@@ -8,7 +8,7 @@ Literature Review at UCSC
 - [ ] [THetA: inferring intra-tumor heterogeneity from high-throughput DNA sequencing data](pdf/theta.pdf)
 - [x] [Bayesian inference for intratumour heterogeneity in mutations and copy number variation](pdf/bayesTumor.pdf)
 
-## Other
+## Miscellaneous
 - [ ] Look up papers on tumor purity
 - [ ] Get familiar with DNA sequencing data
       - [ ] read papers on how the data are generated
