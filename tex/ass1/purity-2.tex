@@ -1,4 +1,5 @@
 \documentclass[12pt]{article}
+\usepackage{bm}
 \usepackage{fullpage, amsmath, mathtools}
 \usepackage{setspace}
 \usepackage{graphicx, psfrag, amsfonts}
@@ -157,7 +158,7 @@ Reasoning:
 
 \item $\log(N_{1s}/N_{0s})$: logR
 $$
-\log(N_{1s}/N_{0s}) \mid M_s, \sigma^2, \mu \sim \Nor\left(\log\left(\frac{(1-\mu)2 + \mu M_s}{2}\right) + \phi, \sigma^2\right).
+\log(N_{1s}/N_{0s}) \mid M_s, \sigma^2, \mu \sim \Nor\left(\log\left(\frac{(1-\mu)2 + \mu M_s}{2}\right) + \phi_s, \sigma^2\right).
 $$
 Note that if $M_s=2$, the mean of $\log(N_{1s}/N_{0s})$ becomes $\phi$, some adjustment by difference in sequencing depth. 
 \end{itemize}
@@ -170,7 +171,7 @@ Note that if $M_s=2$, the mean of $\log(N_{1s}/N_{0s})$ becomes $\phi$, some adj
 \begin{enumerate}
 \item $v_s$
 \begin{align*}
-  v_s | G &\sim G \\
+  v_s | G &\iid G \\
   G &\sim \text{DP}(\alpha,G_0),
 \end{align*}
 where $G_0 = \Be(a_v, b_v)$ and $\alpha$ is the total mass parameter.
@@ -180,9 +181,9 @@ $$
 \mu \sim \Be(a_\mu, b_\mu).
 $$
 
-\item $\phi$
+\item $\phi_s$
   $$
-  \phi \sim N(m_\phi, s^2_\phi)
+  \phi_s \iid N(m_\phi, s^2_\phi)
   $$
 
 \item $\sigma^2$
@@ -195,7 +196,6 @@ $$
 
 % ARTHUR LUI
 \newpage
-\renewcommand{\iid}{\overset{iid}{\sim}}
 \newcommand{\ind}{\overset{ind}{\sim}}
 \newcommand{\p}[1]{\left(#1\right)}
 \newcommand{\bk}[1]{\left[#1\right]}
@@ -213,8 +213,8 @@ $$
 \subsection{Sampling Distribution}
 
 \begin{align*}
-  n_{1s} \mid N_{1s}, p_{s} &\sim \Binom(N_{1s}, p_{s}) \\
-  \log\p{\frac{N_{1s}}{N_{0s}}} \mid \mu, \phi_s, M_s, \sigma^2 &\sim \N\p{\log\p{\frac{2(1-\mu)+\mu M_s}{2}}+\phi_s, \sigma^2}\\
+  n_{1s} \mid N_{1s}, p_{s} &\ind \Binom(N_{1s}, p_{s}) \\
+  \log\p{\frac{N_{1s}}{N_{0s}}} \mid \mu, \phi_s, M_s, \sigma^2 &\ind \N\p{\log\p{\frac{2(1-\mu)+\mu M_s}{2}}+\phi_s, \sigma^2}\\
 \end{align*}
 where $p_s = \ds\frac{\mu v_s M_s}{2(1-\mu)+\mu M_s}$.
 
@@ -222,38 +222,38 @@ where $p_s = \ds\frac{\mu v_s M_s}{2(1-\mu)+\mu M_s}$.
 \begin{align*}
 \mu &\sim \text{Beta}(a_\mu,b_\mu)\\
 \sigma^2 &\sim \text{IG}(a_\sigma,b_\sigma)\\
-\phi_s &\sim \mathcal{N}(m_\phi,s^2_\phi) \\
-v_s \mid G &\sim G \\
+\phi_s &\iid \mathcal{N}(m_\phi,s^2_\phi) \\
+v_s \mid G &\iid G \\
 G &\sim \text{DP}(\alpha,G_0) \\
 \end{align*}
 
 \subsection{Likelihood}
 $$
-\mathcal{L}(\mu,\sigma^2,\phi,v,G~\mid~n_{1s},N_{1s}) \propto \ds\prod_{s=1}^S \mathcal{L}_1(\mu,v_s~|~n_{1s},N_{1s})\mathcal{L}_2(\mu,\phi_s,\sigma^2~|~N_{1s},N_{0s})
+\mathcal{L}(\mu,\sigma^2,\bm{\phi},\bm{v},G~\mid~n_{1s},N_{1s}) \propto \ds\prod_{s=1}^S \mathcal{L}_1(\mu,v_s~|~n_{1s},N_{1s})\mathcal{L}_2(\mu,\phi_s,\sigma^2~|~N_{1s},N_{0s})
 $$
 
 \subsection{Joint Posterior}
 $$
-p(\mu,\sigma^2, \phi, v, G ~|~ \text{Data}) \sim \mathcal{L}(\mu,\sigma^2,\phi,v,G~|~n_{1s},N_{1s}) \times p(\mu)~p(\sigma^2)~p(\phi)~p(v|G)~p(G)
+p(\mu,\sigma^2, \bm\phi, \bm v, G ~|~ \text{Data}) \sim \mathcal{L}(\mu,\sigma^2,\bm\phi,\bm v,G~|~n_{1s},N_{1s}) \times p(\mu)~p(\sigma^2)~p(\bm\phi)~p(\bm v|G)~p(G)
 $$
-Note that the marginal posterior $p(\mu,\sigma^2, \phi, v ~|~ \text{Data})$ can be obtained after integrating $G$ over its DP prior (Blackwell \& McQueen, 1973).
+Note that the marginal posterior $p(\mu,\sigma^2, \bm\phi,\bm v ~|~ \text{Data})$ can be obtained after integrating $G$ over its DP prior (Blackwell \& McQueen, 1973).
 
-\subsection{Complete Conditionals}
+\subsection{Full Conditionals}
 
-\subsubsection{Complete Conditional for $\sigma^2$}
+\subsubsection{Full Conditional for $\sigma^2$}
 \begin{align*}
 p(\sigma^2 ~|~ ...) &\propto \prod_{s=1}^S \mathcal{L}_2(\mu,\phi_s,\sigma^2 ~|~ N_{1s}, N_{0s}) \times p(\sigma^2)\\
-                    &\propto \p{\sigma^2}^{-S/2}\exp\bc{\ds-\frac{\sums\p{\log(N_{1s}/N_{0s})-\log z_s-\phi_2}^2}{2\sigma^2}} (\sigma^2)^{-a_\sigma-1} \exp(-b/\sigma^2)\\
-                    &\propto (\sigma^2)^{-a_\sigma-S/2-1} \exp\bc{-\frac{1}{\sigma^2}\p{\frac{\sums\p{\log(N_{1s}/N_{0s})-\log z_s-\phi_2}^2}{2}}}\\
+                    &\propto \p{\sigma^2}^{-S/2}\exp\bc{\ds-\frac{\sums\p{\log(N_{1s}/N_{0s})-\log z_s-\phi_s}^2}{2\sigma^2}} (\sigma^2)^{-a_\sigma-1} \exp(-b_\sigma/\sigma^2)\\
+                    &\propto (\sigma^2)^{-a_\sigma-S/2-1} \exp\bc{-\frac{1}{\sigma^2}\p{\frac{\sums\p{\log(N_{1s}/N_{0s})-\log z_s-\phi_s}^2}{2}+b_\sigma}}\\
 \end{align*}
 where $z_s = \ds\frac{2(1-\mu)+\mu M_s}{2}$.
 
 $$
-\therefore ~~~ \sigma^2|... \sim \text{IG}\p{a_\sigma+S/2, \frac{\sums\p{\log(N_{1s}/N_{0s})-\log z_s-\phi_2}^2}{2}}
+\therefore ~~~ \sigma^2|... \sim \text{IG}\p{a_\sigma+S/2, b_\sigma+\frac{\sums\p{\log(N_{1s}/N_{0s})-\log z_s-\phi_2}^2}{2}}
 $$
 
-\subsubsection{Complete Conditional for $\phi_s$}
-Let $Y_s = N_{1s}/N{0s}$
+\subsubsection{Full Conditional for $\phi_s$}
+Let $Y_s = N_{1s}/N_{0s}$
 \begin{align*}
   p(\phi_s|...) &\propto\L_2(\mu,\phi_s,\sigma^2) \times p(\phi_s)\\
                 &\propto\exp\bc{-\frac{\p{\log(Y_s)-\log(z_s)-\phi_s}^2}{2\sigma^2}}
@@ -265,25 +265,67 @@ $$
 \therefore ~~~ \phi_s | ... \ind  \N\p{\frac{\log\p{Y_s/z_s}s_\phi^2+m_\phi\sigma^2}{\sigma^2+s_\phi^2},\frac{\sigma^2 s_\phi^2}{\sigma^2+s_\phi^2}}
 $$
 
-\subsubsection{Complete Conditional for $\mu$}
+\subsubsection{Full Conditional for $\mu$}
 \begin{align*}
   p(\mu|...) &\propto \prods \L_1(\mu,v_s|n_{1s},N_{1s})\L_2(\mu,\phi_s,\sigma^2|N_{1s},N_{0s}) \times p(\mu) \\
              &\propto \prods \exp\bc{-\frac{\p{\log(Y_s/z_s)-\phi_s}^2}{2\sigma^2}} \times p_s^{n_{1s}} (1-p_s)^{N_{1s}-n_{1s}} \times \mu^{a_\mu-1} (1-\mu)^{b_\mu-1}\\
              &\propto \exp\bc{-\frac{\sums\p{\log(Y_s/z_s)-\phi_s}^2}{2\sigma^2}} \times \prods\bc{p_s^{n_{1s}} (1-p_s)^{N_{1s}-n_{1s}}} \times \mu^{a_\mu-1} (1-\mu)^{b_\mu-1}\\
 \end{align*}
-Note that here a metropolis step is needed.
+Note that here a metropolis step is needed. Specifically, since the support for
+$\mu$ is (0,1), it is appropriate to logit-transform the parameter to obtain
+$\log\p{\ds\frac{\mu}{1-\mu}}$, which has support on the real line. Now, a
+metropolis update can be done using a (symmetric) Normal proposal.
 
-\subsubsection{Complete Conditional for $v_s$}
-\begin{align*}
-  p(v_s|v_{-s},\mu,\sigma^2,\phi,\text{Data}) &\propto \L_1(\mu,v_s|n_{1s},N_{1s}) \times p(v_s)\\
-                                              &\propto v_s^{n_1s} (1-p_s)^{N_{1s}-n_{1s}} \bc{\frac{\alpha}{\alpha+n-1}g_0(v_s) + \frac{1}{\alpha+n-1}\sum_{j=1}^{n^{*-}} \delta_{v_j^{*-}}(v_s)}\\
-\end{align*}
-where 
+\subsubsection{Full Conditional for $v_s$}
+Note that the full conditional distribution for $v_s$ is almost surely discrete because of the DP prior on $v_s$. 
+Consequently, there is positive probability that $v_s=v_s'$ for $s\ne s'$. As such, writing down the full conditional for
+the cluster labels of $v_s$ is equivalent to writing the full conditional for $v_s$ and will be helpful in the computational
+implementation of the MCMC to sample from the full conditional of $v_s$. Before writing down the full conditional for the
+cluster labels of $v_s$, some additional notation will be introduced.
+
+First, recognize that in an MCMC each $v_s$ could be updated sequentially by assigning it to an existing cluster,
+or assigning it a new value drawn from $G_0$. Let's call the current $\bm v$ in the MCMC iterations $\bm v^t$. Now,
+
+\def\vt{\bm v^t}
+\def\vstar{ \vt_{-s}\mbox{*} }
+
 \begin{itemize}
-  \item $g_0(v_s)$ is the baseline density evaluated at $v_s$\\ 
-  \item $n^{*-}$ is the number of unique $v_j$'s excluding $j = s$\\
-  \item $v_j^{*-}$ is the $j^{th}$ unique $v$ excluding $j = s$\\
+  \item let $\vt_{-s}$ (a vector of length $S-1$) be the elements in $\vt$ \textbf{after} removing element $s$
+  \item let $K^{-s}$ be the number of unique elements in $\vt_{-s}$ 
+  \item let $\vstar$ (a vector of length $K^{-s}$) be the unique elements in $\vt_{-s}$
+  \item let $\bm c^{-s}$ (a vector of length $K^{-s}$) be the (arbitrary) cluster labels for elements in $\vt_{-s}$
+  \item let $\bm u^{-s}$ (a vector of length $K^{-s}$) be the cardinality of each cluster in $\vt_{-s}$.
 \end{itemize}
-Note that we can sample from the complete conditional for $v_s$ efficiently using one of the algorithms (e.g. Algorithm 8) presented by Radford Neal (2000).
+
+Then note the full conditional for the cluster label of $v_s$ is 
+
+$$
+\begin{cases}
+  P(c_s = k) & \propto u^{-s}_k \times \p{v_{-s,k}^{t}}^{n_{1s}} (1-p_s)^{N_{1s}-n_{1s}}, \text{ for } k \in \bc{1,...,K^{-s}}\\
+  P(c_s = K^{-s}+1) & \propto \alpha \times \ds\int v^{n_{1s}} (1-p_s)^{N_{1s}-n_{1s}} ~dG_0(v), \text{otherwise}
+\end{cases}
+$$
+
+Finally, for each element in $\bm v^*$ (the unique elements in $\bm v$) perform sample from the full conditional for $v_k^*$
+which leaves the distribution invariant. That is, sample from
+
+$$
+v_k^* | ... \propto g_0(v_k^*) \prod_{\bc{s:c_s=k}}^K \p{v_k^*}^{n_{1s}}(1-p_s)^{N_{1s}-n_{1s}}
+$$
+
+
+
+%\begin{align*}
+%  p(v_s|v_{-s},\mu,\sigma^2,\phi,\text{Data}) &\propto \L_1(\mu,v_s|n_{1s},N_{1s}) \times p(v_s)\\
+%                                              &\propto v_s^{n_1s} (1-p_s)^{N_{1s}-n_{1s}} \bc{\frac{\alpha}{\alpha+n-1}g_0(v_s) + \frac{1}{\alpha+n-1}\sum_{j=1}^{n^{*-}} \delta_{v_j^{*-}}(v_s)}\\
+%\end{align*}
+%where 
+%\begin{itemize}
+%  \item $g_0(v_s)$ is the baseline density evaluated at $v_s$\\ 
+%  \item $n^{*-}$ is the number of unique $v_j$'s excluding $j = s$\\
+%  \item $v_j^{*-}$ is the $j^{th}$ unique $v$ excluding $j = s$\\
+%\end{itemize}
+%Note that we can sample from the full conditional for $v_s$ efficiently using
+%one of the algorithms (e.g. Algorithm 8) presented by Radford Neal (2000).
 
 \end{document}
