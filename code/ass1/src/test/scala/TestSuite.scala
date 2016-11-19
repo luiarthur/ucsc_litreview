@@ -10,10 +10,11 @@ class TestSuite extends FunSuite {
     val out2 = timer { Vector.fill(n)(wsample(x,p2)) }
     val trueMean = x.zip(p1).map(z => z._1*z._2).sum 
 
-    println(out1.sum / n, trueMean)
-    println(out2.sum / n, trueMean)
+    //println(out1.sum / n, trueMean)
+    //println(out2.sum / n, trueMean)
     assert(math.abs(out1.sum/n - trueMean) < .1)
     assert(math.abs(out2.sum/n - trueMean) < .1)
+    println()
   }
 
   test("sim data") {
