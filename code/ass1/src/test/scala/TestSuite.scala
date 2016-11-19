@@ -19,7 +19,7 @@ class TestSuite extends FunSuite {
 
   test("sim data") {
     import ass1.util._
-    import ass1.GenerateData.simOneObs
+    import ass1.data.GenerateData.simOneObs
     val trueData = simOneObs(phiMean=0.0, phiVar=1.0, mu=0.3, 
                              c=30.0, minM=0, maxM=5, wM=.5, 
                              setV=Set(.3,.2,.6), S=10)
