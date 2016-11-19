@@ -14,13 +14,17 @@ package object util {
 
   // weighted sampling
   def wsample(x: Vector[Double], p: Vector[Double]) = {
-    p.foreach( pi => assert(pi > 0 && pi < 1))
-    val n = x.length
-    assert(p.length == n)
+    require(p.min>=0)
+    require(p.length == x.length)
     val sump = p.sum
     val rescaledP = if (sump == 1) p else p.map(pi => pi / sump)
-    val u = Rand.nextUniform(0,n-1)
-    val cumP = rescaledP.scanLeft(0.0)(_+_)
-    // stopped here FIXME
+    val u = Rand.nextUniform(0,1)
+    val cumP = rescaledP.scanLeft(0.0)(_+_).tail
+    x.zip(cumP).dropWhile(_._2<u).head._1 //FIXME
+  }
+
+  def round(x: Double, d: Int=4) = {
+    val s = math pow (10, d)
+    (math round x * s) / s
   }
 }
