@@ -3,6 +3,7 @@ package ass1
 package object util {
   val Rand = new org.apache.commons.math3.random.RandomDataGenerator()
   def reSeed(s: Long) = Rand.reSeed(s)
+  def rig(shp: Double, rate: Double) = 1.0 / Rand.nextGamma(shp, 1.0/rate)
 
   def timer[R](block: => R) = {
     val t0 = System.nanoTime()
