@@ -1,5 +1,43 @@
 import org.scalatest.FunSuite
 class TestSuite extends FunSuite {
+  test("speed of sum") {
+    import ass1.util._
+    val n = 100000
+    // in general for n = 100000, array is 10 times faster than vector
+    val v1 = Vector.fill(n)(scala.util.Random.nextGaussian)
+    val v2 = Vector.fill(n)(scala.util.Random.nextGaussian)
+    val v3 = Vector.fill(n)(scala.util.Random.nextGaussian)
+
+    println()
+    // in general, for these operations, for loop is fastest!
+    print("Create idx:\t")
+    val idx = timer {Vector.range(0,n).par}
+    print("zipped:\t\t")  // Vector:0.01s // Array: 0.015
+    val v4 = timer { (v1,v2,v3).zipped.toVector.map(z => z._1 * z._2 * z._3).sum }
+    print("idx:\t\t") // Vector: 0.03s // Array: 0.007
+    val v5 = timer {idx.map(i => v1(i) * v2(i) * v3(i)).sum }
+    print("for:\t\t") // Vector: 0.008s // Array: 0.002
+    var sum = 0.0
+    timer { for (i <- 0 until n) { sum += v1(i) * v2(i) * v3(i) } }
+    val v6 = sum
+    print("while:\t\t") // Vector: 0.01s // Array: 0.004
+    sum = 0.0; var i = 0
+    timer {while (i < n) {sum += v1(i) * v2(i) * v3(i); i+=1} }
+    val v7 = sum
+    def loop(sum: Double, i: Int): Double = {
+      if (i == n) sum else loop(sum + v1(i) * v2(i) * v3(i), i+1)
+    }
+    print("recursive:\t") // Vector: 0.014s // Array: 0.0025s
+    val v8 = timer {loop(0.0, 0) }
+    println()
+
+    /* julia
+       n = 100000; v1 = randn(n); v2 = randn(n); v3 = randn(n);
+       sum( v1.* v2 .* v3) # 0.0019 seconds
+     */
+    assert(round(v4,5) == round(v5,5) && round(v5,5) == round(v6,5) && round(v6,5) == round(v7,5) && round(v7,5) == round(v8,5))
+  }
+
   test("wsample") {
     import ass1.util._
     val x = Vector(1.0,2.0,3.0,4.0,5.0)
