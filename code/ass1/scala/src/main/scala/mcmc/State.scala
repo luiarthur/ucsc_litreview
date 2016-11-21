@@ -65,11 +65,11 @@ case class State(phi: Vector[Double], sig2: Double, mu: Double, v: Vector[Double
       invLogit(metropolis(logit(mu), logLikePluslogPriorLogitMu, priors.csMu))
     
     // update v
-    def updateV = {
-      // STOPPED HERE FIXME
-      // update each cluster label
-      // update each cluster
-    }
+    //def updateV = { 
+    //  def f(x: Double, i: Int) = 
+    //  val newV = neal8Update(priors.alpha, v, ) // updateV
+    //}
+
     val newV = v // updateV
 
     ass1.mcmc.State(phi=newPhi, sig2=newSig2, v=newV, mu=newMu)
