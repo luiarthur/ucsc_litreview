@@ -14,9 +14,12 @@ class TestSuite extends FunSuite {
     val idx = timer {Vector.range(0,n).par}
     print("zipped:\t\t")  // Vector:0.01s // Array: 0.015
     val v4 = timer { (v1,v2,v3).zipped.toVector.map(z => z._1 * z._2 * z._3).sum }
+    print("zipped2:\t")  // Vector:0.005s // Array: 0.015 // winner for Vectors
+    val v123 = (v1,v2,v3).zipped.toVector
+    val v42 = timer { v123.map(z => z._1 * z._2 * z._3).sum }
     print("idx:\t\t") // Vector: 0.03s // Array: 0.007
     val v5 = timer {idx.map(i => v1(i) * v2(i) * v3(i)).sum }
-    print("for:\t\t") // Vector: 0.008s // Array: 0.002
+    print("for:\t\t") // Vector: 0.008s // Array: 0.002 // winner for Arrays
     var sum = 0.0
     timer { for (i <- 0 until n) { sum += v1(i) * v2(i) * v3(i) } }
     val v6 = sum
@@ -29,13 +32,20 @@ class TestSuite extends FunSuite {
     }
     print("recursive:\t") // Vector: 0.014s // Array: 0.0025s
     val v8 = timer {loop(0.0, 0) }
+
+    def loop2(sum:Double,v1:Vector[Double],v2:Vector[Double],v3:Vector[Double]): Double ={
+      if (v1 == Nil) sum else loop2(sum+v1.head*v2.head*v3.head,v1.tail,v2.tail,v3.tail)
+    }
+    print("recursive2:\t") // Vector: 0.014s // Array: 0.0025s
+    val v9 = timer {loop2(0.0,v1,v2,v3) }
+
     println()
 
     /* julia
        n = 100000; v1 = randn(n); v2 = randn(n); v3 = randn(n);
        sum( v1.* v2 .* v3) # 0.0019 seconds
      */
-    assert(round(v4,5) == round(v5,5) && round(v5,5) == round(v6,5) && round(v6,5) == round(v7,5) && round(v7,5) == round(v8,5))
+    assert(round(v4,5) == round(v5,5) && round(v5,5) == round(v6,5) && round(v6,5) == round(v7,5) && round(v7,5) == round(v8,5) && round(v8,5) == round(v9,5))
   }
 
   test("wsample") {
