@@ -11,7 +11,7 @@ class TestSuite extends FunSuite {
     println()
     // in general, for these operations, for loop is fastest!
     print("Create idx:\t")
-    val idx = timer {Vector.range(0,n).par}
+    val idx = timer {Vector.range(0,n)}
     print("zipped:\t\t")  // Vector:0.01s // Array: 0.015
     val v4 = timer { (v1,v2,v3).zipped.toVector.map(z => z._1 * z._2 * z._3).sum }
     print("zipped2:\t")  // Vector:0.005s // Array: 0.015 // winner for Vectors
@@ -47,6 +47,51 @@ class TestSuite extends FunSuite {
      */
     assert(round(v4,5) == round(v5,5) && round(v5,5) == round(v6,5) && round(v6,5) == round(v7,5) && round(v7,5) == round(v8,5) && round(v8,5) == round(v9,5))
   }
+
+  test("speed of Array sum") {
+    import ass1.util._
+    val n = 100000
+    // in general for n = 100000, array is 10 times faster than vector
+    val a1 = Array.fill(n)(scala.util.Random.nextGaussian)
+    val a2 = Array.fill(n)(scala.util.Random.nextGaussian)
+    val a3 = Array.fill(n)(scala.util.Random.nextGaussian)
+
+    println()
+    // in general, for these operations, for loop is fastest!
+    print("Create idx:\t")
+    val idx = timer {Array.range(0,n)}
+    print("zipped:\t\t")  // Vector:0.01s // Array: 0.015
+    val v4 = timer { (a1,a2,a3).zipped.toVector.map(z => z._1 * z._2 * z._3).sum }
+    print("zipped2:\t")  // Vector:0.005s // Array: 0.015 // winner for Vectors
+    val a123 = (a1,a2,a3).zipped.toVector
+    val v42 = timer { a123.map(z => z._1 * z._2 * z._3).sum }
+    print("idx:\t\t") // Vector: 0.03s // Array: 0.007
+    val v5 = timer {idx.map(i => a1(i) * a2(i) * a3(i)).sum }
+    print("for:\t\t") // Vector: 0.008s // Array: 0.002 // winner for Arrays
+    var sum = 0.0
+    timer { for (i <- 0 until n) { sum += a1(i) * a2(i) * a3(i) } }
+    val v6 = sum
+    print("while:\t\t") // Vector: 0.01s // Array: 0.004
+    sum = 0.0; var i = 0
+    timer {while (i < n) {sum += a1(i) * a2(i) * a3(i); i+=1} }
+    val v7 = sum
+    def loop(sum: Double, i: Int): Double = {
+      if (i == n) sum else loop(sum + a1(i) * a2(i) * a3(i), i+1)
+    }
+    print("recursive:\t") // Vector: 0.014s // Array: 0.0025s
+    val v8 = timer {loop(0.0, 0) }
+
+
+    println()
+
+    /* julia
+       n = 100000; v1 = randn(n); v2 = randn(n); v3 = randn(n);
+       sum( v1.* v2 .* v3) # 0.0019 seconds
+     */
+    assert(round(v4,5) == round(v5,5) && round(v5,5) == round(v6,5) && round(v6,5) == round(v7,5) && round(v7,5) == round(v8,5))
+  }
+
+
 
   test("wsample") {
     import ass1.util._
