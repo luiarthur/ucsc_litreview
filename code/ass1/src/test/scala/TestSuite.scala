@@ -67,10 +67,13 @@ class TestSuite extends FunSuite {
     val v42 = timer { a123.map(z => z._1 * z._2 * z._3).sum }
     print("idx:\t\t") // Vector: 0.03s // Array: 0.007
     val v5 = timer {idx.map(i => a1(i) * a2(i) * a3(i)).sum }
+
     print("for:\t\t") // Vector: 0.008s // Array: 0.002 // winner for Arrays
     var sum = 0.0
     timer { for (i <- 0 until n) { sum += a1(i) * a2(i) * a3(i) } }
     val v6 = sum
+    //val v6 = timer {for (i <- 0 until n) yield a1(i)*a2(i)*a3(i)}.sum
+
     print("while:\t\t") // Vector: 0.01s // Array: 0.004
     sum = 0.0; var i = 0
     timer {while (i < n) {sum += a1(i) * a2(i) * a3(i); i+=1} }
