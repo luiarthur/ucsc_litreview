@@ -26,7 +26,8 @@ package object mcmc {
 
   def neal8Update(alpha: Double, t: Vector[Double],
     f: (Double,Int)=>Double, logf: (Double,Int)=>Double, 
-    logg0: Double=>Double, rg0: ()=>Double) = { // assumes m = 1
+    logg0: Double=>Double, rg0: ()=>Double,
+    cs: Double) = { // assumes m = 1
 
     val n = t.length
     val idx = Vector.range(0,n)
@@ -60,7 +61,9 @@ package object mcmc {
       // FIXME
       val ut = t.toSet.toVector
       val utIdx = ut.map{ u => idx.filter(i => t(i) == u) }
-      // STOPPED HERE
+      val newUT = for (k <- 0 until ut.length) yield 
+        metropolis(ut(k), u => utIdx(k).map(s => logf(u,s)).sum + logg0(u), cs)
+      // STOPPED HERE. Need  to return vector in correct order
     }
 
     updateAll(update(n, t))
