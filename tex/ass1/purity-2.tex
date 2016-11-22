@@ -281,8 +281,9 @@ Note that the full conditional distribution for $v_s$ is almost surely discrete 
 Consequently, there is positive probability that $v_s=v_s'$ for $s\ne s'$. As such, writing down the full conditional for
 the cluster labels of $v_s$ is equivalent to writing the full conditional for $v_s$ and will be helpful in the computational
 implementation of the MCMC to sample from the full conditional of $v_s$. Before writing down the full conditional for the
-cluster labels of $v_s$, some additional notation will be introduced.
+cluster labels of $v_s$, some additional notation will be introduced.\\
 
+\noindent
 First, recognize that in an MCMC each $v_s$ could be updated sequentially by assigning it to an existing cluster,
 or assigning it a new value drawn from $G_0$. Let's call the current $\bm v$ in the MCMC iterations $\bm v^t$. Now,
 
@@ -296,7 +297,6 @@ or assigning it a new value drawn from $G_0$. Let's call the current $\bm v$ in 
   \item let $\bm c^{-s}$ (a vector of length $K^{-s}$) be the (arbitrary) cluster labels for elements in $\vt_{-s}$
   \item let $\bm u^{-s}$ (a vector of length $K^{-s}$) be the cardinality of each cluster in $\vt_{-s}$.
 \end{itemize}
-
 Then note the full conditional for the cluster label of $v_s$ is 
 
 $$
@@ -306,13 +306,13 @@ $$
 \end{cases}
 $$
 
+\noindent
 Finally, for each element in $\bm v^*$ (the unique elements in $\bm v$) perform sample from the full conditional for $v_k^*$
 which leaves the distribution invariant. That is, sample from
 
 $$
-v_k^* | ... \propto g_0(v_k^*) \prod_{\bc{s:c_s=k}}^K \p{v_k^*}^{n_{1s}}(1-p_s)^{N_{1s}-n_{1s}}
+v_k^* | ... \propto g_0(v_k^*) \prod_{\bc{s:c_s=k}}^K \p{v_k^*}^{n_{1s}}(1-p_s)^{N_{1s}-n_{1s}}.
 $$
-
 
 
 %\begin{align*}
