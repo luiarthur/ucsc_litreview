@@ -4,7 +4,8 @@ import ass1.util.{logit,invLogit}
 
 package object mcmc {
 
-  def metropolis(curr:Double, loglike_plus_prior:Double=>Double, candSig:Double) = {
+  def metropolis(curr:Double, loglike_plus_prior:Double=>Double, 
+                 candSig:Double) = {
     val cand = ass1.util.Rand.nextGaussian(curr,candSig)
     val u = math.log(ass1.util.Rand.nextUniform(0,1))
     val p = loglike_plus_prior(cand) - loglike_plus_prior(curr)
@@ -13,17 +14,25 @@ package object mcmc {
 
   def gibbs(init: State, priors: Priors, data: ass1.data.Data,
             B: Int, burn: Int, printEvery: Int = 10) = {
+
     def loop(S: List[State], i: Int): List[State] = {
+      if (i % printEvery == 0) 
+        print("\rProgress: " + i +"/"+ (B+burn) + "\t" + 
+          java.util.Calendar.getInstance.getTime() + "\t")
+
       if (i < B + burn) {
-        if (i % printEvery == 0) print("\rProgress: " + i +"/"+ (B+burn))
-        val newState = S.head.update(priors,data) :: S
+        val newState = if (i <= B) 
+          List( S.head.update(priors,data) )
+        else 
+          S.head.update(priors,data) :: S
+        
         loop(newState, i+1)
-      } else {
-        print("\rProgress: " + i + "/" + (B + burn) + "\n")
-        S
-      }
+      } else S
     }
-    loop(List(init),0).take(B)
+
+    lazy val out = loop(List(init),0)
+    println()
+    out
   }
  
   def neal8Update(alpha: Double, t: Vector[Double],

@@ -131,9 +131,8 @@ class TestSuite extends FunSuite {
 
     val trueData = simOneObs(phiMean=0.0, phiVar=1.0, mu=0.3, 
                              c=30.0, minM=0, maxM=5, wM=.5, 
-                             setV=Set(.1,.5,.9), numLoci=100)
-    println(trueData)
-    println(trueData.data.numLoci)
+                             setV=Set(.1,.5,.9), numLoci=100) // 10000
+
     val data:Data = trueData.data
     val numLoci:Int = data.numLoci
     val truev:Vector[Double] = trueData.param.v
@@ -142,7 +141,7 @@ class TestSuite extends FunSuite {
     val burn = 6000
     
     val init = State(Vector.fill(numLoci)(0), 1.0, .5, Vector.fill(numLoci)(.5))
-    val priors = Priors(csV = .01, csMu = 0.2, alpha=3.0)
+    val priors = Priors(csV = .5, csMu = 0.2, alpha=0.001)
 
     val out = timer { gibbs(init,priors,data,B,burn,printEvery=100) }
 
@@ -155,19 +154,25 @@ class TestSuite extends FunSuite {
     R.sig2 = sig2
     R.phi = phi
     R.v = v
+    println("mu length:" + mu.length)
     println("mu acc: " + mu.distinct.length / B.toDouble)
     println("mu: "  + mu.sum / B)
     println("sig2: "  + sig2.sum / B)
     R.truePhi = truePhi.toArray
     R.truev = truev.toArray
 
+    val numClus = v.map( vt => vt.distinct.length )
+    R.numClus = numClus
+
     R.eval(".libPaths(c(.libPaths(),'/home/arthur/lib/R_lib'))")
     R.eval("library(rcommon)")
+    R.eval("library(corrplot)")
 
-    R.eval("par(mfrow=c(2,2))")
+    R.eval("par(mfrow=c(2,3))")
 
     R.eval("plotPost(sig2,main='sig2',float=TRUE)")
     R.eval("plotPost(mu,main='mu',float=TRUE)")
+    R.eval("plot(numClus,main='numClus',pch=20,col=rgb(0,0,1,.5),cex=2)")
 
     R.eval("plot(truePhi,pch=20,ylim=c(-3,3), main='phi')")
     R.eval("points(apply(phi,2,mean),lwd=2,col='blue')")
@@ -177,9 +182,11 @@ class TestSuite extends FunSuite {
     R.eval("points(apply(v,2,mean),lwd=2,col='blue',cex=1.3)")
     R.eval("add.errbar(t(apply(v,2,quantile,c(.025,.975))))")
 
-    R.eval("par(mfrow=c(1,1))")
+    R.eval("corrplot(cor(v))")
 
-    val xxx = readLine()
+    R.eval("par(mfrow=c(1,1))")
+    scala.io.StdIn.readLine()
+
   }
 
 }
