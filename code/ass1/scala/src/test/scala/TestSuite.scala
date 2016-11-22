@@ -118,27 +118,68 @@ class TestSuite extends FunSuite {
     import ass1.data.GenerateData.simOneObs
     val trueData = simOneObs(phiMean=0.0, phiVar=1.0, mu=0.3, 
                              c=30.0, minM=0, maxM=5, wM=.5, 
-                             setV=Set(.3,.2,.6), S=10)
+                             setV=Set(.3,.2,.6), numLoci=10)
     println(trueData)
   }
 
   test("test algo") {
     import ass1.util._
     import ass1.data.GenerateData.simOneObs
+    import ass1.data.Data
     import ass1.mcmc._
+    val R = org.ddahl.rscala.callback.RClient()
+
     val trueData = simOneObs(phiMean=0.0, phiVar=1.0, mu=0.3, 
                              c=30.0, minM=0, maxM=5, wM=.5, 
-                             setV=Set(.3,.2,.6), S=100)
+                             setV=Set(.1,.5,.9), numLoci=100)
     println(trueData)
-    val s = trueData.data.S
-    val B = 1000
-    val burn = 100
-    val init = State(Vector.fill(s)(0), 1.0, .5, Vector.fill(s)(.5))
-    val priors = Priors(csV = .001, csMu = .001)
-    val out = gibbs(init,priors,trueData.data,B,burn,printEvery=10)
-    println("mu acc: " + out.map(_.mu).toSet.size / B)
-    println("mu: "  + out.map(_.mu).sum / B)
+    println(trueData.data.numLoci)
+    val data:Data = trueData.data
+    val numLoci:Int = data.numLoci
+    val truev:Vector[Double] = trueData.param.v
+    val truePhi = trueData.param.phi
+    val B = 2000
+    val burn = 20000
+    
+    val init = State(Vector.fill(numLoci)(0), 1.0, .5, Vector.fill(numLoci)(.5))
+    val priors = Priors(csV = 2, csMu = .2)
 
+    val out = gibbs(init,priors,data,B,burn,printEvery=100)
+
+    val sig2 = out.map(_.sig2).toArray
+    val phi = out.map(_.phi).map(_.toArray).toArray
+    val mu = out.map(_.mu).toArray
+    val v = out.map(_.v).map(_.toArray).toArray
+
+    R.mu = mu
+    R.sig2 = sig2
+    R.phi = phi
+    R.v = v
+    println("mu acc: " + mu.distinct.length / B.toDouble)
+    println("mu: "  + mu.sum / B)
+    println("sig2: "  + sig2.sum / B)
+    R.truePhi = truePhi.toArray
+    R.truev = truev.toArray
+
+    R.eval(".libPaths(c(.libPaths(),'/home/arthur/lib/R_lib'))")
+    R.eval("library(rcommon)")
+
+    R.eval("par(mfrow=c(2,2))")
+
+    R.eval("plotPost(sig2,main='sig2',float=TRUE)")
+    R.eval("plotPost(mu,main='mu',float=TRUE)")
+
+    R.eval("plot(truePhi,pch=20,ylim=c(-3,3), main='phi')")
+    R.eval("points(apply(phi,2,mean),lwd=2,col='blue')")
+    R.eval("add.errbar(t(apply(phi,2,quantile,c(.025,.975))))")
+
+    R.eval("plot(truev,pch=20,ylim=c(0,1),main='v')")
+    R.eval("points(apply(v,2,mean),lwd=2,col='blue',cex=1.3)")
+    R.eval("add.errbar(t(apply(v,2,quantile,c(.025,.975))))")
+
+    R.eval("par(mfrow=c(1,1))")
+
+    val xxx = readLine()
   }
 
 }

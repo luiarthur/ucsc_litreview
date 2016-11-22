@@ -1,5 +1,7 @@
 package ass1
 
+import ass1.util.{logit,invLogit}
+
 package object mcmc {
 
   def metropolis(curr:Double, loglike_plus_prior:Double=>Double, candSig:Double) = {
@@ -39,11 +41,11 @@ package object mcmc {
     def updateAt(i: Int, t: Vector[Double]): Vector[Double] = {
       if (i == n) t else {
         val tMinus = removeAt(i,t)
-        val (uT,uN) = tMinus.groupBy(identity).
-                        map{z => (z._1,z._2.length)}.toVector.unzip
+        val mapUT = tMinus.groupBy(identity).mapValues(_.length).toVector
         val aux = rg0()
-        val probExisting = uT.zip(uN).map(z => z._2 * f(z._1,i))
-        val pAux = alpha * f(aux, i)
+        val probExisting = mapUT.map(ut => ut._2 * f(ut._1,i) / (alpha + n -1))
+        val pAux = alpha * f(aux, i) / (alpha + n - 1)
+        val (uT,uN) = mapUT.unzip
         val newTi = ass1.util.wsample(uT :+ aux, probExisting :+ pAux)
         updateAt(i+1, t.updated(i,newTi))
       }
@@ -51,10 +53,21 @@ package object mcmc {
 
     def updateClusters(t: Vector[Double]): Vector[Double] = {
       val out = Array.ofDim[Double](n)
-      t.zipWithIndex.groupBy(_._1).mapValues(i => i.map(_._2)).foreach{ kv => 
-        val curr = kv._1
-        val idx = kv._2
-        val newVal = metropolis(curr, v => idx.map(i => logf(v,i)).sum + logg0(v), cs)
+
+      t.view.zipWithIndex.groupBy(_._1).mapValues(i => i.map(_._2)).foreach{ kv => 
+        val (curr,idx) = kv
+
+        def logLikePlusLogPriorLogitV(logitV: Double) = {
+          val v = invLogit(logitV)
+          val logJ = -logitV + 2 * math.log(v)
+          val logPriorLogitV = logJ // + logg0(v)
+          val ll = idx.map(i => logf(v,i)).sum
+          ll + logPriorLogitV
+        }
+
+        val newVal = 
+          invLogit(metropolis(logit(curr), logLikePlusLogPriorLogitV, cs))
+
         idx.foreach { i => out(i) = newVal }
       }
       out.toVector
