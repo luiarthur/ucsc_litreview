@@ -121,4 +121,24 @@ class TestSuite extends FunSuite {
                              setV=Set(.3,.2,.6), S=10)
     println(trueData)
   }
+
+  test("test algo") {
+    import ass1.util._
+    import ass1.data.GenerateData.simOneObs
+    import ass1.mcmc._
+    val trueData = simOneObs(phiMean=0.0, phiVar=1.0, mu=0.3, 
+                             c=30.0, minM=0, maxM=5, wM=.5, 
+                             setV=Set(.3,.2,.6), S=100)
+    println(trueData)
+    val s = trueData.data.S
+    val B = 1000
+    val burn = 100
+    val init = State(Vector.fill(s)(0), 1.0, .5, Vector.fill(s)(.5))
+    val priors = Priors(csV = .001, csMu = .001)
+    val out = gibbs(init,priors,trueData.data,B,burn,printEvery=10)
+    println("mu acc: " + out.map(_.mu).toSet.size / B)
+    println("mu: "  + out.map(_.mu).sum / B)
+
+  }
+
 }
