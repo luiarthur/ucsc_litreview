@@ -138,13 +138,13 @@ class TestSuite extends FunSuite {
     val numLoci:Int = data.numLoci
     val truev:Vector[Double] = trueData.param.v
     val truePhi = trueData.param.phi
-    val B = 2000
-    val burn = 20000
+    val B = 10000
+    val burn = 6000
     
     val init = State(Vector.fill(numLoci)(0), 1.0, .5, Vector.fill(numLoci)(.5))
-    val priors = Priors(csV = 2, csMu = .2)
+    val priors = Priors(csV = .01, csMu = 0.2, alpha=3.0)
 
-    val out = gibbs(init,priors,data,B,burn,printEvery=100)
+    val out = timer { gibbs(init,priors,data,B,burn,printEvery=100) }
 
     val sig2 = out.map(_.sig2).toArray
     val phi = out.map(_.phi).map(_.toArray).toArray
