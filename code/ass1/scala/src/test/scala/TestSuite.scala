@@ -1,7 +1,7 @@
 import org.scalatest.FunSuite
 class TestSuite extends FunSuite {
   test("speed of sum") {
-    import ass1.util._
+    import tumor.util._
     val n = 100000
     // in general for n = 100000, array is 10 times faster than vector
     val v1 = Vector.fill(n)(scala.util.Random.nextGaussian)
@@ -49,7 +49,7 @@ class TestSuite extends FunSuite {
   }
 
   test("speed of Array sum") {
-    import ass1.util._
+    import tumor.util._
     val n = 100000
     // in general for n = 100000, array is 10 times faster than vector
     val a1 = Array.fill(n)(scala.util.Random.nextGaussian)
@@ -97,7 +97,7 @@ class TestSuite extends FunSuite {
 
 
   test("wsample") {
-    import ass1.util._
+    import tumor.util._
     val x = Vector(1.0,2.0,3.0,4.0,5.0)
     val p1 = Vector(.2, .4, .1, .2, .1)
     val p2 = Vector(2.0, 4.0, 1.0, 2.0, 1.0)
@@ -114,75 +114,77 @@ class TestSuite extends FunSuite {
   }
 
   test("sim data") {
-    import ass1.util._
-    import ass1.data.GenerateData.simOneObs
-    val trueData = simOneObs(phiMean=0.0, phiVar=1.0, mu=0.3, 
-                             c=30.0, minM=0, maxM=5, wM=.5, 
-                             setV=Set(.3,.2,.6), numLoci=10)
-    println(trueData)
+    import tumor.util._
+    import tumor.data.GenerateData.genData
+    val (obs,param) = genData(phiMean=0.0, phiVar=1.0, mu=0.3, 
+                              c=30.0, minM=0, maxM=5, wM=.5, 
+                              setV=Set(.3,.2,.6), numLoci=10)
+    println(obs)
+    println(param)
   }
 
-  test("test algo") {
-    import ass1.util._
-    import ass1.data.GenerateData.simOneObs
-    import ass1.data.Data
-    import ass1.mcmc._
+  test("test dp") {
+    import tumor.util._
+    import tumor.data.GenerateData.genData
+    import tumor.data._
+    import tumor.mcmc._
+
     val R = org.ddahl.rscala.callback.RClient()
 
-    val trueData = simOneObs(phiMean=0.0, phiVar=1.0, mu=0.3, 
-                             c=30.0, minM=0, maxM=5, wM=.5, 
-                             setV=Set(.1,.5,.9), numLoci=100) // 10000
+    val (obs,param) = genData(phiMean=0.0, phiVar=1.0, mu=0.3, 
+                              c=30.0, minM=1, maxM=5, wM=.5, 
+                              setV=Set(.1,.5,.9), numLoci=100) // 10000
 
-    val data:Data = trueData.data
-    val numLoci:Int = data.numLoci
-    val truev:Vector[Double] = trueData.param.v
-    val truePhi = trueData.param.phi
-    val B = 10000
-    val burn = 6000
-    
-    val init = State(Vector.fill(numLoci)(0), 1.0, .5, Vector.fill(numLoci)(.5))
-    val priors = Priors(csV = .5, csMu = 0.2, alpha=0.001)
+    val nLoci = obs.numLoci
+    val init = State(Vector.fill(nLoci)(0), 1.0, .5, Vector.fill(nLoci)(.5))
+    val prior = new Prior(csV = 1, csMu = 0.1, alpha=0.0001, clusterUpdates=1)
 
-    val out = timer { gibbs(init,priors,data,B,burn,printEvery=100) }
+    val out = timer { gibbs(init,prior,obs,B=10000,6000,printEvery=100) }
 
-    val sig2 = out.map(_.sig2).toArray
-    val phi = out.map(_.phi).map(_.toArray).toArray
-    val mu = out.map(_.mu).toArray
+    R.mu = out.map(_.mu).toArray
+    R.muTrue = param.mu
+
+    R.sig2 = out.map(_.sig2).toArray
+
+    R.phi = out.map(_.phi).map(_.toArray).toArray
+    R.truePhi = param.phi.toArray
+
     val v = out.map(_.v).map(_.toArray).toArray
-
-    R.mu = mu
-    R.sig2 = sig2
-    R.phi = phi
     R.v = v
-    println("mu length:" + mu.length)
-    println("mu acc: " + mu.distinct.length / B.toDouble)
-    println("mu: "  + mu.sum / B)
-    println("sig2: "  + sig2.sum / B)
-    R.truePhi = truePhi.toArray
-    R.truev = truev.toArray
+    R.truev = param.v.toArray
 
-    val numClus = v.map( vt => vt.distinct.length )
-    R.numClus = numClus
+    R.numClus = v.map( vt => vt.distinct.length )
 
-    R.eval(".libPaths(c(.libPaths(),'/home/arthur/lib/R_lib'))")
+    R.eval("require('devtools')")
+    R.eval("devtools::install_github('luiarthur/rcommon')")
     R.eval("library(rcommon)")
-    R.eval("library(corrplot)")
 
     R.eval("par(mfrow=c(2,3))")
 
     R.eval("plotPost(sig2,main='sig2',float=TRUE)")
-    R.eval("plotPost(mu,main='mu',float=TRUE)")
+    R.eval("muAcc <- round(length(unique(mu)) / length(mu),2)")
+    R.eval("""plotPost(mu,main=paste0('mu',' (truth=',muTrue,')'),
+              float=TRUE,xlab=paste0('accRate: ', muAcc))""")
     R.eval("plot(numClus,main='numClus',pch=20,col=rgb(0,0,1,.5),cex=2)")
 
-    R.eval("plot(truePhi,pch=20,ylim=c(-3,3), main='phi')")
-    R.eval("points(apply(phi,2,mean),lwd=2,col='blue')")
-    R.eval("add.errbar(t(apply(phi,2,quantile,c(.025,.975))))")
+    R eval """
+    plot(truePhi,apply(phi,2,mean),ylim=c(-3,3),fg='grey',
+         xlab='obs',ylab='pred',main='phi',col='grey30')
+    """ 
+    R.eval("add.errbar(t(apply(phi,2,quantile,c(.025,.975))),x=truePhi,col=rgb(0,0,1,.2))")
 
-    R.eval("plot(truev,pch=20,ylim=c(0,1),main='v')")
-    R.eval("points(apply(v,2,mean),lwd=2,col='blue',cex=1.3)")
-    R.eval("add.errbar(t(apply(v,2,quantile,c(.025,.975))))")
+    R.eval("ord <- order(truev)")
+    R.eval("plot(truev[ord],pch=20,ylim=c(0,1),main='v',col='grey30',fg='grey')")
+    R.eval("points(apply(v,2,mean)[ord],lwd=2,col='blue',cex=1.3)")
+    R.eval("add.errbar(t(apply(v,2,quantile,c(.025,.975)))[ord,],co=rgb(0,0,1,.2))")
+    //R eval """
+    //for (i in (1:nrow(v))) {
+    //  points(v[,ord],cex=.1,col=rgb(0,0,1,.01))
+    //}
+    //"""
 
-    R.eval("corrplot(cor(v))")
+    //R.eval("library(corrplot)")
+    //R.eval("corrplot(cor(v))")
 
     R.eval("par(mfrow=c(1,1))")
     scala.io.StdIn.readLine()

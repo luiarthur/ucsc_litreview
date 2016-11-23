@@ -1,4 +1,4 @@
-name := "ass1"
+name := "tumor"
 
 version := "0.1.0"
 

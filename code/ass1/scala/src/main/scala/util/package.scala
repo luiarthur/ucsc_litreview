@@ -1,4 +1,4 @@
-package ass1
+package tumor
 
 package object util {
   val Rand = new org.apache.commons.math3.random.RandomDataGenerator()

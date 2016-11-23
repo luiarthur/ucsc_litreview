@@ -1,6 +1,10 @@
-package ass1.data
+package tumor.data
 
-case class Data(n1:Vector[Int], N1:Vector[Int], N0:Vector[Int], M:Vector[Double]) {
+import tumor.util.round
+
+class Obs(val n1:Vector[Int], 
+          val N1:Vector[Int], val N0:Vector[Int], 
+          val M:Vector[Double]) {
 
   val numLoci = M.length
   val idx = Vector.range(0,numLoci)
@@ -10,7 +14,7 @@ case class Data(n1:Vector[Int], N1:Vector[Int], N0:Vector[Int], M:Vector[Double]
     "n1:  " + n1.mkString(", ") + "\n" + 
     "N1:  " + N1.mkString(", ") + "\n" + 
     "N0:  " + N0.mkString(", ") + "\n" + 
-    "M:   " + M.map(i => ass1.util.round(i)).mkString(", ") + "\n" +
+    "M:   " + M.map(i => round(i)).mkString(", ") + "\n" +
     "S:   " + numLoci 
   }
 }

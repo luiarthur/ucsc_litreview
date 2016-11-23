@@ -1,8 +1,8 @@
-package ass1.data
+package tumor.data
 
 object GenerateData {
-  import ass1.util._
-  import ass1.data.{Data,Param}
+  import tumor.util._
+  import tumor.data.{Obs,Param}
 
   // Ms: a reasonable range would be {0,1,2,3,4,5}
   private def simP(mu: Double, v: Double, M: Double) = {
@@ -22,13 +22,13 @@ object GenerateData {
   }
   
   //FIXME: check this
-  private def simN1(phi: Double, mu: Double, M: Double, c: Double=30): Int = {
+  private def simN1(phi: Double, mu: Double, M: Double, c: Double): Int = {
     val out = Rand.nextPoisson( math.exp(phi) * c * (2*(1-mu) + mu*M) ).toInt
     if (out > 0) out else simN1(phi,mu,M,c)
   }
 
   //FIXME: check this
-  private def simN0(c: Double=30): Int = {
+  private def simN0(c: Double): Int = {
     val out = Rand.nextPoisson(2*c).toInt
     if (out > 0) out else simN0(c)
   }
@@ -46,18 +46,19 @@ object GenerateData {
     if (out.toSet == setV) out else simV(setV, n)
   }
 
-  def simOneObs(phiMean: Double, phiVar: Double, mu: Double, 
-                c: Double=30, minM: Double=0, maxM: Double=5, wM: Double=.5, 
-                setV: Set[Double], numLoci:Int): TrueData = {
+  def genData(phiMean: Double, phiVar: Double, mu: Double, 
+              c: Double=30, minM: Double=0, maxM: Double=5, wM: Double=.5, 
+              setV: Set[Double], numLoci:Int) = {
     val M = Vector.fill(numLoci)(simM(minM,maxM,wM))
-    val phi = Vector.fill(numLoci)(simPhi(phiMean,phiVar)).sorted
+    val phi = Vector.fill(numLoci)(simPhi(phiMean,phiVar))//.sorted
     val N0 = Vector.fill(numLoci)(simN0(c))
     val N1 = Vector.tabulate(numLoci)(s => simN1(phi(s), mu, M(s), c))
-    val v = simV(setV,numLoci).sorted
+    val v = simV(setV,numLoci)//.sorted
     val p = Vector.tabulate(numLoci)(s => simP(mu,v(s),M(s)))
     val n1 = Vector.tabulate(numLoci)(s => simn1(N1(s), mu, v(s), M(s)))
-    val data = Data(n1, N1, N0, M)
-    val param = Param(mu, phi, v)
-    TrueData(data,param)
+    val obs = new Obs(n1, N1, N0, M)
+    val param = new Param(mu, phi, v)
+
+    (obs,param)
   }
 }
