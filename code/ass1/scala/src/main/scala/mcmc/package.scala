@@ -63,8 +63,10 @@ package object mcmc {
 
     def updateClusters(t:Vector[Double]): Vector[Double] = {
       val out = Array.ofDim[Double](n)
-      t.view.zipWithIndex.groupBy(_._1).mapValues(i => i.map(_._2)).foreach{kv => 
-        val (curr,idx) = kv
+      val tWithIndex = t.zipWithIndex.view
+
+      t.distinct.foreach { curr =>
+        val idx = tWithIndex.filter(_._1 == curr).map(_._2)
 
         def logLikePlusLogPriorLogitV(logitV: Double) = {
           val v = invLogit(logitV)
@@ -83,8 +85,8 @@ package object mcmc {
         val newVal = invLogit(loop(clusterUpdates, logit(curr)))
 
         idx.foreach { i => out(i) = newVal }
-        Vector
       }
+
       out.toVector 
     }
   

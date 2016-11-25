@@ -22,6 +22,14 @@ package object util {
     val u = Rand.nextUniform(0,1)
     val cumP = rescaledP.scanLeft(0.0)(_+_).tail
     x.view.zip(cumP).dropWhile(_._2<u).head._1 //FIXME. Check.
+
+    //var rnd = Rand.nextUniform(0,w.sum)
+    //var i = 0
+    //while ( rnd < w(i) ) {
+    //  rnd -= w(i) 
+    //  i += 1
+    //}
+    //x(i)
   }
 
   def round(x: Double, d: Int=4) = {

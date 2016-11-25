@@ -133,13 +133,13 @@ class TestSuite extends FunSuite {
 
     val (obs,param) = genData(phiMean=0.0, phiVar=1.0, mu=0.3, 
                               c=30.0, minM=1, maxM=5, wM=.5, 
-                              setV=Set(.1,.5,.9), numLoci=100) // 10000
+                              setV=Set(.1,.3,.5,.7,.9), numLoci=100) // 10000
 
     val nLoci = obs.numLoci
     val init = State(Vector.fill(nLoci)(0), 1.0, .5, Vector.fill(nLoci)(.5))
-    val prior = new Prior(csV = 1, csMu = 0.1, alpha=0.0001, clusterUpdates=1)
+    val prior = new Prior(csV = 0.1, csMu = 0.1, alpha=0.0001, clusterUpdates=100)
 
-    val out = timer { gibbs(init,prior,obs,B=10000,6000,printEvery=100) }
+    val out = timer { gibbs(init,prior,obs,B=2000,10000,printEvery=100) }
 
     R.mu = out.map(_.mu).toArray
     R.muTrue = param.mu
@@ -155,38 +155,37 @@ class TestSuite extends FunSuite {
 
     R.numClus = v.map( vt => vt.distinct.length )
 
-    R.eval("require('devtools')")
-    R.eval("devtools::install_github('luiarthur/rcommon')")
-    R.eval("library(rcommon)")
-
-    R.eval("par(mfrow=c(2,3))")
-
-    R.eval("plotPost(sig2,main='sig2',float=TRUE)")
-    R.eval("muAcc <- round(length(unique(mu)) / length(mu),2)")
-    R.eval("""plotPost(mu,main=paste0('mu',' (truth=',muTrue,')'),
-              float=TRUE,xlab=paste0('accRate: ', muAcc))""")
-    R.eval("plot(numClus,main='numClus',pch=20,col=rgb(0,0,1,.5),cex=2)")
-
     R eval """
-    plot(truePhi,apply(phi,2,mean),ylim=c(-3,3),fg='grey',
-         xlab='obs',ylab='pred',main='phi',col='grey30')
-    """ 
-    R.eval("add.errbar(t(apply(phi,2,quantile,c(.025,.975))),x=truePhi,col=rgb(0,0,1,.2))")
+    require('devtools')
+    if ( !("rcommon" %in% installed.packages()) ) {
+      devtools::install_github('luiarthur/rcommon')
+    }
+    library(rcommon)
 
-    R.eval("ord <- order(truev)")
-    R.eval("plot(truev[ord],pch=20,ylim=c(0,1),main='v',col='grey30',fg='grey')")
-    R.eval("points(apply(v,2,mean)[ord],lwd=2,col='blue',cex=1.3)")
-    R.eval("add.errbar(t(apply(v,2,quantile,c(.025,.975)))[ord,],co=rgb(0,0,1,.2))")
-    //R eval """
-    //for (i in (1:nrow(v))) {
-    //  points(v[,ord],cex=.1,col=rgb(0,0,1,.01))
-    //}
-    //"""
+    par(mfrow=c(2,3))
 
-    //R.eval("library(corrplot)")
-    //R.eval("corrplot(cor(v))")
+    plotPost(sig2,main='sig2',float=TRUE)
+    muAcc <- round(length(unique(mu)) / length(mu),2)
+    plotPost(mu,main=paste0('mu',' (truth=',muTrue,')'),
+             float=TRUE,xlab=paste0('accRate: ', muAcc))
+    plot(numClus,main='Number of Clusters',pch=20,col=rgb(0,0,1,.5),cex=2,fg='grey')
 
-    R.eval("par(mfrow=c(1,1))")
+    plot(truePhi,apply(phi,2,mean),xlim=c(-3,3),ylim=c(-3,3),fg='grey',
+         xlab='truth',ylab='prediction',main='phi',col='grey30')
+    abline(0,1,col='grey30')
+
+    add.errbar(t(apply(phi,2,quantile,c(.025,.975))),x=truePhi,col=rgb(0,0,1,.2))
+
+    ord <- order(truev)
+    plot(truev[ord],pch=20,ylim=c(0,1),main='v',col='grey30',fg='grey',ylab='')
+    points(apply(v,2,mean)[ord],lwd=2,col='blue',cex=1.3)
+    add.errbar(t(apply(v,2,quantile,c(.025,.975)))[ord,],co=rgb(0,0,1,.2))
+
+    #library(corrplot)
+    #corrplot(cor(v))
+
+    par(mfrow=c(1,1))
+    """
     scala.io.StdIn.readLine()
 
   }
