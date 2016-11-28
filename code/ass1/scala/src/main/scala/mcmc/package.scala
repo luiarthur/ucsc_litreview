@@ -22,7 +22,7 @@ package object mcmc {
           java.util.Calendar.getInstance.getTime() + "\t")
 
       if (i < B + burn) {
-        val newState = if (i <= B) 
+        val newState = if (i <= burn) 
           List( S.head.update(prior,obs) )
         else 
           S.head.update(prior,obs) :: S
@@ -63,7 +63,7 @@ package object mcmc {
 
     def updateClusters(t:Vector[Double]): Vector[Double] = {
       val out = Array.ofDim[Double](n)
-      val tWithIndex = t.zipWithIndex.view
+      val tWithIndex = t.zipWithIndex
 
       t.distinct.foreach { curr =>
         val idx = tWithIndex.filter(_._1 == curr).map(_._2)
@@ -76,11 +76,11 @@ package object mcmc {
           ll + logPriorLogitV
         }
 
-        def loop(j:Int, newt:Double): Double = 
+        def loop(j:Int, logitV:Double): Double = 
           if (j==0) 
-            newt 
+            logitV 
           else
-            loop(j-1,metropolis(newt,logLikePlusLogPriorLogitV,cs))
+            loop(j-1,metropolis(logitV,logLikePlusLogPriorLogitV,cs))
 
         val newVal = invLogit(loop(clusterUpdates, logit(curr)))
 

@@ -133,13 +133,13 @@ class TestSuite extends FunSuite {
 
     val (obs,param) = genData(phiMean=0.0, phiVar=1.0, mu=0.3, 
                               c=30.0, minM=1, maxM=5, wM=.5, 
-                              setV=Set(.1,.3,.5,.7,.9), numLoci=100) // 10000
+                              setV=Set(.2,.5,.9), numLoci=100) // 10000
 
     val nLoci = obs.numLoci
     val init = State(Vector.fill(nLoci)(0), 1.0, .5, Vector.fill(nLoci)(.5))
     val prior = new Prior(csV = 0.1, csMu = 0.1, alpha=0.0001, clusterUpdates=100)
 
-    val out = timer { gibbs(init,prior,obs,B=2000,10000,printEvery=100) }
+    val out = timer { gibbs(init,prior,obs,B=2000,burn=10000,printEvery=100) }
 
     R.mu = out.map(_.mu).toArray
     R.muTrue = param.mu
@@ -180,6 +180,8 @@ class TestSuite extends FunSuite {
     plot(truev[ord],pch=20,ylim=c(0,1),main='v',col='grey30',fg='grey',ylab='')
     points(apply(v,2,mean)[ord],lwd=2,col='blue',cex=1.3)
     add.errbar(t(apply(v,2,quantile,c(.025,.975)))[ord,],co=rgb(0,0,1,.2))
+
+    plot(v[,ord[ncol(v)]],type='l',ylim=c(0,1))
 
     #library(corrplot)
     #corrplot(cor(v))

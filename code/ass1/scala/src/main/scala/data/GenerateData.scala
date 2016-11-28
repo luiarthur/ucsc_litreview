@@ -33,8 +33,7 @@ object GenerateData {
     if (out > 0) out else simN0(c)
   }
 
-  private def simn1(N1: Int, mu: Double, v: Double, M: Double) = {
-    val p = mu * v * M / (2*(1-mu) + mu*M) 
+  private def simn1(N1: Int, p: Double) = {
     Rand.nextBinomial(N1,p)
   }
 
@@ -55,7 +54,7 @@ object GenerateData {
     val N1 = Vector.tabulate(numLoci)(s => simN1(phi(s), mu, M(s), c))
     val v = simV(setV,numLoci)//.sorted
     val p = Vector.tabulate(numLoci)(s => simP(mu,v(s),M(s)))
-    val n1 = Vector.tabulate(numLoci)(s => simn1(N1(s), mu, v(s), M(s)))
+    val n1 = Vector.tabulate(numLoci)(s => simn1(N1(s), p(s)))
     val obs = new Obs(n1, N1, N0, M)
     val param = new Param(mu, phi, v)
 
