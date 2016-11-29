@@ -48,6 +48,7 @@ package object mcmc {
       sa._1 ++ sa._2.tail
     }
 
+    // check this FIXME
     def updateAt(i: Int, t: Vector[Double]): Vector[Double] = {
       if (i == n) t else {
         val tMinus = removeAt(i,t)
