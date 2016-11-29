@@ -133,7 +133,7 @@ class TestSuite extends FunSuite {
 
     val (obs,param) = genData(phiMean=0.0, phiVar=1.0, mu=0.3, 
                               c=30.0, minM=1, maxM=5, wM=.5, 
-                              setV=Set(.2,.5,.9), numLoci=100) // 10000
+                              setV=Set(.1,.5,.9), numLoci=100) // 10000
 
     val nLoci = obs.numLoci
     val init = State(Vector.fill(nLoci)(0), 1.0, .5, Vector.fill(nLoci)(.5))
@@ -162,6 +162,7 @@ class TestSuite extends FunSuite {
     }
     library(rcommon)
 
+    pdf("src/test/scala/output/plots.pdf")
     par(mfrow=c(2,3))
 
     plotPost(sig2,main='sig2',float=TRUE)
@@ -181,14 +182,15 @@ class TestSuite extends FunSuite {
     points(apply(v,2,mean)[ord],lwd=2,col='blue',cex=1.3)
     add.errbar(t(apply(v,2,quantile,c(.025,.975)))[ord,],co=rgb(0,0,1,.2))
 
-    plot(v[,ord[ncol(v)]],type='l',ylim=c(0,1))
+    plot(v[,ord[ncol(v)]],col=rgb(.5,.5,.5,.3),type='l',ylim=c(0,1),fg='grey',main='trace plot for v_100')
 
     #library(corrplot)
     #corrplot(cor(v))
 
     par(mfrow=c(1,1))
+    dev.off()
     """
-    scala.io.StdIn.readLine()
+    //scala.io.StdIn.readLine()
 
   }
 
