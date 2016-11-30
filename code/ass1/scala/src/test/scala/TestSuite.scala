@@ -137,7 +137,7 @@ class TestSuite extends FunSuite {
 
     val nLoci = obs.numLoci
     val init = State(Vector.fill(nLoci)(0), 1.0, .5, Vector.fill(nLoci)(.5))
-    val prior = new Prior(csV = 0.1, csMu = 0.1, alpha=1E-6, clusterUpdates=100)
+    val prior = new Prior(csV = 0.1, csMu = 0.1, alpha=1E-6, clusterUpdates=1)
 
     val out = timer { gibbs(init,prior,obs,B=2000,burn=10000,printEvery=100) }
 
