@@ -66,8 +66,6 @@ package object mcmc {
       val out = Array.ofDim[Double](n)
       val tWithIndex = t.zipWithIndex
 
-      println(t.distinct)
-      readLine()
       t.distinct.foreach { curr =>
         val idx = tWithIndex.filter(_._1 == curr).map(_._2)
 
