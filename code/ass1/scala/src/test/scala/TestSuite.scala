@@ -131,15 +131,15 @@ class TestSuite extends FunSuite {
 
     val R = org.ddahl.rscala.callback.RClient()
 
-    val (obs,param) = genData(phiMean=0.0, phiVar=1.0, mu=0.3, 
-                              c=30.0, minM=1, maxM=5, wM=.5, 
-                              setV=Set(.1,.5,.9), numLoci=100) // 10000
+    val (obs,param) = genData(phiMean=0, phiVar=1, mu=0.3, 
+                              c=30, minM=0, maxM=5, wM=.5, 
+                              setV=Set(.1,.9), numLoci=100)
 
     val nLoci = obs.numLoci
     val init = State(Vector.fill(nLoci)(0), 1.0, .5, Vector.fill(nLoci)(.5))
-    val prior = new Prior(csV = 0.1, csMu = 0.1, alpha=0.0001, clusterUpdates=100)
+    val prior = new Prior(csV = 0.1, csMu = 0.1, alpha=1E-6, clusterUpdates=100)
 
-    val out = timer { gibbs(init,prior,obs,B=2000,burn=10000,printEvery=100) }
+    val out = timer { gibbs(init,prior,obs,B=2000,burn=20000,printEvery=100) }
 
     R.mu = out.map(_.mu).toArray
     R.muTrue = param.mu

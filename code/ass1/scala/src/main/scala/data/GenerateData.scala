@@ -11,9 +11,9 @@ object GenerateData {
     mu * v * M / (2.0 *(1.0-mu) + mu*M)
   }
 
-  private def simPhi(m: Double=0.0, s2: Double) = Rand.nextGaussian(m,math.sqrt(s2))
+  private def simPhi(m: Double, s2: Double) = Rand.nextGaussian(m,math.sqrt(s2))
 
-  private def simM(min: Double=0, max: Double=5, w: Double=0.5) = {
+  private def simM(min: Double, max: Double, w: Double) = {
     val discrete = { Rand.nextUniform(0,1) < w }
     if (discrete) 
       Rand.nextInt(min.toInt,max.toInt).toDouble
@@ -49,12 +49,12 @@ object GenerateData {
               c: Double=30, minM: Double=0, maxM: Double=5, wM: Double=.5, 
               setV: Set[Double], numLoci:Int) = {
     val M = Vector.fill(numLoci)(simM(minM,maxM,wM))
-    val phi = Vector.fill(numLoci)(simPhi(phiMean,phiVar))//.sorted
+    val phi = Vector.fill(numLoci)(simPhi(phiMean,phiVar))
     val N0 = Vector.fill(numLoci)(simN0(c))
-    val N1 = Vector.tabulate(numLoci)(s => simN1(phi(s), mu, M(s), c))
-    val v = simV(setV,numLoci)//.sorted
-    val p = Vector.tabulate(numLoci)(s => simP(mu,v(s),M(s)))
-    val n1 = Vector.tabulate(numLoci)(s => simn1(N1(s), p(s)))
+    val N1 = Vector.tabulate(numLoci)(s=>simN1(phi(s),mu,M(s),c))
+    val v = simV(setV,numLoci)
+    val p = Vector.tabulate(numLoci)(s=>simP(mu,v(s),M(s)))
+    val n1 = Vector.tabulate(numLoci)(s=>simn1(N1(s),p(s)))
     val obs = new Obs(n1, N1, N0, M)
     val param = new Param(mu, phi, v)
 

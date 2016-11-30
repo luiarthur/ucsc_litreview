@@ -53,9 +53,9 @@ package object mcmc {
       if (i == n) t else {
         val tMinus = removeAt(i,t)
         val mapUT = tMinus.groupBy(identity).mapValues(_.length).toVector
-        val aux = rg0()
-        val probExisting = mapUT.map(ut => ut._2 * f(ut._1,i) / (alpha + n -1))
-        val pAux = alpha * f(aux, i) / (alpha + n - 1)
+        val aux = if ( tMinus.contains(t(i)) ) rg0() else t(i)
+        val probExisting = mapUT.map(ut => ut._2 * f(ut._1,i))
+        val pAux = alpha * f(aux, i)
         val uT = mapUT.map(_._1)
         val newTi = wsample(uT :+ aux, probExisting :+ pAux)
         updateAt(i+1, t.updated(i,newTi))
@@ -66,6 +66,8 @@ package object mcmc {
       val out = Array.ofDim[Double](n)
       val tWithIndex = t.zipWithIndex
 
+      println(t.distinct)
+      readLine()
       t.distinct.foreach { curr =>
         val idx = tWithIndex.filter(_._1 == curr).map(_._2)
 
@@ -73,7 +75,7 @@ package object mcmc {
           val v = invLogit(logitV)
           val logJ = -logitV + 2 * math.log(v)
           val logPriorLogitV = logJ // + logg0(v)
-          val ll = idx.map(i => logf(v,i)).sum
+          val ll = idx.map(logf(v,_)).sum
           ll + logPriorLogitV
         }
 
