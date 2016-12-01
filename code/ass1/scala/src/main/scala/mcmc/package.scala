@@ -72,7 +72,7 @@ package object mcmc {
         def logLikePlusLogPriorLogitV(logitV: Double) = {
           val v = invLogit(logitV)
           val logJ = -logitV + 2 * math.log(v)
-          val logPriorLogitV = logJ // + logg0(v)
+          val logPriorLogitV = logJ + logg0(v)
           val ll = idx.map(logf(v,_)).sum
           ll + logPriorLogitV
         }
