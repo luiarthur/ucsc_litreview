@@ -43,4 +43,11 @@ package object util {
     math.log( p / (1-p) )
   }
 
+  def std(x:Vector[Double]) = {
+    val n = x.length
+    val mean = x.sum / n
+    math.sqrt(x.map(xi => math.pow(xi-mean,2) / (n-1)).sum)
+  }
+
+
 }

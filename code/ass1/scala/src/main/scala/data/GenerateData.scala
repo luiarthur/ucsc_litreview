@@ -11,26 +11,32 @@ object GenerateData {
     mu * v * M / (2.0 *(1.0-mu) + mu*M)
   }
 
-  private def simPhi(m: Double, s2: Double) = Rand.nextGaussian(m,math.sqrt(s2))
+  private def simPhi(m: Double, phiVar: Double) = 
+    Rand.nextGaussian(m,math.sqrt(phiVar))
 
-  private def simM(min: Double, max: Double, w: Double) = {
-    val discrete = { Rand.nextUniform(0,1) < w }
-    if (discrete) 
-      Rand.nextInt(min.toInt,max.toInt).toDouble
+  private def simM(min: Double, max: Double, w: Double):Double = {
+    val discrete = { w > Rand.nextUniform(0,1) }
+    if (discrete) {
+      val out = Rand.nextInt(min.toInt,max.toInt).toDouble
+      if (out == 0) simM(min,max,w) else out
+    }
     else 
       Rand.nextUniform(min,max)
   }
-  
-  //FIXME: check this
-  private def simN1(phi: Double, mu: Double, M: Double, c: Double): Int = {
-    val out = Rand.nextPoisson( math.exp(phi) * c * (2*(1-mu) + mu*M) ).toInt
-    if (out > 0) out else simN1(phi,mu,M,c)
+
+  private def simLogN1OverN0(phi: Double, mu: Double, M: Double, s2:Double): Double = {
+    val mean = math.log((2*(1-mu) + mu*M)/2) + phi
+    Rand.nextGaussian(mean, math.sqrt(s2))
   }
 
-  //FIXME: check this
-  private def simN0(c: Double): Int = {
-    val out = Rand.nextPoisson(2*c).toInt
-    if (out > 0) out else simN0(c)
+  private def simN0(meanN0: Double): Int = {
+    val out = Rand.nextPoisson(meanN0).toInt
+    if (out > 0) out else simN0(meanN0)
+  }
+
+  private def simN1(N0:Double, logN1OverN0:Double): Int = {
+    val out = (math.exp(logN1OverN0) * N0).toInt
+    if (out == 0) 1 else out
   }
 
   private def simn1(N1: Int, p: Double) = {
@@ -45,18 +51,21 @@ object GenerateData {
     if (out.toSet == setV) out else simV(setV, n)
   }
 
-  def genData(phiMean: Double, phiVar: Double, mu: Double, 
-              c: Double=30, minM: Double=0, maxM: Double=5, wM: Double=.5, 
+  def genData(phiMean: Double, phiVar: Double, 
+              mu: Double, sig2:Double,
+              meanN0:Double=30, minM:Double=0, maxM: Double=5, 
+              wM: Double=.5, 
               setV: Set[Double], numLoci:Int) = {
     val M = Vector.fill(numLoci)(simM(minM,maxM,wM))
     val phi = Vector.fill(numLoci)(simPhi(phiMean,phiVar))
-    val N0 = Vector.fill(numLoci)(simN0(c))
-    val N1 = Vector.tabulate(numLoci)(s=>simN1(phi(s),mu,M(s),c))
+    val N0 = Vector.fill(numLoci)(simN0(meanN0))
+    val x = Vector.tabulate(numLoci)(s=>simLogN1OverN0(phi(s),mu,M(s),sig2))
+    val N1 = Vector.tabulate(numLoci)(s=>simN1(N0(s),x(s)))
     val v = simV(setV,numLoci)
     val p = Vector.tabulate(numLoci)(s=>simP(mu,v(s),M(s)))
     val n1 = Vector.tabulate(numLoci)(s=>simn1(N1(s),p(s)))
     val obs = new Obs(n1, N1, N0, M)
-    val param = new Param(mu, phi, v)
+    val param = new Param(mu, phi, v, sig2)
 
     (obs,param)
   }

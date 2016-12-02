@@ -117,7 +117,8 @@ class TestSuite extends FunSuite {
     import tumor.util._
     import tumor.data.GenerateData.genData
     val (obs,param) = genData(phiMean=0.0, phiVar=1.0, mu=0.3, 
-                              c=30.0, minM=0, maxM=5, wM=.5, 
+                              sig2=1,
+                              meanN0=30.0, minM=0, maxM=5, wM=.5, 
                               setV=Set(.3,.2,.6), numLoci=10)
     println(obs)
     println(param)
@@ -129,22 +130,38 @@ class TestSuite extends FunSuite {
     import tumor.data._
     import tumor.mcmc._
 
+    //Rand.reSeed(1)
     val R = org.ddahl.rscala.callback.RClient()
 
-    val (obs,param) = genData(phiMean=0, phiVar=1, mu=0.3, 
-                              c=10, minM=5, maxM=10, wM=.5, 
-                              setV=Set(.1,.9), numLoci=30)
+    // it appears that when mu < .5, the clusters cant be found.
+    val (obs,param) = genData(phiMean=0, phiVar=1, mu=.6, 
+                              sig2=.15, meanN0=30, 
+                              minM=0, maxM=4, wM=.9, 
+                              setV=Set(.1,.5,.9), numLoci=100)
 
     val nLoci = obs.numLoci
-    val init = State(Vector.fill(nLoci)(0), 1.0, .5, Vector.fill(nLoci)(.5))
-    val prior = new Prior(csV = 0.1, csMu = 0.1, alpha=1E-6, clusterUpdates=1)
+    val sig2MLE = {
+      val logN1OverN0 = Vector.tabulate(obs.numLoci){s=> 
+        math.log(obs.N1(s).toDouble / obs.N0(s).toDouble)
+      }
+      std(logN1OverN0)
+    }
+    println(sig2MLE)
 
-    val out = timer { gibbs(init,prior,obs,B=2000,burn=10000,printEvery=100) }
+    lazy val init = State(phi=Vector.fill(nLoci)(0),
+                          sig2=sig2MLE, mu=.5,
+                          v=Vector.fill(nLoci)(.5))
+    val prior = new Prior(aSig=2,bSig=sig2MLE,
+                          s2Phi=1E6,csV=0.1,
+                          csMu=.5,alpha=0.05)
+
+    val out = timer { gibbs(init,prior,obs,B=2000,burn=30000,printEvery=100) }
 
     R.mu = out.map(_.mu).toArray
     R.muTrue = param.mu
 
     R.sig2 = out.map(_.sig2).toArray
+    R.sig2True = param.sig2
 
     R.phi = out.map(_.phi).map(_.toArray).toArray
     R.truePhi = param.phi.toArray
@@ -165,7 +182,7 @@ class TestSuite extends FunSuite {
     pdf("src/test/scala/output/plots.pdf")
     par(mfrow=c(2,3))
 
-    plotPost(sig2,main='sig2',float=TRUE)
+    plotPost(sig2,main=paste0('sig2(truth=',sig2True,')'),float=TRUE)
     muAcc <- round(length(unique(mu)) / length(mu),2)
     plotPost(mu,main=paste0('mu',' (truth=',muTrue,')'),
              float=TRUE,xlab=paste0('accRate: ', muAcc))

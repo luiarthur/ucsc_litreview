@@ -5,13 +5,33 @@ import tumor.data.Obs
 
 package object mcmc {
 
-  def metropolis(curr:Double, loglike_plus_prior:Double=>Double, 
-                 candSig:Double) = {
+  // metropolis step with normal random walk
+  def metropolis(curr:Double,ll:Double=>Double,lp:Double=>Double,candSig:Double) = {
+    def logLikePlusLogPrior(x:Double) = ll(x) + lp(x)
     val cand = Rand.nextGaussian(curr,candSig)
     val u = math.log(Rand.nextUniform(0,1))
-    val p = loglike_plus_prior(cand) - loglike_plus_prior(curr)
+    val p = logLikePlusLogPrior(cand) - logLikePlusLogPrior(curr)
     if (p > u) cand else curr
   }
+
+  // metropolis step on logit-transformed var with normal random walk
+  def metLogit(curr:Double,ll:Double=>Double,lp:Double=>Double,candSig:Double) = {
+    // curr should be between 0 and 1
+    
+    def logit(p:Double) = math.log(p / (1-p))
+    def invLogit(x:Double) = 1.0 / (1.0 + math.exp(-x))
+
+    def logLogitPrior(logitP: Double) = {
+      val p = invLogit(logitP)
+      val logJ = -logitP + 2*math.log(p)
+      lp(p) + logJ 
+    }
+
+    def llLogit(logitP:Double) = ll(invLogit(logitP))
+
+    invLogit(metropolis(logit(curr), llLogit, logLogitPrior, candSig))
+  }
+
 
   def gibbs(init: State, prior: Prior, obs: Obs,
             B: Int, burn: Int, printEvery: Int = 10) = {
@@ -35,11 +55,12 @@ package object mcmc {
     println()
     out
   }
- 
-  def neal8Update(alpha: Double, t: Vector[Double],
+
+  def algo8(alpha: Double, t: Vector[Double],
     logf: (Double,Int)=>Double, 
     logg0: Double=>Double, rg0: ()=>Double,
-    cs: Double, clusterUpdates:Int) = { // assumes m = 1
+    mh:(Double,Double=>Double,Double=>Double,Double)=>Double=metropolis, 
+    cs: Double, clusterUpdates:Int=1) = { // assumes m = 1
 
     def f(x:Double,i:Int) = math.exp(logf(x,i))
     val n = t.length
@@ -48,7 +69,6 @@ package object mcmc {
       sa._1 ++ sa._2.tail
     }
 
-    // check this FIXME
     def updateAt(i: Int, t: Vector[Double]): Vector[Double] = {
       if (i == n) t else {
         val tMinus = removeAt(i,t)
@@ -69,21 +89,12 @@ package object mcmc {
       t.distinct.foreach { curr =>
         val idx = tWithIndex.filter(_._1 == curr).map(_._2)
 
-        def logLikePlusLogPriorLogitV(logitV: Double) = {
-          val v = invLogit(logitV)
-          val logJ = -logitV + 2 * math.log(v)
-          val logPriorLogitV = logJ + logg0(v)
-          val ll = idx.map(logf(v,_)).sum
-          ll + logPriorLogitV
-        }
+        def ll(v:Double) = idx.map( logf(v,_) ).sum
 
-        def loop(j:Int, logitV:Double): Double = 
-          if (j==0) 
-            logitV 
-          else
-            loop(j-1,metropolis(logitV,logLikePlusLogPriorLogitV,cs))
+        def loop(v:Double,it:Int):Double = 
+          if (it==0) v else mh(v,ll,logg0,cs)
 
-        val newVal = invLogit(loop(clusterUpdates, logit(curr)))
+        val newVal = loop(curr,clusterUpdates)
 
         idx.foreach { i => out(i) = newVal }
       }
@@ -94,4 +105,5 @@ package object mcmc {
     updateClusters(updateAt(0,t))
   }
 
+  
 }
