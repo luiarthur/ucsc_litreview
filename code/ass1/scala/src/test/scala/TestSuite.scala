@@ -134,7 +134,7 @@ class TestSuite extends FunSuite {
     val R = org.ddahl.rscala.callback.RClient()
 
     // it appears that when mu < .5, the clusters cant be found.
-    val (obs,param) = genData(phiMean=0, phiVar=1, mu=.6, 
+    val (obs,param) = genData(phiMean=0, phiVar=1, mu=.9, 
                               sig2=.15, meanN0=30, 
                               minM=0, maxM=4, wM=.9, 
                               setV=Set(.1,.5,.9), numLoci=100)
