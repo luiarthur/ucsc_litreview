@@ -134,10 +134,10 @@ class TestSuite extends FunSuite {
     val R = org.ddahl.rscala.callback.RClient()
 
     // it appears that when mu < .5, the clusters cant be found.
-    val (obs,param) = genData(phiMean=0, phiVar=1, mu=.9, 
+    val (obs,param) = genData(phiMean=0, phiVar=1, mu=.7, 
                               sig2=.15, meanN0=30, 
                               minM=0, maxM=4, wM=.9, 
-                              setV=Set(.1,.5,.9), numLoci=100)
+                              setV=Set(.1,.5,.9), numLoci=30)
 
     val nLoci = obs.numLoci
     val sig2MLE = {
@@ -171,6 +171,7 @@ class TestSuite extends FunSuite {
     R.truev = param.v.toArray
 
     R.numClus = v.map( vt => vt.distinct.length )
+    R.M = obs.M.toArray
 
     R eval """
     require('devtools')
@@ -178,6 +179,8 @@ class TestSuite extends FunSuite {
       devtools::install_github('luiarthur/rcommon')
     }
     library(rcommon)
+
+    p <- muTrue*M*truev / (2*(1-muTrue) + M*mu)
 
     pdf("src/test/scala/output/plots.pdf")
     par(mfrow=c(2,3))
@@ -198,6 +201,7 @@ class TestSuite extends FunSuite {
     plot(truev[ord],pch=20,ylim=c(0,1),main='v',col='grey30',fg='grey',ylab='')
     points(apply(v,2,mean)[ord],lwd=2,col='blue',cex=1.3)
     add.errbar(t(apply(v,2,quantile,c(.025,.975)))[ord,],co=rgb(0,0,1,.2))
+    points(p[ord],col='red',pch=20)
 
     plot(v[,ord[ncol(v)]],col=rgb(.5,.5,.5,.3),type='l',ylim=c(0,1),fg='grey',main='trace plot for v_100')
 
