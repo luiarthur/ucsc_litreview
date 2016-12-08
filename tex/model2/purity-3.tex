@@ -1,0 +1,341 @@
+\documentclass[12pt]{article}
+\usepackage{bm}
+\usepackage{fullpage, amsmath, mathtools}
+\usepackage{setspace}
+\usepackage{graphicx, psfrag, amsfonts}
+\usepackage{natbib}
+\usepackage{amsthm}
+\usepackage{multirow}
+\usepackage{hhline}
+\usepackage{amssymb}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lem}{Lemma}
+\newtheorem{corollary}{Corollary}
+\newtheorem{definition}{Definition}
+\newtheorem{assumption}{Assumption}
+\newtheorem{proposition}{Proposition}
+
+
+% ***************************************************************
+% JUHEE: just comment out this line to get the figures back :-)
+%\renewcommand{\includegraphics}[2][1]{FIGURE HERE}
+
+
+\def\bth{\mbox{\boldmath $\theta$}}
+\def\bmu{\mbox{\boldmath $\mu$}}
+\def\bgam{\mbox{\boldmath $\gamma$}}
+\def\bsig{\mbox{\boldmath $\sigma$}}
+\def\bomega{\mbox{\boldmath $\omega$}}
+\def\bdeta{\mbox{\boldmath $\eta$}}
+\def\bpi{\mbox{\boldmath $\pi$}}
+\def\bbeta{\mbox{\boldmath $\beta$}}
+\newcommand{\pit}{\widetilde{\pi}}
+\def\bpit{\mbox{\boldmath $\pit$}}
+
+\newcommand{\thethe}{ } % {{\bf THE}}  % YUAN & JUHEE:
+   %% in many places i felt we should drop the definte article "the".
+   %% To see all of them just replace this command.
+\newcommand{\bY}{\mbox{\boldmath $Y$}}
+\newcommand{\by}{\mbox{\boldmath $y$}}
+\newcommand{\bx}{\mbox{\boldmath $x$}}
+\newcommand{\bn}{\mbox{\boldmath $n$}}
+\newcommand{\bN}{\mbox{\boldmath $N$}}
+\newcommand{\bc}{\mbox{\boldmath $c$}}
+\newcommand{\bd}{\mbox{\boldmath $d$}}
+\newcommand{\tbc}{\widetilde{\mbox{\boldmath $c$}}}
+\newcommand{\bchat}{\widehat{\mbox{\boldmath $c$}}}
+\newcommand{\bZ}{\mbox{\boldmath $Z$}}
+\newcommand{\bL}{\mbox{\boldmath $L$}}
+\newcommand{\bM}{\mbox{\boldmath $M$}}
+\newcommand{\bz}{\mbox{\boldmath $z$}}
+\newcommand{\bell}{\mbox{\boldmath $\ell$}}
+\renewcommand {\bpi} {\mbox{\boldmath $\pi$}}
+\newcommand{\No} {\text{N}}
+\newcommand {\bg} {\mbox{\boldmath $g$}}
+\newcommand{\Bern} {\text{Bern}}
+
+\newcommand{\bV}{\mbox{\boldmath $V$}}
+\newcommand{\bv}{\mbox{\boldmath $v$}}
+\newcommand{\brr}{\mbox{\boldmath $r$}}
+\newcommand {\bh} {\mbox{\boldmath $h$}}
+
+\newcommand{\wt}{\mbox{$\tilde{w}$}}
+\newcommand{\Mb}{\mbox{$\bar{M}$}}
+\newcommand{\bwt}{\mbox{\boldmath $\tilde{w}$}}
+\newcommand{\bw}{\mbox{\boldmath $w$}}
+\newcommand{\bp}{\mbox{\boldmath $p$}}
+\newcommand{\pt}{\mbox{$\tilde{p}$}}
+
+\newcommand{\btau}{\bm{\tau}}
+\newcommand{\bnu}{\bm{\nu}}
+\newcommand{\Sbar}{\overline{S}}
+\newcommand{\Var} {\text{Var}}
+
+\newcommand{\Ga}{\mbox{Gamma}}
+\newcommand{\Dir}{\mbox{Dir}}
+\newcommand{\Ber}{\mbox{Ber}}
+\newcommand{\Be}{\mbox{Be}}
+\newcommand{\Unif}{\mbox{Unif}}
+\newcommand{\Nor}{\mbox{N}}
+\newcommand{\Binom}{\mbox{Bin}}
+\newcommand{\Multi}{\mbox{Multinomial}}
+\newcommand{\Exp}{\mbox{E}}
+
+
+\newcommand{\Gprime}{G^\prime}
+\newcommand{\Normal}{\mathrm{N}}
+\newcommand{\Poi}{\mathrm{Poi}}
+\renewcommand{\th}{\theta}
+\newcommand{\thstar}{\theta^\star}
+\newcommand{\sig}{\sigma}
+\newcommand{\sigsq}{\sig^2}
+
+\newcommand{\iid}{\stackrel{iid}{\sim}}
+\newcommand{\indep}{\stackrel{indep}{\sim}}
+
+\usepackage[dvipsnames,usenames]{color}
+\newcommand{\bch}{\color{blue}\it}
+\newcommand{\bchm}{\color{red}}
+\newcommand{\ech}{\rm\color{Black}\normalsize}
+\newcommand{\note}[1]{\color{Orange} Note \color{Black} \footnote{\color{Orange}\rm #1 \color{Black}}}
+
+\newcommand{\yy}{\color{magenta}}
+\newcommand{\jj}{\color{Black}\normalsize}
+\newcommand{\yjnote}[1]{\color{blue} Note \color{Black} \footnote{\color{Brown}\rm #1 \color{Black}}}
+
+\newcommand{\cut}{\color{green}[cut] \color{Black}  }
+%\renewcommand{\split}{\color{green}[split] \color{Black}  }
+
+\newcommand{\hh}{\color{Mahogany}}
+
+
+
+
+\begin{document}
+
+\centerline {\bf Tumor Purity}
+\vskip .5in
+
+\today
+
+\begin{enumerate}
+\item Goal:  develop a statistical method to infer tumor purity using DNA-seq data.
+
+\vspace*{0.1in}
+
+
+\item Notation
+\begin{enumerate}
+\item Loci associated with single nucleotide variants (SNVs): $s=1, \ldots, S$
+\item $M_{s}$: tumor cell copy number at locus $s$ from a copy number caller  --- \textbf{Observed}
+\item $N_{ks}$: total number of reads at locus $s$ in sample $k$ where $k=0$ for normal and 1 for tumor  --- \textbf{Observed}
+\item $n_{ks}$:  number of reads indicating variants at locus $s$ in sample $k$  --- \textbf{Observed}
+\end{enumerate}
+
+
+\item Likelihood
+\begin{itemize}
+\item $M_s$: Tumor cell copy number estimate from bioinformatics tools.
+\begin{eqnarray*}
+  \log(M_s) | m_s, \omega^2 \indep \Normal(\log(m_s),\omega^2)
+\end{eqnarray*}
+where
+\begin{description}
+  \item[$m_s$:] true tumor cell copy number. We may fix $\omega^2$
+  at a small value (implying that we believe that the 
+  bioinformatics caller works well.)
+\end{description}
+\item $n_{1s}$:  Define sampling models for $n_{1s}$ conditional on $N_{1s}$ and $M_s$.
+\begin{eqnarray*}
+n_{1s} \mid N_{1s}, p_{s} &\sim& \mbox{Binom}(N_{1s}, p_{s}),  
+\end{eqnarray*}
+where 
+\begin{description}
+\item[$p_{s}$:] the expected proportion of reads indicating mutation at locus $s$
+\end{description}
+
+We formulate $p_s$ as follows:
+\begin{eqnarray*}
+p_s =\frac{\mu \times v_s  \times m_s}{(1-\mu)\times 2 + \mu \times m_s}.
+\end{eqnarray*}
+Reasoning:  
+\begin{itemize}
+\item $\mu$: tumor cell fraction (tumor purity)
+\item no copy number variant in normal cells  $\Rightarrow$ the expected total number of alleles at locus $s$ becomes the average of normal cell copy number (2) and  tumor cell copy number ($m_s$) by weights $(1-\mu)$ (normal cell fraction) and $\mu$.
+\item $v_s$: the proportion of mutated alleles at locus $s$
+\end{itemize}
+
+\item $\log(N_{1s}/N_{0s})$: logR
+$$
+\log(N_{1s}/N_{0s}) \mid m_s, \sigma^2, \mu \sim \Nor\left(\log\left(\frac{(1-\mu)2 + \mu m_s}{2}\right) + \phi_s, \sigma^2\right).
+$$
+Note that if $m_s=2$, the mean of $\log(N_{1s}/N_{0s})$ becomes $\phi$, some adjustment by difference in sequencing depth. 
+\end{itemize}
+
+
+
+
+
+\item Priors
+\begin{enumerate}
+\item $v_s$
+\begin{align*}
+  v_s | G &\iid G \\
+  G &\sim \text{DP}(\alpha,G_0),
+\end{align*}
+where $G_0 = \Be(a_v, b_v)$ and $\alpha$ is the total mass parameter.
+
+\item $\mu$
+$$
+\mu \sim \Be(a_\mu, b_\mu).
+$$
+
+\item $\phi_s$
+  $$
+  \phi_s \iid N(m_\phi, s^2_\phi)
+  $$
+
+\item $\sigma^2$
+  $$
+  \sigma^2 \sim IG(a_\sigma,b_\sigma)
+  $$
+
+\end{enumerate}
+\end{enumerate}
+
+% ARTHUR LUI
+\newpage
+\newcommand{\ind}{\overset{ind}{\sim}}
+\newcommand{\p}[1]{\left(#1\right)}
+\newcommand{\bk}[1]{\left[#1\right]}
+\renewcommand{\bc}[1]{ \left\{#1\right\} }
+\newcommand{\abs}[1]{ \left|#1\right| }
+\newcommand{\norm}[1]{ \left|\left|#1\right|\right| }
+\newcommand{\N}{ \mathcal N }
+\renewcommand{\L}{ \mathcal L }
+\newcommand{\ds}{ \displaystyle }
+\newcommand{\sums}{\sum_{s=1}^S}
+\newcommand{\prods}{\prod_{s=1}^S}
+\allowdisplaybreaks
+
+\section{Derivation of Full Conditionals}
+\subsection{Sampling Distribution}
+
+\begin{align*}
+  n_{1s} \mid N_{1s}, p_{s} &\ind \Binom(N_{1s}, p_{s}) \\
+  \log\p{\frac{N_{1s}}{N_{0s}}} \mid \mu, \phi_s, M_s, \sigma^2 &\ind \N\p{\log\p{\frac{2(1-\mu)+\mu M_s}{2}}+\phi_s, \sigma^2}\\
+\end{align*}
+where $p_s = \ds\frac{\mu v_s M_s}{2(1-\mu)+\mu M_s}$.
+
+\subsection{Priors}
+\begin{align*}
+\mu &\sim \text{Beta}(a_\mu,b_\mu)\\
+\sigma^2 &\sim \text{IG}(a_\sigma,b_\sigma)\\
+\phi_s &\iid \mathcal{N}(m_\phi,s^2_\phi) \\
+v_s \mid G &\iid G \\
+G &\sim \text{DP}(\alpha,G_0) \\
+\end{align*}
+
+\subsection{Likelihood}
+$$
+\mathcal{L}(\mu,\sigma^2,\bm{\phi},\bm{v},G~\mid~n_{1s},N_{1s}) \propto \ds\prod_{s=1}^S \mathcal{L}_1(\mu,v_s~|~n_{1s},N_{1s})\mathcal{L}_2(\mu,\phi_s,\sigma^2~|~N_{1s},N_{0s})
+$$
+
+\subsection{Joint Posterior}
+$$
+p(\mu,\sigma^2, \bm\phi, \bm v, G ~|~ \text{Data}) \sim \mathcal{L}(\mu,\sigma^2,\bm\phi,\bm v,G~|~n_{1s},N_{1s}) \times p(\mu)~p(\sigma^2)~p(\bm\phi)~p(\bm v|G)~p(G)
+$$
+Note that the marginal posterior $p(\mu,\sigma^2, \bm\phi,\bm v ~|~ \text{Data})$ can be obtained after integrating $G$ over its DP prior (Blackwell \& McQueen, 1973).
+
+\subsection{Full Conditionals}
+
+\subsubsection{Full Conditional for $\sigma^2$}
+\begin{align*}
+p(\sigma^2 ~|~ ...) &\propto \prod_{s=1}^S \mathcal{L}_2(\mu,\phi_s,\sigma^2 ~|~ N_{1s}, N_{0s}) \times p(\sigma^2)\\
+                    &\propto \p{\sigma^2}^{-S/2}\exp\bc{\ds-\frac{\sums\p{\log(N_{1s}/N_{0s})-\log z_s-\phi_s}^2}{2\sigma^2}} (\sigma^2)^{-a_\sigma-1} \exp(-b_\sigma/\sigma^2)\\
+                    &\propto (\sigma^2)^{-a_\sigma-S/2-1} \exp\bc{-\frac{1}{\sigma^2}\p{\frac{\sums\p{\log(N_{1s}/N_{0s})-\log z_s-\phi_s}^2}{2}+b_\sigma}}\\
+\end{align*}
+where $z_s = \ds\frac{2(1-\mu)+\mu M_s}{2}$.
+
+$$
+\therefore ~~~ \sigma^2|... \sim \text{IG}\p{a_\sigma+S/2, b_\sigma+\frac{\sums\p{\log(N_{1s}/N_{0s})-\log z_s-\phi_s}^2}{2}}
+$$
+
+\subsubsection{Full Conditional for $\phi_s$}
+Let $Y_s = N_{1s}/N_{0s}$
+\begin{align*}
+  p(\phi_s|...) &\propto\L_2(\mu,\phi_s,\sigma^2) \times p(\phi_s)\\
+                &\propto\exp\bc{-\frac{\p{\log(Y_s)-\log(z_s)-\phi_s}^2}{2\sigma^2}}
+  \exp\bc{-\frac{(\phi_s-m_\phi)^2}{2s_\phi^2}}\\
+                &\propto\exp\bc{-\frac{\p{\log(Y_s/z_s)-\phi_s}^2}{2\sigma^2}} 
+  \exp\bc{-\frac{(\phi_s-m_\phi)^2}{2s_\phi^2}}\\
+\end{align*}
+$$
+\therefore ~~~ \phi_s | ... \ind  \N\p{\frac{\log\p{Y_s/z_s}s_\phi^2+m_\phi\sigma^2}{\sigma^2+s_\phi^2},\frac{\sigma^2 s_\phi^2}{\sigma^2+s_\phi^2}}
+$$
+
+\subsubsection{Full Conditional for $\mu$}
+\begin{align*}
+  p(\mu|...) &\propto \prods \L_1(\mu,v_s|n_{1s},N_{1s})\L_2(\mu,\phi_s,\sigma^2|N_{1s},N_{0s}) \times p(\mu) \\
+             &\propto \prods \exp\bc{-\frac{\p{\log(Y_s/z_s)-\phi_s}^2}{2\sigma^2}} \times p_s^{n_{1s}} (1-p_s)^{N_{1s}-n_{1s}} \times \mu^{a_\mu-1} (1-\mu)^{b_\mu-1}\\
+             &\propto \exp\bc{-\frac{\sums\p{\log(Y_s/z_s)-\phi_s}^2}{2\sigma^2}} \times \prods\bc{p_s^{n_{1s}} (1-p_s)^{N_{1s}-n_{1s}}} \times \mu^{a_\mu-1} (1-\mu)^{b_\mu-1}\\
+\end{align*}
+Note that here a metropolis step is needed. Specifically, since the support for
+$\mu$ is (0,1), it is appropriate to logit-transform the parameter to obtain
+$\log\p{\ds\frac{\mu}{1-\mu}}$, which has support on the real line. Now, a
+metropolis update can be done using a (symmetric) Normal proposal.
+
+\subsubsection{Full Conditional for $v_s$}
+Note that the full conditional distribution for $v_s$ is almost surely discrete because of the DP prior on $v_s$. 
+Consequently, there is positive probability that $v_s=v_s'$ for $s\ne s'$. As such, writing down the full conditional for
+the cluster labels of $v_s$ is equivalent to writing the full conditional for $v_s$ and will be helpful in the computational
+implementation of the MCMC to sample from the full conditional of $v_s$. Before writing down the full conditional for the
+cluster labels of $v_s$, some additional notation will be introduced.\\
+
+\noindent
+First, recognize that in an MCMC each $v_s$ could be updated sequentially by assigning it to an existing cluster,
+or assigning it a new value drawn from $G_0$. Let's call the current $\bm v$ in the MCMC iterations $\bm v^t$. Now,
+
+\def\vt{\bm v^t}
+\def\vstar{ \vt_{-s}\mbox{*} }
+
+\begin{itemize}
+  \item let $\vt_{-s}$ (a vector of length $S-1$) be the elements in $\vt$ \textbf{after} removing element $s$
+  \item let $K^{-s}$ be the number of unique elements in $\vt_{-s}$ 
+  \item let $\vstar$ (a vector of length $K^{-s}$) be the unique elements in $\vt_{-s}$
+  \item let $\bm c^{-s}$ (a vector of length $K^{-s}$) be the (arbitrary) cluster labels for elements in $\vt_{-s}$
+  \item let $\bm u^{-s}$ (a vector of length $K^{-s}$) be the cardinality of each cluster in $\vt_{-s}$.
+\end{itemize}
+Then note the full conditional for the cluster label of $v_s$ is 
+
+$$
+\begin{cases}
+  P(c_s = k) & \propto u^{-s}_k \times \p{v_{-s,k}^{t}}^{n_{1s}} (1-p_s)^{N_{1s}-n_{1s}}, \text{ for } k \in \bc{1,...,K^{-s}}\\
+  P(c_s = K^{-s}+1) & \propto \alpha \times \ds\int v^{n_{1s}} (1-p_s)^{N_{1s}-n_{1s}} ~dG_0(v), \text{otherwise}
+\end{cases}
+$$
+
+\noindent
+Finally, for each element in $\bm v^*$ (the unique elements in $\bm v$) perform sample from the full conditional for $v_k^*$
+which leaves the distribution invariant. That is, sample from
+
+$$
+v_k^* | ... \propto g_0(v_k^*) \prod_{\bc{s:c_s=k}} \p{v_k^*}^{n_{1s}}(1-p_s)^{N_{1s}-n_{1s}}.
+$$
+
+
+%\begin{align*}
+%  p(v_s|v_{-s},\mu,\sigma^2,\phi,\text{Data}) &\propto \L_1(\mu,v_s|n_{1s},N_{1s}) \times p(v_s)\\
+%                                              &\propto v_s^{n_1s} (1-p_s)^{N_{1s}-n_{1s}} \bc{\frac{\alpha}{\alpha+n-1}g_0(v_s) + \frac{1}{\alpha+n-1}\sum_{j=1}^{n^{*-}} \delta_{v_j^{*-}}(v_s)}\\
+%\end{align*}
+%where 
+%\begin{itemize}
+%  \item $g_0(v_s)$ is the baseline density evaluated at $v_s$\\ 
+%  \item $n^{*-}$ is the number of unique $v_j$'s excluding $j = s$\\
+%  \item $v_j^{*-}$ is the $j^{th}$ unique $v$ excluding $j = s$\\
+%\end{itemize}
+%Note that we can sample from the full conditional for $v_s$ efficiently using
+%one of the algorithms (e.g. Algorithm 8) presented by Radford Neal (2000).
+
+\end{document}
