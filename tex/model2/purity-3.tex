@@ -201,6 +201,16 @@ $$
   \sigma^2 \sim IG(a_\sigma,b_\sigma)
   $$
 
+\item $m_s$
+  $$
+  m_s \iid \text{Gamma}(a_m,b_m)
+  $$
+
+\item $\omega^2$
+  $$
+  \omega^2 \sim IG(a_\omega,b_\omega)
+  $$
+
 \end{enumerate}
 \end{enumerate}
 
@@ -224,67 +234,101 @@ $$
 
 \begin{align*}
   n_{1s} \mid N_{1s}, p_{s} &\ind \Binom(N_{1s}, p_{s}) \\
-  \log\p{\frac{N_{1s}}{N_{0s}}} \mid \mu, \phi_s, M_s, \sigma^2 &\ind \N\p{\log\p{\frac{2(1-\mu)+\mu M_s}{2}}+\phi_s, \sigma^2}\\
+  \log\p{\frac{N_{1s}}{N_{0s}}} \mid \mu, \phi_s, m_s, \sigma^2 &\ind \N\p{\log\p{\frac{2(1-\mu)+\mu m_s}{2}}+\phi_s, \sigma^2}\\
+\log(M_s) \mid m_s, \omega^2 &\ind \N\p{\log(m_s),\omega^2} \\
 \end{align*}
-where $p_s = \ds\frac{\mu v_s M_s}{2(1-\mu)+\mu M_s}$.
+where $p_s = \ds\frac{\mu v_s m_s}{2(1-\mu)+\mu m_s}$.
 
 \subsection{Priors}
 \begin{align*}
 \mu &\sim \text{Beta}(a_\mu,b_\mu)\\
 \sigma^2 &\sim \text{IG}(a_\sigma,b_\sigma)\\
 \phi_s &\iid \mathcal{N}(m_\phi,s^2_\phi) \\
+\omega^2 &\sim \text{IG}(a_\omega,b_\omega)\\
+m_s &\iid \text{Gamma}(a_m,b_m) \\
 v_s \mid G &\iid G \\
 G &\sim \text{DP}(\alpha,G_0) \\
 \end{align*}
 
 \subsection{Likelihood}
-$$
-\mathcal{L}(\mu,\sigma^2,\bm{\phi},\bm{v},G~\mid~n_{1s},N_{1s}) \propto \ds\prod_{s=1}^S \mathcal{L}_1(\mu,v_s~|~n_{1s},N_{1s})\mathcal{L}_2(\mu,\phi_s,\sigma^2~|~N_{1s},N_{0s})
-$$
+\def\LOne{\mathcal{L}_1(\mu,v_s~|~n_{1s},N_{1s},m_{s})}
+\def\LTwo{\mathcal{L}_2(\mu,\phi_s,\sigma^2~|~N_{1s},N_{0s},m_{s})}
+\def\LThree{\mathcal{L}_3(m_s,\omega^2~|~M_{s})}
+
+\begin{align*}
+  \mathcal{L}(\mu,\sigma^2,\bm{\phi},\omega^2,\bm{m},\bm{v},G~\mid~ \bm{n_{1}},\bm{N_{1}},\bm{M}) &\propto \ds\prod_{s=1}^S \LOne \times \LTwo \times \\ 
+              &\hspace{3em}\LThree
+\end{align*}
+
 
 \subsection{Joint Posterior}
 $$
-p(\mu,\sigma^2, \bm\phi, \bm v, G ~|~ \text{Data}) \sim \mathcal{L}(\mu,\sigma^2,\bm\phi,\bm v,G~|~n_{1s},N_{1s}) \times p(\mu)~p(\sigma^2)~p(\bm\phi)~p(\bm v|G)~p(G)
+p(\mu,\sigma^2, \bm\phi, \bm{m}, \omega, \bm v, G ~|~ \text{Data}) \sim \mathcal{L}(\mu,\sigma^2,\bm\phi,\bm v,G~|~n_{1s},N_{1s}) \times p(\bm{m})p(\omega)p(\mu)~p(\sigma^2)~p(\bm\phi)~p(\bm v|G)~p(G)
 $$
-Note that the marginal posterior $p(\mu,\sigma^2, \bm\phi,\bm v ~|~ \text{Data})$ can be obtained after integrating $G$ over its DP prior (Blackwell \& McQueen, 1973).
+Note that the marginal posterior $p(\mu,\sigma^2, \bm{m},\omega,\bm\phi,\bm v ~|~
+\text{Data})$ can be obtained after integrating $G$ over its DP prior
+(Blackwell \& McQueen, 1973).
 
 \subsection{Full Conditionals}
+Let 
+\begin{itemize}
+  \item $x_s = N_{1s}/N_{0s}$, \\
+  \item $y_s = \ds\frac{2(1-\mu)+\mu m_s}{2}$.
+  \item $z_s$ = $x_s / y_s = \ds\frac{2N_{1s}}{ (2(1-\mu) +\mu m_s)N_{0s}}$
+\end{itemize}
 
 \subsubsection{Full Conditional for $\sigma^2$}
 \begin{align*}
-p(\sigma^2 ~|~ ...) &\propto \prod_{s=1}^S \mathcal{L}_2(\mu,\phi_s,\sigma^2 ~|~ N_{1s}, N_{0s}) \times p(\sigma^2)\\
-                    &\propto \p{\sigma^2}^{-S/2}\exp\bc{\ds-\frac{\sums\p{\log(N_{1s}/N_{0s})-\log z_s-\phi_s}^2}{2\sigma^2}} (\sigma^2)^{-a_\sigma-1} \exp(-b_\sigma/\sigma^2)\\
-                    &\propto (\sigma^2)^{-a_\sigma-S/2-1} \exp\bc{-\frac{1}{\sigma^2}\p{\frac{\sums\p{\log(N_{1s}/N_{0s})-\log z_s-\phi_s}^2}{2}+b_\sigma}}\\
+p(\sigma^2 ~|~ ...) &\propto \prod_{s=1}^S \LOne \times p(\sigma^2)\\
+                    &\propto \p{\sigma^2}^{-S/2}\exp\bc{\ds-\frac{\sums\p{\log(N_{1s}/N_{0s})-\log y_s-\phi_s}^2}{2\sigma^2}} (\sigma^2)^{-a_\sigma-1} \exp(-b_\sigma/\sigma^2)\\
+                    &\propto (\sigma^2)^{-a_\sigma-S/2-1} \exp\bc{-\frac{1}{\sigma^2}\p{\frac{\sums\p{\log(x_s)-\log y_s-\phi_s}^2}{2}+b_\sigma}}\\
+                    &\propto (\sigma^2)^{-a_\sigma-S/2-1} \exp\bc{-\frac{1}{\sigma^2}\p{\frac{\sums\p{\log(x_s/y_s)-\phi_s}^2}{2}+b_\sigma}}\\
 \end{align*}
-where $z_s = \ds\frac{2(1-\mu)+\mu M_s}{2}$.
 
 $$
-\therefore ~~~ \sigma^2|... \sim \text{IG}\p{a_\sigma+S/2, b_\sigma+\frac{\sums\p{\log(N_{1s}/N_{0s})-\log z_s-\phi_s}^2}{2}}
+\therefore ~~~ \sigma^2|... \sim \text{IG}\p{a_\sigma+S/2, b_\sigma+\frac{\sums\p{\log(z_s)-\phi_s}^2}{2}}
 $$
 
 \subsubsection{Full Conditional for $\phi_s$}
-Let $Y_s = N_{1s}/N_{0s}$
 \begin{align*}
-  p(\phi_s|...) &\propto\L_2(\mu,\phi_s,\sigma^2) \times p(\phi_s)\\
-                &\propto\exp\bc{-\frac{\p{\log(Y_s)-\log(z_s)-\phi_s}^2}{2\sigma^2}}
+  p(\phi_s|...) &\propto\LTwo \times p(\phi_s)\\
+                &\propto\exp\bc{-\frac{\p{\log(x_s)-\log(y_s)-\phi_s}^2}{2\sigma^2}}
   \exp\bc{-\frac{(\phi_s-m_\phi)^2}{2s_\phi^2}}\\
-                &\propto\exp\bc{-\frac{\p{\log(Y_s/z_s)-\phi_s}^2}{2\sigma^2}} 
+                &\propto\exp\bc{-\frac{\p{\log(z_s)-\phi_s}^2}{2\sigma^2}} 
   \exp\bc{-\frac{(\phi_s-m_\phi)^2}{2s_\phi^2}}\\
 \end{align*}
 $$
-\therefore ~~~ \phi_s | ... \ind  \N\p{\frac{\log\p{Y_s/z_s}s_\phi^2+m_\phi\sigma^2}{\sigma^2+s_\phi^2},\frac{\sigma^2 s_\phi^2}{\sigma^2+s_\phi^2}}
+\therefore ~~~ \phi_s | ... \ind  \N\p{\frac{\log\p{z_s}s_\phi^2+m_\phi\sigma^2}{\sigma^2+s_\phi^2},\frac{\sigma^2 s_\phi^2}{\sigma^2+s_\phi^2}}
 $$
 
 \subsubsection{Full Conditional for $\mu$}
 \begin{align*}
-  p(\mu|...) &\propto \prods \L_1(\mu,v_s|n_{1s},N_{1s})\L_2(\mu,\phi_s,\sigma^2|N_{1s},N_{0s}) \times p(\mu) \\
-             &\propto \prods \exp\bc{-\frac{\p{\log(Y_s/z_s)-\phi_s}^2}{2\sigma^2}} \times p_s^{n_{1s}} (1-p_s)^{N_{1s}-n_{1s}} \times \mu^{a_\mu-1} (1-\mu)^{b_\mu-1}\\
-             &\propto \exp\bc{-\frac{\sums\p{\log(Y_s/z_s)-\phi_s}^2}{2\sigma^2}} \times \prods\bc{p_s^{n_{1s}} (1-p_s)^{N_{1s}-n_{1s}}} \times \mu^{a_\mu-1} (1-\mu)^{b_\mu-1}\\
+  p(\mu|...) &\propto \prods \LOne\LTwo \times p(\mu) \\
+             &\propto \prods \exp\bc{-\frac{\p{\log(x_s/y_s)-\phi_s}^2}{2\sigma^2}} \times p_s^{n_{1s}} (1-p_s)^{N_{1s}-n_{1s}} \times \mu^{a_\mu-1} (1-\mu)^{b_\mu-1}\\
+             &\propto \exp\bc{-\frac{\sums\p{\log(z_s)-\phi_s}^2}{2\sigma^2}} \times \prods\bc{p_s^{n_{1s}} (1-p_s)^{N_{1s}-n_{1s}}} \times \mu^{a_\mu-1} (1-\mu)^{b_\mu-1}\\
 \end{align*}
 Note that here a metropolis step is needed. Specifically, since the support for
 $\mu$ is (0,1), it is appropriate to logit-transform the parameter to obtain
 $\log\p{\ds\frac{\mu}{1-\mu}}$, which has support on the real line. Now, a
 metropolis update can be done using a (symmetric) Normal proposal.
+
+\subsubsection{Full Conditional for $\omega^2$}
+\begin{align*}
+p(\omega^2 ~|~ ...) &\propto \prods \LThree \times p(\sigma^2)\\
+                    &\propto \prods (\omega^2)^{-1/2} \exp\bc{-\frac{(\log M_s - \log m_s)^2}{2\omega^2}} (\omega^2)^{-a_\omega-1}e^{-b_\omega/\omega^2} \\
+                    &\propto (\omega^2)^{-S/2}\exp\bc{-\sums\frac{\log(M_s/m_s)^2}{2\omega^2}} (\omega^2)^{-a_\omega-1}e^{-b_\omega/\omega^2} \\
+                    &\propto (\omega^2)^{-S/2-a_\omega-1}\exp\bc{-\p{\sums\frac{\log(M_s/m_s)^2}{2} + b_\omega} \bigg/ \omega^2} \\
+\end{align*}
+$$
+\therefore ~~~ \omega^2|... \sim \text{IG}\p{a_\omega+S/2, b_\omega+\frac{\sums\p{\log(M_s/m_s)}^2}{2}}
+$$
+
+\subsection{Full Conditional for $m_s$}
+\begin{align*}
+p(m_s ~|~ ...) &\propto \prods \LOne\LTwo\LThree p(m_s)\\
+               &\propto \prods \LOne\LTwo\LThree \times m_s^{a_m-1}e^{-b_m m} \\
+\end{align*}
+
 
 \subsubsection{Full Conditional for $v_s$}
 Note that the full conditional distribution for $v_s$ is almost surely discrete because of the DP prior on $v_s$. 
