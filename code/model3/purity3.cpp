@@ -64,6 +64,7 @@ double wsample(double x[], double p[], int n) { // GOOD
 }
 
 
+// neal algorithm 8
 NumericVector algo8(double alpha, NumericVector t, 
                     std::function<double(double,int)> lf,
                     std::function<double(double)> lg0,
@@ -149,22 +150,27 @@ NumericVector algo8(double alpha, NumericVector t,
   return NumericVector(newT.begin(), newT.end());
 }
 
-//[[Rcpp::export]]
-NumericMatrix fit(NumericVector y, NumericVector m, double alpha, double cs, int B, int burn, int printEvery) {
+//////////////////////////////////////////////////////////////////
+struct State {
+    NumericVector phi;
+    double sig2;
+    double mu;
+    NumericVector v;
+    NumericVector m;
+    double w2;
+}
 
-  NumericMatrix out(y.size(),B);
-  out(_,0) = NumericVector(y.size(),0.5);
+std::vector<State> gibbs(State init, std::function<S(S)> update, 
+                         int B, int burn, int printevery) {
 
-  auto lf = [y,m](double p, int i) {return y[i]*log(p)+(m[i]-y[i])*log(1-p);};
-  auto lg0 = [](double p){return 0.0;};
-  auto rg0 = [](){return R::runif(0,1);};
+  std::vector<State> out(B);
+  out[0] = init;
 
-  // gibbs loop
   for (int i=0; i<B+burn; i++) {
     if (i <= burn) {
-      out(_,0) = algo8(alpha,out(_,0),lf,lg0,rg0,metLogit,cs);
+      out[0] = update(out[0]);
     } else {
-      out(_,i-burn) = algo8(alpha,out(_,i-burn-1),lf,lg0,rg0,metLogit,cs);
+      out[i-burn] = update(out[i-burn-1]);
     }
 
     if (printEvery > 0 && (i+1) % printEvery == 0) {
@@ -172,6 +178,61 @@ NumericMatrix fit(NumericVector y, NumericVector m, double alpha, double cs, int
     }
   }
 
-  Rcout << std::endl;
+  return out;
+}
+
+//////////////////////////////////////////////////////////////////
+
+//[[Rcpp::export]]
+NumericMatrix fit(NumericVector n1, NumericVector N1, 
+                  NumericVector N0, NumericVector M,
+                  // priors
+                  double m_phi, double s2_phi,
+                  double a_sig, double b_sig,
+                  double a_mu, double b_mu, double cs_mu,
+                  double a_m, double b_m, double cs_m,
+                  double a_w, double b_w,
+                  // dpmm prior
+                  double alpha, double cs_v,
+                  std::function<double(double)> lg0,
+                  std::function<double(double)> rg0,
+                  // gibbs param
+                  int B, int burn, int printEvery) {
+
+  const int N = y.size();
+
+  // v
+  NumericMatrix out_v(N,B);
+  out_v(_,0) = NumericVector(N,0.5);
+
+  // phi
+  NumericMatrix out_phi(N,B);
+  out_phi(_,0) = NumericVector(N,0.0);
+
+  // m
+  NumericMatrix out_m(N,B);
+  out_phi(_,0) = NumericVector(N,2.0);
+
+  // mu
+  NumericVector out_mu(B);
+  out_mu(0) = .5;
+
+  // w2
+  NumericVector out_w2(B);
+  out_w2(0) = 1;
+
+  // sig2
+  NumericVector out_sig2(B);
+  out_sig2(0) = 1;
+
+
+  // functions for neal8
+  auto lf = [y,m](double p, int i) {return y[i]*log(p)+(m[i]-y[i])*log(1-p);};
+  auto lg0 = [](double p){return 0.0;};
+  auto rg0 = [](){return R::runif(0,1);};
+
+  // gibbs loop
+  out = gibbs(init, update, B, burn, printEvery)
+
   return out;
 }
