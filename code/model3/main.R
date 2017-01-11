@@ -16,6 +16,8 @@ dat <- genData(phi_mean=0, phi_var=1, mu=.99, sig2=.1,
 
 obs <- dat$obs
 param <- dat$param
+
+# To do: See where the performance bottlenecks are in the cpp version
 system.time(out <- fit(obs$n1, obs$N1, obs$N0, obs$M,
             m_phi=0, s2_phi=100, 
             a_sig=2, b_sig=2,
