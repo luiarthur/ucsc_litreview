@@ -35,8 +35,15 @@ std::vector<S> gibbs(S init, std::function<void(S&,S&)> update,
 }
 
 // random inverse gamma 
+//[[Rcpp::export]]
 double rig(double shp, double rate) {
-  return 1 / R::rgamma(shp, 1/rate);
+  // R::rgamma takes as args: (double shape, double scale)
+  // note also that 
+  // X ~ Gamma(sh=a,sc=b) => 1/X ~ IG(sh=a, rate = 1/b)
+  // Y ~ IG(sh=a, rate=b) = draw 1 / Gamma(sh=a, sc=1/b)
+  // FIXME Not sure which one to use!!!
+  //return 1 / R::rgamma(shp, 1/rate); // original. Why not this?
+  return 1 / R::rgamma(shp, rate);
 }
 
 // Uniariate Metropolis step with Normal proposal

@@ -10,7 +10,7 @@ source("gendata.R")
 library(Rcpp)
 sourceCpp("purity3.cpp")
 
-dat <- genData(phi_mean=0, phi_var=1, mu=.99, sig2=.1,
+dat <- genData(phi_mean=0, phi_var=1, mu=.7, sig2=.1,
                meanN0=30, minM=0, maxM=3, c=.5,
                w2=.01, set_v=c(.1,.5,.9), numLoci=100)
 
@@ -61,4 +61,21 @@ abline(0,1,col='grey30')
 add.errbar(t(apply(out$m,1,quantile,c(.025,.975))),x=param$m,col=rgb(0,0,1,.2))
 
 par(mfrow=c(1,1))
+
+
+### Test parallel
+sim <- function() {fit(obs$n1, obs$N1, obs$N0, obs$M,
+                         m_phi=0, s2_phi=100, 
+                         a_sig=2, b_sig=2,
+                         a_mu=1, b_mu=1, cs_mu=.3,
+                         a_m=2,b_m=2, cs_m=1,
+                         a_w=2,b_w=.01,
+                         alpha=1, a_v=1, b_v=1, cs_v=.4,
+                         B=2000,burn=10000,printEvery=1000)}
+
+
+library(doMC)
+registerDoMC(8)
+system.time( l <- foreach(i=1:8) %dopar% sim() )
+
 
