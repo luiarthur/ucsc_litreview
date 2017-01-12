@@ -57,6 +57,7 @@ List fit(NumericVector n1, NumericVector N1,
     double phi_denom = s_new.sig2 + s2_phi;
     double phi_mean, phi_sd;
 
+    // note that omp is slower here
     for (int s=0; s<numLoci; s++) {
       phi_mean = ( log(z(s_old.mu,s_old.m[s],s))*s2_phi + 
                    m_phi*s_new.sig2 ) / phi_denom;

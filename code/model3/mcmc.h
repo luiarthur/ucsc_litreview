@@ -1,5 +1,6 @@
 #include<Rcpp.h>
 #include<functional> // std::function
+#include<algorithm> // std::for_each
 #include<map>
 
 using namespace Rcpp;
@@ -99,6 +100,27 @@ int wsample_index(double p[], int n) { // GOOD
   return i-1;
 }
 
+double max(double x[], int n) {
+  double mx = x[0];
+  for (int i=1; i<n; i++) {
+    if (x[i] > mx) {
+      mx = x[i];
+    }
+  }
+  return mx;
+}
+
+// weighted sampling of log probs
+int wsampleLogProb_index(double logProb[], int n) {
+  double mx = max(logProb,n);
+  //auto prob = logProb;
+  for (int i=0; i<n; i++) {
+    logProb[i] = exp(logProb[i] - mx);
+  }
+  //return wsample_index(prob,n);
+  return wsample_index(logProb,n);
+}
+
 void algo8(double alpha, 
            std::vector<double> &t_old, 
            std::vector<double> &t_new, 
@@ -111,7 +133,7 @@ void algo8(double alpha,
                                 std::function<double(double)>,
                                 double)> mh) {
 
-  auto f = [lf](double x, int i){ return exp(lf(x,i)); };
+  //auto f = [lf](double x, int i){ return exp(lf(x,i)); };
   const int n = t_old.size();
 
   // create a map of unique t's
@@ -138,23 +160,23 @@ void algo8(double alpha,
       map_t_count.erase(t_new[i]);
     }
 
-    double probAux = alpha * f(aux,i);
+    double logProbAux = log(alpha) + lf(aux,i);
 
     const int K = map_t_count.size();
-    double prob[K+1];
+    double logProb[K+1];
     double unique_t[K+1];
     
-    prob[0] = probAux;
+    logProb[0] = logProbAux;
     unique_t[0] = aux;
 
     int k=1;
     for (auto const& ut : map_t_count) {
-      prob[k] = ut.second * f(ut.first,i);
+      logProb[k] = log(ut.second) + lf(ut.first,i);
       unique_t[k] = ut.first;
       k++;
     }
 
-    t_new[i] = unique_t[wsample_index(prob,K)];
+    t_new[i] = unique_t[wsampleLogProb_index(logProb,K)];
     if (map_t_count.find( t_new[i] ) != map_t_count.end()) {
       map_t_count[t_new[i]]++;
     } else {

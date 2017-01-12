@@ -30,5 +30,5 @@ system.time(out <- fit(obs$n1, obs$N1, obs$N0, obs$M,
             B=2000,burn=10000,printEvery=1000))
 
 # plot
-plotPurity(out,param)
+plotPurity(out,dat)
 
