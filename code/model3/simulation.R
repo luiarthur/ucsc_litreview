@@ -1,0 +1,45 @@
+set.seed(1)
+require('devtools')
+if ( !("rcommon" %in% installed.packages()) ) {
+  devtools::install_github('luiarthur/rcommon')
+}
+library(rcommon)
+
+source("gendata.R")
+source("plotPurity.R")
+library(Rcpp)
+sourceCpp("purity3.cpp")
+
+library(doMC)
+registerDoMC(8)
+
+sim <- function(mu) {
+
+  dat <- genData(phi_mean=0, phi_var=3, mu=mu, sig2=.1,
+                 meanN0=30, minM=0, maxM=3, c=.5,
+                 w2=.01, set_v=c(.1,.5,.9), numLoci=100)
+
+  obs <- dat$obs
+  param <- dat$param
+
+  mod <- fit(obs$n1, obs$N1, obs$N0, obs$M,
+                         m_phi=0, s2_phi=100, 
+                         a_sig=2, b_sig=2,
+                         a_mu=.1, b_mu=.1, cs_mu=.3,
+                         a_m=2,b_m=2, cs_m=1,
+                         a_w=200,b_w=2,
+                         alpha=.1, a_v=1, b_v=1, cs_v=.4,
+                         B=2000,burn=20000,printEvery=1000)
+
+  list("mod"=mod, "dat"=dat)
+}
+
+
+system.time( l <- foreach(mu=(1:9)/10) %dopar% sim(mu) )
+
+pdf("output/sim.pdf")
+for (i in 1:length(l)) {
+  plotPurity(l[[i]]$mod,l[[i]]$dat)
+}
+dev.off()
+

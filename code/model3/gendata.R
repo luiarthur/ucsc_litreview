@@ -62,7 +62,3 @@ genData <- function(phi_mean, phi_var, mu, sig2,
   list("obs"=obs, "param"=param)
 }
 
-#dat <- genData(phi_mean=0, phi_var=1, mu=.6, sig2=.1,
-#               meanN0=30, minM=0, maxM=5, c=.5,
-#               w2=1, set_v=c(.1,.5,.9), numLoci=10)
-
