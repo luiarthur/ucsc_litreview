@@ -22,24 +22,18 @@ List fit(NumericVector n1, NumericVector N1,
 
   const int numLoci = n1.size();
 
-  auto update = [n1, N1, N0, M, numLoci,
-                 m_phi, s2_phi, 
-                 a_sig, b_sig,
-                 a_mu, b_mu, cs_mu,
-                 a_m, b_m, cs_m,
-                 a_w, b_w,
-                 alpha,cs_v,a_v,b_v](State& s_old, State& s_new) {
+  auto update = [&](State& s_old, State& s_new) {
 
     // Helper functions
     auto p = [](double mu, double vs, double ms) {
       return mu*vs*ms / (2*(1-mu) + mu*ms);
     };
 
-    auto z = [N1,N0](double mu, double ms, int s) {
+    auto z = [&](double mu, double ms, int s) {
       return 2*N1[s] / (N0[s] * (2*(1-mu) + mu*ms));
     };
 
-    auto ss = [numLoci,z](double mu, std::vector<double> phi, std::vector<double> m) {
+    auto ss = [&](double mu, std::vector<double> phi, std::vector<double> m) {
       double sum = 0;
       for (int s=0; s<numLoci; s++) {
         sum += pow(log(z(mu,m[s],s)) - phi[s], 2.0);
@@ -67,7 +61,7 @@ List fit(NumericVector n1, NumericVector N1,
 
 
     // update mu (Met-logit)
-    auto llMu = [ss,s_old,s_new,numLoci,n1,N1,p](double mu) {
+    auto llMu = [&](double mu) {
       double ll1 = -ss(mu, s_new.phi, s_old.m) / (2*s_new.sig2);
       double ll2 = 0.0;
 
@@ -79,7 +73,7 @@ List fit(NumericVector n1, NumericVector N1,
       return ll1 + ll2;
     };
 
-    auto lpMu = [a_mu, b_mu](double mu) {
+    auto lpMu = [&](double mu) {
       return (a_mu-1)*log(mu) + (b_mu-1)*log(1-mu);
     };
 
@@ -87,12 +81,12 @@ List fit(NumericVector n1, NumericVector N1,
 
 
     // update v (Neal)
-    auto lf = [n1,p,N1,s_new,s_old,alpha](double vs, int s) {
+    auto lf = [&](double vs, int s) {
       double ps = p(s_new.mu, vs, s_old.m[s]);
       return n1[s]*log(ps) + (N1[s]-n1[s])*log(1-ps);
     };
-    auto lg0 = [a_v, b_v](double vs) {return 0.0;};
-    auto rg0 = [a_v, b_v]() {return R::rbeta(a_v,b_v);};
+    auto lg0 = [&](double vs) {return 0.0;};
+    auto rg0 = [&]() {return R::rbeta(a_v,b_v);};
 
     algo8(alpha, s_old.v, s_new.v, cs_v, lf, lg0, rg0, metLogit);
 
@@ -107,7 +101,7 @@ List fit(NumericVector n1, NumericVector N1,
 
     // update m (Met)
     for (int s=0; s<numLoci; s++) {
-      auto lp = [a_m, b_m](double ms) {
+      auto lp = [&](double ms) {
         double out;
 
         if (ms <= 0) 
@@ -117,7 +111,7 @@ List fit(NumericVector n1, NumericVector N1,
 
         return out;
       };
-      auto ll = [z,p,n1,N1,s_new,M,s](double ms) {
+      auto ll = [&](double ms) {
         double out;
         if (ms <= 0) {
           out = -1E10;
