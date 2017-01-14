@@ -176,7 +176,7 @@ void algo8(double alpha,
       k++;
     }
 
-    t_new[i] = unique_t[wsampleLogProb_index(logProb,K)];
+    t_new[i] = unique_t[wsampleLogProb_index(logProb,K+1)];
     if (map_t_count.find( t_new[i] ) != map_t_count.end()) {
       map_t_count[t_new[i]]++;
     } else {
