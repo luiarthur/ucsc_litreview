@@ -11,7 +11,7 @@ source("plotPurity.R")
 library(Rcpp)
 sourceCpp("purity3.cpp")
 
-dat <- genData(phi_mean=0, phi_var=3, mu=.8, sig2=.1,
+dat <- genData(phi_mean=0, phi_var=3, mu=.6, sig2=.1,
                meanN0=30, minM=0, maxM=3, c=.5,
                w2=.01, set_v=c(.1,.5,.9), numLoci=100)
 
