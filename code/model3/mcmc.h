@@ -1,6 +1,5 @@
 #include<Rcpp.h>
 #include<functional> // std::function
-#include<algorithm> // std::for_each
 #include<map>
 
 using namespace Rcpp;
