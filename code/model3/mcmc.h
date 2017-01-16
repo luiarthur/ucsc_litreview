@@ -108,14 +108,13 @@ double max(double x[], int n) {
 }
 
 // weighted sampling of log probs
-int wsampleLogProb_index(double logProb[], int n) {
+int wsampleLogProb_index(double logProb[], const int n) {
   double mx = max(logProb,n);
-  //auto prob = logProb;
+  double prob[n]; 
   for (int i=0; i<n; i++) {
-    logProb[i] = exp(logProb[i] - mx);
+    prob[i] = exp(logProb[i] - mx);
   }
-  //return wsample_index(prob,n);
-  return wsample_index(logProb,n);
+  return wsample_index(prob,n);
 }
 
 void algo8(double alpha, 
@@ -130,7 +129,6 @@ void algo8(double alpha,
                                 std::function<double(double)>,
                                 double)> mh) {
 
-  //auto f = [lf](double x, int i){ return exp(lf(x,i)); };
   const int n = t_old.size();
 
   // create a map of unique t's
