@@ -28,7 +28,8 @@ genData <- function(phi_mean, phi_var, mu, sig2,
   v <- sample(unique(set_v), numLoci, replace=TRUE)
 
   p <- mu * v * m / (2*(1-mu) + mu*m)
-  n1 <- rbinom(numLoci, N1, p) 
+  #n1 <- sapply(rbinom(numLoci, N1, p), function(ps) max(1,ps))
+  n1 <- rbinom(numLoci, N1, p)
 
   obs <- list("n1"=n1, "N1"=N1, "N0"=N0, "M"=M)
   param <- list("mu"=mu,"phi"=phi,"m"=m,"w2"=w2,"v"=v,"sig2"=sig2)

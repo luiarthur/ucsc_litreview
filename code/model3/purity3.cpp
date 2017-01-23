@@ -119,7 +119,7 @@ List fit(NumericVector n1, NumericVector N1,
           double zs = z(s_new.mu, ms, s);
           double ps = p(s_new.mu, s_new.v[s], ms);
           double ll1 = n1[s]*log(ps) + (N1[s]-n1[s])*log(1-ps);
-          double ll2 = -pow(log(zs)-s_new.phi[s], 2) / (2*s_new.sig2);
+          double ll2 = -pow( log(zs)-s_new.phi[s], 2) / (2*s_new.sig2);
           double ll3 = -pow( log(M[s]/ms), 2) / (2*s_new.w2);
           out = ll1 + ll2 + ll3;
         }
