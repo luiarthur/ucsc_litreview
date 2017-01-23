@@ -85,7 +85,7 @@ List fit(NumericVector n1, NumericVector N1,
       double ps = p(s_new.mu, vs, s_old.m[s]);
       return n1[s]*log(ps) + (N1[s]-n1[s])*log(1-ps);
     };
-    auto lg0 = [&](double vs) {return 0.0;};
+    auto lg0 = [&](double vs) {return (a_v-1)*log(vs) + (b_v-1)*log(1-vs);};
     auto rg0 = [&]() {return R::rbeta(a_v,b_v);};
 
     algo8(alpha, s_old.v, s_new.v, cs_v, lf, lg0, rg0, metLogit);

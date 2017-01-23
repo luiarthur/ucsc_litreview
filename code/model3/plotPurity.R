@@ -4,7 +4,7 @@
   })
 }
 
-plotPurity <- function(out,dat) {
+plotPurity <- function(out,dat,rgba_level=.2) {
   obs <- dat$obs
   param <- dat$param
 
@@ -33,7 +33,7 @@ plotPurity <- function(out,dat) {
   numClus <- apply(out$v,2,function(x) length(unique(x)))
   plot(param$v[ord],pch=20,ylim=c(0,1),main=paste('v\n mean numclus:',mean(numClus)),col='grey30',fg='grey',ylab='')
   points(apply(out$v,1,mean)[ord],lwd=1,col='blue')
-  add.errbar(t(apply(out$v,1,quantile,c(.025,.975)))[ord,],co=rgb(0,0,1,.2))
+  add.errbar(t(apply(out$v,1,quantile,c(.025,.975)))[ord,],co=rgb(0,0,1,rgba_level))
   p <- obs$n1 / obs$N1
   points(p[ord],col='red',pch=20)
 
