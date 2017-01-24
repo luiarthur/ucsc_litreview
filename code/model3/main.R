@@ -12,9 +12,9 @@ library(Rcpp)
 sourceCpp("purity3.cpp")
 
 #set.seed(1)
-dat <- genData(phi_mean=0, phi_var=3, mu=.8, sig2=.1,
+dat <- genData(phi_mean=3, phi_var=3, mu=.8, sig2=.5,
                meanN0=30, minM=1.5, maxM=2.5, c=.5,
-               w2=.01, set_v=c(.1,.5,.9), numLoci=100)
+               w2=.001, set_v=c(.1,.5,.9), numLoci=100)
 
 obs <- dat$obs
 param <- dat$param
@@ -23,12 +23,12 @@ param <- dat$param
 system.time(out <- fit(obs$n1, obs$N1, obs$N0, obs$M,
             m_phi=0, s2_phi=100,  #Normal
             #a_sig=2, b_sig=.1, #IG
-            a_sig=2, b_sig=.1, #IG
-            a_mu=1, b_mu=1, cs_mu=.3, #Beta
+            a_sig=2, b_sig=1, #IG
+            a_mu=1, b_mu=1, cs_mu=.1, #Beta
             a_m=2,b_m=1, cs_m=1, #Gamma
-            a_w=200,b_w=2, #IG basically fixing w2
+            a_w=2000,b_w=2, #IG basically fixing w2
             alpha=.1, a_v=1, b_v=1, cs_v=.4,
-            B=2000,burn=10000,printEvery=1000))
+            B=2000,burn=50000,printEvery=1000))
 
 
 # 2.78s: 100obs, bigHPElite, B=2000, burn=10000
@@ -71,6 +71,6 @@ out_scala <- list(mu= s %~% 'out.map(_.mu).toArray',
 
 # plot
 pdf("output/compare.pdf",w=13,h=7)
-plotPurity(out,dat)
+plotPurity(out,dat,rgba_l=.5)
 plotPurity(out_scala, dat)
 dev.off()
