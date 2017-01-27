@@ -16,8 +16,8 @@ sim_logN1OverN0 <- function(phi, mu, m, s2, n) {
 }
 
 genData <- function(phi_mean, phi_var, mu, sig2,
-                    meanN0=30, minM=0, maxM=5, c=.5,
-                    w2=1, set_v, numLoci) {
+                    meanN0=30, minM=0, maxM=5,
+                    w2=1, set_v, v_sd=0, numLoci) {
   vec <- 1:numLoci
   phi <- rnorm(numLoci, phi_mean, sqrt(phi_var))
   N0 <- 1 + rpois(numLoci, meanN0)
@@ -25,7 +25,8 @@ genData <- function(phi_mean, phi_var, mu, sig2,
   M <- exp( rnorm(numLoci, log(m), sqrt(w2)) )
   logN1OverN0 <- sim_logN1OverN0(phi, mu, m, sig2, numLoci)
   N1 <- floor(exp(logN1OverN0 + log(N0))) + 1
-  v <- sample(unique(set_v), numLoci, replace=TRUE)
+  v <- sample(unique(set_v), numLoci, replace=TRUE) + 
+       ifelse(rep(v_sd>0,numLoci), rnorm(numLoci,0,v_sd), 0)
 
   p <- mu * v * m / (2*(1-mu) + mu*m)
   #n1 <- sapply(rbinom(numLoci, N1, p), function(ps) max(1,ps))
