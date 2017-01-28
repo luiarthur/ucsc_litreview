@@ -24,7 +24,7 @@ system.time(out <- fit(obs$n1, obs$N1, obs$N0, obs$M,
             m_phi=0, s2_phi=1,  #Normal
             #a_sig=2, b_sig=.1, #IG
             a_sig=2, b_sig=1, #IG
-            a_mu=1, b_mu=1, cs_mu=.9, #Beta
+            a_mu=1, b_mu=1, cs_mu=.5, #Beta
             a_m=2,b_m=1, cs_m=.7, #Gamma
             a_w=200,b_w=2, #IG basically fixing w2
             alpha=1, a_v=1, b_v=1, cs_v=1,
