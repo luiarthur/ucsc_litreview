@@ -1,3 +1,8 @@
+color.btwn.lines <- function(xbounds, ybounds,col.area='grey') {
+  n <- length(xbounds)
+  polygon(c(xbounds, rev(xbounds)), rep(ybounds,each=n),col=col.area, border=NA)
+}
+
 "%btwn%" <- function(elem, rng) {
   sapply(1:length(elem), function(i) {
     rng[i,1] <= elem[i] && elem[i] <=rng[i,2]
@@ -38,7 +43,7 @@ plotPurity <- function(out,dat,rgba_level=.2) {
     acc <- apply(out$v,1,function(x) length(unique(x)) / length(x))
     plot(acc[ord],pch=20,col='grey30',bty='n',fg='grey',ylim=c(0,1),cex=.5,
          main="Acceptance Rate",xaxt='n')
-    abline(h=c(.25,.4),col='grey')
+    color.btwn.lines(c(1:length(acc)),c(.25,.4),col=rgb(0,0,0,.2))
   }
   plotInPlot(minor.plot,coords='bottomright')
   #p <- obs$n1 / obs$N1
@@ -58,7 +63,7 @@ plotPurity <- function(out,dat,rgba_level=.2) {
     acc <- apply(out$m,1,function(x) length(unique(x)) / length(x))
     plot(acc,pch=20,col='grey30',bty='n',fg='grey',ylim=c(0,1),cex=.5,
          main="Acceptance Rate",xaxt='n')
-    abline(h=c(.25,.4),col='grey')
+    color.btwn.lines(c(1:length(acc)),c(.25,.4),col=rgb(0,0,0,.2))
   }
   plotInPlot(minor.m,coords='bottomright')
 
@@ -66,3 +71,5 @@ plotPurity <- function(out,dat,rgba_level=.2) {
 
   par(mfrow=c(1,1))
 }
+
+

@@ -25,10 +25,10 @@ function metropolis(curr::Float64, ll, lp, cs::Float64)
 
   const cand = rand(Normal(curr,cs))
 
-  if ll(cand) + lp(cand) - ll(curr) - lp(curr) > log(rand())
-    new_state = cand
+  const new_state = if ll(cand) + lp(cand) - ll(curr) - lp(curr) > log(rand())
+    cand
   else
-    new_state = curr
+    curr
   end
 
   return new_state
@@ -56,7 +56,7 @@ end
 
 function metropolis(curr::Vector{Float64}, ll, lp, cs::Matrix{Float64})
 
-  const cand = rand(MvNormal(curr,cs))
+  const cand = rand( MvNormal(curr,cs) )
 
   const new_state = if ll(cand) + lp(cand) - ll(curr) - lp(curr) > log(rand())
     cand
