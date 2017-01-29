@@ -1,0 +1,239 @@
+\documentclass[12pt]{article}
+\usepackage{bm}
+\usepackage{fullpage, amsmath, mathtools}
+\usepackage{setspace}
+\usepackage{graphicx, psfrag, amsfonts}
+\usepackage{natbib}
+\usepackage{amsthm}
+\usepackage{multirow}
+\usepackage{hhline}
+\usepackage{amssymb}
+
+\newtheorem{theorem}{Theorem}
+\newtheorem{lem}{Lemma}
+\newtheorem{corollary}{Corollary}
+\newtheorem{definition}{Definition}
+\newtheorem{assumption}{Assumption}
+\newtheorem{proposition}{Proposition}
+
+
+% ***************************************************************
+% JUHEE: just comment out this line to get the figures back :-)
+%\renewcommand{\includegraphics}[2][1]{FIGURE HERE}
+
+
+\def\bth{\mbox{\boldmath $\theta$}}
+\def\bmu{\mbox{\boldmath $\mu$}}
+\def\bgam{\mbox{\boldmath $\gamma$}}
+\def\bsig{\mbox{\boldmath $\sigma$}}
+\def\bomega{\mbox{\boldmath $\omega$}}
+\def\bdeta{\mbox{\boldmath $\eta$}}
+\def\bpi{\mbox{\boldmath $\pi$}}
+\def\bbeta{\mbox{\boldmath $\beta$}}
+\newcommand{\pit}{\widetilde{\pi}}
+\def\bpit{\mbox{\boldmath $\pit$}}
+
+\newcommand{\thethe}{ } % {{\bf THE}}  % YUAN & JUHEE:
+   %% in many places i felt we should drop the definte article "the".
+   %% To see all of them just replace this command.
+\newcommand{\bY}{\mbox{\boldmath $Y$}}
+\newcommand{\by}{\mbox{\boldmath $y$}}
+\newcommand{\bx}{\mbox{\boldmath $x$}}
+\newcommand{\bn}{\mbox{\boldmath $n$}}
+\newcommand{\bN}{\mbox{\boldmath $N$}}
+\newcommand{\bc}{\mbox{\boldmath $c$}}
+\newcommand{\bd}{\mbox{\boldmath $d$}}
+\newcommand{\tbc}{\widetilde{\mbox{\boldmath $c$}}}
+\newcommand{\bchat}{\widehat{\mbox{\boldmath $c$}}}
+\newcommand{\bZ}{\mbox{\boldmath $Z$}}
+\newcommand{\bL}{\mbox{\boldmath $L$}}
+\newcommand{\bM}{\mbox{\boldmath $M$}}
+\newcommand{\bz}{\mbox{\boldmath $z$}}
+\newcommand{\bell}{\mbox{\boldmath $\ell$}}
+\renewcommand {\bpi} {\mbox{\boldmath $\pi$}}
+\newcommand{\No} {\text{N}}
+\newcommand {\bg} {\mbox{\boldmath $g$}}
+\newcommand{\Bern} {\text{Bern}}
+
+\newcommand{\bV}{\mbox{\boldmath $V$}}
+\newcommand{\bv}{\mbox{\boldmath $v$}}
+\newcommand{\brr}{\mbox{\boldmath $r$}}
+\newcommand {\bh} {\mbox{\boldmath $h$}}
+
+\newcommand{\wt}{\mbox{$\tilde{w}$}}
+\newcommand{\Mb}{\mbox{$\bar{M}$}}
+\newcommand{\bwt}{\mbox{\boldmath $\tilde{w}$}}
+\newcommand{\bw}{\mbox{\boldmath $w$}}
+\newcommand{\bp}{\mbox{\boldmath $p$}}
+\newcommand{\pt}{\mbox{$\tilde{p}$}}
+
+\newcommand{\btau}{\bm{\tau}}
+\newcommand{\bnu}{\bm{\nu}}
+\newcommand{\Sbar}{\overline{S}}
+\newcommand{\Var} {\text{Var}}
+
+\newcommand{\Ga}{\mbox{Gamma}}
+\newcommand{\Dir}{\mbox{Dir}}
+\newcommand{\Ber}{\mbox{Ber}}
+\newcommand{\Be}{\mbox{Be}}
+\newcommand{\Unif}{\mbox{Unif}}
+\newcommand{\Nor}{\mbox{N}}
+\newcommand{\Binom}{\mbox{Bin}}
+\newcommand{\Multi}{\mbox{Multinomial}}
+\newcommand{\Exp}{\mbox{E}}
+
+
+\newcommand{\Gprime}{G^\prime}
+\newcommand{\Normal}{\mathrm{N}}
+\newcommand{\Poi}{\mathrm{Poi}}
+\renewcommand{\th}{\theta}
+\newcommand{\thstar}{\theta^\star}
+\newcommand{\sig}{\sigma}
+\newcommand{\sigsq}{\sig^2}
+
+\newcommand{\iid}{\stackrel{iid}{\sim}}
+\newcommand{\indep}{\stackrel{indep}{\sim}}
+
+\usepackage[dvipsnames,usenames]{color}
+\newcommand{\bch}{\color{blue}\it}
+\newcommand{\bchm}{\color{red}}
+\newcommand{\ech}{\rm\color{Black}\normalsize}
+\newcommand{\note}[1]{\color{Orange} Note \color{Black} \footnote{\color{Orange}\rm #1 \color{Black}}}
+
+\newcommand{\yy}{\color{magenta}}
+\newcommand{\jj}{\color{Black}\normalsize}
+\newcommand{\yjnote}[1]{\color{blue} Note \color{Black} \footnote{\color{Brown}\rm #1 \color{Black}}}
+
+\newcommand{\cut}{\color{green}[cut] \color{Black}  }
+%\renewcommand{\split}{\color{green}[split] \color{Black}  }
+
+\newcommand{\hh}{\color{Mahogany}}
+
+
+
+
+\begin{document}
+
+\centerline {\bf Tumor Purity}
+\vskip .5in
+
+\today
+
+\begin{enumerate}
+\item Goal:  develop a statistical method to infer tumor purity using DNA-seq data.
+
+\vspace*{0.1in}
+
+
+\item Notation
+\begin{enumerate}
+\item Loci associated with single nucleotide variants (SNVs): $s=1, \ldots, S$
+\item $M_{s}$: tumor cell copy number at locus $s$ from a copy number caller  --- \textbf{Observed}
+\item $N_{ks}$: total number of reads at locus $s$ in sample $k$ where $k=0$ for normal and 1 for tumor  --- \textbf{Observed}
+\item $n_{ks}$:  number of reads indicating variants at locus $s$ in sample $k$  --- \textbf{Observed}
+\end{enumerate}
+
+
+\item Likelihood
+\begin{itemize}
+\item $M_s$: Tumor cell copy number estimate from bioinformatics tools.
+\begin{eqnarray*}
+  \log(M_s) | m_s, \omega^2 \indep \Normal(\log(m_s),\omega^2)
+\end{eqnarray*}
+where
+\begin{description}
+  \item[$m_s$:] true tumor cell copy number. We may fix $\omega^2$
+  at a small value (implying that we believe that the 
+  bioinformatics caller works well.)
+\end{description}
+\item $n_{1s}$:  Define sampling models for $n_{1s}$ conditional on $N_{1s}$ and $M_s$.
+\begin{eqnarray*}
+n_{1s} \mid N_{1s}, p_{s} &\sim& \mbox{Binom}(N_{1s}, p_{s}),  
+\end{eqnarray*}
+where 
+\begin{description}
+\item[$p_{s}$:] the expected proportion of reads indicating mutation at locus $s$
+\end{description}
+
+We formulate $p_s$ as follows:
+\begin{eqnarray*}
+p_s =\frac{\mu \times v_s  \times m_s}{(1-\mu)\times 2 + \mu \times m_s}.
+\end{eqnarray*}
+Reasoning:  
+\begin{itemize}
+\item $\mu$: tumor cell fraction (tumor purity)
+\item no copy number variant in normal cells  $\Rightarrow$ the expected total number of alleles at locus $s$ becomes the average of normal cell copy number (2) and  tumor cell copy number ($m_s$) by weights $(1-\mu)$ (normal cell fraction) and $\mu$.
+\item $v_s$: the proportion of mutated alleles at locus $s$
+\end{itemize}
+
+\item $\log(N_{1s}/N_{0s})$: logR
+$$
+\log(N_{1s}/N_{0s}) \mid m_s, \sigma^2, \mu \sim \Nor\left(\log\left(\frac{(1-\mu)2 + \mu m_s}{2}\right) + \phi_s, \sigma^2\right).
+$$
+Note that if $m_s=2$, the mean of $\log(N_{1s}/N_{0s})$ becomes $\phi$, some adjustment by difference in sequencing depth. 
+\end{itemize}
+
+\end{enumerate}
+
+% ARTHUR LUI
+\newcommand{\ind}{\overset{ind}{\sim}}
+\newcommand{\p}[1]{\left(#1\right)}
+\newcommand{\bk}[1]{\left[#1\right]}
+\renewcommand{\bc}[1]{ \left\{#1\right\} }
+\newcommand{\abs}[1]{ \left|#1\right| }
+\newcommand{\norm}[1]{ \left|\left|#1\right|\right| }
+\newcommand{\N}{ \mathcal N }
+\renewcommand{\L}{ \mathcal L }
+\newcommand{\ds}{ \displaystyle }
+\newcommand{\sums}{\sum_{s=1}^S}
+\newcommand{\prods}{\prod_{s=1}^S}
+\allowdisplaybreaks
+
+\section{Generating Data}
+\subsection{Fixing the Parameters $\sigma^2, w^2$, and $\mu$}
+The parameters were fixed to be $(\sigma^2=.1, w^2=.01, \mu=.8)$.
+
+\subsection{Generating $\bm m$}
+For simplicity, $\bm m$, a vector of length $S$, was simulated by sampling 
+each element $m_s$ independently from a Uniform(1.5,2.5) distribution. 
+i.e., $m_s \iid U(1.5,2.5)$.
+
+\subsection{Generating $\bm v$}
+For simplicity, $\bm v$, a vector of length $S$, was simulated by 
+randomly assigning $v_s$ to be one either .1, .5, or .9. i.e. 
+$$
+v_s = \begin{cases} 
+  0.1, \text{ with probability 1/3} \\
+  0.5, \text{ with probability 1/3} \\
+  0.9, \text{ with probability 1/3} \\
+\end{cases}.
+$$
+
+\subsection{Generating $\bm\phi$}
+The vector $\bm\phi$ of length $S$ was simulated by sampling each element
+$\phi_s$ independently from a Normal distribution with mean 0 and variance
+0.1. i.e. $\phi_s \iid \N(0,0.1)$.
+
+\subsection{Generating $\bm M$}
+The vector $M$ of length $S$ was simulated as follows:
+$\log(M_s) \ind \N(\log(m_s),w^2)$. $M_s$ is then simply $\exp(\log(M_s))$.
+ 
+\subsection{Generating $\bm N_0$}
+Each element of the vector $N_0$ of length $S$ was simulated independently 
+from a Poisson(30) distribution. i.e. $N_{0s} \iid \Poi(30)$.
+
+\subsection{Generating $\bm N_1$}
+First, let $x_s = \log\p{\ds\frac{N_{1s}}{N_{0s}}}$ for $s=1,...,S$.
+$x_s$ are drawn independently from Normal distributions with mean = 
+$\ds\log\p{\frac{2(1-\mu)+\mu m_s}{2} + \phi_s}$ and variance $\sigma^2$.
+Then 
+  $$N_1 = \lfloor\exp(x_s) N_{0s}\rfloor + 1,$$
+where $\lfloor y\rfloor$ denotes the floor of $y$. This ensures that $N_{0s}$
+are integers.
+
+\subsection{Generating $\bm n_1$}
+Using $\mu,\bm{v}$, and $\bm{m}$. We can obtain $\bm{p} = (p_1,...,p_s)$.
+$\bm{n_1}$ is then simply a vector of length $S$ where $n_{1s}$ is simulated
+independently from $\Binom(N_{1s}, p_s)$. i.e. $n_{1s} \ind \Binom(N_{1s},p_s)$
+
+\end{document}
