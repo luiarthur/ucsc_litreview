@@ -36,8 +36,8 @@ pdf("output/datviz.pdf",w=13,h=7)
 plotPurity(out,dat,rgba_l=.5)
 
 par(mfrow=c(2,3))
-plot(obs$M, param$m, xlab="M Truth", ylab="m Truth",pch=20,
-     main="m Truth vs M Truth"); abline(0,1)
+plot(param$m, obs$M, xlab="m Truth", ylab="M Truth",pch=20,
+     main="M Truth vs m Truth"); abline(0,1)
 hyp_dat <- genData(phi_mean=0, phi_var=.1, mu=.8, sig2=.1,
                meanN0=30, minM=0, maxM=4, m_mean=2, m_sd=.001,
                w2=.01, set_v=c(.1,.5,.9), v_sd=.03, numLoci=100)
