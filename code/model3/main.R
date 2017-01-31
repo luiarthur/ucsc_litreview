@@ -13,7 +13,7 @@ sourceCpp("purity3.cpp")
 
 #set.seed(1)
 dat <- genData(phi_mean=0, phi_var=.1, mu=.8, sig2=.1,
-               meanN0=30, minM=1.5, maxM=2.5, 
+               meanN0=30, minM=0, maxM=4, m_mean=2, m_sd=.5,
                w2=.01, set_v=c(.1,.5,.9), v_sd=.03, numLoci=100)
 
 obs <- dat$obs
@@ -32,6 +32,22 @@ system.time(out <- fit(obs$n1, obs$N1, obs$N0, obs$M,
 
 
 # 2.78s: 100obs, bigHPElite, B=2000, burn=10000
+pdf("output/datviz.pdf",w=13,h=7)
+plotPurity(out,dat,rgba_l=.5)
+
+par(mfrow=c(2,3))
+plot(obs$M, param$m, xlab="M Truth", ylab="m Truth",pch=20,
+     main="m Truth vs M Truth"); abline(0,1)
+hyp_dat <- genData(phi_mean=0, phi_var=.1, mu=.8, sig2=.1,
+               meanN0=30, minM=0, maxM=4, m_mean=2, m_sd=.001,
+               w2=.01, set_v=c(.1,.5,.9), v_sd=.03, numLoci=100)
+plot(hyp_dat$obs$N0, hyp_dat$obs$N1, xlab="N0", ylab="N1",pch=20,
+     main="N1 vs N0 when m == 2")
+plot(dat$obs$N0, dat$obs$N1, xlab="N0", ylab="N1",pch=20,
+     main="N1 vs N0 when m <> 2")
+par(mfrow=c(1,1))
+
+dev.off()
 
 ### Scala:
 library(rscala)

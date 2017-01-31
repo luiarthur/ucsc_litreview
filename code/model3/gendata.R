@@ -15,13 +15,23 @@ sim_logN1OverN0 <- function(phi, mu, m, s2, n) {
   rnorm(n, avg, sqrt(s2))
 }
 
-genData <- function(phi_mean, phi_var, mu, sig2,
+gen_m <- function(n, mn, mx, mu, sd) {
+  out <- double(n)
+  sapply(out, function(dummy) {
+         x <- rnorm(1,mu,sd)
+         while (x < mn || x > mx) { x <- rnorm(1,mu,sd) }
+         x
+  })
+}
+
+genData <- function(phi_mean=0, phi_var=.1, mu, sig2,
                     meanN0=30, minM=0, maxM=5,
+                    m_mean=2, m_sd=.5,
                     w2=1, set_v, v_sd=0, numLoci) {
   vec <- 1:numLoci
   phi <- rnorm(numLoci, phi_mean, sqrt(phi_var))
   N0 <- 1 + rpois(numLoci, meanN0)
-  m <- runif(numLoci, minM, maxM)
+  m <- gen_m(numLoci, minM, maxM, m_mean, m_sd)
   M <- exp( rnorm(numLoci, log(m), sqrt(w2)) )
   logN1OverN0 <- sim_logN1OverN0(phi, mu, m, sig2, numLoci)
   N1 <- floor(exp(logN1OverN0 + log(N0))) + 1
