@@ -46,7 +46,6 @@ plot(hyp_dat$obs$N0, hyp_dat$obs$N1, xlab="N0", ylab="N1",pch=20,
 plot(dat$obs$N0, dat$obs$N1, xlab="N0", ylab="N1",pch=20,
      main="N1 vs N0 when m <> 2")
 par(mfrow=c(1,1))
-
 dev.off()
 
 ### Scala:
