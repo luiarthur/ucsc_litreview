@@ -77,45 +77,46 @@ function fit(n₁::Vector{Int}, N₁::Vector{Int}, N₀::Vector{Int}, M::Vector{
     end
 
     ## Update μ
-    #const mu_new = begin
-    #  function llMu(mu::Float64)
-    #    const ll1 = -ss(mu,phi_new,curr.m) / (2*sig2_new)
-    #    const pp = p(mu, v_new, curr.m)
-    #    const ll2 = sum( n₁.*log(pp) + (N₁-n₁).*log(1-pp) )
-    #    return ll1 + ll2
-    #  end
+    const mu_new = begin
+      function llMu(mu::Float64)
+        const ll1 = -ss(mu,phi_new,curr.m) / (2*sig2_new)
+        const pp = p(mu, v_new, curr.m)
+        const ll2 = sum( n₁.*log(pp) + (N₁-n₁).*log(1-pp) )
+        return ll1 + ll2
+      end
 
-    #  lpMu(mu::Float64) = (a_mu-1)*log(mu) + (b_mu-1)*log(1-mu)
+      lpMu(mu::Float64) = (a_mu-1)*log(mu) + (b_mu-1)*log(1-mu)
 
-    #  DPMM.metLogit(curr.mu, llMu, lpMu, cs_mu)
-    #end
+      DPMM.metLogit(curr.mu, llMu, lpMu, cs_mu)
+    end
 
     # Update m
-    #const m_new = M
-    #const m_new = begin
-    #  function lp(m::Vector{Float64})
-    #    return any(m .< 0) ? -Inf : sum((a_m-1)*log(m) - b_m*m)
-    #  end
+    const m_new = M
+    const m_new = begin
+      function lp(m::Vector{Float64})
+        return any(m .< 0) ? -Inf : sum((a_m-1)*log(m) - b_m*m)
+      end
 
-    #  function ll(m::Vector{Float64})
-    #    const out = if any(m .< 0) 
-    #      -Inf
-    #    else
-    #      const zz = z(mu_new, m)
-    #      const pp = p(mu_new, v_new, m)
-    #      const ll1 = sum(n₁ .* log(pp) + (N₁-n₁) .* log(1-pp))
-    #      const ll2 = -sum( (log(zz)-phi_new).^2 ) / (2*sig2_new)
-    #      const ll3 = -sum(log(M ./ m).^2) / (2*w2_new)
-    #      ll1 + ll2 + ll3
-    #    end
+      function ll(m::Vector{Float64})
+        const out = if any(m .< 0) 
+          -Inf
+        else
+          const zz = z(mu_new, m)
+          const pp = p(mu_new, v_new, m)
+          const ll1 = sum(n₁ .* log(pp) + (N₁-n₁) .* log(1-pp))
+          const ll2 = -sum( (log(zz)-phi_new).^2 ) / (2*sig2_new)
+          const ll3 = -sum(log(M ./ m).^2) / (2*w2_new)
+          ll1 + ll2 + ll3
+        end
 
-    #    return out
-    #  end
+        return out
+      end
 
-    #  DPMM.metropolis(curr.m, ll, lp, cs_m*Iₛ)
-    #end
+      DPMM.metropolis(curr.m, ll, lp, cs_m*Iₛ)
+    end
 
     # Update μ and m
+    #=
     const mu_and_m_new = begin 
       const mu_and_m = [curr.mu; curr.m]
 
@@ -161,6 +162,7 @@ function fit(n₁::Vector{Int}, N₁::Vector{Int}, N₀::Vector{Int}, M::Vector{
 
     const mu_new = mu_and_m_new[1]
     const m_new = mu_and_m_new[2:end]
+    =#
 
     return State(v_new, phi_new, m_new, mu_new, w2_new, sig2_new)
   end
