@@ -14,7 +14,7 @@ sourceCpp("purity3.cpp")
 #set.seed(1)
 dat <- genData(phi_mean=0, phi_var=.1, mu=.8, sig2=.1,
                meanN0=30, minM=0, maxM=4, m_mean=2, m_sd=.5,
-               w2=.01, set_v=c(.1,.5,.9), v_sd=.03, numLoci=100)
+               w2=.01, set_v=c(.1,.5,.9), v_sd=.0, numLoci=200)
 
 obs <- dat$obs
 param <- dat$param
@@ -24,7 +24,7 @@ system.time(out <- fit(obs$n1, obs$N1, obs$N0, obs$M,
             m_phi=0, s2_phi=1,  #Normal
             #a_sig=2, b_sig=.1, #IG
             a_sig=2, b_sig=1, #IG
-            a_mu=1, b_mu=1, cs_mu=.5, #Beta
+            a_mu=1, b_mu=1, cs_mu=.3, #Beta
             a_m=2,b_m=1, cs_m=.7, #Gamma
             a_w=200,b_w=2, #IG basically fixing w2
             alpha=1, a_v=1, b_v=1, cs_v=1,

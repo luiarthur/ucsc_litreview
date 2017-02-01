@@ -69,7 +69,8 @@ double metLogit(double curr, std::function<double(double)> ll,
   // capture invLogit,lp in []
   auto lp_logit = [invLogit,lp](double logit_p) {
     const double p = invLogit(logit_p);
-    const double log_J = -logit_p + 2 * log(p);
+    //const double log_J = -logit_p + 2*log(p); // ???
+    const double log_J = -logit_p + 2*log(1-p); // ???
     return lp(p) + log_J;
   };
 
