@@ -26,8 +26,9 @@ N1 = Vector{Int}(N1)
 N0 = Vector{Int}(N0)
 
 
-@time out = Purity.fit(n1,N1,N0,M,2000,10000, s2_phi=1.,
-                       cs_m=1E-3,cs_mu=5E-1,cs_v=2.0,
+@time out = Purity.fit(n1,N1,N0,M,2000,20000, s2_phi=1.,
+                       #cs_m=1E-3,cs_mu=5E-1,cs_v=2.0,
+                       cs_m=5E-4,cs_mu=1E-4,cs_v=2E-0,
                        printFreq=1000);
 
 v = hcat(map(o->o.v, out)...)

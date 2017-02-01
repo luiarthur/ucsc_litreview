@@ -35,21 +35,20 @@ function metropolis(curr::Float64, ll, lp, cs::Float64)
 end
 
 
-
-logit(p::Float64) = log(p / (1.0-p))
-invlogit(x::Float64) = 1.0 / (1.0+exp(-x))
+logit(p::Float64,a::Float64=0.0,b::Float64=1.0) = log( (p-a)/ (b-p) )
+inv_logit(x::Float64,a::Float64=0.0,b::Float64=1.0) = (b*exp(x)+a) / (1+exp(x))
 
 function metLogit(curr::Float64, ll, lp, cs::Float64)
 
   function lp_logit(logit_p::Float64)
-    const p = invlogit(logit_p)
+    const p = inv_logit(logit_p)
     const logJ = -logit_p + 2.0*log(p)
     return lp(p) + logJ
   end
   
-  ll_logit(logit_p::Float64) = ll(invlogit(logit_p))
+  ll_logit(logit_p::Float64) = ll(inv_logit(logit_p))
 
-  return invlogit(metropolis(logit(curr),ll_logit,lp_logit,cs))
+  return inv_logit(metropolis(logit(curr),ll_logit,lp_logit,cs))
 end
 
 
@@ -66,3 +65,22 @@ function metropolis(curr::Vector{Float64}, ll, lp, cs::Matrix{Float64})
 
   return new_state
 end
+
+
+# For transforming bounded parameters to have infinite support
+
+function lp_log_gamma(log_x::Float64, shape::Float64, rate::Float64)
+  #shape*log(rate) - lgamma(shape) + shape*log_x - rate*exp(log_x)
+  const log_abs_J = log_x
+  return logpdf(Gamma(shape,1/rate), exp(log_x)) + log_abs_J
+end
+
+function lp_log_invgamma(log_x::Float64, a::Float64, b_numer::Float64)
+  #a*log(b_numer) - lgamma(a) - a*log_x - b_numer*exp(-log_x)
+  const log_abs_J = log_x
+  return logpdf(InverseGamma(a,b_numer), exp(log_x)) + log_abs_J
+end
+
+#lp_logit_unif(logit_u::Float64) = logit_u - 2*log(1+exp(logit_u)) 
+lp_logit_unif(logit_u::Float64) = logpdf(Logistic(), logit_u)
+

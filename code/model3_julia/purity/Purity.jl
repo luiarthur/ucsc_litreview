@@ -25,7 +25,7 @@ function fit(n₁::Vector{Int}, N₁::Vector{Int}, N₀::Vector{Int}, M::Vector{
   
   const numLoci = length(n₁)
   const Iₛ = eye(numLoci)
-  const cs_mu_and_m = Matrix(Diagonal([cs_mu; fill(cs_m,numLoci)]))
+  #const cs_mu_and_m = Matrix(Diagonal([cs_mu; fill(cs_m,numLoci)]))
 
   function update(curr::State)
     # Helper Fn
@@ -64,7 +64,7 @@ function fit(n₁::Vector{Int}, N₁::Vector{Int}, N₀::Vector{Int}, M::Vector{
     end
 
     # Update v
-    const v_new = begin
+    const v_tmp = begin
       function lf(vs::Float64, s::Int)
         const pss = ps(curr.mu, vs, curr.m[s])
         return n₁[s]*log(pss) + (N₁[s]-n₁[s])*log(1-pss)
@@ -77,43 +77,79 @@ function fit(n₁::Vector{Int}, N₁::Vector{Int}, N₀::Vector{Int}, M::Vector{
                  numClusterUpdates=1)
     end
 
-    ## Update μ
-    const mu_new = begin
-      function llMu(mu::Float64)
+    # Update v and mu
+    const (mu_new,v_new) = begin
+      const v_star = unique(v_tmp)
+      const K = length(v_star)
+
+      # getting cluster membership
+      const idx = Dict{Int,Int}()
+      for i in 1:numLoci
+        j = 1
+        while v_tmp[i] != v_star[j]
+          j += 1
+        end
+        assert(j <= K)
+        idx[i] = j
+      end
+
+      lp_logit_muv(logit_muv::Vector{Float64}) = sum(DPMM.lp_logit_unif.(logit_muv))
+
+      function ll_logit_muv(logit_muv::Vector{Float64})
+        const muv = DPMM.inv_logit.(logit_muv)
+        const mu = muv[1]
+        const v_unique = muv[2:end]
+        const v = v_unique[[idx[i] for i in 1:numLoci]]
+
         const ll1 = -ss(mu,phi_new,curr.m) / (2*sig2_new)
-        const pp = p(mu, v_new, curr.m)
+        const pp = p(mu, v, curr.m)
         const ll2 = sum( n₁.*log(pp) + (N₁-n₁).*log(1-pp) )
         return ll1 + ll2
       end
 
-      lpMu(mu::Float64) = (a_mu-1)*log(mu) + (b_mu-1)*log(1-mu)
+      const logit_muv = DPMM.logit.([curr.mu; v_star])
+      const cs_mu_and_v = Matrix(Diagonal([cs_mu; fill(cs_v,K)]))
+      const muv_new = DPMM.inv_logit.(DPMM.metropolis(logit_muv,
+                                                      ll_logit_muv,lp_logit_muv,
+                                                      cs_mu_and_v))
 
-      DPMM.metLogit(curr.mu, llMu, lpMu, cs_mu)
+      const v_new = [ muv_new[idx[i]+1] for i in 1:numLoci ]
+
+      (muv_new[1], v_new)
     end
+
+    ## Update μ
+    #const mu_new = begin
+    #  function llMu(mu::Float64)
+    #    const ll1 = -ss(mu,phi_new,curr.m) / (2*sig2_new)
+    #    const pp = p(mu, v_new, curr.m)
+    #    const ll2 = sum( n₁.*log(pp) + (N₁-n₁).*log(1-pp) )
+    #    return ll1 + ll2
+    #  end
+
+    #  lpMu(mu::Float64) = (a_mu-1)*log(mu) + (b_mu-1)*log(1-mu)
+
+    #  DPMM.metLogit(curr.mu, llMu, lpMu, cs_mu)
+    #end
 
     # Update m
     const m_new = M
     const m_new = begin
-      function lp(m::Vector{Float64})
-        return any(m .< 0) ? -Inf : sum((a_m-1)*log(m) - b_m*m)
+      function lp_log_m(log_m::Vector{Float64})
+        return sum( DPMM.lp_log_gamma(lm, a_m, b_m) for lm in log_m )
       end
 
-      function ll(m::Vector{Float64})
-        const out = if any(m .< 0) 
-          -Inf
-        else
-          const zz = z(mu_new, m)
-          const pp = p(mu_new, v_new, m)
-          const ll1 = sum(n₁ .* log(pp) + (N₁-n₁) .* log(1-pp))
-          const ll2 = -sum( (log(zz)-phi_new).^2 ) / (2*sig2_new)
-          const ll3 = -sum(log(M ./ m).^2) / (2*w2_new)
-          ll1 + ll2 + ll3
-        end
-
-        return out
+      function ll_log_m(log_m::Vector{Float64})
+        const m = exp(log_m)
+        const zz = z(mu_new, m)
+        const pp = p(mu_new, v_new, m)
+        const ll1 = sum(n₁ .* log(pp) + (N₁-n₁) .* log(1-pp))
+        const ll2 = -sum( (log(zz)-phi_new).^2 ) / (2*sig2_new)
+        const ll3 = -sum(log(M ./ m).^2) / (2*w2_new)
+        return ll1 + ll2 + ll3
       end
 
-      DPMM.metropolis(curr.m, ll, lp, cs_m*Iₛ)
+      exp(DPMM.metropolis(log(curr.m), ll_log_m, lp_log_m, cs_m*Iₛ))
     end
 
     return State(v_new, phi_new, m_new, mu_new, w2_new, sig2_new)
