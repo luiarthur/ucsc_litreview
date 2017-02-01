@@ -73,7 +73,8 @@ function fit(n₁::Vector{Int}, N₁::Vector{Int}, N₀::Vector{Int}, M::Vector{
       lg0(vs::Float64) = (a_v-1)*log(vs) + (b_v-1)*log(1-vs)
       rg0() = rand(Beta(a_v, b_v))
 
-      DPMM.neal8(alpha, curr.v, lf, lg0, rg0, DPMM.metLogit, cs_v)
+      DPMM.neal8(alpha,curr.v,lf,lg0,rg0,DPMM.metLogit,cs_v,
+                 numClusterUpdates=1)
     end
 
     ## Update μ
