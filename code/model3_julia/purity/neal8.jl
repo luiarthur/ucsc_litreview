@@ -1,5 +1,6 @@
 function neal8(a::Float64, θ::Vector{Float64},
-               lf, lg0, rg0, mh, cs::Float64)
+               lf, lg0, rg0, mh, cs::Float64;
+               numClusterUpdates::Int=1)
 
   f(x::Float64,i::Int) = exp(lf(x,i))
   const n::Int = length(θ)
@@ -37,11 +38,13 @@ function neal8(a::Float64, θ::Vector{Float64},
   end
 
   # update by cluster
-  const θ_star = unique(newθ)
-  for θⱼ in θ_star
-    const idx = oneToN[newθ .== θⱼ]#find(ti -> ti == θⱼ, newθ)
-    ll(t::Float64) = sum([lf(t,i) for i in idx])
-    newθ[idx] = mh(θⱼ,ll,lg0,cs)
+  if (numClusterUpdates == 1)
+    const θ_star = unique(newθ)
+    for θⱼ in θ_star
+      const idx = oneToN[newθ .== θⱼ]#find(ti -> ti == θⱼ, newθ)
+      ll(t::Float64) = sum([lf(t,i) for i in idx])
+      newθ[idx] = mh(θⱼ,ll,lg0,cs)
+    end
   end
 
   return newθ

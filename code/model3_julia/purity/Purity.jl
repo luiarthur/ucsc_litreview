@@ -57,6 +57,12 @@ function fit(n₁::Vector{Int}, N₁::Vector{Int}, N₀::Vector{Int}, M::Vector{
       rand( MvNormal(phi_mean, phi_var * eye(numLoci)) )
     end
 
+    # Update w²
+    const w2_new = begin
+      const ssM = sum(log(M ./ curr.m) .^ 2)
+      rand( InverseGamma(a_w+numLoci/2, b_w+ssM/2) )
+    end
+
     # Update v
     const v_new = begin
       function lf(vs::Float64, s::Int)
@@ -68,12 +74,6 @@ function fit(n₁::Vector{Int}, N₁::Vector{Int}, N₀::Vector{Int}, M::Vector{
       rg0() = rand(Beta(a_v, b_v))
 
       DPMM.neal8(alpha, curr.v, lf, lg0, rg0, DPMM.metLogit, cs_v)
-    end
-
-    # Update w²
-    const w2_new = begin
-      const ssM = sum(log(M ./ curr.m) .^ 2)
-      rand( InverseGamma(a_w+numLoci/2, b_w+ssM/2) )
     end
 
     ## Update μ
