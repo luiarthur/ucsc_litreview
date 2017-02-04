@@ -27,23 +27,36 @@ function fit(n₁::Vector{Int}, N₁::Vector{Int}, N₀::Vector{Int}, M::Vector{
   const Iₛ = eye(numLoci)
   #const cs_mu_and_m = Matrix(Diagonal([cs_mu; fill(cs_m,numLoci)]))
 
+  # Helper Fn
+  function p(mu::Float64, v::Vector{Float64}, m::Vector{Float64})
+    return (mu * v .* m) ./ (2.0*(1.0-mu) + mu*m)
+  end
+
+  function ps(mu::Float64, vs::Float64, ms::Float64)
+    return (mu * vs * ms) / (2.0*(1.0-mu) + mu*ms)
+  end
+
+  function z(mu::Float64, m::Vector{Float64})
+    return (2N₁) ./ (N₀ .* (2*(1-mu) + mu*m))
+  end
+
+  function ss(mu::Float64, phi::Vector{Float64}, m::Vector{Float64})
+    return sum( (log(z(mu,m)) .- phi) .^ 2 )
+  end
+
+  function loglike(curr::State)
+    const zz = z(curr.mu, curr.m)
+    const pp = p(curr.mu, curr.v, curr.m)
+
+    const ll1 = sum(n₁ .* log(pp) + (N₁-n₁) .* log(1-pp))
+    const ll2 = -sum( (log(zz)-curr.phi).^2 ) / (2*curr.sig2)
+    const ll3 = -sum(log(M ./ curr.m).^2) / (2*curr.w2)
+  end
+
+  const ll_vec = Vector{Float64}(B)
+  it = 0
+
   function update(curr::State)
-    # Helper Fn
-    function p(mu::Float64, v::Vector{Float64}, m::Vector{Float64})
-      return (mu * v .* m) ./ (2.0*(1.0-mu) + mu*m)
-    end
-
-    function ps(mu::Float64, vs::Float64, ms::Float64)
-      return (mu * vs * ms) / (2.0*(1.0-mu) + mu*ms)
-    end
-
-    function z(mu::Float64, m::Vector{Float64})
-      return (2N₁) ./ (N₀ .* (2*(1-mu) + mu*m))
-    end
-
-    function ss(mu::Float64, phi::Vector{Float64}, m::Vector{Float64})
-      return sum( (log(z(mu,m)) .- phi) .^ 2 )
-    end
 
     # Update σ²
     const sig2_new = rand(InverseGamma(a_sig + numLoci/2, 
@@ -153,12 +166,22 @@ function fit(n₁::Vector{Int}, N₁::Vector{Int}, N₀::Vector{Int}, M::Vector{
       exp(DPMM.metropolis(log(curr.m), ll_log_m, lp_log_m, cs_m*Iₛ))
     end
 
-    return State(v_new, phi_new, m_new, mu_new, w2_new, sig2_new)
+    const new_state = State(v_new, phi_new, m_new, mu_new, w2_new, sig2_new)
+
+    # Compute ll. Comment this out when done testing.
+    it += 1
+    if it >= burn 
+      ll_vec[it-burn+1] = loglike(new_state)
+    end
+    # end of compute ll
+
+    return new_state
   end
 
   const init = State(fill(.5,numLoci),fill(0.,numLoci),fill(2.,numLoci),.5,1.,1.)
 
-  return DPMM.gibbs(init, update, B, burn, printFreq=printFreq)
+  return (ll_vec, DPMM.gibbs(init, update, B, burn, printFreq=printFreq))
+  #return DPMM.gibbs(init, update, B, burn, printFreq=printFreq)
 end
 
 end

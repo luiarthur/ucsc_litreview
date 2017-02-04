@@ -26,10 +26,10 @@ N1 = Vector{Int}(N1)
 N0 = Vector{Int}(N0)
 
 
-@time out = Purity.fit(n1,N1,N0,M,2000,10000, s2_phi=1.,
-                       cs_m=5E-4,cs_mu=5E-1,cs_v=0.1,
-                       #cs_m=5E-4,cs_mu=1E-2,cs_v=2E-2,
-                       printFreq=1000);
+@time ll,out = Purity.fit(n1,N1,N0,M,2000,10000, s2_phi=1.,
+                          cs_m=5E-4,cs_mu=5E-1,cs_v=0.1,
+                          #cs_m=5E-4,cs_mu=1E-2,cs_v=2E-2,
+                          printFreq=1000);
 
 v = hcat(map(o->o.v, out)...)
 phi = hcat(map(o->o.phi,out)...)
@@ -41,7 +41,9 @@ w2 = map(o->o.w2, out)
 R"pdf('../../model3/output/multivariate.pdf',w=13,h=8)"
 R"out <- list(v=$v,phi=$phi,m=$m,mu=$mu,sig2=$sig2,w2=$w2)";
 R"plotPurity(out,dat)";
+R"plot($ll,type='l',main='Log likelihood after burn-in',ylab='log likelihood')"
 R"dev.off()"
+
 
 #=
 include("test.jl")
