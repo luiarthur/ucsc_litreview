@@ -13,6 +13,8 @@ immutable State
   sig2::Float64
 end
 
+const null_state = State([0.0], [0.0], [0.0], 0.0, 0.0, 0.0)
+
 function fit(n₁::Vector{Int}, N₁::Vector{Int}, N₀::Vector{Int}, M::Vector{Float64},
              B::Int, burn::Int; 
              m_phi::Float64=0.0, s2_phi::Float64=10.0,
@@ -21,7 +23,8 @@ function fit(n₁::Vector{Int}, N₁::Vector{Int}, N₀::Vector{Int}, M::Vector{
              a_m::Float64=1.0, b_m::Float64=1.0, cs_m::Float64=1.0,
              a_w::Float64=200.0, b_w::Float64=2.0,
              a_v::Float64=1.0, b_v::Float64=1.0, cs_v::Float64=1.0,
-             alpha::Float64=1.0, printFreq::Int=0)
+             alpha::Float64=1.0, printFreq::Int=0,
+             truth=null_state)
   
   const numLoci = length(n₁)
   const Iₛ = eye(numLoci)
@@ -44,41 +47,54 @@ function fit(n₁::Vector{Int}, N₁::Vector{Int}, N₀::Vector{Int}, M::Vector{
     return sum( (log(z(mu,m)) .- phi) .^ 2 )
   end
 
-  function loglike(curr::State)
-    const zz = z(curr.mu, curr.m)
-    const pp = p(curr.mu, curr.v, curr.m)
+  function loglike(state::State)
+    const zz = z(state.mu, state.m)
+    const pp = p(state.mu, state.v, state.m)
 
     const ll1 = sum(n₁ .* log(pp) + (N₁-n₁) .* log(1-pp))
-    const ll2 = -sum( (log(zz)-curr.phi).^2 ) / (2*curr.sig2)
-    const ll3 = -sum(log(M ./ curr.m).^2) / (2*curr.w2)
+    const ll2 = -sum( (log(zz)-state.phi).^2 ) / (2*state.sig2) - (numLoci/2)*log(state.sig2)
+    const ll3 = -sum(log(M ./ state.m).^2) / (2*state.w2) - (numLoci/2)*log(state.w2)
+
+    return ll1 + ll2 + ll3
   end
 
-  const ll_vec = Vector{Float64}(B)
+  #const ll_vec = Vector{Float64}(B)
+  const ll_vec = Vector{Float64}(B+burn-1)
   it = 0
 
   function update(curr::State)
 
     # Update σ²
-    const sig2_new = rand(InverseGamma(a_sig + numLoci/2, 
-                                       b_sig + ss(curr.mu, curr.phi, curr.m)/2))
+    const sig2_new = if truth.sig2 != null_state.sig2
+      truth.sig2
+    else
+      rand(InverseGamma(a_sig + numLoci/2, 
+                        b_sig + ss(curr.mu, curr.phi, curr.m)/2))
+    end
 
     # Update ϕ
-    const phi_new = begin
+    const phi_new = if truth.phi != null_state.phi
+      truth.phi
+    else
       const phi_denom = sig2_new + s2_phi
       const phi_mean = ( log(z(curr.mu,curr.m)*s2_phi) + m_phi*sig2_new) / phi_denom
       const phi_var = sig2_new*s2_phi / phi_denom
       rand( MvNormal(phi_mean, phi_var * eye(numLoci)) )
     end
 
-    # Update w²
-    const w2_new = begin
+    # Update w² # messing up the loglike
+    const w2_new = if truth.w2 != null_state.w2
+      truth.w2
+    else
       const ssM = sum(log(M ./ curr.m) .^ 2)
       rand( InverseGamma(a_w+numLoci/2, b_w+ssM/2) )
     end
 
     # Update v
     #const v_tmp = begin
-    const v_new = begin
+    const v_new = if truth.v != null_state.v
+      truth.v
+    else
       function lf(vs::Float64, s::Int)
         const pss = ps(curr.mu, vs, curr.m[s])
         return n₁[s]*log(pss) + (N₁[s]-n₁[s])*log(1-pss)
@@ -133,7 +149,9 @@ function fit(n₁::Vector{Int}, N₁::Vector{Int}, N₀::Vector{Int}, M::Vector{
     #end
 
     ## Update μ
-    const mu_new = begin
+    const mu_new = if truth.mu != null_state.mu
+      truth.mu
+    else
       function llMu(mu::Float64)
         const ll1 = -ss(mu,phi_new,curr.m) / (2*sig2_new)
         const pp = p(mu, v_new, curr.m)
@@ -147,8 +165,9 @@ function fit(n₁::Vector{Int}, N₁::Vector{Int}, N₀::Vector{Int}, M::Vector{
     end
 
     # Update m
-    const m_new = M
-    const m_new = begin
+    const m_new = if truth.m != null_state.m
+      truth.m
+    else
       function lp_log_m(log_m::Vector{Float64})
         return sum( DPMM.lp_log_gamma(lm, a_m, b_m) for lm in log_m )
       end
@@ -170,8 +189,11 @@ function fit(n₁::Vector{Int}, N₁::Vector{Int}, N₀::Vector{Int}, M::Vector{
 
     # Compute ll. Comment this out when done testing.
     it += 1
-    if it >= burn 
-      ll_vec[it-burn+1] = loglike(new_state)
+    #if it >= burn 
+    #  ll_vec[it-burn+1] = loglike(new_state)
+    #end
+    if it < B+burn
+      ll_vec[it] = loglike(new_state)
     end
     # end of compute ll
 
