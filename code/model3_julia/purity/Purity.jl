@@ -104,7 +104,7 @@ function fit(n₁::Vector{Int}, N₁::Vector{Int}, N₀::Vector{Int}, M::Vector{
       rg0() = rand(Beta(a_v, b_v))
 
       DPMM.neal8(alpha,curr.v,lf,lg0,rg0,DPMM.metLogit,cs_v,
-                 numClusterUpdates=0)
+                 numClusterUpdates=1)
     end
 
     # Update v and mu
