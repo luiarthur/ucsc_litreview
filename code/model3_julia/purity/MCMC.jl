@@ -35,22 +35,6 @@ function metropolis(curr::Float64, ll, lp, cs::Float64)
 end
 
 
-logit(p::Float64,a::Float64=0.0,b::Float64=1.0) = log( (p-a)/ (b-p) )
-inv_logit(x::Float64,a::Float64=0.0,b::Float64=1.0) = (b*exp(x)+a) / (1+exp(x))
-
-function metLogit(curr::Float64, ll, lp, cs::Float64)
-
-  function lp_logit(logit_p::Float64)
-    const p = inv_logit(logit_p)
-    const logJ = -logit_p + 2.0*log(p)
-    return lp(p) + logJ
-  end
-  
-  ll_logit(logit_p::Float64) = ll(inv_logit(logit_p))
-
-  return inv_logit(metropolis(logit(curr),ll_logit,lp_logit,cs))
-end
-
 
 
 function metropolis(curr::Vector{Float64}, ll, lp, cs::Matrix{Float64})
@@ -84,3 +68,13 @@ end
 #lp_logit_unif(logit_u::Float64) = logit_u - 2*log(1+exp(logit_u)) 
 lp_logit_unif(logit_u::Float64) = logpdf(Logistic(), logit_u)
 
+logit(p::Float64,a::Float64=0.0,b::Float64=1.0) = log( (p-a)/ (b-p) )
+inv_logit(x::Float64,a::Float64=0.0,b::Float64=1.0) = (b*exp(x)+a) / (1+exp(x))
+
+function metLogit(curr::Float64, ll, lp, cs::Float64)
+
+  lp_logit(logit_p::Float64) = lp(inv_logit(logit_p)) + lp_logit_unif(logit_p)
+  ll_logit(logit_p::Float64) = ll(inv_logit(logit_p))
+
+  return inv_logit(metropolis(logit(curr),ll_logit,lp_logit,cs))
+end

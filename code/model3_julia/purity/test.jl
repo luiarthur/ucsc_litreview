@@ -9,7 +9,7 @@ set.seed(1)
 source("../../model3/gendata.R")
 dat <- genData(phi_mean=0, phi_var=.1, mu=.8, sig2=.1,
                meanN0=30, minM=1.5, maxM=2.5, 
-               w2=.01, set_v=c(.1,.5,.9), v_sd=.03, numLoci=100)
+               w2=.01, set_v=c(.8), v_sd=0, numLoci=100)
 
 obs <- dat$obs
 param <- dat$param
@@ -33,19 +33,19 @@ N1 = Vector{Int}(N1)
 N0 = Vector{Int}(N0)
 
 
-@time ll,out = Purity.fit(n1,N1,N0,M,2000,10000, s2_phi=1.,
-                          cs_m=5E-4,cs_mu=5E-1,cs_v=0.9,
+@time ll,out = Purity.fit(n1,N1,N0,M,50000,20000, s2_phi=1.,
+                          cs_m=5E-4,cs_mu=.1,cs_v=1.9,
                           #cs_m=5E-4,cs_mu=1E-2,cs_v=2E-2,
                           printFreq=1000, 
                           truth=Purity.State([0.],phi_truth,m_truth,
                                              0.,w2_truth,sig2_truth));
 
-v = hcat(map(o->o.v, out)...)
-phi = hcat(map(o->o.phi,out)...)
-m = hcat(map(o->o.m,out)...)
-mu = map(o->o.mu, out)
-sig2 = map(o->o.sig2, out)
-w2 = map(o->o.w2, out)
+v = hcat(map(o->o.v, out)...);
+phi = hcat(map(o->o.phi,out)...);
+m = hcat(map(o->o.m,out)...);
+mu = map(o->o.mu, out);
+sig2 = map(o->o.sig2, out);
+w2 = map(o->o.w2, out);
 
 R"pdf('../../model3/output/multivariate.pdf',w=13,h=8)"
 R"out <- list(v=$v,phi=$phi,m=$m,mu=$mu,sig2=$sig2,w2=$w2)";
