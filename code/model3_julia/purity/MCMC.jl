@@ -90,5 +90,10 @@ function autotune(accept::Float64, target::Float64=.3, k::Float64=2.5)
 end
 
 function acceptance_rate{T}(samples::Vector{T})
-  return mean(samples[i] == samples[i-1] for i in 2:length(samples))
+  return mean(samples[i] != samples[i-1] for i in 2:length(samples))
+end
+
+function collect_posterior{T}(samples::Vector{T})
+  return [ map(s -> getfield(s, p), samples) for p in fieldnames(samples[1])]
+  # maybe also return it as a struct?
 end

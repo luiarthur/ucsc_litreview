@@ -70,4 +70,7 @@ R"dev.off()";
 
 #=
 include("test.jl")
+Purity.DPMM.
+collect_posterior(out)
+Purity.DPMM.acceptance_rate(mu)
 =#
