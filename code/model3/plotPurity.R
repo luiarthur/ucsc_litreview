@@ -9,7 +9,7 @@ color.btwn.lines <- function(xbounds, ybounds,col.area='grey') {
   })
 }
 
-plotPurity <- function(out,dat,rgba_level=.2) {
+plotPurity <- function(out,dat,rgba_level=.2,v_acc=TRUE) {
   obs <- dat$obs
   param <- dat$param
 
@@ -45,7 +45,7 @@ plotPurity <- function(out,dat,rgba_level=.2) {
          main="Acceptance Rate",xaxt='n')
     color.btwn.lines(c(1:length(acc)),c(.25,.4),col=rgb(0,0,0,.2))
   }
-  plotInPlot(minor.plot,coords='bottomright')
+  if (v_acc) plotInPlot(minor.plot,coords='bottomright')
   #p <- obs$n1 / obs$N1
   #points(p[ord],col='red',pch=20)
 
