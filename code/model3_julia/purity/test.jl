@@ -9,7 +9,7 @@ set.seed(1)
 source("../../model3/gendata.R")
 dat <- genData(phi_mean=0, phi_var=.1, mu=.8, sig2=.1,
                meanN0=30, minM=1.5, maxM=2.5, m_sd=3,
-               w2=.0001, set_v=c(.1,.5,.9), v_sd=0, numLoci=2000)
+               w2=.0001, set_v=c(.1,.5,.9), v_sd=0, numLoci=200)
 
 obs <- dat$obs
 param <- dat$param

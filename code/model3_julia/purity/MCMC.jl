@@ -78,3 +78,17 @@ function metLogit(curr::Float64, ll, lp, cs::Float64)
 
   return inv_logit(metropolis(logit(curr),ll_logit,lp_logit,cs))
 end
+
+# Autotune MCMC candsig
+"""
+k = (window / 50) is good
+Multiply this with the old cs to get a new cs
+"""
+function autotune(accept::Float64, target::Float64=.3, k::Float64=2.5)
+  return (1+(cosh(accept-target)-1)*(k-1)/(cosh(target-
+             ceil(accept-target))-1))^sign(accept-target)
+end
+
+function acceptance_rate{T}(samples::Vector{T})
+  return mean(samples[i] == samples[i-1] for i in 2:length(samples))
+end
