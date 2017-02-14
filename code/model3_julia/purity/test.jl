@@ -43,12 +43,12 @@ N0 = Vector{Int}(N0)
 
 @time ll,out = Purity.fit(n1,N1,N0,M,2000,10000, s2_phi=1.,
                           #cs_m=.000005,cs_mu=.1,cs_v=.5,
-                          cs_m=.000005,cs_mu=.0001,cs_v=.0005,
+                          cs_m=.000005,cs_mu=.1,cs_v=.0005,
                           a_mu=.01, b_mu=.01,
                           a_w=20000., b_w=2.,
                           printFreq=1000, 
-                          truth=Purity.State([0.],phi_truth,m_truth,
-                                             0.,w2_truth,sig2_truth));
+                          truth=Purity.State(v_truth,[0.],[0.],
+                                             0.,0.,0.));
 
 v = hcat(map(o->o.v, out)...);
 phi = hcat(map(o->o.phi,out)...);
@@ -59,7 +59,7 @@ w2 = map(o->o.w2, out);
 
 R"pdf('../../model3/output/multivariate.pdf',w=13,h=8)";
 R"out <- list(v=$v,phi=$phi,m=$m,mu=$mu,sig2=$sig2,w2=$w2)";
-R"plotPurity(out,dat,rgba_level=.1,v_acc=FALSE)";
+R"plotPurity(out,dat,rgba_level=.3,v_acc=FALSE)";
 R"plot($ll,type='l',main='Log likelihood with burn-in',ylab='log likelihood',
 ylim=c(min($ll,$ll_truth),max($ll,$ll_truth)))";
 R"abline(v=length($ll)-length($mu),col='grey', h=$ll_truth)"
