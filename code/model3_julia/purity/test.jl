@@ -9,7 +9,7 @@ set.seed(1)
 source("../../model3/gendata.R")
 dat <- genData(phi_mean=0, phi_var=.1, mu=.8, sig2=.1,
                meanN0=30, minM=1.5, maxM=2.5, m_sd=3,
-               w2=.0001, set_v=c(.1,.5,.9), v_sd=0, numLoci=200)
+               w2=0, set_v=c(.1,.5,.9), v_sd=0, numLoci=200)
 
 obs <- dat$obs
 param <- dat$param
@@ -41,14 +41,14 @@ N0 = Vector{Int}(N0)
                              truth=Purity.State(v_truth,phi_truth,m_truth,
                                                 mu_truth,w2_truth,sig2_truth));
 
-@time ll,out = Purity.fit(n1,N1,N0,M,2000,10000, s2_phi=1.,
+@time ll,out = Purity.fit(n1,N1,N0,M,10000,20000, s2_phi=1.,
                           #cs_m=.000005,cs_mu=.1,cs_v=.5,
                           cs_m=.000005,cs_mu=.1,cs_v=.0005,
                           a_mu=.01, b_mu=.01,
                           a_w=20000., b_w=2.,
                           printFreq=1000, 
-                          truth=Purity.State(v_truth,[0.],[0.],
-                                             0.,0.,0.));
+                          truth=Purity.State([0.],[0.],m_truth,
+                                             0.,w2_truth,0.));
 
 v = hcat(map(o->o.v, out)...);
 phi = hcat(map(o->o.phi,out)...);
