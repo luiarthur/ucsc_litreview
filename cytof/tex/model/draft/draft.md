@@ -79,7 +79,7 @@ Based on the notation above, we propose the following model:
 $$
 \begin{array}{rcl}
 \yin \mid \lambda_{i,n}=k,\muik, \sigma_i^2 &\ind& \N_J^+(\muik,\sigma_i^2 \I_J), \text{ for } i=1,...,I, n = 1,...,N_i\\
-\log(\muik) \mid \bm{\bar{\mu_i}}, \tau_i^2  &\ind& \N_J^+(\bm{\bar{\mu_i}}, \tau^2_i \I_J), \text{ for } i=1,...,I \\
+\log(\muik) \mid \bm{\bar{\mu_i}}, \tau_i^2  &\ind& \N_J(\bm{\bar{\mu_i}}, \tau^2_i \I_J), \text{ for } i=1,...,I \\
 \sigma_i &\ind& IG(a_{\sigma i},b_{\sigma i}), \text{ for } i=1,...,I \\
 \tau_i &\ind& IG(a_{\tau i},b_{\tau i}), \text{ for } i=1,...,I \\
 \\
@@ -93,7 +93,7 @@ where
 - $\N_J^+(\cdot,.\cdot)$ denotes a positive-truncated multivariate Normal
 distribution of dimension $J$,
 - $\lambda_i,n \in \bc{1,...,K}$, where $K$ is some positive integer, represents the phenotype of sample $i$ in cell $n$.
-- $\Z$ is a $J$ by $K$ random binary matrix where $K$ is random. Since each row in $\Z$ represents a marker, $\Z_k$ (which is column $k$ in $\Z$) would represent a phenotype. 
+- $\Z$ is a $J$ by $K$ random binary matrix where $K$ is random. Since each row in $\Z$ represents a marker, column $k$ of $\Z$ would represent a phenotype. 
 - $X \sim IG(a,b)$ denotes that $X$ follows an inverse gamma distribution with pdf 
   $$f_X(x) = \ds\frac{b^a}{\Gamma(a)} x^{-a-1} e^{-b/x}$$
 
