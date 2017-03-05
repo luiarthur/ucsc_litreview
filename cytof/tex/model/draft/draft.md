@@ -44,24 +44,30 @@ header-includes:
     - \newcommand{\I}{\mathrm{\mathbf{I}}}
     - \newcommand{\yin}{\mathbf{y_{i,n}}}
     - \newcommand{\muik}{\bm{\mu_{i,k}}}
+    - \newcommand{\Z}{\mathbf{Z}}
+    - \newcommand{\IBP}{\text{IBP}}
     #
     - \allowdisplaybreaks
     - \def\M{\mathcal{M}}
 ---
 
 
-# To do
-
-- Use "Bayesian Hierarchical Models for Protein Networks in Single-Cell Mass Cytometry" idea to subtract cut-off points?
+$$
+%# To do
+%
+%- Use "Bayesian Hierarchical Models for Protein Networks in Single-Cell Mass Cytometry" idea to subtract cut-off points?
+%
+$$
 
 
 # Notation
 
 - Let the total number of samples be $I$. 
 - For each sample $i \in \bc{1,...,I}$, let the number total number of cells in sample $i$ be $N_i$.
-- Let $j \in \bc{1,...,J}$ be indices referring to one of $J$ markers of interest, such that $j$ refers to the marker $j$.
-- Finally, let $y_{i,n,j}$ be expression level of marker $j$ at cell $n$ in
-  sample $i$ **after subtracting the cutoff level $j$**. Furthermore, let $\yin = \bc{y_{i,n,1},..., y_{i,n,J}}$,
+- Let $J$ be the total number of genetic markers of interest. Then, $j \in \bc{1,...,J}$ refers to one of the $J$ markers.
+- Finally, let $y_{i,n,j}$ be the expression level of marker $j$ at cell $n$ in
+  sample $i$ **after subtracting some cutoff expression level for marker $j$**. 
+  Furthermore, let $\yin = \bc{y_{i,n,1},..., y_{i,n,J}}$,
   which is a vector of length $J$ containing the expression levels of the $J$
   markers for sample $i$ at cell $n$.
 
@@ -71,18 +77,25 @@ header-includes:
 Based on the notation above, we propose the following model:
 
 $$
-\begin{aligned}
-\yin \mid \lambda_{i,n},\muik &=& R \sim \N_J^+(\muik,\sigma_i^2 \I_J) \\
-\log(\muik) &=& R \sim \N_J(\bm{\bar{\mu_i}}, \tau^2_i \I_J)
-\end{aligned}
+\begin{array}{rcl}
+\yin \mid \lambda_{i,n}=k,\muik, \sigma_i^2 &\ind& \N_J^+(\muik,\sigma_i^2 \I_J), \text{ for } i=1,...,I, n = 1,...,N_i\\
+\log(\muik) \mid \bm{\bar{\mu_i}}, \tau_i^2  &\ind& \N_J^+(\bm{\bar{\mu_i}}, \tau^2_i \I_J), \text{ for } i=1,...,I \\
+\sigma_i &\ind& IG(a_{\sigma i},b_{\sigma i}), \text{ for } i=1,...,I \\
+\tau_i &\ind& IG(a_{\tau i},b_{\tau i}), \text{ for } i=1,...,I \\
+\\
+p\p{\lambda_{i,n} = k \mid \Z} &\propto& w_{i,k}, \text{ where } \bm{w_t} = (w_{i,1},...,w_{i,k})\\
+\Z &\sim& \IBP(\alpha) \\
+\end{array}
 $$
 
 where 
 
 - $\N_J^+(\cdot,.\cdot)$ denotes a positive-truncated multivariate Normal
 distribution of dimension $J$,
-- $\lambda_i,n \in \bc{1,...,K}$, where $K$ is some positive integer, and
-- 
+- $\lambda_i,n \in \bc{1,...,K}$, where $K$ is some positive integer, represents the phenotype of sample $i$ in cell $n$.
+- $\Z$ is a $J$ by $K$ random binary matrix where $K$ is random. Since each row in $\Z$ represents a marker, $\Z_k$ (which is column $k$ in $Z$) would represent a phenotype. 
+- $X \sim IG(a,b)$ denotes that $X$ follows an inverse gamma distribution with pdf 
+  $$f_X(x) = \ds\frac{b^a}{\Gamma(a)} x^{-a-1} e^{-b/x}$$
 
 
 [//]: # ( example image embedding
