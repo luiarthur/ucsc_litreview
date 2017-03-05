@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# -s        =>  create standalone file (in this case report.tex latex file)
+# --toc     =>  create table of contents
+# --natbib  =>  use the natbib package in latex
+# -o        =>  output file name
+
+pandoc draft.md -s -o draft.tex
+
+pdflatex draft.tex
+bibtex draft.aux
+pdflatex draft.tex
+pdflatex draft.tex
+rm -f draft.{log,aux,nav,out,snm,toc,blg,bbl}
+rm -f draft.tex
+
