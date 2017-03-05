@@ -93,7 +93,7 @@ where
 - $\N_J^+(\cdot,.\cdot)$ denotes a positive-truncated multivariate Normal
 distribution of dimension $J$,
 - $\lambda_i,n \in \bc{1,...,K}$, where $K$ is some positive integer, represents the phenotype of sample $i$ in cell $n$.
-- $\Z$ is a $J$ by $K$ random binary matrix where $K$ is random. Since each row in $\Z$ represents a marker, $\Z_k$ (which is column $k$ in $Z$) would represent a phenotype. 
+- $\Z$ is a $J$ by $K$ random binary matrix where $K$ is random. Since each row in $\Z$ represents a marker, $\Z_k$ (which is column $k$ in $\Z$) would represent a phenotype. 
 - $X \sim IG(a,b)$ denotes that $X$ follows an inverse gamma distribution with pdf 
   $$f_X(x) = \ds\frac{b^a}{\Gamma(a)} x^{-a-1} e^{-b/x}$$
 
