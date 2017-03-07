@@ -11,7 +11,7 @@ fontsize: 12pt
 # bibliographystyle: plain 
 
 # This is how you use bibtex refs: @nameOfRef
-# see: http://www.mdlerch.com/tutorial-for-pandoc-citations-markdown-to-latex.html)
+# see: http://www.mdlerch.com/tutorial-for-pandoc-citations-markdown-to-latex.html
 
 header-includes: 
     - \usepackage{bm}
