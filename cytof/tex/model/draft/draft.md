@@ -60,7 +60,7 @@ header-includes:
 # Notation
 
 - Let the total number of samples be $I$. 
-- For each sample $i \in \bc{1,...,I}$, let the number total number of cells in sample $i$ be $N_i$.
+- For each sample $i \in \bc{1,...,I}$, let the total number of cells in sample $i$ be $N_i$.
 - Let $J$ be the total number of genetic markers of interest. Then, $j \in \bc{1,...,J}$ refers to one of the $J$ markers.
 - Finally, let $y_{i,n,j}$ be the expression level of marker $j$ at cell $n$ in
   sample $i$ **after subtracting some cutoff expression level for marker $j$**. 
