@@ -51,13 +51,10 @@ header-includes:
     - \def\M{\mathcal{M}}
 ---
 
+[//]: # (To do:
+  - Use "Bayesian Hierarchical Models for Protein Networks in Single-Cell Mass Cytometry" idea to subtract cut-off points?
+)
 
-$$
-%# To do
-%
-%- Use "Bayesian Hierarchical Models for Protein Networks in Single-Cell Mass Cytometry" idea to subtract cut-off points?
-%
-$$
 
 
 # Notation
