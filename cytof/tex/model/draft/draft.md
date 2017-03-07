@@ -7,7 +7,7 @@ fontsize: 12pt
 
 # Uncomment if using natbib:
 
-# bibliography: BIB.bib
+# bibliography: ../../bib/litreview.bib
 # bibliographystyle: plain 
 
 # This is how you use bibtex refs: @nameOfRef
