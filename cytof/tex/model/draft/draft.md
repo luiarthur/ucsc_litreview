@@ -137,8 +137,8 @@ $$
         $$
         \mu^\star_{j,k} \mid z_{j,k} \ind 
         \begin{cases}
-          \N(0, \tau_j^2)I(\mu \geq 0) & \text{  if } z_{j,k}=1,\\ \N(0,
-          \tau_j^2)I(\mu < 0) & \mbox{  if } z_{j,k}=0.\\ 
+          \N(0, \tau_j^2)~\Ind(\mu^\star_{j,k}\geq0) &\text{ if } z_{j,k}=1,\\ 
+          \N(0, \tau_j^2)~\Ind(\mu^\star_{j,k} < 0)  &\text{ if } z_{j,k}=0.\\ 
         \end{cases}
         $$
 
