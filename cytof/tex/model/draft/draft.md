@@ -43,7 +43,8 @@ header-includes:
     - \newcommand{\iid}{\overset{iid}{\sim}}
     - \newcommand{\ind}{\overset{ind}{\sim}}
     - \newcommand{\I}{\mathrm{\mathbf{I}}}
-    - \newcommand{\yin}{\bm{y}_{i,n}}
+    - \newcommand{\y}{\bm{y}}
+    - \newcommand{\yin}{\y_{i,n}}
     - \newcommand{\muin}{\bm{\mu}_{i,n}}
     - \newcommand{\bmu}{\bm{\mu}}
     - \newcommand{\Z}{\mathbf{Z}}
@@ -55,16 +56,18 @@ header-includes:
     - \newcommand{\Dir}{\text{Dirichlet}}
     - \newcommand{\IG}{\text{IG}}
     - \newcommand{\Be}{\text{Beta}}
-    - \newcommand{\Ind}{\mathrm{I}}
+    - \newcommand{\Ind}[1]{\mathrm{I}\bc{#1}}
     #
     - \allowdisplaybreaks
     - \def\M{\mathcal{M}}
+    # For Drawing Graphs
+    - \usepackage {tikz}
 ---
 
 [//]: # (To do:
-  - Use "Bayesian Hierarchical Models for Protein Networks in Single-Cell Mass Cytometry" idea to subtract cut-off points?
+  - read DIBP paper
+  - read stick breaking construction paper
 )
-
 
 
 1.  Notation
@@ -116,7 +119,7 @@ $$
         \h_k \mid \Gamma &\iid \N_J(\bzero,\Gamma) \\
         v_l &\sim \Be(\alpha,1) \\
         b_k &:= \prod_{l=1}^k v_l \\
-        z_{j,k} &= \Ind\p{\Phi(j_{j,k}\mid 0, \Gamma_{k,k} < b_k)} \\
+        z_{j,k} &= \Ind{\Phi(h_{j,k}\mid 0, \Gamma_{k,k}) < b_k} \\
         \end{split}
         $$
         From the last line of the equation, the probability that marker $j$ is
@@ -135,14 +138,14 @@ $$
         subpopulation $k$.  $\mu^\star_{j, k} >0$ if $z_{j,k} =1$ and
         $\mu^\star_{j, k} < 0$ if $z_{j,k} =0$.  Assume 
         $$
-        \mu^\star_{j,k} \mid z_{j,k} \ind 
+        \mu^\star_{j,k} \mid z_{j,k}, \tau_j^2 \ind 
         \begin{cases}
-          \N(0, \tau_j^2)~\Ind(\mu^\star_{j,k}\geq0) &\text{ if } z_{j,k}=1,\\ 
-          \N(0, \tau_j^2)~\Ind(\mu^\star_{j,k} < 0)  &\text{ if } z_{j,k}=0.\\ 
+          \N(0, \tau_j^2)~\Ind{\mu^\star_{j,k}\geq0} &\text{ if } z_{j,k}=1,\\ 
+          \N(0, \tau_j^2)~\Ind{\mu^\star_{j,k} < 0}  &\text{ if } z_{j,k}=0.\\ 
         \end{cases}
         $$
 
-    (c) Composition of NK Cell Subpopulations in Samples
+    (c) **Composition of NK Cell Subpopulations in Samples**
         \par
         We introduce $\w_i=(w_{i,1}, \ldots, w_{i,K})$, $0 < w_{i,k} <1$,
         $\sum_{k=1}^K w_{i,k}=1$,  given $\Z$.  Let a cell in sample $i$ belong
@@ -168,7 +171,35 @@ $$
        \end{split}
        $$
 
-4.  Additional Items
+    (e) **Graphical Representation of Model**
+        \vspace{1em}
+        \begin{center}
+        \begin{tikzpicture}[sibling distance=10em,
+                            every node/.style = {shape=circle, draw}]
+          \node {$\y$}
+            child { node {$\bm{\sigma^2}$} }
+            child { node {$\bmu$}
+              child { node {$\bmu^\star$}
+                child { node {$\bm{\tau^2}$} }
+                child { node {$\Z$} }
+              }
+              child { node {$\bm\lambda$} 
+                child { node {$\bm{w}$} }
+              } 
+            };
+        \end{tikzpicture}
+        \end{center}
+
+    (f) **Full Conditionals for Parameters**
+        \par
+        $$
+        \begin{split}
+        \sigma_i^2 \mid - &\sim  \IG\p{a_\sigma + \frac{NJ}{2}, b_\sigma + \frac{\sum_{j=1}^J\sum_{n=1}^{N_i} \p{y_{i,n,j}-\mu_{i,n,j}}^2}{2}} \\
+        \lambda_{i,n} \mid \w_i &\sim \Dir\p{1+\sum_{n=1}^{N_i}\Ind{\lambda_{i,n}=1},...,1+\sum_{n=1}^{N_i}\Ind{\lambda_{i,n}=K}}
+        \end{split}
+        $$
+
+4.  **Additional Items**
 
     (a) Computation: A sample has 20000 cells and we have multiple samples
 
