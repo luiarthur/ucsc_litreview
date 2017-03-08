@@ -7,8 +7,8 @@ fontsize: 12pt
 
 # Uncomment if using natbib:
 
-# bibliography: ../../bib/litreview.bib
-# bibliographystyle: plain 
+bibliography: ../../bib/litreview.bib
+bibliographystyle: plain 
 
 # This is how you use bibtex refs: @nameOfRef
 # see: http://www.mdlerch.com/tutorial-for-pandoc-citations-markdown-to-latex.html
@@ -59,29 +59,38 @@ header-includes:
 
 # Notation
 
-- Let the total number of samples be $I$. 
-- For each sample $i \in \bc{1,...,I}$, let the total number of cells in sample $i$ be $N_i$.
-- Let $J$ be the total number of genetic markers of interest. Then, $j \in \bc{1,...,J}$ refers to one of the $J$ markers.
-- Finally, let $y_{i,n,j}$ be the expression level of marker $j$ at cell $n$ in
-  sample $i$ **after subtracting some cutoff expression level for marker $j$**. 
-  Furthermore, let $\yin = \bc{y_{i,n,1},..., y_{i,n,J}}$,
-  which is a vector of length $J$ containing the expression levels of the $J$
-  markers for sample $i$ at cell $n$.
+- **Samples:** Let the total number of samples be $I$, and
+  $i=1,...,I$. 
+- **Cells:** For each sample $i \in \bc{1,...,I}$, let the total
+  number of cells in sample $i$ be $N_i$, and $n=1,...,N_i$.
+- **Markers:** Let $J$ be the total number of genetic markers of
+  interest. (Expression levels are measured for the same set of
+  surface markers in all cells of all samples.) Then, $j \in
+  \bc{1,...,J}$ refers to one of the $J$ markers.
+- **Expression Levels:** Let $y_{i,n,j}$ be the expression level 
+  of marker $j$ at cell $n$ in sample $i$ **after subtracting some
+  cutoff expression level for marker $j$** so that 
+  $y_{i,n,j} \in \mathbb{R}$. The subtraction is done to 
+  remove background noise that may differ across samples.
+  Furthermore, let $\yin = \bc{y_{i,n,1},..., y_{i,n,J}}$, 
+  which is a vector of length $J$ containing the expression 
+  levels of the $J$ markers for sample $i$ at cell $n$.
 
 
-# Model
+
+# Model (FIXME!)
 
 Based on the notation above, we propose the following model:
 
 $$
 \begin{array}{rcl}
-\yin \mid \lambda_{i,n}=k,\muik, \sigma_i^2 &\ind& \N_J^+(\muik,\sigma_i^2 \I_J), \text{ for } i=1,...,I, n = 1,...,N_i\\
-\log(\muik) \mid \bm{\bar{\mu_i}}, \tau_i^2  &\ind& \N_J(\bm{\bar{\mu_i}}, \tau^2_i \I_J), \text{ for } i=1,...,I \\
-\sigma_i &\ind& IG(a_{\sigma i},b_{\sigma i}), \text{ for } i=1,...,I \\
-\tau_i &\ind& IG(a_{\tau i},b_{\tau i}), \text{ for } i=1,...,I \\
-\\
-p\p{\lambda_{i,n} = k \mid \Z} &\propto& w_{i,k}, \text{ where } \bm{w_t} = (w_{i,1},...,w_{i,k})\\
-\Z &\sim& \IBP(\alpha) \\
+\yin \mid \lambda_{i,n}=k,\muik, \sigma_i^2 &\ind& \N_J(\muik,\sigma_i^2 \I_J), \text{ for } i=1,...,I, n = 1,...,N_i\\
+%\log(\muik) \mid \bm{\bar{\mu_i}}, \tau_i^2  &\ind& \N_J(\bm{\bar{\mu_i}}, \tau^2_i \I_J), \text{ for } i=1,...,I \\
+%\sigma_i &\ind& IG(a_{\sigma i},b_{\sigma i}), \text{ for } i=1,...,I \\
+%\tau_i &\ind& IG(a_{\tau i},b_{\tau i}), \text{ for } i=1,...,I \\
+%\\
+%p\p{\lambda_{i,n} = k \mid \Z} &\propto& w_{i,k}, \text{ where } \bm{w_t} = (w_{i,1},...,w_{i,k})\\
+%\Z &\sim& \IBP(\alpha) \\
 \end{array}
 $$
 
@@ -94,6 +103,7 @@ distribution of dimension $J$,
 - $X \sim IG(a,b)$ denotes that $X$ follows an inverse gamma distribution with pdf 
   $$f_X(x) = \ds\frac{b^a}{\Gamma(a)} x^{-a-1} e^{-b/x}$$
 
+@williamson2010dependent
 
 [//]: # ( example image embedding
 \beginmyfig

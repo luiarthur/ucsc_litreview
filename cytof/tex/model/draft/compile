@@ -11,6 +11,6 @@ pdflatex draft.tex
 bibtex draft.aux
 pdflatex draft.tex
 pdflatex draft.tex
-rm -f draft.{log,aux,nav,out,snm,toc,blg,bbl}
+rm -f *.{log,aux,nav,out,snm,toc,blg,bbl}
 rm -f draft.tex
 
