@@ -47,6 +47,8 @@ header-includes:
     - \newcommand{\yin}{\y_{i,n}}
     - \newcommand{\muin}{\bm{\mu}_{i,n}}
     - \newcommand{\bmu}{\bm{\mu}}
+    - \newcommand{\muks}{\bmu_k^\star}
+    - \newcommand{\mlins}{\bmu_{\lambda_{i,n}}^\star}
     - \newcommand{\Z}{\mathbf{Z}}
     - \newcommand{\z}{\bm{z}}
     - \newcommand{\bzero}{\bm{0}}
@@ -133,7 +135,7 @@ $$
 
     (b) **Mean Expression Levels for Subpopulations**
         \par
-        Let $\bmu^\star_k$ be a
+        Let $\muks$ be a
         $J-$dim mean-expression levels vector of surface markers for
         subpopulation $k$.  $\mu^\star_{j, k} >0$ if $z_{j,k} =1$ and
         $\mu^\star_{j, k} < 0$ if $z_{j,k} =0$.  Assume 
@@ -158,7 +160,7 @@ $$
         p(\lambda_{i,n} = k \mid \w_i) = w_{i,k}.
         $$  
         Note that $\w_i$ can be used to identify differences between samples.
-        We further let $\bmu_{i,n} = \bmu^\star_k$ if $\lambda_{i,n}=k$. 
+        We further let $\bmu_{i,n} = \muks$ if $\lambda_{i,n}=k$. 
         (i.e., $\bmu_{i,n} = \bmu^*_{\lambda_{i,n}}$.)
 
 
@@ -182,7 +184,10 @@ $$
             child { node {$\bmu$}
               child { node {$\bmu^\star$}
                 child { node {$\bm{\tau^2}$} }
-                child { node {$\Z$} }
+                child { node {$\Z$} 
+                  child { node {$\h$} }
+                  child { node {$\bm v$} }
+                }
               }
               child { node {$\bm\lambda$} 
                 child { node {$\bm{w}$} }
@@ -190,13 +195,37 @@ $$
             };
         \end{tikzpicture}
         \end{center}
+        \vspace{1em}
+        $$
+        \begin{split}
+          \yin \mid \mlins, \sigma_i^2 &\ind \N_J(\mlins,\sigma_i^2 \I_J) \\
+          \sigma_i^2 &\iid \IG(a_\sigma,b_\sigma) \\
+          \\
+          \mu^\star_{j,k} \mid z_{j,k}=1, \tau^2_j &\ind \N^+(0,\tau^2_j)\\
+          \mu^\star_{j,k} \mid z_{j,k}=0, \tau^2_j &\ind \N^-(0,\tau^2_j)\\
+          \tau_j^2 &\ind \IG(a_\tau,b_\tau) \\
+          %\Z \sim \IBP(\alpha) \leftrightarrow % when \Gamma = \I
+          \\
+          \h_k &\sim \N_J(\bzero, \Gamma) \\
+          v_l &\iid \Be(\alpha,1) \\
+          z_{j,k} &:= \Ind{\Phi(h_{j,k}\mid0,\Gamma_{k,k}) < \prod_{l=1}^k v_l}\\
+          (K^\star &:= \text{number of non-zero columns in } \Z) \\
+          \\
+          \lambda_{i,n} \mid \w_i &\sim \text{Multinomial}_{K^\star}(1, \w_i) \\
+          \w_i &\sim \Dir_{K^\star}(1,...,1) \\
+        \end{split}
+        $$
 
     (f) **Full Conditionals for Parameters**
         \par
         $$
         \begin{split}
-        \sigma_i^2 \mid \y,\bmu,- &\sim  \IG\p{a_\sigma + \frac{NJ}{2}, b_\sigma + \frac{\sum_{j=1}^J\sum_{n=1}^{N_i} \p{y_{i,n,j}-\mu_{i,n,j}}^2}{2}} \\
-        \w_i \mid \bm\lambda_i,- &\sim \Dir\p{1+\sum_{n=1}^{N_i}\Ind{\lambda_{i,n}=1},...,1+\sum_{n=1}^{N_i}\Ind{\lambda_{i,n}=K}}
+        \sigma_i^2 \mid \y,\bmu,- &\sim  \IG\p{a_\sigma + \frac{NJ}{2}, b_\sigma + \frac{\sum_{j=1}^J\sum_{n=1}^{N_i} \p{y_{i,n,j}-\mu^\star_{\lambda_{i,n},j}}^2}{2}} \\
+        \w_i \mid \bm\lambda_i,- &\sim \Dir\p{1+\sum_{n=1}^{N_i}\Ind{\lambda_{i,n}=1},...,1+\sum_{n=1}^{N_i}\Ind{\lambda_{i,n}=K}} \\
+        p(\mu_{j,k}^\star \mid z_{j,k}=1, y_{i,n,j}, \tau^2_j,-)&\propto \\
+        p(\mu_{j,k}^\star \mid z_{j,k}=0, y_{i,n,j}, \tau^2_j,-)&\propto \\
+        p(\tau^2_j \mid z_{j,k}=1, -) &\propto\\
+        p(\tau^2_j \mid z_{j,k}=0, -) &\propto\\
         \end{split}
         $$
 
