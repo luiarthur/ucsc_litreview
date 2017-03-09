@@ -174,7 +174,29 @@ $$
        \end{split}
        $$
 
-    (e) **Graphical Representation of Model**
+    (e) **Recap of Model & Priors**
+        $$
+        \begin{split}
+          \yin \mid \mlins, \sigma_i^2 &\ind \N_J(\mlins,\sigma_i^2 \I_J) \\
+          \sigma_i^2 &\iid \IG(a_\sigma,b_\sigma) \\
+          \\
+          \mu^\star_{j,k} \mid z_{j,k}=1, \tau^2_j &\ind \N^+(0,\tau^2_j)\\
+          \mu^\star_{j,k} \mid z_{j,k}=0, \tau^2_j &\ind \N^-(0,\tau^2_j)\\
+          \tau_j^2 &\ind \IG(a_\tau,b_\tau) \\
+          %\Z \sim \IBP(\alpha) \leftrightarrow % when \Gamma = \I
+          \\
+          \h_k &\sim \N_J(\bzero, \Gamma) \\
+          v_l &\iid \Be(\alpha,1) \\
+          z_{j,k} &:= \Ind{\Phi(h_{j,k}\mid0,\Gamma_{k,k}) < \prod_{l=1}^k v_l}\\
+          %(K^\star &:= \text{number of non-zero columns in } \Z) \\
+          \\
+          \lambda_{i,n} \mid \w_i &\sim \text{Multinomial}_{K}(1, \w_i) \\
+          \w_i &\sim \Dir_{K}(1,...,1) \\
+        \end{split}
+        $$
+        where $k=1,\ldots,K$ for some sufficiently large $K$.
+
+    (f) **Graphical Representation of Model**
         \vspace{1em}
         \begin{center}
         \begin{tikzpicture}[sibling distance=10em,
@@ -196,27 +218,10 @@ $$
         \end{tikzpicture}
         \end{center}
         \vspace{1em}
-        $$
-        \begin{split}
-          \yin \mid \mlins, \sigma_i^2 &\ind \N_J(\mlins,\sigma_i^2 \I_J) \\
-          \sigma_i^2 &\iid \IG(a_\sigma,b_\sigma) \\
-          \\
-          \mu^\star_{j,k} \mid z_{j,k}=1, \tau^2_j &\ind \N^+(0,\tau^2_j)\\
-          \mu^\star_{j,k} \mid z_{j,k}=0, \tau^2_j &\ind \N^-(0,\tau^2_j)\\
-          \tau_j^2 &\ind \IG(a_\tau,b_\tau) \\
-          %\Z \sim \IBP(\alpha) \leftrightarrow % when \Gamma = \I
-          \\
-          \h_k &\sim \N_J(\bzero, \Gamma) \\
-          v_l &\iid \Be(\alpha,1) \\
-          z_{j,k} &:= \Ind{\Phi(h_{j,k}\mid0,\Gamma_{k,k}) < \prod_{l=1}^k v_l}\\
-          (K^\star &:= \text{number of non-zero columns in } \Z) \\
-          \\
-          \lambda_{i,n} \mid \w_i &\sim \text{Multinomial}_{K^\star}(1, \w_i) \\
-          \w_i &\sim \Dir_{K^\star}(1,...,1) \\
-        \end{split}
-        $$
+        \newpage
 
-    (f) **Full Conditionals for Parameters**
+
+    (g) **Full Conditionals for Parameters**
         \par
         $$
         \begin{split}
