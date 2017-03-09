@@ -159,6 +159,7 @@ $$
         $$  
         Note that $\w_i$ can be used to identify differences between samples.
         We further let $\bmu_{i,n} = \bmu^\star_k$ if $\lambda_{i,n}=k$. 
+        (i.e., $\bmu_{i,n} = \bmu^*_{\lambda_{i,n}}$.)
 
 
     (d) **Priors for** $\sigma^2_i$, $\tau^2_j$, $\w_i$
@@ -194,8 +195,8 @@ $$
         \par
         $$
         \begin{split}
-        \sigma_i^2 \mid - &\sim  \IG\p{a_\sigma + \frac{NJ}{2}, b_\sigma + \frac{\sum_{j=1}^J\sum_{n=1}^{N_i} \p{y_{i,n,j}-\mu_{i,n,j}}^2}{2}} \\
-        \lambda_{i,n} \mid \w_i &\sim \Dir\p{1+\sum_{n=1}^{N_i}\Ind{\lambda_{i,n}=1},...,1+\sum_{n=1}^{N_i}\Ind{\lambda_{i,n}=K}}
+        \sigma_i^2 \mid \y,\bmu,- &\sim  \IG\p{a_\sigma + \frac{NJ}{2}, b_\sigma + \frac{\sum_{j=1}^J\sum_{n=1}^{N_i} \p{y_{i,n,j}-\mu_{i,n,j}}^2}{2}} \\
+        \w_i \mid \bm\lambda_i,- &\sim \Dir\p{1+\sum_{n=1}^{N_i}\Ind{\lambda_{i,n}=1},...,1+\sum_{n=1}^{N_i}\Ind{\lambda_{i,n}=K}}
         \end{split}
         $$
 
