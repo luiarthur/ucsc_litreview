@@ -234,8 +234,8 @@ $$
         \\
         h_{j,k}\mid z_{jk}=1,v_l- &\sim \TN\p{0,\Gamma_{kk},-\infty, \Phi^{-1}\p{\prod_{l=1}^k v_l\mid 0, \Gamma_{kk}}} \\
         h_{j,k}\mid z_{jk}=0,v_l- &\sim \TN\p{0,\Gamma_{kk}, \Phi^{-1}\p{\prod_{l=1}^k v_l\mid 0, \Gamma_{kk}},\infty} \\
-        p(v_l\mid,z_{jk}=1,v_{-l},-) &\propto p(v_l) \times \Ind{\Phi(h_{jk}|0,\Gamma_{kk})<\prod_{l=1}^k v_l}\\
-        p(v_l\mid,z_{jk}=0,v_{-l},-) &\propto p(v_l) \times \Ind{\Phi(h_{jk}|0,\Gamma_{kk})>\prod_{l=1}^k v_l}\\
+        p(v_l\mid z_{jk}=1,v_{-l},-) &\propto p(v_l) \times \Ind{v_l > \frac{\Phi(h_{jk}|0,\Gamma_{kk})}{\prod_{d\ne l}^k v_l}} \text{\quad Truncated Beta?}\\
+        p(v_l\mid z_{jk}=0,v_{-l},-) &\propto p(v_l) \times \Ind{v_l < \frac{\Phi(h_{jk}|0,\Gamma_{kk})}{\prod_{d\ne l}^k v_l}} \text{\quad Truncated Beta?}\\
         \\
         p(\lambda_{i,n}=k \mid w_{i,k}, -) &\propto w_{i,k} \exp\bc{-\frac{1}{2\sigma_i^2}\sum_{j=1}^J\p{y_{i,n,j}-\mu_{i,n,j}}^2} \\
         \w_i \mid \bm\lambda_i,- &\sim \Dir\p{a_{i1}+\sum_{n=1}^{N_i}\Ind{\lambda_{i,n}=1},...,a_{iK}+\sum_{n=1}^{N_i}\Ind{\lambda_{i,n}=K}} \\
