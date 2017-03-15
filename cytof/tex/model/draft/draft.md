@@ -195,7 +195,7 @@ $$
           \w_i &\sim \Dir_{K}(a_{i1},...,a_{iK}) \\
         \end{split}
         $$
-        where $k=1,\ldots,K$ for some sufficiently large $K$.
+        where $k=1,\ldots,K$ for some fixed and sufficiently large $K$.
 
     (f) **Graphical Representation of Model**
         \vspace{1em}
@@ -221,8 +221,24 @@ $$
         \vspace{1em}
         \newpage
 
+    (g) **Joint Posterior of Parameters**
+        \par
+        $$
+        \begin{split}
+        p(\bm\sigma^2,\bmu^\star,\bm\tau^2,\bm{h},\bm{v},\bm\lambda,\bm{w}\mid\bm{y}) \propto& \bc{\prod_{i=1}^Ip(\sigma_i^2)p(\bm{w}_i)\prod_{n=1}^{N_i}
+        p(\yin\mid \muin,\sigma_i^2)   \prod_{k=1}^K p(\lambda_{i,n}=k\mid\bm{w}_i)}\times  \\
+        &\prod_{j=1}^J p(\tau_j^2)
+        \prod_{k=1}^K p(\h_k) p(\mu_{jk}^\star \mid z_{jk},\tau_j^2)
+        \prod_{l=1}^k p(v_l) \\
+        \propto & \left\{\prod_{i=1}^I (\sigma_i^2)^{a_\sigma-1} \exp\bc{-b_\sigma/\sigma_i^2} \times \right.\\
+        &\prod_{n=1}^{N_i} (\sigma_i^2)^{-J/2} \exp\bc{-\frac{\sum_{j=1}^J(y_{inj}-\mu^\star_{j,\lambda_{in}})^2}{2\sigma_i^2}} \times  \\
+        &\left. \prod_{k=1}^K w_{ik}^{a_{ik}} (w_{i,\lambda_{i,n}})\right\} \times \prod_{j=1}^J (\tau_u^2)^{-a_\tau-1} \exp\bc{-b_\tau/\tau_j^2} \times \\
+        &\prod_{k=1}^K \bc{\abs{\Gamma}^{-1/2} \exp\bc{-\frac{\h_k'\Gamma^{-1}\h_k}{2}} \prod_{l=1}^k v_l^{\alpha-1}} \\
+        \end{split}
+        $$
+        \newpage
 
-    (g) **Full Conditionals for Parameters**
+    (h) **Full Conditionals for Parameters**
         \par
         $$
         \begin{split}
@@ -234,8 +250,8 @@ $$
         \\
         h_{j,k}\mid z_{jk}=1,v_l- &\sim \TN\p{0,\Gamma_{kk},-\infty, \Phi^{-1}\p{\prod_{l=1}^k v_l\mid 0, \Gamma_{kk}}} \\
         h_{j,k}\mid z_{jk}=0,v_l- &\sim \TN\p{0,\Gamma_{kk}, \Phi^{-1}\p{\prod_{l=1}^k v_l\mid 0, \Gamma_{kk}},\infty} \\
-        p(v_l\mid z_{jk}=1,v_{-l},-) &\propto p(v_l) \times \Ind{v_l > \frac{\Phi(h_{jk}|0,\Gamma_{kk})}{\prod_{d\ne l}^k v_l}} \text{\quad Truncated Beta?}\\
-        p(v_l\mid z_{jk}=0,v_{-l},-) &\propto p(v_l) \times \Ind{v_l < \frac{\Phi(h_{jk}|0,\Gamma_{kk})}{\prod_{d\ne l}^k v_l}} \text{\quad Truncated Beta?}\\
+        p(v_l\mid z_{jk}=1,v_{-l},-) &\propto p(v_l) \times \Ind{v_l > \frac{\Phi(h_{jk}|0,\Gamma_{kk})}{\prod_{d\ne l}^k v_d}} \text{\quad Truncated Beta?}\\
+        p(v_l\mid z_{jk}=0,v_{-l},-) &\propto p(v_l) \times \Ind{v_l < \frac{\Phi(h_{jk}|0,\Gamma_{kk})}{\prod_{d\ne l}^k v_d}} \text{\quad Truncated Beta?}\\
         \\
         p(\lambda_{i,n}=k \mid w_{i,k}, -) &\propto w_{i,k} \exp\bc{-\frac{1}{2\sigma_i^2}\sum_{j=1}^J\p{y_{i,n,j}-\mu_{i,n,j}}^2} \\
         \w_i \mid \bm\lambda_i,- &\sim \Dir\p{a_{i1}+\sum_{n=1}^{N_i}\Ind{\lambda_{i,n}=1},...,a_{iK}+\sum_{n=1}^{N_i}\Ind{\lambda_{i,n}=K}} \\
