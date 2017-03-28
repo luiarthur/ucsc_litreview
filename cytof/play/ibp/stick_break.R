@@ -5,6 +5,6 @@ ibp_sb <- function(N,a=1,K=10) {
   sapply(b, function(bk) rbinom(N,1,bk))
 }
 
-image(t(Z <- ibp_sb(100,a=5,K=50)))
+image(t(Z <- ibp_sb(100,a=5,K=30)))
 rowSums(Z)
 colSums(Z)
