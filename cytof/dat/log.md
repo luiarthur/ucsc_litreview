@@ -11,3 +11,7 @@ clarification is needed to do the analysis.
 Also, what are the rows supposed to represent?
 
 The log of the columns in `CB34_CLEAN.csv` appear to be Normal.
+
+# 31 March 2017
+
+Looked at the Correlations
