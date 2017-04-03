@@ -1,7 +1,7 @@
 library(rcommon)
 source("myimage.R")
 dat_all <- read.csv("ALL.csv",skip=1)
-dat_CB34 <- read.csv("cytof_data_lil/cytof_data_lili/cb/CB34_CLEAN.csv")
+dat_CB34 <- read.csv("cytof_data_lili/cytof_data_lili/cb/CB34_CLEAN.csv")
 
 N <- nrow(dat_all)
 K <- ncol(dat_all)
