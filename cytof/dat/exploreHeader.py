@@ -31,8 +31,7 @@ def getHeaders(path):
 
 # check that all files have same number of columns 
 # and the right header
-def inspectHeaders(fh, compareWith=1):
-    expectedHeader = fh[compareWith][1]
+def inspectHeaders(fh, expectedHeader):
     expectedNumCols = len(expectedHeader)
     #
     badNumCols = filter(lambda x: len(x[1]) != expectedNumCols, fh)
@@ -63,8 +62,8 @@ def elemComp(A,B):
 # Path to Data
 path = "./cytof_data_lili/cytof_data_lili"
 file_headers = getHeaders(path)
-ih = inspectHeaders(file_headers,compareWith=1)
 EXPECTED_HEADER = file_headers[1][1]
+ih = inspectHeaders(file_headers,EXPECTED_HEADER)
 
 for i in range(len(ih['diff'])):
     fs = ih['diff'][i]
@@ -83,6 +82,7 @@ for i in range(len(ih['badNumCols'])):
 print
 print "Note that if the set difference is empty, then the column orders are different!"
 
+print
 print "Model Header:"
 print EXPECTED_HEADER
 
