@@ -12,6 +12,18 @@ Also, what are the rows supposed to represent?
 
 The log of the columns in `CB34_CLEAN.csv` appear to be Normal.
 
+
 # 31 March 2017
 
 Looked at the Correlations
+
+
+
+# 3 April 2017
+
+Looking at columns.
+The output of `python exploreHeaders.py` provide a summary of 
+the cleanliness of the data. Note that if the set difference
+is empty, the column order is different.
+
+
