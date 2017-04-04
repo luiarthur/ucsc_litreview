@@ -41,28 +41,52 @@ def inspectHeaders(fh, compareWith=1):
             (x[0],
              set(expectedHeader).symmetric_difference(x[1])),
             badHeaders)
+    missing = map(lambda x: 
+      (x[0],set(expectedHeader).difference(x[1])), badHeaders)
+    unexpected = map(lambda x: 
+      (x[0],set(x[1]).difference(expectedHeader)), badHeaders)
     #
-    return {'badNumCols':badNumCols, 'badHeaders':badHeaders,
+    return {'badNumCols':badNumCols, 'badHeaders':badHeaders, 
+            'missing':missing, 'unexpected':unexpected,
             'diff':diff}
+
+
+def getFileHeader(fname,fh):
+    for (name,header) in fh:
+        if name == fname:
+            return header
+
+def elemComp(A,B):
+    return [a==b for (a,b) in zip(A,B)]
 
 ### Main ###
 # Path to Data
 path = "./cytof_data_lili/cytof_data_lili"
 file_headers = getHeaders(path)
-ih = inspectHeaders(file_headers)
+ih = inspectHeaders(file_headers,compareWith=1)
+EXPECTED_HEADER = file_headers[1][1]
 
-c=0 
-for fs in ih['diff']:
-    c += 1
-    print str(c) + ") Unexpected Columns in: " + fs[0]
-    print fs[1]
+for i in range(len(ih['diff'])):
+    fs = ih['diff'][i]
+    miss = ih['missing'][i]
+    unexpected = ih['unexpected'][i]
+    print str(i+1) + ". Unexpected Columns in: " + fs[0]
+    print "Missing:    " + ",".join("'"+m+"'" for m in miss[1])
+    print "Unexpected: " + ",".join("'"+m+"'" for m in unexpected[1])
     print ""
 
-c=0
-for fs in ih['badNumCols']:
-    c += 1
-    print str(c) + ") Unexpected Number of Columns in: " + fs[0]
+for i in range(len(ih['badNumCols'])):
+    fs = ih['badNumCols'][i]
+    print str(i+1) + ". Unexpected Number of Columns in: " + fs[0]
     print fs[1]
 
 print
 print "Note that if the set difference is empty, then the column orders are different!"
+
+print "Model Header:"
+print EXPECTED_HEADER
+
+### TESTS ###
+h = getFileHeader('patients/006_D106_clean.csv',file_headers)
+elemComp(h,EXPECTED_HEADER)
+
