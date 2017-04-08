@@ -23,7 +23,7 @@ hc <- hclust(D)
 ord <- hc$order
 
 # AXIS
-f <- function() {
+f <- function(dummy) {
   axis(1,at=1:ncol(dat_CB34),label=colnames(dat_CB34)[ord],las=2,cex.axis=.6,fg='grey')
   axis(2,at=1:ncol(dat_CB34),label=colnames(dat_CB34)[ord],las=1,cex.axis=.6,fg='grey')
 }
