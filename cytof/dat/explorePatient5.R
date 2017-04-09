@@ -34,8 +34,24 @@ stopifnot(
 )
 
 # CORRELATION
-my.image(cor(pat5_d54)>.8,f=label_markers,xaxt='n',yaxt='n',xlab="",ylab="",
-         main="Patient 5 (Day 54) Correlation b/w Markers > .8")
+my.image(cor(pat5_d54),f=label_markers,xaxt='n',yaxt='n',xlab="",ylab="",
+         main="Patient 5 (Day 54) Correlation b/w Markers",addLegend=TRUE)
+my.image(cor(pat5_d70),f=label_markers,xaxt='n',yaxt='n',xlab="",ylab="",
+         main="Patient 5 (Day 70) Correlation b/w Markers",addLegend=TRUE)
+my.image(cor(pat5_d93),f=label_markers,xaxt='n',yaxt='n',xlab="",ylab="",
+         main="Patient 5 (Day 93) Correlation b/w Markers",addLegend=TRUE)
+
+for (p in seq(.1,.9,by=.1)) 
+my.image(cor(pat5_d54)>p,f=label_markers,xaxt='n',yaxt='n',xlab="",ylab="",
+         main=paste0("Patient 5 (Day 54) Correlation b/w Markers > ",p*100,"%"))
+
+for (p in seq(.1,.9,by=.1)) 
+my.image(cor(pat5_d70)>p,f=label_markers,xaxt='n',yaxt='n',xlab="",ylab="",
+         main=paste0("Patient 5 (Day 70) Correlation b/w Markers > ",p*100,"%"))
+
+for (p in seq(.1,.9,by=.1)) 
+my.image(cor(pat5_d93)>p,f=label_markers,xaxt='n',yaxt='n',xlab="",ylab="",
+         main=paste0("Patient 5 (Day 93) Correlation b/w Markers > ",p*100,"%"))
 
 
 # Percentage of 0's
@@ -82,11 +98,20 @@ summary_zeros <- rbind(pat5_zeros,pbs_zeros,cbs_zeros)
 
 
 # Summary of percentage of 0's
+
+source("myimage.R")
 my.image(t(summary_zeros),xlab="",ylab="Markers",xaxt="n",yaxt="n",
          main="Percentage of Expression Level == 0",
          f=function(dat) {
            axis(1,at=1:ncol(dat),label=colnames(dat),las=2,cex.axis=.6,fg='grey')
            axis(2,at=1:nrow(dat),label=rownames(dat),las=1,cex.axis=.6,fg='grey')
-         })
+         },addLegend=TRUE)
 t(summary_zeros)
 
+for (p in seq(.1,.9,by=.1))
+my.image(t(summary_zeros)>p,xlab="",ylab="Markers",xaxt="n",yaxt="n",
+         main=paste0("Percentage of Expression Level == 0 (>",p*100,"%)"),
+         f=function(dat) {
+           axis(1,at=1:ncol(dat),label=colnames(dat),las=2,cex.axis=.6,fg='grey')
+           axis(2,at=1:nrow(dat),label=rownames(dat),las=1,cex.axis=.6,fg='grey')
+         })
