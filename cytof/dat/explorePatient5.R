@@ -27,6 +27,34 @@ pat5_d54 <- order_col(read.csv(paste0(PATH,"patients/005_D54_CLEAN.csv")),parse_
 pat5_d70 <- order_col(read.csv(paste0(PATH,"patients/005_D70_CLEAN.csv")),parse_marker)
 pat5_d93 <- order_col(read.csv(paste0(PATH,"patients/005_D93_CLEAN.csv")),parse_marker)
 
+# Read Cutoff Files
+pat5_d54_cutoff <- {
+  tmp <- read.csv(paste0(PATH,"patients/005_D54_CLEAN_cutoff.csv"),header=FALSE)
+  x <- tmp[,2]
+  names(x) <- parse_marker(tmp[,1])
+  x[order(names(x))]
+}
+pat5_d70_cutoff <- {
+  tmp <- read.csv(paste0(PATH,"patients/005_D70_CLEAN_cutoff.csv"),header=FALSE)
+  x <- tmp[,2]
+  names(x) <- parse_marker(tmp[,1])
+  x[order(names(x))]
+}
+pat5_d93_cutoff <- {
+  tmp <- read.csv(paste0(PATH,"patients/005_D93_CLEAN_cutoff.csv"),header=FALSE)
+  x <- tmp[,2]
+  names(x) <- parse_marker(tmp[,1])
+  x[order(names(x))]
+}
+
+# Assert cutoff files columns names are the same!
+stopifnot(
+  all(names(pat5_d54_cutoff) == colnames(pat5_d54)) &&
+  all(names(pat5_d70_cutoff) == colnames(pat5_d54)) &&
+  all(names(pat5_d93_cutoff) == colnames(pat5_d54))
+)
+
+
 # Assert marker names are the same!
 stopifnot(
   all(colnames(pat5_d54) == colnames(pat5_d70)) &&
@@ -99,7 +127,6 @@ summary_zeros <- rbind(pat5_zeros,pbs_zeros,cbs_zeros)
 
 # Summary of percentage of 0's
 
-source("myimage.R")
 my.image(t(summary_zeros),xlab="",ylab="Markers",xaxt="n",yaxt="n",
          main="Percentage of Expression Level == 0",
          f=function(dat) {
@@ -115,3 +142,38 @@ my.image(t(summary_zeros)>p,xlab="",ylab="Markers",xaxt="n",yaxt="n",
            axis(1,at=1:ncol(dat),label=colnames(dat),las=2,cex.axis=.6,fg='grey')
            axis(2,at=1:nrow(dat),label=rownames(dat),las=1,cex.axis=.6,fg='grey')
          })
+
+
+### log(y/c) ### 
+pdf("img/hist.pdf")
+par(mfrow=c(3,1),mar=c(2,2,3,2))
+for (i in 1:ncol(pat5_d54)) {
+  hist(log((pat5_d54[,i]+1E-3) / pat5_d54_cutoff[i]),xlab="",
+       main=paste0("Patient 5 Day 54 -- ", colnames(pat5_d54)[i],": log(expression / cutoff)"),prob=TRUE,ylab="Probability")
+
+  hist(log((pat5_d70[,i]+1E-3) / pat5_d70_cutoff[i]),xlab="",
+       main=paste0("Patient 5 Day 70 -- ", colnames(pat5_d54)[i],": log(expression / cutoff)"),prob=TRUE,ylab="Probability")
+
+  hist(log((pat5_d93[,i]+1E-5) / pat5_d93_cutoff[i]),xlab="",
+       main=paste0("Patient 5 Day 93 -- ", colnames(pat5_d54)[i],": log(expression / cutoff)"),prob=TRUE,ylab="Probability")
+  #readline()
+}
+par(mfrow=c(1,1),mar=c(5.1,4.1,4.1,2.1))
+dev.off()
+
+# SD of log(y/c)
+model.sd <- cbind(
+  apply(t(t(pat5_d54) / pat5_d54_cutoff),2,sd),
+  apply(t(t(pat5_d70) / pat5_d70_cutoff),2,sd),
+  apply(t(t(pat5_d93) / pat5_d93_cutoff),2,sd)
+); colnames(model.sd) <- c("pat5_d54","pat5_d70","pat5_d93")
+
+# Mean of log(y/c)
+model.mean <- cbind(
+  apply(t(t(pat5_d54) / pat5_d54_cutoff),2,mean),
+  apply(t(t(pat5_d70) / pat5_d70_cutoff),2,mean),
+  apply(t(t(pat5_d93) / pat5_d93_cutoff),2,mean)
+); colnames(model.mean) <- c("pat5_d54","pat5_d70","pat5_d93")
+
+sink("img/mean.txt"); model.mean; sink()
+sink("img/sd.txt"); model.sd; sink()
