@@ -146,7 +146,7 @@ my.image(t(summary_zeros)>p,xlab="",ylab="Markers",xaxt="n",yaxt="n",
 
 ### log(y/c) ### 
 pdf("img/hist.pdf")
-par(mfrow=c(3,1),mar=c(2,2,3,2))
+par(mfrow=c(3,1),mar=c(2,4,3,2))
 for (i in 1:ncol(pat5_d54)) {
   hist(log((pat5_d54[,i]+1E-3) / pat5_d54_cutoff[i]),xlab="",
        main=paste0("Patient 5 Day 54 -- ", colnames(pat5_d54)[i],": log(expression / cutoff)"),prob=TRUE,ylab="Probability")
@@ -177,3 +177,29 @@ model.mean <- cbind(
 
 sink("img/mean.txt"); model.mean; sink()
 sink("img/sd.txt"); model.sd; sink()
+
+pdf('img/mean.pdf')
+plot(model.mean[,1],1:nrow(model.mean),xlim=range(model.mean),type='n',
+     fg='grey', ylab="",xlab="",yaxt='n',bty='n',
+     main="Patient 5: mean log(y/cutoff)")
+abline(h=1:nrow(model.mean),col='grey85',lty=2)
+axis(2,at=1:nrow(model.mean),label=rownames(model.mean),las=1,cex.axis=.6,fg='grey')
+points(model.mean[,1],1:32,pch=20,cex=2,col=rgb(1,0,0,.5))
+points(model.mean[,2],1:32,pch=20,cex=2,col=rgb(0,1,0,.5))
+points(model.mean[,3],1:32,pch=20,cex=2,col=rgb(0,0,1,.5))
+legend("topright", col=c('red','green','blue'),
+       legend=c("D54","D70","D93"),bty='n',pch=20,pt.cex=2,cex=1.5)
+dev.off()
+
+pdf('img/sd.pdf')
+plot(model.sd[,1],1:nrow(model.sd),xlim=range(model.sd),type='n',
+     fg='grey', ylab="",xlab="",yaxt='n',bty='n',
+     main="Patient 5: SD log(y/cutoff)")
+abline(h=1:nrow(model.sd),col='grey85',lty=2)
+axis(2,at=1:nrow(model.sd),label=rownames(model.sd),las=1,cex.axis=.6,fg='grey')
+points(model.sd[,1],1:32,pch=20,cex=2,col=rgb(1,0,0,.5))
+points(model.sd[,2],1:32,pch=20,cex=2,col=rgb(0,1,0,.5))
+points(model.sd[,3],1:32,pch=20,cex=2,col=rgb(0,0,1,.5))
+legend("topright", col=c('red','green','blue'),
+       legend=c("D54","D70","D93"),bty='n',pch=20,pt.cex=2,cex=1.5)
+dev.off()
