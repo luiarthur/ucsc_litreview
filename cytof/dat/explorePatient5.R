@@ -127,53 +127,13 @@ for (i in 1:ncol(pat5_d54)) {
 par(mfrow=c(1,1),mar=c(5.1,4.1,4.1,2.1))
 dev.off()
 
-# SD of log(y/c)
-model.sd <- cbind(
-  apply(t(t(pat5_d54) / pat5_d54_cutoff),2,sd),
-  apply(t(t(pat5_d70) / pat5_d70_cutoff),2,sd),
-  apply(t(t(pat5_d93) / pat5_d93_cutoff),2,sd)
-); colnames(model.sd) <- c("pat5_d54","pat5_d70","pat5_d93")
 
-# Mean of log(y/c)
-model.mean <- cbind(
-  apply(t(t(pat5_d54) / pat5_d54_cutoff),2,mean),
-  apply(t(t(pat5_d70) / pat5_d70_cutoff),2,mean),
-  apply(t(t(pat5_d93) / pat5_d93_cutoff),2,mean)
-); colnames(model.mean) <- c("pat5_d54","pat5_d70","pat5_d93")
-
-sink("img/mean.txt"); model.mean; sink()
-sink("img/sd.txt"); model.sd; sink()
-
-pdf('img/mean.pdf')
-plot(model.mean[,1],1:nrow(model.mean),xlim=range(model.mean),type='n',
-     fg='grey', ylab="",xlab="",yaxt='n',bty='n',
-     main="Patient 5: mean log(y/cutoff)")
-abline(h=1:nrow(model.mean),col='grey85',lty=2)
-axis(2,at=1:nrow(model.mean),label=rownames(model.mean),las=1,cex.axis=.6,fg='grey')
-points(model.mean[,1],1:32,pch=20,cex=2,col=rgb(1,0,0,.5))
-points(model.mean[,2],1:32,pch=20,cex=2,col=rgb(0,1,0,.5))
-points(model.mean[,3],1:32,pch=20,cex=2,col=rgb(0,0,1,.5))
-legend("topright", col=c('red','green','blue'),
-       legend=c("D54","D70","D93"),bty='n',pch=20,pt.cex=2,cex=1.5)
-dev.off()
-
-pdf('img/sd.pdf')
-plot(model.sd[,1],1:nrow(model.sd),xlim=range(model.sd),type='n',
-     fg='grey', ylab="",xlab="",yaxt='n',bty='n',
-     main="Patient 5: SD log(y/cutoff)")
-abline(h=1:nrow(model.sd),col='grey85',lty=2)
-axis(2,at=1:nrow(model.sd),label=rownames(model.sd),las=1,cex.axis=.6,fg='grey')
-points(model.sd[,1],1:32,pch=20,cex=2,col=rgb(1,0,0,.5))
-points(model.sd[,2],1:32,pch=20,cex=2,col=rgb(0,1,0,.5))
-points(model.sd[,3],1:32,pch=20,cex=2,col=rgb(0,0,1,.5))
-legend("topright", col=c('red','green','blue'),
-       legend=c("D54","D70","D93"),bty='n',pch=20,pt.cex=2,cex=1.5)
-dev.off()
-
-### SAME PLOTS FOR PB & CB ### 
+### Log((Expression+eps) / Cutoff) PLOTS FOR PB & CB ### 
+pdf('img/logExpressionOverCutoff.pdf')
 plot.expression.mean.sd(list(pat5_d54,pat5_d70,pat5_d93), 
                         list(pat5_d54_cutoff,pat5_d70_cutoff,pat5_d93_cutoff),
                         main="Patient5: log[(y+eps)/cutoff]")
 
 plot.expression.mean.sd(pbs,pb_cutoff,main="PB: log[(y+eps)/cutoff]")
 plot.expression.mean.sd(cbs,cb_cutoff,main="CB: log[(y+eps)/cutoff]")
+dev.off()
