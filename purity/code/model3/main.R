@@ -51,7 +51,7 @@ dev.off()
 ### Scala:
 library(rscala)
 
-s <- scalaInterpreter(classpath="jar/purity-assembly-0.3.0.jar")
+s <- scala(classpath="jar/purity-assembly-0.3.0.jar")
 
 s %~% '
 import purity.util._
@@ -59,10 +59,10 @@ import purity.data._
 import purity.model
 '
 
-intpSet(s, "n1", obs$n1)
-intpSet(s, "N1", obs$N1)
-intpSet(s, "N0", obs$N0)
-intpSet(s, "M", obs$M)
+scalaSet(s, "n1", obs$n1)
+scalaSet(s, "N1", obs$N1)
+scalaSet(s, "N0", obs$N0)
+scalaSet(s, "M",  obs$M)
 s %~% 'val obs = new Obs(n1.map(_.toInt).toVector,
                          N1.map(_.toInt).toVector,
                          N0.map(_.toInt).toVector,
