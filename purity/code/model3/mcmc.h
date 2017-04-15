@@ -134,12 +134,7 @@ void algo8(double alpha,
   // create a map of unique t's
   std::map<double,int> map_t_count;
   for (int i=0; i<n; i++) {
-    if (map_t_count.find( t_old[i] ) != map_t_count.end()) 
-    { // if key exists
-      map_t_count[t_old[i]]++;
-    } else {
-      map_t_count[t_old[i]] = 1;
-    }
+    map_t_count[t_old[i]]++;
     t_new[i] = t_old[i];
   }
 
@@ -172,11 +167,7 @@ void algo8(double alpha,
     }
 
     t_new[i] = unique_t[wsampleLogProb_index(logProb,K)];
-    if (map_t_count.find( t_new[i] ) != map_t_count.end()) {
-      map_t_count[t_new[i]]++;
-    } else {
-      map_t_count[t_new[i]] = 1;
-    }
+    map_t_count[ t_new[i] ]++;
   }
 
   // update by cluster
