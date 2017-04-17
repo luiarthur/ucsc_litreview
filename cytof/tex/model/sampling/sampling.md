@@ -96,7 +96,6 @@ mean parameter $m$, variance $s^2$, lower bound $a$, and upper bound $b$.
 
 ### Possible issues:
 
-- $n > 20000$
 - Repeated columns allowed in $Z$ in prior
 
 # Other Methods:
