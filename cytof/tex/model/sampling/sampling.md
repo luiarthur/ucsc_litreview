@@ -7,8 +7,8 @@ fontsize: 12pt
 
 # Uncomment if using natbib:
 
-# bibliography: BIB.bib
-# bibliographystyle: plain 
+bibliography: ../../bib/litreview.bib
+bibliographystyle: plain 
 
 # This is how you use bibtex refs: @nameOfRef
 # see: http://www.mdlerch.com/tutorial-for-pandoc-citations-markdown-to-latex.html
@@ -65,7 +65,7 @@ header-includes:
     - \newcommand{\Ind}[1]{\mathbbm{1}\bc{#1}}
 ---
 
-# Sampling for $\Z$
+# Sampling $\Z$ via MCMC
 \par
 $$
 \begin{split}
@@ -79,7 +79,7 @@ h_{j,k}\mid z_{jk}=1,v_l- &\sim \TN\p{0,\Gamma_{kk},-\infty, \Phi^{-1}\p{\prod_{
 h_{j,k}\mid z_{jk}=0,v_l- &\sim \TN\p{0,\Gamma_{kk}, \Phi^{-1}\p{\prod_{l=1}^k v_l\mid 0, \Gamma_{kk}},\infty} \\
 p(v_l\mid z_{jk}=1,v_{-l},-) &\propto v_l^{a_v-1} \times \Ind{v_l > \frac{\Phi(h_{jk}|0,\Gamma_{kk})}{\prod_{d\ne l}^k v_d}} \text{\quad Truncated Beta?}\\
 p(v_l\mid z_{jk}=0,v_{-l},-) &\propto v_l^{a_v-1} \times \Ind{v_l < \frac{\Phi(h_{jk}|0,\Gamma_{kk})}{\prod_{d\ne l}^k v_d}} \text{\quad Truncated Beta?}\\
-z_{jk} | h_{jk} &= \Ind{\Phi(h_{jk} | 0, \Gamma_{k,k}) < \prod_{l=1}^k v_l} \\
+z_{jk} | h_{jk} &:= \Ind{\Phi(h_{jk} | 0, \Gamma_{k,k}) < \prod_{l=1}^k v_l} \\
 \\
 %p(\lambda_{i,n}=k \mid w_{i,k}, -) &\propto w_{i,k} \exp\bc{-\frac{1}{2\sigma_i^2}\sum_{j=1}^J\p{y_{i,n,j}-\mu_{i,n,j}}^2} \\
 %\w_i \mid \bm\lambda_i,- &\sim \Dir\p{a_{i1}+\sum_{n=1}^{N_i}\Ind{\lambda_{i,n}=1},...,a_{iK}+\sum_{n=1}^{N_i}\Ind{\lambda_{i,n}=K}} \\
@@ -96,11 +96,22 @@ mean parameter $m$, variance $s^2$, lower bound $a$, and upper bound $b$.
 
 ### Possible issues:
 
-- Repeated columns allowed in $Z$ in prior
+- Repeated columns allowed in $Z$ apriori
 
-# Other Methods:
+# Alternative Methods:
 
-- Variational Inference for $Z$
+- Variational Inference for $Z$ using stick-breaking construction [@doshi2009variational]
+    - takes longer and has poorer performacnce for lower-dimension $Z$
+    - faster and has better performance for higher-dimension $Z$
+- General idea of Variational inference
+$$
+\begin{aligned}
+  KL(p || q) &= E_q \bk{ \log\frac{q(z)}{p(z|y)} } \\
+             &= -E_q \bk{\log\p{\frac{p(z,y)}{q(z)}}} + \log p(y)\\
+             &= -ELBO + \log p(y)\\
+\end{aligned} 
+$$
+So, $KL(p\lVert q) + ELBO = \log p(y) \Rightarrow$ maximizing ELBO is equivalent to minimizing KL.
 
 
 

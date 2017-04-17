@@ -5,7 +5,7 @@
 # --natbib  =>  use the natbib package in latex
 # -o        =>  output file name
 
-pandoc sampling.md -s -o sampling.tex
+pandoc sampling.md -s --natbib -o sampling.tex
 
 pdflatex sampling.tex
 bibtex sampling.aux
