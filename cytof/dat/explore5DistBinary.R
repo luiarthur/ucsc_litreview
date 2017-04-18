@@ -61,14 +61,29 @@ stopifnot(all.equal( names(pbs), names(pb_cutoff) ))
 S <- scala()
 trun <- (t(t(pat5_d54) - pat5_d54_cutoff) > 0) * 1
 x <- unique(trun, MARGIN=1)
-my.image(x)
+my.image(t(trun),yaxt='n',ylab='',xlab='Cells'); axis(2,at=1:ncol(x),label=colnames(x),fg='grey',las=2,cex.axis=.7)
 
-apply(, 1, function(r) identical(r, ) )
-unique_rows <- S$def('m: Array[Array[Double]]','
-  m.distinct
+
+unique_row_count <- S$def('m: Array[Array[Double]]','
+  import collection.mutable.Map
+  val n = m.length
+  val mapRowCount = Map[Vector[Double], Int]().withDefaultValue(0)
+  m.foreach( row => mapRowCount(row.toVector) += 1 )
+  mapRowCount.map( r => (r._2.toDouble +: r._1).toArray ).toArray.sortBy(z => -z.head)
 ')
 
-m <- matrix(1:5, 10, 4, byrow=TRUE)
+### FIXME
+firstPercent <- S$def('m: Array[Array[Double]], p: Double', '
+  val n = m.length
+  val cumPercent = m.map(b=>b.head).scanLeft(0)(_+_).tail
+  val dat = m.map(d => d.tail)
+  val out = cumPercent.zip(dat).takeWhile(d => d._1 < p)
+  out.map(z => z._2)
+')
 
-### FIXME ###
-unique_rows(m)
+### TEST uniqe_rows
+#unique_row_count(m)
+
+tmp <- unique_row_count(trun)
+
+my.image(t(tmp[1:62,-1]),yaxt='n',ylab='',xlab='Cells',main=''); axis(2,at=1:ncol(x),label=colnames(x),fg='grey',las=2,cex.axis=.7)
