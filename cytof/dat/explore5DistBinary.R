@@ -59,31 +59,71 @@ stopifnot(all.equal( names(pbs), names(pb_cutoff) ))
 
 ### MAIN ###
 S <- scala()
-trun <- (t(t(pat5_d54) - pat5_d54_cutoff) > 0) * 1
-x <- unique(trun, MARGIN=1)
-my.image(t(trun),yaxt='n',ylab='',xlab='Cells'); axis(2,at=1:ncol(x),label=colnames(x),fg='grey',las=2,cex.axis=.7)
 
+### SCALA FUNCTIONS ###
+orderBinaryMatByRow <- S$def('m: Array[Array[Int]]', '/*scala*/
+  m.sortBy(_.mkString.reverse)
+/*scala*/')
 
-unique_row_count <- S$def('m: Array[Array[Double]]','
+orderByCol <- function(m) {
+  t(orderBinaryMatByRow(t(m)))
+}
+
+unique_row_count <- S$def('m: Array[Array[Double]]', '/*scala*/
   import collection.mutable.Map
   val n = m.length
   val mapRowCount = Map[Vector[Double], Int]().withDefaultValue(0)
   m.foreach( row => mapRowCount(row.toVector) += 1 )
   mapRowCount.map( r => (r._2.toDouble +: r._1).toArray ).toArray.sortBy(z => -z.head)
-')
+/*scala*/')
 
-### FIXME
-firstPercent <- S$def('m: Array[Array[Double]], p: Double', '
-  val n = m.length
-  val cumPercent = m.map(b=>b.head).scanLeft(0)(_+_).tail
+topPercent <- S$def('m: Array[Array[Double]], p: Double', '/*scala*/
+  val n = m.map(_.head).sum
+  val cumPercent = m.map(b=>b.head).scanLeft(0.0)(_+_).tail
   val dat = m.map(d => d.tail)
-  val out = cumPercent.zip(dat).takeWhile(d => d._1 < p)
-  out.map(z => z._2)
-')
+  val out = cumPercent.zip(dat).takeWhile(_._1 < p * n)
+  out.map(_._2)
+/*scala*/')
+### END OF SCALA FUNCTIONS ###
 
-### TEST uniqe_rows
-#unique_row_count(m)
+binary_plot <- function(expr, cutoff, ...) {
+  trun <- (t(t(expr) - cutoff) > 0) * 1
+  my.image(orderByCol(t(trun)),yaxt='n',ylab='',xlab='Cells', ...)
+  axis(2,at=1:ncol(trun),label=colnames(trun),fg='grey',las=2,cex.axis=.7)
+}
 
-tmp <- unique_row_count(trun)
+binary_plot(pat5_d54, pat5_d54_cutoff, main='Patient 5 Truncated Expression (d54)')
+binary_plot(pat5_d70, pat5_d70_cutoff, main='Patient 5 Truncated Expression (d70)')
+binary_plot(pat5_d93, pat5_d93_cutoff, main='Patient 5 Truncated Expression (d93)')
 
-my.image(t(tmp[1:62,-1]),yaxt='n',ylab='',xlab='Cells',main=''); axis(2,at=1:ncol(x),label=colnames(x),fg='grey',las=2,cex.axis=.7)
+binary_plot_unique <- function(expr, cutoff, p=.2, ...) {
+  trun <- (t(t(expr) - cutoff) > 0) * 1
+  unq <- unique_row_count(trun)
+  y <- orderByCol(t(topPercent(unq, p)))
+  my.image(y,yaxt='n',ylab='',xlab='Cells', ...)
+  axis(2,at=1:ncol(trun),label=colnames(trun),fg='grey',las=2,cex.axis=.7)
+}
+
+binary_plot_unique(pat5_d54, pat5_d54_cutoff)
+binary_plot_unique(pat5_d70, pat5_d70_cutoff)
+binary_plot_unique(pat5_d93, pat5_d93_cutoff)
+
+binary_col_means <- function(expr, cutoff, p=.2, ...) {
+  trun <- (t(t(expr) - cutoff) > 0) * 1
+  colMeans(trun) > p
+}
+
+my.image(x <- cbind(
+  binary_col_means(pat5_d54, pat5_d54_cutoff, p=.8),
+  binary_col_means(pat5_d70, pat5_d70_cutoff, p=.8),
+  binary_col_means(pat5_d93, pat5_d93_cutoff, p=.8),
+  sapply(as.list(1:length(cbs)), function(i) 
+           binary_col_means(cbs[[i]], cb_cutoff[[i]], p=.8)),
+  sapply(as.list(1:length(pbs)), function(i) 
+           binary_col_means(pbs[[i]], pb_cutoff[[i]], p=.8))
+), yaxt='n', ylab='', xlab='',xaxt='n')
+colnames(x) <- c(paste0('pat5_d', c(54,70,93)), 
+                 names(cbs), 
+                 names(pbs))
+axis(2,at=1:nrow(x),label=rownames(x),fg='grey',las=2,cex.axis=.7)
+axis(1,at=1:ncol(x),label=colnames(x),fg='grey',las=2,cex.axis=.6)
