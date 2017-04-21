@@ -111,6 +111,24 @@ plot_table_pheno <- function(expr, cutoff, p=.001, ...) {
   par(mar=mar.default())
 }
 
+plot_cumtable_pheno <- function(expr, cutoff, p=1,ret=FALSE,...) {
+  x <- table_pheno(expr, cutoff)
+  cum_prop <- cumsum(x) / sum(x)
+  xx <- cum_prop[cum_prop < p]
+  plot(xx, type='n', lwd=2, fg='grey', ...)
+  abline(h=seq(.1, 1, by=.1), col='grey', lty=2)
+  #break_points <- sapply(unique(x), function(u) which.max(x==u))
+  #abline(v=break_points, col='grey', lty=2)
+  singleton <- which.max(x==1)
+  abline(v=singleton, col='grey', lty=2)
+  lines(xx, type='s', lwd=2)
+  points(singleton, xx[singleton], pch=20, cex=2)
+  if (ret) {
+    return (xx)
+  }
+}
+
+
 ### END OF SCALA FUNCTIONS ###
 
 binary_plot <- function(expr, cutoff, ...) {
@@ -208,5 +226,28 @@ for (i in 1:length(pbs)) {
   main <- paste0('Phenotype Frequency: pb', names(pbs)[i])
   plot_table_pheno(pbs[[i]], pb_cutoff[[i]], p=.001, 
                    main=main, ylab='Proportion')
+}
+##############################################################
+
+### PLOT MARKER CUMMULATIVE FREQUENCIES ######################
+### PATIENT 5 ###
+for (i in 1:length(pat5)) {
+  main <- paste0('Phenotype Cummulative Frequency: ', names(pat5)[i])
+  plot_cumtable_pheno(pat5[[i]], pat5_cutoff[[i]], p=1, 
+                   main=main, ylab='Proportion')
+}
+
+### CB ###
+for (i in 1:length(cbs)) {
+  main <- paste0('Phenotype Cummulative Frequency: ', names(cbs)[i])
+  plot_cumtable_pheno(cbs[[i]], cb_cutoff[[i]], p=1, 
+                   main=main, ylab='Proportion')
+}
+
+### PB ###
+for (i in 1:length(pbs)) {
+  main <- paste0('Phenotype Cummulative Frequency: pb', names(pbs)[i])
+  plot_cumtable_pheno(pbs[[i]], pb_cutoff[[i]], p=1, 
+                      main=main, ylab='Proportion')
 }
 ##############################################################
