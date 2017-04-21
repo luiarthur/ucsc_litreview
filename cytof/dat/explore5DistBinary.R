@@ -131,22 +131,22 @@ plot_cumtable_pheno <- function(expr, cutoff, p=1,ret=FALSE,...) {
 
 ### END OF SCALA FUNCTIONS ###
 
-binary_plot <- function(expr, cutoff, ...) {
-  trun <- (t(t(expr) - cutoff) > 0) * 1
+binary_plot <- function(expr, cutoff, offset=0,...) {
+  trun <- (t(t(expr) - cutoff - offset) > 0) * 1
   my.image(orderByCol(t(trun)),yaxt='n',ylab='',xlab='Cells', ...)
   axis(2,at=1:ncol(trun),label=colnames(trun),fg='grey',las=2,cex.axis=.7)
 }
 
-binary_plot_unique <- function(expr, cutoff, p=.2, ...) {
-  trun <- (t(t(expr) - cutoff) > 0) * 1
+binary_plot_unique <- function(expr, cutoff, p=.2, offset=0,...) {
+  trun <- (t(t(expr) - cutoff - offset) > 0) * 1
   unq <- unique_row_count(trun)
   y <- orderByCol(t(topPercent(unq, p)))
   my.image(y,yaxt='n',ylab='',xlab='Cells', ...)
   axis(2,at=1:ncol(trun),label=colnames(trun),fg='grey',las=2,cex.axis=.7)
 }
 
-binary_col_means <- function(expr, cutoff, p=.2, ...) {
-  trun <- (t(t(expr) - cutoff) > 0) * 1
+binary_col_means <- function(expr, cutoff, p=.2, offset=0,...) {
+  trun <- (t(t(expr) - cutoff - offset) > 0) * 1
   colMeans(trun) > p
 }
 
@@ -169,17 +169,23 @@ binary_col_means <- function(expr, cutoff, p=.2, ...) {
 
 ### Plot Most Common 20% Binarized Data Sorted ################
 pp <- .2
+offset <- 0
+
+#binary_plot_unique(pat5[[1]], pat5_cutoff[[1]], p=pp, offset=2)
 for (i in 1:length(pat5)) {
   main <- paste0('Top ',pp*100,'% most frequent phenotypes in ', names(pat5)[[i]])
-  binary_plot_unique(pat5[[i]], pat5_cutoff[[i]], p=pp, main=main)
+  binary_plot_unique(pat5[[i]], pat5_cutoff[[i]], p=pp, 
+                     offset=offset, main=main)
 }
 for (i in 1:length(cbs)) {
   main <- paste0('Top ',pp*100,'% most frequent phenotypes in ', names(cbs)[[i]])
-  binary_plot_unique(cbs[[i]], cb_cutoff[[i]], p=pp, main=main)
+  binary_plot_unique(cbs[[i]], cb_cutoff[[i]], p=pp, 
+                     offset=offset, main=main)
 }
 for (i in 1:length(pbs)) {
   main <- paste0('Top ',pp*100,'% most frequent phenotypes in ', names(pbs)[[i]])
-  binary_plot_unique(pbs[[i]], pb_cutoff[[i]], p=pp, main=main)
+  binary_plot_unique(pbs[[i]], pb_cutoff[[i]], p=pp, 
+                     offset=offset, main=main)
 }
 ################################################################
 
