@@ -65,11 +65,6 @@ header-includes:
 
 # Sampling $\Z$ via MCMC
 
-
-$$
-\alpha
-$$
-
 \begin{align*}
 \allowdisplaybreaks
 \sigma_i^2 \mid \y,\bmu,- &\sim  \IG\p{a_\sigma + \frac{N_iJ}{2}, b_\sigma + \frac{\sum_{j=1}^J\sum_{n=1}^{N_i} \p{y_{i,n,j}-\mu^\star_{j,\lambda_{i,n}}}^2}{2}} \\
