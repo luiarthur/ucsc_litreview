@@ -10,7 +10,7 @@ bibliographystyle: plain
 
 # This is how you use bibtex refs: @nameOfRef
 # see: http://www.mdlerch.com/tutorial-for-pandoc-citations-markdown-to-latex.html
-
+#{{{1
 header-includes: 
     - \usepackage{bm}
     - \usepackage{bbm}
@@ -43,6 +43,7 @@ header-includes:
     #
     - \allowdisplaybreaks
     - \def\M{\mathcal{M}}
+#}}}1
     # FOR THIS PROJECT:
     - \newcommand{\y}{\bm{y}}
     - \newcommand{\yin}{\y_{i,n}}
@@ -52,6 +53,7 @@ header-includes:
     - \newcommand{\mlins}{\bmu_{\lambda_{i,n}}^\star}
     - \newcommand{\Z}{\mathbf{Z}}
     - \newcommand{\z}{\bm{z}}
+    - \renewcommand{\v}{\bm{v}}
     - \newcommand{\bzero}{\bm{0}}
     - \newcommand{\w}{\bm{w}}
     - \newcommand{\h}{\bm{h}}
@@ -63,6 +65,7 @@ header-includes:
     - \newcommand{\Ind}[1]{\mathbbm{1}\bc{#1}}
 ---
 
+
 # Sampling $\Z$ via MCMC
 
 \begin{align*}
@@ -73,15 +76,13 @@ header-includes:
 %\mu_{j,k}^\star \mid z_{j,k}=0, y_{i,n,j}, \tau^2_j,-&\sim \N^-\p{\frac{\tau_j^2\sum_{\bc{(i,n):\lambda_{i,n}=k}} y_{i,n,j}}{c_{jk}\tau_j^2+\sigma_i^2},\frac{\tau_j^2\sigma_i^2}{c_{jk}\tau_j^2+\sigma_i^2}} \\
 %p(\tau^2_{ij} \mid \bmu^\star-) &\propto \tau_{ij}^{2(a_\tau-1)} \exp\bc{-b_{\tau}/\tau_{ij}^2} \prod_{k=1}^K q_{jk}(\mu_{jk}^\star)\\
 %\\
-h_{j,k}\mid z_{jk}=1,v_l- &\sim \TN\p{0,\Gamma_{jj},-\infty, \Phi^{-1}\p{\prod_{l=1}^k v_l\mid 0, \Gamma_{jj}}} \\
+%h_{j,k}\mid z_{jk}=1,v_l- &\sim \TN\p{0,\Gamma_{jj},-\infty, \Phi^{-1}\p{\prod_{l=1}^k v_l\mid 0, \Gamma_{jj}}} \\
+%p(v_l\mid z_{jk}=0,v_{-l},-) &\propto v_l^{a_v-1} \times \Ind{v_l < \frac{\Phi(h_{jk}|0,\Gamma_{jj})}{\prod_{d\ne l}^k v_d}} \text{\quad Truncated Beta?}\\
+\h_k\mid z_{jk}- &\propto p(\h_k) \prod_{\gamma\in\bc{0,1}} \prod_{\bc{j: z_{jk}=\gamma}}p_\gamma(\mu^*_{jk} \mid z_{jk}(h_{jk},\v), \psi_j, \tau_j^2) \\
 %
-h_{j,k}\mid z_{jk}=0,v_l- &\sim \TN\p{0,\Gamma_{jj}, \Phi^{-1}\p{\prod_{l=1}^k v_l\mid 0, \Gamma_{jj}},\infty} \\
+v_l\mid z_{jk}- &\propto p(v_l) \prod_{\gamma\in\bc{0,1}} \prod_{\bc{j: z_{jk}=\gamma}}p_\gamma(\mu^*_{jk} \mid z_{jk}(h_{jk},\v), \psi_j, \tau_j^2) \\
 %
-p(v_l\mid z_{jk}=1,v_{-l},-) &\propto v_l^{a_v-1} \times \Ind{v_l > \frac{\Phi(h_{jk}|0,\Gamma_{jj})}{\prod_{d\ne l}^k v_d}} \text{\quad Truncated Beta?}\\
-%
-p(v_l\mid z_{jk}=0,v_{-l},-) &\propto v_l^{a_v-1} \times \Ind{v_l < \frac{\Phi(h_{jk}|0,\Gamma_{jj})}{\prod_{d\ne l}^k v_d}} \text{\quad Truncated Beta?}\\
-%
-z_{jk} | h_{jk} &:= \Ind{\Phi(h_{jk} | 0, \Gamma_{jj}) < \prod_{l=1}^k v_l} \\
+z_{jk}(h_{jk},\v) &:= \Ind{\Phi(h_{jk} | 0, \Gamma_{jj}) < \prod_{l=1}^k v_l} \\
 \\
 %
 p(\lambda_{i,n}=k \mid w_{i,k}, -) &\propto w_{i,k} \exp\bc{-\frac{1}{2\sigma_i^2}\sum_{j=1}^J\p{y_{i,n,j}-\mu_{i,n,j}}^2} \\
