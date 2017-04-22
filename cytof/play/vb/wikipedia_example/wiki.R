@@ -1,3 +1,4 @@
+library(rcommon)
 # See: https://en.wikipedia.org/wiki/Variational_Bayesian_methods
 # Model: 
 # x_i | mu, tau ~ N(mu, 1 / tau), i = 1, ..., N. (tau is precision)
@@ -39,3 +40,15 @@ out <- vb(y, eps=1E-10)
 out$mu_mean
 sqrt(out$tau_b / out$tau_a)
 out$its
+
+post_sig2 <- 1 / rgamma(1000, out$tau_a, out$tau_b)
+post_mu <- rnorm(1000, out$mu_mean, 1 / sqrt(out$mu_prec))
+
+plotPosts(cbind(post_sig2, post_mu))
+
+
+### MCMC ###
+
+mcmc <- function(init, a, b, B, burn, ) {
+   
+}
