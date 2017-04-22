@@ -1,3 +1,4 @@
+# See: https://en.wikipedia.org/wiki/Variational_Bayesian_methods
 # Model: 
 # x_i | mu, tau ~ N(mu, 1 / tau), i = 1, ..., N. (tau is precision)
 #  mu | tau     ~ N(m, 1 / (g tau))
@@ -27,6 +28,8 @@ vb <- function(y, m=0, a0=.001, b0=.001, g=1, prec_init=1, eps=1E-3) {
 
   list(mu_mean=mu, mu_prec=param$prec, tau_a=aN, tau_b=param$bN, its=its)
 }
+
+### MAIN ###
 
 B <- 30000
 y <- rnorm(B,5,3)
