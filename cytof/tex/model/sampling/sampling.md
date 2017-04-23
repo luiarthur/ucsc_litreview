@@ -63,6 +63,7 @@ header-includes:
     - \newcommand{\IG}{\text{IG}}
     - \newcommand{\Be}{\text{Beta}}
     - \newcommand{\Ind}[1]{\mathbbm{1}\bc{#1}}
+    - \newcommand{\sign}[1]{\text{sign}\p{#1}}
 ---
 
 
@@ -78,31 +79,38 @@ header-includes:
 %\\
 %h_{j,k}\mid z_{jk}=1,v_l- &\sim \TN\p{0,\Gamma_{jj},-\infty, \Phi^{-1}\p{\prod_{l=1}^k v_l\mid 0, \Gamma_{jj}}} \\
 %p(v_l\mid z_{jk}=0,v_{-l},-) &\propto v_l^{a_v-1} \times \Ind{v_l < \frac{\Phi(h_{jk}|0,\Gamma_{jj})}{\prod_{d\ne l}^k v_d}} \text{\quad Truncated Beta?}\\
-\h_k\mid z_{jk}- &\propto p(\h_k) \prod_{\gamma\in\bc{0,1}} \prod_{\bc{j: z_{jk}=\gamma}}p_\gamma(\mu^*_{jk} \mid z_{jk}(h_{jk},\v), \psi_j, \tau_j^2) \\
+\h_k\mid - &\propto p(\h_k) \prod_{j=1}^J p_{z_{jk}}(\mu^*_{jk} \mid \psi_j, \tau_j^2) \\
 %
-v_l\mid z_{jk}- &\propto p(v_l) \prod_{\gamma\in\bc{0,1}} \prod_{\bc{j: z_{jk}=\gamma}}p_\gamma(\mu^*_{jk} \mid z_{jk}(h_{jk},\v), \psi_j, \tau_j^2) \\
+v_l\mid z_{jk}- &\propto p(v_l) \prod_{j=1}^Jp_{z_{jk}}(\mu^*_{jk} \mid \psi_j, \tau_j^2) \\
 %
 z_{jk}(h_{jk},\v) &:= \Ind{\Phi(h_{jk} | 0, \Gamma_{jj}) < \prod_{l=1}^k v_l} \\
 \\
 %
-p(\lambda_{i,n}=k \mid w_{i,k}, -) &\propto w_{i,k} \exp\bc{-\frac{1}{2\sigma_i^2}\sum_{j=1}^J\p{y_{i,n,j}-\mu_{i,n,j}}^2} \\
+p(\lambda_{i,n}=k \mid w_{i,k}, -) &\propto w_{i,k} \exp\bc{-\frac{1}{2\sigma_i^2}\sum_{j=1}^J\p{y_{i,n,j}-\mu^*_{j,k}}^2} \\
 \w_i \mid \bm\lambda_i,- &\sim \Dir\p{a_{i1}+\sum_{n=1}^{N_i}\Ind{\lambda_{i,n}=1},...,a_{iK}+\sum_{n=1}^{N_i}\Ind{\lambda_{i,n}=K}} \\
 %
 \\
-p(\tau_j^2|-) &\propto (\tau_j^2)^{-a_\tau-1} \exp\bc{-b_\tau/\tau_j^2} \times \prod_{k=1,i=1}^{K,I} \bc{\prod_{\gamma\in \bc{0,1}} p\p{\mu^*_{jk} \mid \tau_j^2, z_{jk}=\gamma, \psi_j}} \\
+p(\tau_j^2|-) &\propto p(\tau_j^2) \times \prod_{k=1}^K p_{z_{jk}}(\mu_{jk}^* \mid \psi_j, \tau_j^2)\\
 %
-p(\psi_j\mid -) &\propto p(\psi_j) \times \prod_{k=1,i=1}^{K,I} \bc{\prod_{\gamma\in \bc{0,1}} p\p{\mu^*_{jk} \mid \tau_j^2, z_{jk}=\gamma, \psi_j}} \\
+p(\psi_j\mid -) &\propto p(\psi_j) \times \prod_{k=1}^K p_{z_{jk}}(\mu_{jk}^* \mid \psi_j, \tau_j^2)\\
 %
-p(\mu^*_{jk} \mid -) &\propto p(\mu^*_{jk}) \times \prod_{i=1}^{I} \bc{\prod_{\gamma\in \bc{0,1}} p\p{\mu^*_{jk} \mid \tau_j^2, z_{jk}=\gamma, \psi_j}} \\
+p(\mu^*_{jk} \mid z_{jk}=1, -) &\propto p_1(\mu^*_{jk} \mid \psi_j, \tau_j^2) \times \prod_{(i,n):\lambda_{in}=k} p(y_{inj} \mid \mu_{jk}^*, \sigma_i^2) \times \Ind{\mu_{jk}^*>0}\\
+p(\mu^*_{jk} \mid z_{jk}=0, -) &\propto p_0(\mu^*_{jk} \mid \psi_j, \tau_j^2) \times \prod_{(i,n):\lambda_{in}=k} p(y_{inj} \mid \mu_{jk}^*, \sigma_i^2) \times \Ind{\mu_{jk}^*<0}\\
 \end{align*}
 
-$$
-%where 
-%- $\TN(m,s^2,a,b)$ refers to the truncated Normal distribution with 
-%mean parameter $m$, variance $s^2$, lower bound $a$, and upper bound $b$.
-%- $c_{jk} = \sum_{\bc{(i,n):\lambda_{i,n}=k}} 1$
-%- $q_{jk}(\cdot) = \N\p{\cdot\mid\frac{\tau_j^2\sum_{\bc{(i,n):\lambda_{i,n}=k}} y_{i,n,j}}{c_{jk}\tau_j^2+\sigma_i^2},\frac{\tau_j^2\sigma_i^2}{c_{jk}\tau_j^2+\sigma_i^2}}$ 
-$$
+where 
+
+- $p_0(\mu^*_{jk} \mid \psi_j, \tau_j^2) = \ds\frac{\frac{1}{\sqrt{2\pi\tau_j^2}}\exp\bc{-\frac{(\mu_{jk}^* - \psi_j)^2}{2\tau_j^2}}}{1-\Phi\p{\frac{\mu_{jk}-\psi_j}{\tau_j}}}$
+
+- $p_1(\mu^*_{jk} \mid \psi_j, \tau_j^2) = \ds\frac{\frac{1}{\sqrt{2\pi\tau_j^2}}\exp\bc{-\frac{(\mu_{jk}^* - \psi_j)^2}{2\tau_j^2}}}{\Phi\p{\frac{\mu_{jk}-\psi_j}{\tau_j}}}$
+
+- $p(\h_k) \propto \exp\bc{-\frac{\h_k'(\Gamma^{-1})\h_k}{2}}$
+
+- $p(v_l) \propto v_l^{a_v-1} (1-v_l)^{b_v-1}$
+
+- $p(\tau_j^2) \propto (\tau_j^2)^{-a_\tau-1} \exp\bc{-b_\tau / \tau_j^2}$
+
+- $p(\psi_j^2) \propto \exp\bc{-\frac{(\psi - m_\psi)^2}{2 s_\psi^2}}$
 
 ### Possible issues:
 
@@ -113,14 +121,4 @@ $$
 - Variational Inference for $Z$ using stick-breaking construction [@doshi2009variational]
     - takes longer and has poorer performance for lower-dimension $Z$
     - faster and has better performance for higher-dimension $Z$
-- General idea of Variational inference
-$$
-\begin{aligned}
-  KL(p || q) &= E_q \bk{ \log\frac{q(z)}{p(z|y)} } \\
-             &= -E_q \bk{\log\p{\frac{p(z,y)}{q(z)}}} + \log p(y)\\
-             &= -ELBO + \log p(y)\\
-\end{aligned} 
-$$
-So, $KL(p\lVert q) + ELBO = \log p(y) \Rightarrow$ maximizing ELBO is equivalent to minimizing KL.
-
 
