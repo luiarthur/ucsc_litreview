@@ -122,3 +122,10 @@ where
     - takes longer and has poorer performance for lower-dimension $Z$
     - faster and has better performance for higher-dimension $Z$
 
+
+[comment]: <> (%
+  All these are commented
+  No strange spell checks in the commetns.
+  $$\alpha$$
+%)
+
