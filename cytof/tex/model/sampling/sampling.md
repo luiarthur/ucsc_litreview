@@ -66,8 +66,29 @@ header-includes:
     - \newcommand{\sign}[1]{\text{sign}\p{#1}}
 ---
 
+# Joint Posterior
 
-# Sampling $\Z$ via MCMC
+Let $\bm\theta = \p{\bm{\sigma^2, v, h, \lambda, w, \tau^2, \psi, \mu^*}}$
+
+$$
+\begin{split}
+p(\bm\theta \mid K, \y) \propto& \bc{\prod_{i=1}^n p(\sigma_i^2)p(\bm{w_i}) 
+\prod_{n=1}^{N_i} p(\lambda_{i,n}\mid \bm w_i)  p(\y_{i,n} \mid \mu_{j,\lambda_{i,n}}^* , \sigma^2_i \I_J ) } \\
+&\prod_{j=1}^J p(\tau_j^2) p(\psi_j) \prod_{j=1,k=1}^{J,K}  p_{z_{jk}}(\mu^*_{jk} \mid \psi_j, \tau_j^2) 
+\prod_{k=1}^Kp(v_k)p(\h_k)
+\end{split}
+$$
+
+
+
+# Derivation of Full Conditionals
+
+\begin{align*}
+p(v_l \mid -) \propto(
+\end{align*}
+
+
+# Sampling via MCMC
 
 \begin{align*}
 \allowdisplaybreaks
@@ -106,11 +127,11 @@ where
 
 - $p(\h_k) \propto \exp\bc{-\frac{\h_k'(\Gamma^{-1})\h_k}{2}}$
 
-- $p(v_l) \propto v_l^{a_v-1} (1-v_l)^{b_v-1}$
+- $p(v_l) \propto v_l^{\alpha-1}$
 
 - $p(\tau_j^2) \propto (\tau_j^2)^{-a_\tau-1} \exp\bc{-b_\tau / \tau_j^2}$
 
-- $p(\psi_j^2) \propto \exp\bc{-\frac{(\psi - m_\psi)^2}{2 s_\psi^2}}$
+- $p(\psi_j^2) \propto \exp\bc{-\frac{(\psi_j - m_\psi)^2}{2 s_\psi^2}}$
 
 ### Possible issues:
 
