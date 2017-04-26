@@ -1,5 +1,5 @@
 ---
-title: "DRAFT (after dropping $i$)"
+title: "DRAFT"
 author: Arthur Lui
 date: "17 April 2017"
 geometry: margin=1in
@@ -74,23 +74,26 @@ header-includes:
 
 $$
 \begin{array}{rcl}
-(y_{inj} \mid \lambda_{i,n}=k, z_{ij}=1, \mu_{jk}^*,\sigma_i^2) &\sim& \LN(\mu_{jk}^*, \sigma_i^2)\\
-(y_{inj} \mid \lambda_{i,n}=k, z_{ij}=0, \mu_{jk}^*,\sigma_i^2) &\sim& \pi_{ij}\delta_0(y_{inj}) + (1-\pi_{ij}) \LN(\mu_{jk}^*, \sigma_i^2) \\
+(y_{inj} \mid \lambda_{i,n}=k, z_{jk}=1, \mu_{jk}^*,\sigma_i^2) &\sim& \LN(\mu_{jk}^*, \sigma_i^2)\\
+(y_{inj} \mid \lambda_{i,n}=k, z_{jk}=0, \mu_{jk}^*,\sigma_i^2) &\sim& \pi_{ij}\delta_0(y_{inj}) + (1-\pi_{ij}) \LN(\mu_{jk}^*, \sigma_i^2) \\
 \end{array}
 $$
 
 # Joint Posterior
 
-Let $\bm\theta = \p{\bm{\sigma^2, v, h, \lambda, w, \tau^2, \psi, \mu^*}}$
+Let $\bm\theta = \p{\bm{\mu^*, \sigma^2, v, h, \lambda, w, \tau^2, \psi, \bm\pi}}$
 
 $$
 \begin{split}
-p(\bm\theta \mid K, \y, \alpha, \bm\pi) \propto& \bc{p(\bm{w})\prod_{i=1}^n 
+p(\bm\theta \mid K, \y, \alpha) \propto& \bc{p(\bm{w})\prod_{i=1}^I 
 p(\sigma_i^2) 
 \prod_{n=1}^{N_i} p(\lambda_{i,n}\mid \bm w)  \prod_{j=1}^J p(y_{inj} \mid 
 \mu_{j,\lambda_{i,n}}^* , \sigma^2_i, z_{j,\lambda_{i,n}}) } \\
-&\prod_{j=1}^J p(\tau_j^2) p(\psi_j) \prod_{j=1,k=1}^{J,K}  p_{z_{jk}}(\mu^*_{jk} \mid \psi_j, \tau_j^2) 
+&\prod_{j=1}^J p(\tau_j^2) p(\psi_j) \prod_{j=1,k=1}^{J,K}  
+%p_{z_{jk}}(\mu^*_{jk} \mid \psi_j, \tau_j^2) 
+p(\mu^*_{jk} \mid \psi_j, \tau_j^2) 
 \prod_{k=1}^Kp(v_k)p(\h_k)
+\prod_{i=1,j=1}^{I,J} p(\pi_{ij})
 \end{split}
 $$
 
@@ -101,6 +104,38 @@ it's full conditional distribution. Where this cannot be done conveniently,
 a metropolis step will be necessary.
 
 # Derivation of Full Conditionals
+
+## Full Conditional for $\bm\mu^*$
+
+**I changed the prior here.** I thought splitting the prior for $\mu_{jk}^*$
+was a little redundant as this is already done in the likelihood.
+Also, I think the math got a little confusing. 
+
+Let the prior for $\mu_{jk}^*$ be $(\mu_{jk}^* \mid \psi_j, \tau^2_j) \sim
+\N(\psi_j, \tau_j^2)$. 
+
+Let $C_1 = \bc{(i,n): (\lin=k)~\cap~(z_{jk}=1)}$.
+Let $C_0 = \bc{(i,n): (\lin=k)~\cap~(z_{jk}=0)}$.
+
+Then,
+
+\begin{align*}
+p(\mu_{jk}^* \mid \y,-) \propto&~~ p(\mu_{jk}^*\mid \psi_j, \tau_j^2) \times 
+\prod_{i=1,n=1}^{I,N_i} p(y_{inj}\mid \mu_{j,\lin}^*, \sigma_i^2, z_{j,\lin})\\
+%
+\propto&~~ p(\mu_{jk}^*\mid \psi_j, \tau_j^2) \times 
+\prod_{(i,n)\in C_1} p_1(y_{inj}\mid \mu_{jk}^*, \sigma_i^2)
+\prod_{(i,n)\in C_0} p_0(y_{inj}\mid \mu_{jk}^*, \sigma_i^2)\\
+%
+\propto&~~\exp\bc{-\frac{(\mu_{jk}^*-\psi_j)^2}{2\tau_j^2}} \times 
+\prod_{(i,n)\in C_1} \exp\bc{-\frac{(\ln(y_{inj})-\mu_{jk}^*)^2}{2\sigma_i^2}}\times\\
+&~~\prod_{(i,n)\in C_0} \bc{\pi_{ij}\delta_0(y_{inj}) + (1-\pi_{ij}) 
+\logNpdf{y_{inj}}{\mu_{jk}^*}{\sigma_i^2}}
+\end{align*}
+
+The full conditional is not available in closed form. But, it can be sampled
+from by a metropolis step with a Normal proposal. 
+
 
 ## Full Conditional for $\sigma_i^2$
 Let $p_1(y_{inj} \mid \mu_{j,\lin}^*, \sigma_i^2) = 
@@ -119,10 +154,9 @@ $$
 p(\sigma_i^2 \mid -) \propto&~~ p(\sigma_i^2) 
 \prod_{j=1}^J\prod_{n=1}^{N_i} p(y_{inj} \mid \mu_{j,\lin}^*, \sigma_i^2, z_{j,\lin}) \\
 %
-\propto&~~ p(\sigma_i^2) \prod_{\bc{(j,n)\in S_1} }
-p_1(y_{inj}\mid\mu_{j,\lin}^* , \sigma^2_i) \times\\
-&~~~~~~~~~\prod_{\bc{(j,n)\in S_0}} 
-p_0(y_{inj}\mid\mu_{j,\lin}^* , \sigma^2_i) \\
+\propto&~~ p(\sigma_i^2) 
+\prod_{\bc{(j,n)\in S_1}} p_1(y_{inj}\mid\mu_{j,\lin}^* , \sigma^2_i) 
+\prod_{\bc{(j,n)\in S_0}} p_0(y_{inj}\mid\mu_{j,\lin}^* , \sigma^2_i) \\
 %
 \propto&~~ (\sigma_i^2)^{-a_\sigma-1} \exp(-b_\sigma/\sigma_i^2)\times \\
 &~~ \prod_{\bc{(j,n)\in S_1}} \logNpdf{y_{inj}}{\mu_{j,\lin}}{\sigma_i^2} \times\\
@@ -138,9 +172,55 @@ proposal distribution.
 
 ## Full Conditional for $\v$
 
+The prior distribution for $v_l$ are $v_l \mid \alpha \ind \Be(\alpha, 1)$, for 
+$l = 1,...,K$. So, $p(v_l \mid \alpha) \propto v_l^{\alpha-1}$. Also, let
+$v_0 = 1$ (deterministically). Then,
+
+\begin{align*}
+p(v_k \mid \y,-) \propto&~~ p(v_k \mid \alpha) 
+\prod_{(i,n):\lin \ge k} p(y_{inj} \mid \mu_{j,\lin},\sigma_i^2, z_{j,\lin})\\
+\propto&~~ v_k^{\alpha-1}
+\prod_{(i,n):\lin \ge k} p(y_{inj} \mid \mu_{j,\lin},\sigma_i^2, z_{j,\lin})\\
+\end{align*}
+
+For each $k = 1, \cdots, K$, the full conditional cannot be sampled from
+conveniently. So, a metropolis update is required for each $v_k$.
+A joint update of all the $v_k$'s may be desirable to avoid computing 
+the likelihood $K$ times. This requires logit-transforming the $v_k$'s and 
+using a multivariate proposal distribution centered at the current set of $\v$'s
+in the metropolis update.
+
 ## Full Conditional for $\h$
+$$
+\begin{split}
+p(\h_k \mid \y, -) \propto&~~ p(\h_k) 
+\prod_{(i,n): \lin=k} p(y_{inj} \mid \mu_{jk}, \sigma_i^2, z_{jk}) \\
+\end{split}
+$$
+
+Again, for each $k = 1, \cdots, K$, the full conditional cannot be sampled from
+conveniently. So, a metropolis update is required for each $h_k$. Since $h_k$ is
+multivariate Normal apriori, a multivariate Normal centered at the 
+most recent $h_k$ can serve as the proposal distribution.
+
+I think that $\h_k$ needs to be updated as a vector instead of one element 
+at a time because updating each $h_{jk}$ does not take into account the correlation
+between markers (in the off-diagonals of $\Gamma$).
 
 ## Full Conditional for $\bm\lambda$
+
+The prior for $\lin$ is $p(\lin\mid \w) = w_k$.
+
+$$
+\begin{split}
+p(\lin=k\mid \y,-) \propto&~~ p(\lin=k) 
+\prod_{j=1}^J \prod_{(i,n):\lin=k} p(y_{inj}\mid \mu_{jk}^*, \sigma_i^2, z_{jk})\\
+\end{split}
+$$
+
+Since $\lin$ has a discrete support, sampling from it's full conditional is
+simply a matter of sampling each $k$ proportional to the full conditional
+evaluated at $k$.
 
 ## Full Conditional for $\w$
 The prior for $\w$ is $w \sim \Dir(a_1, \cdots, a_K)$
@@ -158,61 +238,111 @@ $$
 (\w \mid \bm\lambda,-) ~\sim~ \Dir\p{a_1+\sum_{i=1}^I\sum_{n=1}^{N_i}\Ind{\lambda_{i,n}=1},...,a_{K}+\sum_{i=1}^I\sum_{n=1}^{N_i}\Ind{\lambda_{i,n}=K}} 
 $$
 
-Consequently, the full conditional for $\w$ can be sampled from in a Gibbs sampler
-from a Dirichlet distribution.
+Consequently, the full conditional for $\w$ can be sampled from directly.
 
 ## Full Conditional for $\bm{\tau^2}$
+Let $\tau_j^2$ have prior distribution $\tau_j^2 \sim \IG(a_\tau, b_\tau)$.
+Then $\tau_j^2$ is a conjugate prior. So, it's full conditional is 
+
+$$
+\begin{split}
+p(\tau_j^2 \mid \y, -) \propto&~~ p(\tau_j^2) \times 
+\prod_{k=1}^K p(\mu_{jk}\mid \psi_j, \tau_j^2) \\
+\propto&~~ (\tau_j^2)^{-a_\tau-1} \exp\bc{-b_\tau/\tau_j^2} \times 
+(\tau_j^2)^{-K/2} \exp\bc{-\frac{\sum_{k=1}^K\p{\mu_{jk}-\psi_j}^2}{2\tau_j^2}} \\
+\propto&~~ (\tau_j^2)^{-a\tau-K/2-1} 
+\exp\bc{-b_\tau/\tau_j^2-\frac{\sum_{k=1}^K\p{\mu_{jk}-\psi_j}^2}{2\tau_j^2}}
+\end{split}
+$$
+
+Therefore,
+
+$$
+(\tau_j^2 \mid \y, -) \sim \IG\p{a_\tau + \frac{K}{2}, b_\tau + \frac{\sum_{k=1}^K\p{\mu_{jk}-\psi_j}^2}{2}}
+$$
+
+Consequently, the full conditional for $\tau_j^2$ can be sampled from one at
+a time directly.
 
 ## Full Conditional for $\bm\psi$
+Let $\psi_j$ have prior distribution $\psi_j \sim \N(m_\psi, s^2_\psi)$.
+Then $\psi_j$ is a conjugate prior. So, it's full conditional is 
 
-## Full Conditional for $\bm\mu^*$
+$$
+\begin{split}
+p(\psi_j \mid \y, -) \propto&~~ p(\psi_j) \times 
+\prod_{k=1}^K p(\mu_{jk}\mid \psi_j, \tau_j^2) \\
+\propto&~~ \exp\bc{-\frac{(\psi_j-m_\psi)^2}{2s^2_\psi}} \times 
+\exp\bc{-\frac{\sum_{k=1}^K\p{\mu_{jk}-\psi_j}^2}{2\tau_j^2}} \\
+\end{split}
+$$
+
+Therefore,
+
+$$
+\psi_j \mid \y, - \sim \N\p{\frac{\tau_j^2 m_\psi + s^2_\psi\sum_{k=1}^K \mu_{jk}}
+                                 {\tau_j^2 + Ks_\psi^2},
+                            \frac{\tau_j^2 s^2_\psi}{\tau_j^2 + Ks_\psi^2}}
+$$
+
+Consequently, the full conditional for $\psi_j$ can be sampled from one at
+a time directly.
 
 
-# Recap
 
-\begin{align*}
-%\sigma_i^2:
-%\sigma_i^2 \mid \y,\bmu,- &\sim  \IG\p{a_\sigma + \frac{N_iJ}{2}, b_\sigma + \frac{\sum_{j=1}^J\sum_{n=1}^{N_i} \p{y_{i,n,j}-\mu^\star_{j,\lambda_{i,n}}}^2}{2}} \\
+
+## Full Conditional for $\bm\pi$
+
+
+[comment]: <> (%
+%{{{
+%# Recap
 %
-%\mu_{j,k}^\star \mid z_{j,k}=1, y_{i,n,j}, \tau^2_j,-&\sim \N^+\p{\frac{\tau_j^2\sum_{\bc{(i,n):\lambda_{i,n}=k}} y_{i,n,j}}{c_{jk}\tau_j^2+\sigma_i^2},\frac{\tau_j^2\sigma_i^2}{c_{jk}\tau_j^2+\sigma_i^2}} \\
-%\mu_{j,k}^\star \mid z_{j,k}=0, y_{i,n,j}, \tau^2_j,-&\sim \N^-\p{\frac{\tau_j^2\sum_{\bc{(i,n):\lambda_{i,n}=k}} y_{i,n,j}}{c_{jk}\tau_j^2+\sigma_i^2},\frac{\tau_j^2\sigma_i^2}{c_{jk}\tau_j^2+\sigma_i^2}} \\
-%p(\tau^2_{ij} \mid \bmu^\star-) &\propto \tau_{ij}^{2(a_\tau-1)} \exp\bc{-b_{\tau}/\tau_{ij}^2} \prod_{k=1}^K q_{jk}(\mu_{jk}^\star)\\
-%\\
-%h_{j,k}\mid z_{jk}=1,v_l- &\sim \TN\p{0,\Gamma_{jj},-\infty, \Phi^{-1}\p{\prod_{l=1}^k v_l\mid 0, \Gamma_{jj}}} \\
-%p(v_l\mid z_{jk}=0,v_{-l},-) &\propto v_l^{a_v-1} \times \Ind{v_l < \frac{\Phi(h_{jk}|0,\Gamma_{jj})}{\prod_{d\ne l}^k v_d}} \text{\quad Truncated Beta?}\\
-\h_k\mid - &\propto p(\h_k) \prod_{j=1}^J p_{z_{jk}}(\mu^*_{jk} \mid \psi_j, \tau_j^2) \\
+%\begin{align*}
+%%%\sigma_i^2:
+%%%\sigma_i^2 \mid \y,\bmu,- &\sim  \IG\p{a_\sigma + \frac{N_iJ}{2}, b_\sigma + \frac{\sum_{j=1}^J\sum_{n=1}^{N_i} \p{y_{i,n,j}-\mu^\star_{j,\lambda_{i,n}}}^2}{2}} \\
+%%%
+%%%\mu_{j,k}^\star \mid z_{j,k}=1, y_{i,n,j}, \tau^2_j,-&\sim \N^+\p{\frac{\tau_j^2\sum_{\bc{(i,n):\lambda_{i,n}=k}} y_{i,n,j}}{c_{jk}\tau_j^2+\sigma_i^2},\frac{\tau_j^2\sigma_i^2}{c_{jk}\tau_j^2+\sigma_i^2}} \\
+%%%\mu_{j,k}^\star \mid z_{j,k}=0, y_{i,n,j}, \tau^2_j,-&\sim \N^-\p{\frac{\tau_j^2\sum_{\bc{(i,n):\lambda_{i,n}=k}} y_{i,n,j}}{c_{jk}\tau_j^2+\sigma_i^2},\frac{\tau_j^2\sigma_i^2}{c_{jk}\tau_j^2+\sigma_i^2}} \\
+%%%p(\tau^2_{ij} \mid \bmu^\star-) &\propto \tau_{ij}^{2(a_\tau-1)} \exp\bc{-b_{\tau}/\tau_{ij}^2} \prod_{k=1}^K q_{jk}(\mu_{jk}^\star)\\
+%%%\\
+%%%h_{j,k}\mid z_{jk}=1,v_l- &\sim \TN\p{0,\Gamma_{jj},-\infty, \Phi^{-1}\p{\prod_{l=1}^k v_l\mid 0, \Gamma_{jj}}} \\
+%%%p(v_l\mid z_{jk}=0,v_{-l},-) &\propto v_l^{a_v-1} \times \Ind{v_l < \frac{\Phi(h_{jk}|0,\Gamma_{jj})}{\prod_{d\ne l}^k v_d}} \text{\quad Truncated Beta?}\\
+%%\h_k\mid - &\propto p(\h_k) \prod_{j=1}^J p_{z_{jk}}(\mu^*_{jk} \mid \psi_j, \tau_j^2) \\
+%%%
+%%v_l\mid z_{jk}- &\propto p(v_l) \prod_{j=1}^Jp_{z_{jk}}(\mu^*_{jk} \mid \psi_j, \tau_j^2) \\
+%%%
+%%z_{jk}(h_{jk},\v) &:= \Ind{\Phi(h_{jk} | 0, \Gamma_{jj}) < \prod_{l=1}^k v_l} \\
+%%\\
+%%%
+%%p(\lambda_{i,n}=k \mid w_{i,k}, -) &\propto w_{i,k} \exp\bc{-\frac{1}{2\sigma_i^2}\sum_{j=1}^J\p{y_{i,n,j}-\mu^*_{j,k}}^2} \\
+%%%
+%%\w \mid \bm\lambda,- &\sim \Dir\p{a_1+\sum_{i=1}^I\sum_{n=1}^{N_i}\Ind{\lambda_{i,n}=1},...,a_{K}+\sum_{i=1}^I\sum_{n=1}^{N_i}\Ind{\lambda_{i,n}=K}} \\
+%%%
+%%\\
+%%p(\tau_j^2|-) &\propto p(\tau_j^2) \times \prod_{k=1}^K p_{z_{jk}}(\mu_{jk}^* \mid \psi_j, \tau_j^2)\\
+%%%
+%%p(\psi_j\mid -) &\propto p(\psi_j) \times \prod_{k=1}^K p_{z_{jk}}(\mu_{jk}^* \mid \psi_j, \tau_j^2)\\
+%%%
+%%p(\mu^*_{jk} \mid z_{jk}=1, -) &\propto p_1(\mu^*_{jk} \mid \psi_j, \tau_j^2) \times \prod_{(i,n):\lambda_{in}=k} p(y_{inj} \mid \mu_{jk}^*, \sigma_i^2) \times \Ind{\mu_{jk}^*>0}\\
+%%p(\mu^*_{jk} \mid z_{jk}=0, -) &\propto p_0(\mu^*_{jk} \mid \psi_j, \tau_j^2) \times \prod_{(i,n):\lambda_{in}=k} p(y_{inj} \mid \mu_{jk}^*, \sigma_i^2) \times \Ind{\mu_{jk}^*<0}\\
+%\end{align*}
 %
-v_l\mid z_{jk}- &\propto p(v_l) \prod_{j=1}^Jp_{z_{jk}}(\mu^*_{jk} \mid \psi_j, \tau_j^2) \\
+%where 
 %
-z_{jk}(h_{jk},\v) &:= \Ind{\Phi(h_{jk} | 0, \Gamma_{jj}) < \prod_{l=1}^k v_l} \\
-\\
+%- $p_0(\mu^*_{jk} \mid \psi_j, \tau_j^2) = \ds\frac{\frac{1}{\sqrt{2\pi\tau_j^2}}\exp\bc{-\frac{(\mu_{jk}^* - \psi_j)^2}{2\tau_j^2}}}{1-\Phi\p{\frac{\mu_{jk}-\psi_j}{\tau_j}}}$
 %
-p(\lambda_{i,n}=k \mid w_{i,k}, -) &\propto w_{i,k} \exp\bc{-\frac{1}{2\sigma_i^2}\sum_{j=1}^J\p{y_{i,n,j}-\mu^*_{j,k}}^2} \\
+%- $p_1(\mu^*_{jk} \mid \psi_j, \tau_j^2) = \ds\frac{\frac{1}{\sqrt{2\pi\tau_j^2}}\exp\bc{-\frac{(\mu_{jk}^* - \psi_j)^2}{2\tau_j^2}}}{\Phi\p{\frac{\mu_{jk}-\psi_j}{\tau_j}}}$
 %
-\w \mid \bm\lambda,- &\sim \Dir\p{a_1+\sum_{i=1}^I\sum_{n=1}^{N_i}\Ind{\lambda_{i,n}=1},...,a_{K}+\sum_{i=1}^I\sum_{n=1}^{N_i}\Ind{\lambda_{i,n}=K}} \\
+%- $p(\h_k) \propto \exp\bc{-\frac{\h_k'(\Gamma^{-1})\h_k}{2}}$
 %
-\\
-p(\tau_j^2|-) &\propto p(\tau_j^2) \times \prod_{k=1}^K p_{z_{jk}}(\mu_{jk}^* \mid \psi_j, \tau_j^2)\\
+%- $p(v_l) \propto v_l^{\alpha-1}$
 %
-p(\psi_j\mid -) &\propto p(\psi_j) \times \prod_{k=1}^K p_{z_{jk}}(\mu_{jk}^* \mid \psi_j, \tau_j^2)\\
+%- $p(\tau_j^2) \propto (\tau_j^2)^{-a_\tau-1} \exp\bc{-b_\tau / \tau_j^2}$
 %
-p(\mu^*_{jk} \mid z_{jk}=1, -) &\propto p_1(\mu^*_{jk} \mid \psi_j, \tau_j^2) \times \prod_{(i,n):\lambda_{in}=k} p(y_{inj} \mid \mu_{jk}^*, \sigma_i^2) \times \Ind{\mu_{jk}^*>0}\\
-p(\mu^*_{jk} \mid z_{jk}=0, -) &\propto p_0(\mu^*_{jk} \mid \psi_j, \tau_j^2) \times \prod_{(i,n):\lambda_{in}=k} p(y_{inj} \mid \mu_{jk}^*, \sigma_i^2) \times \Ind{\mu_{jk}^*<0}\\
-\end{align*}
-
-where 
-
-- $p_0(\mu^*_{jk} \mid \psi_j, \tau_j^2) = \ds\frac{\frac{1}{\sqrt{2\pi\tau_j^2}}\exp\bc{-\frac{(\mu_{jk}^* - \psi_j)^2}{2\tau_j^2}}}{1-\Phi\p{\frac{\mu_{jk}-\psi_j}{\tau_j}}}$
-
-- $p_1(\mu^*_{jk} \mid \psi_j, \tau_j^2) = \ds\frac{\frac{1}{\sqrt{2\pi\tau_j^2}}\exp\bc{-\frac{(\mu_{jk}^* - \psi_j)^2}{2\tau_j^2}}}{\Phi\p{\frac{\mu_{jk}-\psi_j}{\tau_j}}}$
-
-- $p(\h_k) \propto \exp\bc{-\frac{\h_k'(\Gamma^{-1})\h_k}{2}}$
-
-- $p(v_l) \propto v_l^{\alpha-1}$
-
-- $p(\tau_j^2) \propto (\tau_j^2)^{-a_\tau-1} \exp\bc{-b_\tau / \tau_j^2}$
-
-- $p(\psi_j^2) \propto \exp\bc{-\frac{(\psi_j - m_\psi)^2}{2 s_\psi^2}}$
+%- $p(\psi_j^2) \propto \exp\bc{-\frac{(\psi_j - m_\psi)^2}{2 s_\psi^2}}$
+%}}}
+%)
 
 ### Possible issues:
 
