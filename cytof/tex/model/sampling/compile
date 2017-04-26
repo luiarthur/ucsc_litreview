@@ -12,5 +12,5 @@ bibtex sampling.aux
 pdflatex sampling.tex
 pdflatex sampling.tex
 rm -f *.{log,aux,nav,out,snm,toc,blg,bbl}
-rm -f sampling.tex
+#rm -f sampling.tex
 
