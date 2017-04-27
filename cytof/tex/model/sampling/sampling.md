@@ -467,6 +467,10 @@ $$
 STOPPED HERE FIXME 
 %)
 
+---
+
+# ITEMS BELOW NEED TO BE REVISED
+
 ## Full Conditional for $\v$
 
 The prior distribution for $v_l$ are $v_l \mid \alpha \ind \Be(\alpha, 1)$, for 
