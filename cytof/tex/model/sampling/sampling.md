@@ -544,6 +544,11 @@ $$
 Consequently, the full conditional for $\w$ can be sampled from directly.
 
 
+## Full Conditional for $c_j$
+
+## Full Conditional for $d$
+
+
 ### Possible issues:
 
 - Repeated columns allowed in $Z$ apriori
