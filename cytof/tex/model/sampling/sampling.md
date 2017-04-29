@@ -1,7 +1,7 @@
 ---
 title: "DRAFT"
 author: Arthur Lui
-date: "17 April 2017"
+date: "29 April 2017"
 geometry: margin=1in
 fontsize: 12pt
 
@@ -67,9 +67,12 @@ header-includes:
     - \newcommand{\Ind}[1]{\mathbbm{1}\bc{#1}}
     - \newcommand{\sign}[1]{\text{sign}\p{#1}}
     - \pagenumbering{gobble}
-    - \newcommand{\logNpdf}[3]{\frac{1}{#1\sqrt{2\pi#3}}\exp\bc{-\frac{\p{\ln(#1)-#2}^2}{2{#3}}}}
+    - \newcommand{\logNpdf}[3]{\frac{1}{#1\sqrt{2\pi#3}}\exp\bc{-\frac{\p{\log(#1)-#2}^2}{2{#3}}}}
     - \newcommand{\rest}{\text{rest}}
     - \newcommand{\logit}{\text{logit}}
+    - \newcommand{\piconsta}{\frac{\exp(\rho)}{1+\exp(-\kappa_j)}}
+    - \newcommand{\piconstb}{\frac{\exp(\rho)}{1+\exp( \kappa_j)}}
+    - \newcommand{\piconst}{\frac{\Gamma(\exp(\rho))}{\Gamma\p{\piconsta}\Gamma\p{\piconstb}}}
 ---
 
 # Likelihood
@@ -131,8 +134,10 @@ p(\sigma_i^2) p(\bm{w_i})
 &\prod_{j=1}^J p(\tau_j^2) p(\psi_j) \prod_{j=1,k=1}^{J,K}  
 %p_{z_{jk}}(\mu^*_{jk} \mid \psi_j, \tau_j^2) 
 p(\mus_{jk} \mid \psi_j, \tau_j^2, z_{jk}) 
-\prod_{k=1}^Kp(v_k)p(\h_k)
-\prod_{i=1,j=1}^{I,J} p(\pi_{ij})
+\prod_{k=1}^Kp(v_k)p(\h_k)\\
+%
+&\prod_{i=1,j=1}^{I,J} p(\pi_{ij} \mid c_j, d)
+\prod_{j=1}^J p(c_j) p(d)
 \end{split}
 $$
 
@@ -192,7 +197,7 @@ p_0(y_{inj}\mid \mus_{jk}, \sigma_i^2)^{\Ind{\lin=k,~z_{jk}=0}}\\
 }^{\Ind{\mus_{jk}<0,~z_{jk}=0}}
 \times \\
 &~~\prod_{i=1}^I\prod_{n=1}^{N_i}
-\exp\bc{-\frac{(\ln(y_{inj})-\mus_{jk})^2}{2\sigma_i^2}}^{\Ind{\lin=k,~z_{jk}=1}}
+\exp\bc{-\frac{(\log(y_{inj})-\mus_{jk})^2}{2\sigma_i^2}}^{\Ind{\lin=k,~z_{jk}=1}}
 \times\\
 &\bc{\pi_{ij}\delta_0(y_{inj}) + (1-\pi_{ij})
 \logNpdf{y_{inj}}{\mus_{jk}}{\sigma_i^2}}^{\Ind{\lin=k,~z_{jk}=0}}
@@ -463,14 +468,6 @@ $$
 $$
 
 
-[comment]: <> (%
-STOPPED HERE FIXME 
-%)
-
----
-
-# ITEMS BELOW NEED TO BE REVISED
-
 ## Full Conditional for $\v$
 
 The prior distribution for $v_l$ are $v_l \mid \alpha \ind \Be(\alpha, 1)$, for 
@@ -478,58 +475,149 @@ $l = 1,...,K$. So, $p(v_l \mid \alpha) \propto v_l^{\alpha-1}$. Also, let
 $v_0 = 1$ (deterministically). Then,
 
 \begin{align*}
-p(v_k \mid \y,-) \propto&~~ p(v_k \mid \alpha) 
-\prod_{(i,n):\lin \ge k} p(y_{inj} \mid \mu_{j,\lin},\sigma_i^2, z_{j,\lin})\\
-\propto&~~ v_k^{\alpha-1}
-\prod_{(i,n):\lin \ge k} p(y_{inj} \mid \mu_{j,\lin},\sigma_i^2, z_{j,\lin})\\
+p(v_k \mid \y,\rest)
+\propto&~
+p(v_k \mid \alpha) 
+\prod_{i=1}^I\prod_{n=1}^{N_i} \prod_{j=1}^J
+p(y_{inj} \mid \mus_{j,\lin}, \sigma_i^2, z_{j,\lin})^{\Ind{\lin\ge k}} \\
+%
+\propto&~
+v_k^{\alpha-1}
+\prod_{i=1}^I\prod_{n=1}^{N_i} \prod_{j=1}^J
+p_1(y_{inj}\mid \mus_{j,\lin}, \sigma_i^2) ^ {\Ind{\lin\ge k,~z_{jk}=1}} \times \\
+&\hspace{7em}
+p_0(y_{inj}\mid \mus_{j,\lin}, \sigma_i^2) ^ {\Ind{\lin\ge k,~z_{jk}=0}}
 \end{align*}
 
 For each $k = 1, \cdots, K$, the full conditional cannot be sampled from
 conveniently. So, a metropolis update is required for each $v_k$.
-A joint update of all the $v_k$'s may be desirable to avoid computing 
-the likelihood $K$ times. This requires logit-transforming the $v_k$'s and 
-using a multivariate proposal distribution centered at the current set of $\v$'s
-in the metropolis update.
-
-## Full Conditional for $\h$
-Let the prior for $\h_k$ be $\h_k \sim \N_J(0, \Gamma)$.
+This requires logit-transforming the $v_k$'s and using a Normal proposal
+distribution centered at the current $v_k$ in the metropolis update.
+Specifically, if a random variable $X$ has support in the unit interval, the
+$Y=\logit(X)=\log\p{\frac{p}{1-p}}$ will have pdf $f_Y(y) =
+f_X\p{\frac{1}{1+\exp(-y)}}e^{-y}(1+e^{-y})^{-2}$. So, the prior density for
+$\phi_k = \logit(v_k)$ is
 
 $$
 \begin{split}
-p(\h_k \mid \y, -) \propto&~~ p(\h_k) 
-\prod_{(i,n): \lin=k} p(y_{inj} \mid \mu_{jk}, \sigma_i^2, z_{jk}) \\
+p(\phi_k \mid\alpha) &= 
+\frac{\Gamma(\alpha+1)}{\Gamma(\alpha)\Gamma(1)}
+\p{\frac{1}{1+\exp(-\phi_k)}}^{\alpha-1}
+\p{\frac{1}{1+\exp(\phi_k)}}^{1 - 1}
+\frac{e^{\phi_k}}{\p{1+e^{\phi_k}}^2} \\
+%
+&\propto
+\p{\frac{1}{1+\exp(-\phi_k)}}^{\alpha-1}
+\frac{e^{\phi_k}}{\p{1+e^{\phi_k}}^2} \\
 \end{split}
 $$
 
-Again, for each $k = 1, \cdots, K$, the full conditional cannot be sampled from
-conveniently. So, a metropolis update is required for each $h_k$. Since $h_k$ is
-multivariate Normal apriori, a multivariate Normal centered at the 
-most recent $h_k$ can serve as the proposal distribution.
+So, the full conditional of $\phi_k$ is
 
-I think that $\h_k$ needs to be updated as a vector instead of one element 
-at a time because updating each $h_{jk}$ does not take into account the correlation
-between markers (in the off-diagonals of $\Gamma$).
+$$
+\begin{split}
+p(\phi_k \mid \y,\rest) \propto&~
+\p{\frac{1}{1+\exp(-\phi_k)}}^{\alpha-1}
+\frac{e^{\phi_k}}{\p{1+e^{\phi_k}}^2} 
+\times \\
+&~
+\prod_{i=1}^I\prod_{n=1}^{N_i} \prod_{j=1}^J
+p_1(y_{inj}\mid \mus_{j,\lin}, \sigma_i^2) ^ {\Ind{\lin\ge k,~z_{jk}=1}} \times \\
+&\hspace{7em}
+p_0(y_{inj}\mid \mus_{j,\lin}, \sigma_i^2) ^ {\Ind{\lin\ge k,~z_{jk}=0}}
+\end{split}
+$$
+
+The parameter $\phi_k$ can be updated vicariously by updating $\phi_k$ and
+then taking the inverse-logit the result. That is, we sample a candidate value
+for the parameter $\tilde{\phi_k}$ from a Normal proposal centered at the
+current iterate (say $\phi_k$) of the MCMC. The proposed state is accepted
+with probability
+
+$$
+\min\bc{1, \frac{p(\tilde{\phi_k}\mid \y,\rest)}
+                {p(\phi_k\mid \y,\rest)}}.
+$$
+
+**In practice, however, this method will depend on $\mus_{jk}$**. Hence, if
+$\mus_{jk}>0$ then $z_{jk}=1$ by necessity. This behavior is undesired.  So, we
+will jointly update $\mus_{jk}$ and $v_k$. More accurately, we will jointly
+update $(\bm{\mus_{k}}, \phi_k)$.  A metropolis update is required.  A
+multivariate Normal proposal distribution centered at the current
+$(\bm{\mus_{k}}, \phi_k)$ can be used in the metropolis update.
+The proposed state $\widetilde{(\bm{\mus_{k}}, \phi_k)}$ will be accepted
+with probability 
+
+$$
+\min\bc{1, \frac{p(\tilde{\phi_k}\mid \y,\rest)p(\tilde{\bm\mus_{k}}\mid \y, \rest)}
+                {p(\phi_k\mid \y,\rest)p(\bm\mus_{k}\mid \y, \rest)}}.
+$$
+
+The new state in the MCMC for $(v_k,\bm\mus_k)$ are then $\p{\frac{1}{1+\exp\bc{-\phi_k}},\bm\mus_k}$.
+
+
+## Full Conditional for $\h$
+The prior for $\h_k$ is $\h_k \sim \N_J(0, \Gamma)$.
+
+$$
+\begin{split}
+p(\h_k \mid \y, -) 
+\propto&~~ 
+p(\h_k) 
+\prod_{i=1}^I\prod_{n=1}^{N_i}\prod_{j=1}^J
+p(y_{inj} \mid \mu_{jk}, \sigma_i^2, z_{jk}) ^{\Ind{\lin=k}}\\
+%
+\propto&~~ 
+p(\h_k) 
+\prod_{i=1}^I\prod_{n=1}^{N_i}\prod_{j=1}^J
+p_1(y_{inj}\mid \mus_{j,\lin}, \sigma_i^2) ^ {\Ind{\lin\ge k,~z_{jk}=1}} \times \\
+&\hspace{7em}
+p_0(y_{inj}\mid \mus_{j,\lin}, \sigma_i^2) ^ {\Ind{\lin\ge k,~z_{jk}=0}}
+\end{split}
+$$
+
+Similarly to $v_k$, we need to jointly update $(\h_k,\bm\mus_{k})$ so 
+as to fully explore the sample space. This can be done with a metropolis
+step with a 
+multivariate Normal proposal distribution centered at the current
+iterate $(\bm{\mus_{k}}, \h_k)$.
+The proposed state $\widetilde{(\bm{\mus_{k}}, \h_k)}$ will be accepted
+with probability 
+
+$$
+\min\bc{1, \frac{p(\tilde{\h_k}\mid \y,\rest)p(\tilde{\bm\mus_{k}}\mid \y, \rest)}
+                {p(\h_k\mid \y,\rest)p(\bm\mus_{k}\mid \y, \rest)}}.
+$$
+
 
 ## Full Conditional for $\bm\lambda$
 
-The prior for $\lin$ is $p(\lin\mid \w) = w_k$.
+The prior for $\lin$ is $p(\lin\mid \w_i) = w_{ik}$.
 
 $$
 \begin{split}
-p(\lin=k\mid \y,-) \propto&~~ p(\lin=k) 
-\prod_{j=1}^J \prod_{(i,n):\lin=k} p(y_{inj}\mid \mu_{jk}^*, \sigma_i^2, z_{jk})\\
+p(\lin=k\mid \y,\rest) \propto&~~ p(\lin=k) 
+\prod_{i=1}^I\prod_{n=1}^{N_i}\prod_{j=1}^J
+p(y_{inj}\mid \mu_{jk}^*, \sigma_i^2, z_{jk})^{\Ind{\lin=k}}\\
+\propto&~~ 
+w_{ik}
+\prod_{i=1}^I\prod_{n=1}^{N_i}\prod_{j=1}^J
+p_1(y_{inj}\mid \mus_{j,\lin}, \sigma_i^2) ^ {\Ind{\lin\ge k,~z_{jk}=1}} \times \\
+&\hspace{7em}
+p_0(y_{inj}\mid \mus_{j,\lin}, \sigma_i^2) ^ {\Ind{\lin\ge k,~z_{jk}=0}}
 \end{split}
 $$
 
-Since $\lin$ has a discrete support, sampling from it's full conditional is
-simply a matter of sampling each $k$ proportional to the full conditional
-evaluated at $k$.
+Since $\lin$ has a discrete support, it's full conditional can be sampled from
+by sampling one number from $1,...,K$ with probabilities proportional to the
+full conditional evaluated at $k\in\bc{1,...,K}$.
 
 ## Full Conditional for $\w$
-The prior for $\w_i$ is $w_i \sim \Dir(a_1, \cdots, a_K)$
+The prior for $\w_i$ is $w_i \sim \Dir(a_1, \cdots, a_K)$. So the full
+conditional for $\w_i$ is:
 
 \begin{align*}
-p(\w_i \mid -) \propto&~~ p(\w_i) \times \prod_{n=1}^{N_i} p(\lin \mid \w_i)\\
+p(\w_i \mid \rest) \propto&~~ p(\w_i) \times \prod_{n=1}^{N_i} p(\lin \mid \w_i)\\
 \propto&~~ p(\w_i) \times \prod_{n=1}^{N_i}\prod_{k=1}^K w_{k}^{\Ind{\lin=k}}\\
 \propto&~~ \prod_{k=1}^K w_k^{a_k} \times \prod_{n=1}^{N_i}\prod_{k=1}^K w_{ik}^{\Ind{\lin=k}}\\
 \propto&~~ \prod_{k=1}^K w_{ik}^{a_k + \sum_{n=1}^{N_i}\Ind{\lin=k}}\\
@@ -538,20 +626,101 @@ p(\w_i \mid -) \propto&~~ p(\w_i) \times \prod_{n=1}^{N_i} p(\lin \mid \w_i)\\
 
 Therefore,
 $$
-(\w_i \mid \bm\lambda_i,-) ~\sim~ \Dir\p{a_1+\sum_{n=1}^{N_i}\Ind{\lambda_{i,n}=1},...,a_{K}+\sum_{n=1}^{N_i}\Ind{\lambda_{i,n}=K}} 
+(\w_i \mid \bm\lambda_i,K,\y,\rest) ~\sim~ \Dir\p{a_1+\sum_{n=1}^{N_i}\Ind{\lambda_{i,n}=1},...,a_{K}+\sum_{n=1}^{N_i}\Ind{\lambda_{i,n}=K}} 
 $$
 
-Consequently, the full conditional for $\w$ can be sampled from directly.
-
+Consequently, the full conditional for $\w_i$ can be sampled from directly from a Dirichlet distribution of the form above.
 
 ## Full Conditional for $c_j$
+For notational convenience, note that $\kappa_j = \logit(c_j)$ and
+$\rho = \log(d)$. This implies that $c_j = \frac{1}{1+\exp(-\kappa_j)}$
+and $d=\exp(\rho)$.
+
+The prior for $\kappa_j = \logit(c_j)$ is $\kappa_j \ind \N(0, s^2_c)$. 
+The full conditional for $\kappa_j$ is then:
+
+\begin{align*}
+p(\kappa_j \mid \rest) 
+\propto&~~ 
+p(\kappa_j)\times
+\prod_{i=1}^{I} \prod_{j=1}^J p(\pi_{ij} \mid c_j, d)\\
+%
+\propto&~~ 
+\exp\p{-\frac{\kappa_j^2}{2s_c^2}}
+\times \\
+&~~ 
+\prod_{i=1}^{I} \prod_{j=1}^J 
+\piconst (\pi_{ij})^{\piconsta-1} (1-\pi_{ij})^{\piconstb-1} \\
+\\
+%
+\propto&~~ 
+\exp\p{-\frac{\kappa_j^2}{2s_c^2}}
+\prod_{i=1}^{I} \prod_{j=1}^J 
+\frac{(\pi_{ij})^{\piconsta}(1-\pi_{ij})^{\piconstb}}{\Gamma(\piconsta)\Gamma(\piconstb)}
+%
+\end{align*}
+
+The parameter $c_j$ can be updated by updating $\kappa_j$ and
+then taking the inverse-logit the result. That is, we sample a candidate value
+for the parameter $\tilde{\kappa_j}$ from a Normal proposal centered at the
+current iterate (say $\kappa_j$) of the MCMC. The proposed state is accepted
+with probability
+
+$$
+\min\bc{1, \frac{p(\tilde{\kappa_j}\mid \y,\rest)}
+                {p(\kappa_j\mid \y,\rest)}}.
+$$
+
+The new state in the MCMC for $c_j$ is then $\frac{1}{1+\exp(-\kappa_j)}$.
+
 
 ## Full Conditional for $d$
+The prior for $\rho = \log(d)$ is $\rho \sim \N(m_d, s^2_d)$.
+The full conditional for $\rho$ is then:
+
+\begin{align*}
+p(\rho \mid \rest) 
+\propto&~~ 
+p(\rho)\times
+\prod_{i=1}^{I} \prod_{j=1}^J p(\pi_{ij} \mid c_j, d)\\
+%
+\propto&~~ 
+\exp\p{-\frac{(\rho-m_d)^2}{2s_d^2}}
+\times \\
+&~~ 
+\prod_{i=1}^{I} \prod_{j=1}^J 
+\piconst (\pi_{ij})^{\piconsta-1} (1-\pi_{ij})^{\piconstb-1} \\
+\\
+%
+\propto&~~ 
+\exp\p{-\frac{(\rho-m_d)^2}{2s_d^2}}
+\prod_{i=1}^{I} \prod_{j=1}^J 
+\frac{(\pi_{ij})^{\piconsta}(1-\pi_{ij})^{\piconstb}}{\Gamma(\piconsta)\Gamma(\piconstb)}
+%
+\end{align*}
+
+The parameter $d$ can be updated by updating $\rho$ and
+then taking the inverse-logit the result. That is, we sample a candidate value
+for the parameter $\tilde{\rho}$ from a Normal proposal centered at the
+current iterate (say $\rho$) of the MCMC. The proposed state is accepted
+with probability
+
+$$
+\min\bc{1, \frac{p(\tilde{\rho}\mid \y,\rest)}
+                {p(\rho\mid \y,\rest)}}.
+$$
+
+The new state in the MCMC for $d$ is then $\exp(\rho)$.
 
 
 ### Possible issues:
 
 - Repeated columns allowed in $Z$ apriori
+- Sampling $K$
+    - using methods from the tumor purity project
+        - split the data into two parts, training and testing
+        - use the posterior of all parameters but K and 
+        - use training data as a prior for testing data
 
 # Alternative Methods:
 
