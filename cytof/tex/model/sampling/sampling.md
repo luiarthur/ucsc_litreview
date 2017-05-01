@@ -64,6 +64,7 @@ header-includes:
     - \newcommand{\Dir}{\text{Dirichlet}}
     - \newcommand{\IG}{\text{IG}}
     - \newcommand{\Be}{\text{Beta}}
+    - \newcommand{\Bern}{\text{Bernoulli}}
     - \newcommand{\Ind}[1]{\mathbbm{1}\bc{#1}}
     - \newcommand{\sign}[1]{\text{sign}\p{#1}}
     - \pagenumbering{gobble}
@@ -73,15 +74,35 @@ header-includes:
     - \newcommand{\piconsta}{\frac{\exp(\rho)}{1+\exp(-\kappa_j)}}
     - \newcommand{\piconstb}{\frac{\exp(\rho)}{1+\exp( \kappa_j)}}
     - \newcommand{\piconst}{\frac{\Gamma(\exp(\rho))}{\Gamma\p{\piconsta}\Gamma\p{\piconstb}}}
+    - \newcommand{\likeone}[1][]{
+        \bc{\delta_0(y_{inj})}^{\Ind{e_{inj}=1#1}}
+      }
+    - \newcommand{\likezero}[2][]{
+        \bc{
+        \logNpdf{y_{inj}}{\mus_{j#2}}{\sigma_i^2}
+        }^{\Ind{e_{inj}=0#1}}
+      }
+    - \newcommand{\sumjn}{\sum_{j=1}^J\sum_{n=1}^{N_i}}
 ---
 
 # Likelihood
 
 $$
+%\begin{cases}
+%y_{inj} \mid \lambda_{i,n}=k, z_{jk}=1, \mus_{jk},\sigma_i^2 &\sim~ \LN(\mus_{jk}, \sigma_i^2)\\
+%y_{inj} \mid \lambda_{i,n}=k, z_{jk}=0, \mus_{jk},\sigma_i^2 &\sim~ \pi_{ij}\delta_0(y_{inj}) + (1-\pi_{ij}) \LN(\mus_{jk}, \sigma_i^2) \\
+%\end{cases}
+\begin{array}{lcl}
+y_{inj} \mid \mus_{j,\lin}, \sigma^2_i, e_{inj} &\sim&
 \begin{cases}
-y_{inj} \mid \lambda_{i,n}=k, z_{jk}=1, \mus_{jk},\sigma_i^2 &\sim~ \LN(\mus_{jk}, \sigma_i^2)\\
-y_{inj} \mid \lambda_{i,n}=k, z_{jk}=0, \mus_{jk},\sigma_i^2 &\sim~ \pi_{ij}\delta_0(y_{inj}) + (1-\pi_{ij}) \LN(\mus_{jk}, \sigma_i^2) \\
+\delta_0(y_{inj}) & \text{if } e_{inj}=1 \\
+\LN(\mus_{j,\lin}, \sigma^2_i), & \text{if } e_{inj}=0 \\
 \end{cases}
+\\
+\\
+e_{inj} \mid z_{j,\lin}=0,\pi_{ij} &\sim& \Bern(\pi_{ij}) \\
+e_{inj} \mid z_{j,\lin}=1          &:=& 0 \\
+\end{array}
 $$
 
 # Priors
@@ -123,7 +144,12 @@ $$
 
 
 # Joint Posterior
-Let $\bm\theta = \p{\bm{\mus, \psi, \tau^2, \bm\pi, \sigma^2, v, h, \lambda, w}}$
+Let $\bm\theta = (\bm{\theta_1, \theta_2})$, where
+
+- $\theta_1=(\bm{\psi, \tau^2, \sigma^2, \pi})$ are the parameters
+  that do not depend on $K$, and
+- $\theta_2=(\bm{\mus, v, h, \lambda, w, e})$ are the parameters
+  that depend on $K$.
 
 $$
 \begin{split}
@@ -137,7 +163,10 @@ p(\mus_{jk} \mid \psi_j, \tau_j^2, z_{jk})
 \prod_{k=1}^Kp(v_k)p(\h_k)\\
 %
 &\prod_{i=1,j=1}^{I,J} p(\pi_{ij} \mid c_j, d)
-\prod_{j=1}^J p(c_j) p(d)
+\prod_{j=1}^J p(c_j) p(d)\times\\
+%
+&
+\prod_{i=1,n=1,j=1}^{I,N_i,J} p(e_{inj} \mid z_{j,\lin}=0)\\
 \end{split}
 $$
 
@@ -151,12 +180,51 @@ a metropolis step will be necessary.
 
 # Derivation of Full Conditionals
 
-Let $p_1(y_{inj} \mid \mus_{j,\lin}, \sigma_i^2) = 
-\logNpdf{y_{inj}}{\mus_{j,\lin}}{\sigma_i^2}$, the log-Normal pdf.
 
-Let $p_0(y_{inj} \mid \mus_{j,\lin}, \sigma_i^2) = 
+## Full Conditional for $e_{inj}$
+
+First note that for $z_{j,\lin}=1$,
+$$
+e_{inj} \mid (z_{j,\lin}=1, \pi_{ij}, \rest) := 0.\\
+$$
+
+For $z_{j,\lin}=0$,
+
+\begin{align*}
+p(e_{inj} = 1\mid z_{j,\lin}=0, \pi_{ij}, \rest)
+=&~
+\frac{
+p(e_{inj}=1 \mid z_{j,\lin}=0, \pi_{ij})
+\times
+p(y_{inj}\mid \mus_{j,\lin}, \sigma_i^2, e_{inj}=1)
+}{
+\sum_{x\in\bc{0,1}}
+p(e_{inj}=x \mid z_{j,\lin}=0, \pi_{ij})
+\times
+p(y_{inj}\mid \mus_{j,\lin}, \sigma_i^2, e_{inj}=x)
+} \\
+%
+\\
+=&~
+\frac{
+\pi_{ij}\delta_0(y_{inj})
+}{
 \pi_{ij} \delta_0(y_{inj}) + 
-(1-\pi_{ij})p_1(y_{inj} \mid \mus_{j,\lin}, \sigma_i^2)$.
+(1-\pi_{ij})\logNpdf{y_{inj}}{\mus_{j,\lin}}{\sigma_i^2}
+} \\
+\end{align*}
+
+Similarly,
+$$
+p(e_{inj} = 0\mid z_{j,\lin}=0, \pi_{ij}, \rest)
+=
+\frac{
+(1-\pi_{ij})\logNpdf{y_{inj}}{\mus_{j,\lin}}{\sigma_i^2}
+}{
+\pi_{ij} \delta_0(y_{inj}) + 
+(1-\pi_{ij})\logNpdf{y_{inj}}{\mus_{j,\lin}}{\sigma_i^2}
+}
+$$
 
 
 ## Full Conditional for $\bm\mu^*$
@@ -176,15 +244,15 @@ Then,
 \begin{align*}
 p(\mus_{jk} \mid \y,\rest) \propto&~~ p(\mus_{jk}\mid z_{jk}, \psi_j, \tau_j^2) 
 \times 
-\prod_{i=1,n=1}^{I,N_i} p(y_{inj}\mid \mus_{j,\lin}, \sigma_i^2, z_{j,\lin})\\
+\prod_{i=1,n=1}^{I,N_i}
+p(y_{inj}\mid \mus_{j,\lin}, \sigma_i^2, e_{inj})\\
 \\
 \propto&~~ 
 p(\mus_{jk}\mid \psi_j, \tau_j^2, z_{jk}=1)^{\Ind{\mus_{jk}>0}} \times
 p(\mus_{jk}\mid \psi_j, \tau_j^2, z_{jk}=0)^{\Ind{\mus_{jk}<0}} \times
 \\ &~~
 \prod_{i=1}^I\prod_{n=1}^{N_i}
-p_1(y_{inj}\mid \mus_{jk}, \sigma_i^2)^{\Ind{\lin=k,~z_{jk}=1}}
-p_0(y_{inj}\mid \mus_{jk}, \sigma_i^2)^{\Ind{\lin=k,~z_{jk}=0}}\\
+p(y_{inj}\mid \mus_{j,\lin}, \sigma_i^2, e_{inj})\\
 \\
 \propto&~~
 \bc{
@@ -197,10 +265,10 @@ p_0(y_{inj}\mid \mus_{jk}, \sigma_i^2)^{\Ind{\lin=k,~z_{jk}=0}}\\
 }^{\Ind{\mus_{jk}<0,~z_{jk}=0}}
 \times \\
 &~~\prod_{i=1}^I\prod_{n=1}^{N_i}
-\exp\bc{-\frac{(\log(y_{inj})-\mus_{jk})^2}{2\sigma_i^2}}^{\Ind{\lin=k,~z_{jk}=1}}
+\likeone
 \times\\
-&\bc{\pi_{ij}\delta_0(y_{inj}) + (1-\pi_{ij})
-\logNpdf{y_{inj}}{\mus_{jk}}{\sigma_i^2}}^{\Ind{\lin=k,~z_{jk}=0}}
+&
+\likezero{k}
 \end{align*}
 
 The full conditional is not available in closed form. But, it can be sampled
@@ -335,140 +403,84 @@ $$
 p(\pi_{ij}\mid \y,\rest) \propto&~~ p(\pi_{ij}) \times \\
 &~~
 \prod_{n=1}^{N_i} 
-\bc{
-\pi_{ij}\delta_0(y_{inj}) + (1-\pi_{ij})
-\logNpdf{y_{inj}}{\mu_{j,\lin}}{\sigma_i^2}
-}^{1-z_{j,\lin}}\\
+p(e_{inj} \mid z_{j,\lin}, \pi_{ij})^{1-z_{j,\lin}}
+\\
 %
 \propto&~~ (\pi_{ij})^{c_jd-1}(1-\pi_{ij})^{(1-c_j)d-1} \times \\
 &~~\prod_{n=1}^{N_i} 
 \bc{
-\pi_{ij}\delta_0(y_{inj}) + (1-\pi_{ij})
-\logNpdf{y_{inj}}{\mu_{j,\lin}}{\sigma_i^2}
+\pi_{ij}^{e_{inj}}
+(1-\pi_{ij})^{1-e_{inj}}
 }^{1-z_{j,\lin}}\\
-\end{split}
-$$
-
-For each $\pi_{ij}$, the full conditional cannot be sampled from conveniently.
-So, a metropolis update is required for each $\pi_{ij}$.  This requires
-logit-transforming the $\pi_{ij}$'s and using a Normal proposal distribution
-centered at the current $\pi_{ij}$ in the metropolis update. Specifically,
-if a random variable $X$ has support in the unit interval, the 
-$Y=\logit(X)=\log\p{\frac{p}{1-p}}$ will have pdf 
-$f_Y(y) = f_X\p{\frac{1}{1+\exp(-y)}}e^{-y}(1+e^{-y})^{-2}$. So, the prior
-density for $\xi_{ij} = \logit(\pi_{ij})$ is
-
-$$
-p(\xi_{ij} \mid c_j, d) = 
-\frac{\Gamma(d)}{\Gamma(c_jd)\Gamma((1-c_j)d)}
-\p{\frac{1}{1+\exp(-\xi_{ij})}}^{c_j d -1}
-\p{\frac{1}{1+\exp(\xi_{ij})}}^{(1-c_j)d - 1}
-\frac{e^{\xi_{ij}}}{\p{1+e^{\xi_{ij}}}^2}
-$$
-
-So, the full conditional of $\xi_{ij}$ is
-
-$$
-\begin{split}
-p(\xi_{ij}\mid\y,\rest) \propto&~~ 
-\p{\frac{1}{1+\exp(-\xi_{ij})}}^{c_j d -1}
-\p{\frac{1}{1+\exp(\xi_{ij})}}^{(1-c_j)d - 1}
-\frac{e^{\xi_{ij}}}{\p{1+e^{\xi_{ij}}}^2}
-\times \\
-&\prod_{n=1}^{N_i} 
+%
+\propto&~~ (\pi_{ij})^{c_jd-1}(1-\pi_{ij})^{(1-c_j)d-1} \times \\
+&~~
 \bc{
-\frac{\delta_0(y_{inj})}{1+e^{-\xi_{ij}}} + \p{\frac{1}{1+e^{\xi_{ij}}}}
-\logNpdf{y_{inj}}{\mu_{j,\lin}}{\sigma_i^2}
-}^{1-z_{j,\lin}}\\
+\pi_{ij}^{\sum_{n=1}^{N_i} e_{inj}\p{1-z_{j,\lin}}}
+(1-\pi_{ij})^{\sum_{n=1}^{N_i} \p{1-e_{inj}}\p{1-z_{j,\lin}}}
+}\\
+%
+\propto&~~
+(\pi_{ij})^{c_jd+\p{\sum_{n=1}^{N_i} e_{inj}\p{1-z_{j,\lin}}}-1}
+(1-\pi_{ij})^{(1-c_j)d+\p{\sum_{n=1}^{N_i} \p{1-e_{inj}}\p{1-z_{j,\lin}}}-1}
+\\
 \end{split}
 $$
 
-The parameter $\xi_{ij}$ can be updated vicariously by updating $\xi_{ij}$ and
-then taking the inverse-logit the result. That is, we sample a candidate value
-for the parameter $\tilde{\xi_{ij}}$ from a Normal proposal centered at the
-current iterate (say $\xi_{ij}$) of the MCMC. The proposed state is accepted
-with probability
+Therefore, we can sample from the full conditional by sampling
+from
 
 $$
-\min\bc{1, \frac{p(\tilde{\xi_{ij}}\mid \y,\rest)}
-                {p(\xi_{ij}\mid \y,\rest)}}.
+\pi_{ij} \mid \y, \rest \sim 
+\Be\p{
+c_jd+\p{\sum_{n=1}^{N_i} e_{inj}\p{1-z_{j,\lin}}},
+(1-c_j)d+\p{\sum_{n=1}^{N_i} \p{1-e_{inj}}\p{1-z_{j,\lin}}}
+}
 $$
-
 
 ## Full Conditional for $\sigma_i^2$
 
 Let $p(\sigma_i^2) \propto (\sigma_i^2)^{-a_\sigma-1} \exp(-b_\sigma/\sigma_i^2)$. 
 
-$$
-\begin{split}
+\begin{align*}
 p(\sigma_i^2 \mid -) \propto&~~ p(\sigma_i^2) 
-\prod_{j=1}^J\prod_{n=1}^{N_i} p(y_{inj} \mid \mu_{j,\lin}^*, \sigma_i^2, z_{j,\lin}) \\
-%
-\propto&~~ p(\sigma_i^2) 
-\prod_{j=1}^K\prod_{n=1}^{N_i}
-p_1(y_{inj}\mid\mu_{j,\lin}^* , \sigma^2_i)^{\Ind{z_{j,\lin}=1}} 
-p_0(y_{inj}\mid\mu_{j,\lin}^* , \sigma^2_i)^{\Ind{z_{j,\lin}=0}} \\
+\prod_{j=1}^J\prod_{n=1}^{N_i}
+p(y_{inj} \mid \mu_{j,\lin}^*, \sigma_i^2, e_{inj}) \\
 %
 \propto&~~ (\sigma_i^2)^{-a_\sigma-1} \exp(-b_\sigma/\sigma_i^2)\times \\
-&\prod_{j=1}^K\prod_{n=1}^{N_i}
-\logNpdf{y_{inj}}{\mu_{j,\lin}}{\sigma_i^2}^{\Ind{z_{j,\lin}=1}}
+&\prod_{j=1}^J\prod_{n=1}^{N_i}
+\likeone
 \times\\
 &\hspace{1em}
-\bc{
-\pi_{ij}~\delta_0(y_{inj}) + 
-(1-\pi_{ij})\logNpdf{y_{inj}}{\mu_{j,\lin}}{\sigma_i^2} 
-}^{\Ind{z_{j,\lin}=0}}
+\likezero{\lin} \\
 \\
 %
-\end{split}
-$$
+\propto&~~
+(\sigma_i^2)^{-a_\sigma-1} \exp(-b_\sigma/\sigma_i^2)\times \\
+&\prod_{j=1}^J\prod_{n=1}^{N_i}
+\likezero{\lin} \\
+%
+\\
+\propto&~~
+(\sigma_i^2)^{-a_\sigma-1} \exp(-b_\sigma/\sigma_i^2)\times \\
+&
+(\sigma_i^2)^{-\p{JN_i - \p{\sumjn e_{inj}}}/2} \times \\
+& 
+\exp\bc{-\frac{\sumjn(1-e_{inj})\p{\log(y_{inj}-\mus_{j,\lin})}^2}{2\sigma_i^2}}\\
+\end{align*}
 
-As the full conditional for $\sigma_i^2$ is not available in closed form,
-it needs to be approximated. This can be done with a metropolis step
-by log-transforming $\sigma_i^2$ and using a (symmetric) Normal 
-proposal distribution. 
-
-Note that if a random variable $X$ has pdf $f_X(x)$ then $Y = \log(X)$ has pdf
-$f_Y(y) = f_X(e^y) e^y$. So, the pdf for $\gamma_i = \log(\sigma_i^2)$ is 
-
-$$
-\begin{split}
-p(\gamma_i) &= \frac{b^a}{\Gamma(a)} (e^{\gamma_i})^{-a-1} \exp\bc{-b/e^{\gamma_i}} e^{\gamma_i}\\
-&\propto \exp\bc{-a\gamma_i - be^{-\gamma_i}}
-\end{split}
-$$
-
-So, the full conditional of $\gamma_i$ is then
+Therefore, the full conditional can be sampled from:
 
 $$
-\begin{split}
-p(\gamma_i\mid\y,\rest) \propto&~~ 
-\exp\bc{-a_\sigma\gamma_i -b_\sigma e^{-\gamma_i}}
-\times \\
-&\prod_{j=1}^K\prod_{n=1}^{N_i}
-\logNpdf{y_{inj}}{\mu_{j,\lin}}{\exp(\gamma_i)}^{\Ind{z_{j,\lin}=1}}
-\times\\
-&\hspace{1em}
-\bc{
-\pi_{ij}~\delta_0(y_{inj}) + 
-(1-\pi_{ij})\logNpdf{y_{inj}}{\mu_{j,\lin}}{\exp(\gamma_i)}
-}^{\Ind{z_{j,\lin}=0}}
-\end{split}
-$$
-
-The parameter $\sigma_i^2$ can be updated vicariously by updating $\gamma_i$
-and then exponentiating the result. That is, we sample a candidate value for
-the parameter $\tilde{\gamma_i}$ from a Normal proposal centered at the current
-iterate (say $\gamma_i$) of the MCMC. The proposed state is accepted with 
-probability
-
-$$
-\min\bc{1, \frac{p(\tilde{\gamma_i}\mid \y,\rest)}
-                {p(\gamma_i\mid \y,\rest)}}.
+(\sigma_i^2 \mid \y, \rest) \sim \IG\p{
+a_\sigma + \frac{JN_i - \sumjn e_{inj}}{2},
+b_\sigma + \frac{\sumjn(1-e_{inj})\p{\log(y_{inj}-\mus_{j,\lin})}^2}{2}
+}
 $$
 
 
-## Full Conditional for $\v$
+
+## Full Conditional for $\v$ (FIXME)
 
 The prior distribution for $v_l$ are $v_l \mid \alpha \ind \Be(\alpha, 1)$, for 
 $l = 1,...,K$. So, $p(v_l \mid \alpha) \propto v_l^{\alpha-1}$. Also, let
@@ -479,14 +491,15 @@ p(v_k \mid \y,\rest)
 \propto&~
 p(v_k \mid \alpha) 
 \prod_{i=1}^I\prod_{n=1}^{N_i} \prod_{j=1}^J
-p(y_{inj} \mid \mus_{j,\lin}, \sigma_i^2, z_{j,\lin})^{\Ind{\lin\ge k}} \\
+p(y_{inj} \mid \mus_{j,\lin}, \sigma_i^2, e_{inj})^{\Ind{\lin\ge k}} \\
 %
 \propto&~
 v_k^{\alpha-1}
 \prod_{i=1}^I\prod_{n=1}^{N_i} \prod_{j=1}^J
-p_1(y_{inj}\mid \mus_{j,\lin}, \sigma_i^2) ^ {\Ind{\lin\ge k,~z_{jk}=1}} \times \\
+\likeone[,~\lin \ge k]
+\times \\
 &\hspace{7em}
-p_0(y_{inj}\mid \mus_{j,\lin}, \sigma_i^2) ^ {\Ind{\lin\ge k,~z_{jk}=0}}
+\likezero[,~\lin \ge k]{k}
 \end{align*}
 
 For each $k = 1, \cdots, K$, the full conditional cannot be sampled from
@@ -522,9 +535,11 @@ p(\phi_k \mid \y,\rest) \propto&~
 \times \\
 &~
 \prod_{i=1}^I\prod_{n=1}^{N_i} \prod_{j=1}^J
-p_1(y_{inj}\mid \mus_{j,\lin}, \sigma_i^2) ^ {\Ind{\lin\ge k,~z_{jk}=1}} \times \\
-&\hspace{7em}
-p_0(y_{inj}\mid \mus_{j,\lin}, \sigma_i^2) ^ {\Ind{\lin\ge k,~z_{jk}=0}}
+%\bc{\delta_0(y_{inj})}^{\Ind{e_{inj}=1,~\lin\ge k}}
+\likeone[,~\lin\ge k]
+\times \\
+&\hspace{5em}
+\likezero[,~\lin\ge k]{\lin}
 \end{split}
 $$
 
@@ -539,7 +554,7 @@ $$
                 {p(\phi_k\mid \y,\rest)}}.
 $$
 
-**In practice, however, this method will depend on $\mus_{jk}$**. Hence, if
+**In practice, however, this method will depend on $\mus_{jk}$**. That is, if
 $\mus_{jk}>0$ then $z_{jk}=1$ by necessity. This behavior is undesired.  So, we
 will jointly update $\mus_{jk}$ and $v_k$. More accurately, we will jointly
 update $(\bm{\mus_{k}}, \phi_k)$.  A metropolis update is required.  A
@@ -549,14 +564,14 @@ The proposed state $\widetilde{(\bm{\mus_{k}}, \phi_k)}$ will be accepted
 with probability 
 
 $$
-\min\bc{1, \frac{p(\tilde{\phi_k}\mid \y,\rest)p(\tilde{\bm\mus_{k}}\mid \y, \rest)}
-                {p(\phi_k\mid \y,\rest)p(\bm\mus_{k}\mid \y, \rest)}}.
+\min\bc{1, \frac{p(\tilde{\phi_k}, \widetilde{\mus_{j,(k:K)}}\mid \y,\rest)}
+                {p(\phi_k, \mus_{j,(k:K)}\mid \y,\rest)}}
 $$
 
 The new state in the MCMC for $(v_k,\bm\mus_k)$ are then $\p{\frac{1}{1+\exp\bc{-\phi_k}},\bm\mus_k}$.
 
 
-## Full Conditional for $\h$
+## Full Conditional for $\h$ (FIXME)
 The prior for $\h_k$ is $\h_k \sim \N_J(0, \Gamma)$.
 
 $$
@@ -598,13 +613,14 @@ $$
 \begin{split}
 p(\lin=k\mid \y,\rest) \propto&~~ p(\lin=k) 
 \prod_{i=1}^I\prod_{n=1}^{N_i}\prod_{j=1}^J
-p(y_{inj}\mid \mu_{jk}^*, \sigma_i^2, z_{jk})^{\Ind{\lin=k}}\\
+p(y_{inj}\mid \mu_{jk}^*, \sigma_i^2, e_{inj})^{\Ind{\lin=k}}\\
 \propto&~~ 
 w_{ik}
 \prod_{i=1}^I\prod_{n=1}^{N_i}\prod_{j=1}^J
-p_1(y_{inj}\mid \mus_{j,\lin}, \sigma_i^2) ^ {\Ind{\lin\ge k,~z_{jk}=1}} \times \\
+\likeone[,~\lin = k]
+\times \\
 &\hspace{7em}
-p_0(y_{inj}\mid \mus_{j,\lin}, \sigma_i^2) ^ {\Ind{\lin\ge k,~z_{jk}=0}}
+\likezero[,~\lin=k]{k}
 \end{split}
 $$
 
