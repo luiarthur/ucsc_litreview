@@ -1,0 +1,48 @@
+\newcommand{\mhSpiel}[1]{
+Since the full conditional distribution cannot be directly sampled from, it may
+be sampled from by a Metropolis step with a Normal proposal distribution. 
+The proposed state is accepted with probability 
+$$
+\min\bc{1, \frac{p(\widetilde{#1}\mid \y, \rest)}{p(#1\mid \y, \rest)}}.
+$$
+}
+
+
+\newcommand{\mhLogSpiel}[2]{
+Since the full conditional distribution for $#1$ cannot be directly sampled
+from, it may be sampled from by a Metropolis step with a Normal proposal
+distribution.  The parameter first needs to be log-transformed.  
+Let the full conditional of the transformed parameter be 
+$p(#2 \mid \y, \rest) = p_{#1}(\exp(#2) \mid \y, \rest) \exp(#2)$.
+Then, the proposed state of the transformed parameter ($#2$) is accepted with
+probability
+$$
+\min\bc{1, 
+  \frac{p(\widetilde{#2} \mid \y, \rest)}
+       {p(#2 \mid \y, \rest)}
+}.
+$$
+Exponentiating the updated value for $#2$ returns the updated value for $#1$.
+}
+
+
+\newcommand{\mhLogitSpiel}[2]{
+Since the full conditional distribution for $#1$ cannot be directly sampled
+from, it may be sampled from by a Metropolis step with a Normal proposal
+distribution.  The parameter first needs to be logit-transformed. 
+Let the full conditional of the transformed parameter be 
+$p(#2 \mid \y, \rest) = p_{#1}\p{\frac{1}{1+\exp(-#2)} \mid \y, \rest} 
+\frac{\exp(-#2)}{(1 + \exp(- #2))^2}$.
+The proposed
+state of the transformed parameter ($#2$) is accepted with probability 
+$$
+\min\bc{1, 
+  \frac{p(\widetilde{#2} \mid \y, \rest)}
+       {p(#2 \mid \y, \rest)}
+}
+$$
+Taking the inverse-logit of the updated value for $#2$ returns the updated
+value for $#1$.
+}
+
+

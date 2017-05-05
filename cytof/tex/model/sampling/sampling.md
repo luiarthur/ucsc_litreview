@@ -69,6 +69,8 @@ header-includes:
     - \newcommand{\sign}[1]{\text{sign}\p{#1}}
     - \pagenumbering{gobble}
     - \newcommand{\logNpdf}[3]{\frac{1}{#1\sqrt{2\pi#3}}\exp\bc{-\frac{\p{\log(#1)-#2}^2}{2{#3}}}}
+    - \newcommand{\Npdf}[3]{\frac{1}{\sqrt{2\pi{#3}}}\exp\bc{-\frac{\p{#1-#2}^2}{2#3}}}
+    - \newcommand{\TNpdf}[3]{\frac{\Npdf{#1}{#2}{#3}}{\Phi\p{\frac{#1-#2}{#3}}}}
     - \newcommand{\rest}{\text{rest}}
     - \newcommand{\logit}{\text{logit}}
     - \newcommand{\piconsta}{\frac{\exp(\rho)}{1+\exp(-\kappa_j)}}
@@ -77,13 +79,59 @@ header-includes:
     - \newcommand{\likeone}[1][]{
         \bc{\delta_0(y_{inj})}^{\Ind{e_{inj}=1#1}}
       }
+      #- \newcommand{\likezero}[2][]{
+      #    \bc{
+      #    \logNpdf{y_{inj}}{\mus_{j#2}}{\sigma_i^2}
+      #    }^{\Ind{e_{inj}=0#1}}
+      #  }
     - \newcommand{\likezero}[2][]{
         \bc{
-        \logNpdf{y_{inj}}{\mus_{j#2}}{\sigma_i^2}
+        \TNpdf{y_{inj}}{\mus_{j#2}}{\sigma_i^2}
         }^{\Ind{e_{inj}=0#1}}
       }
+    - \newcommand{\pone}[1]{
+        p(y_{inj}\mid \mus_{j,#1}, \sigma_i^2, e_{inj}=1)
+      }
     - \newcommand{\sumjn}{\sum_{j=1}^J\sum_{n=1}^{N_i}}
+    - \newcommand{\pmugt}[1]{
+        \bc{
+          \frac{
+            \Npdf{\mus_{j,#1}}{\psi_j}{\tau_j^2}
+          }{
+            1-\Phi\p{ \frac{(\mus_{j,#1}-\psi_j)-\log(2)}{\tau_j} }
+          }
+        }^{\Ind{\mus_{j,#1}>\log(2),~z_{j#1}=1}}
+      }
+    - \newcommand{\pmult}[1]{
+        \bc{
+          \frac{
+            \Npdf{\mus_{j,#1}}{\psi_j}{\tau_j^2}
+          }{
+            \Phi\p{ \frac{(\mus_{j,#1}-\psi_j)-\log(2)}{\tau_j} }
+          }
+        }^{\Ind{\mus_{j,#1}<\log(2),~z_{j#1}=0}}
+      }
+    - \newcommand{\pmugtc}[1]{
+        \bc{
+          \frac{
+            \exp\bc{-\frac{(\mus{j,#1}-\psi_j)^2}{2tau_j^2}}
+          }{
+            1-\Phi\p{ \frac{(\mus_{j,#1}-\psi_j)-\log(2)}{\tau_j} }
+          }
+        }^{\Ind{\mus_{j,#1}>\log(2),~z_{j#1}=1}}
+      }
+    - \newcommand{\pmultc}[1]{
+        \bc{
+          \frac{
+            \exp\bc{-\frac{(\mus{j,#1}-\psi_j)^2}{2tau_j^2}}
+          }{
+            \Phi\p{ \frac{(\mus_{j,#1}-\psi_j)-\log(2)}{\tau_j} }
+          }
+        }^{\Ind{\mus_{j,#1}<\log(2),~z_{j#1}=0}}
+      }
+    - \input{mh.tex}
 ---
+
 
 # Likelihood
 
@@ -96,7 +144,9 @@ $$
 y_{inj} \mid \mus_{j,\lin}, \sigma^2_i, e_{inj} &\sim&
 \begin{cases}
 \delta_0(y_{inj}) & \text{if } e_{inj}=1 \\
-\LN(\mus_{j,\lin}, \sigma^2_i), & \text{if } e_{inj}=0 \\
+%\LN(\mus_{j,\lin}, \sigma^2_i), & \text{if } e_{inj}=0 \\
+%\TN^+(\mus_{j,\lin}, \sigma^2_i), & \text{if } e_{inj}=0 \\
+\TNpdf{y_{inj}}{\mus_{j,\lin}}{\sigma_i^2}, & \text{if } e_{inj}=0 \\
 \end{cases}
 \\
 \\
@@ -109,11 +159,11 @@ $$
 
 - $\mus_{jk}$:
 $$\begin{cases}
-\mus_{jk} \mid \psi_j, \tau^2_j, z_{jk}=1 ~~&\sim~~ 
-\N(\psi_j, \tau_j^2)\Ind{\mus_{jk} > 0} \\
+p(\mus_{jk} \mid \psi_j, \tau^2_j, z_{jk}=1) ~~&=~~ 
+\pmugt{k} \\
 %
-\mus_{jk} \mid \psi_j, \tau^2_j, z_{jk}=0 ~~&\sim~~ 
-\N(\psi_j, \tau_j^2)\Ind{\mus_{jk} < 0} \\
+p(\mus_{jk} \mid \psi_j, \tau^2_j, z_{jk}=0) ~~&=~~ 
+\pmult{k} \\
 \end{cases}
 $$
 - $\psi_j$: 
@@ -178,6 +228,59 @@ one at a time until convergence. Parameter updates are made by sampling from
 it's full conditional distribution. Where this cannot be done conveniently, 
 a metropolis step will be necessary.
 
+To sample from a distribution which is otherwise difficult to sample from, the
+Metropolis-Hastings algorithm can be used. This is particularly useful when
+sampling from a full conditional distribution of one of many parameters in an
+MCMC based sampling scheme (such as a Gibbs sampler). Say $B$ samples from a
+distribution with density $p(\theta)$ is desired, one can do the following:
+
+1. Provide an initial value for the sampler, e.g. $\theta^{(0)}$.
+2. Repeat the following steps for $i = 1,...,B$.
+3. Sample a new value $\tilde\theta$ for $\theta^{(i)}$ from a proposal 
+   distribution $Q(\cdot \mid \theta^{(i-1)})$.
+     - Let $q(\tilde\theta \mid \theta)$ be the density of the
+       proposal distribution.
+4. Compute the "acceptance ratio" to be 
+   $$
+   \rho=
+   \min\bc{1, \frac{p(\tilde\theta)}{p(\theta^{(i-1)})} \Big/ 
+              \frac{q(\tilde\theta\mid\theta^{(i-1)})}
+                   {q(\theta^{(i-1)}\mid\tilde\theta)}
+          }
+   $$
+5. Set 
+   $$
+   \theta^{(i)} := 
+   \begin{cases}
+   \tilde\theta &\text{with probability } \rho \\
+   \theta^{(i-1)} &\text{with probability } 1-\rho.
+   \end{cases}
+   $$
+
+Note that in the case of a symmetric proposal distribution, the 
+acceptance ratio simplifies further to be 
+$\frac{p(\tilde\theta)}{p(\theta^{(i-1)})}$.
+
+The proposal distribution should be chosen to have the same support
+as the parameter. Transforming parameters to have infinite support
+can, therefore, be convenient as a Normal proposal distribution
+can be used. Moreover, as previously mentioned, the use of symmetric proposal
+distributions (such as the Normal distribution) can simplify the 
+computation of the acceptance ratio.
+
+Some common parameter transformations are therefore presented here:
+
+1. For parameters bounded between $(0,1)$, a logit-transformation
+   may be used.  Specifically, if a random variable $X$ with density $f_X(x)$
+   has support in the unit interval, then $Y=\logit(X)=\log\p{\frac{p}{1-p}}$
+   will have density 
+   $f_Y(y) = f_X\p{\frac{1}{1+\exp(-y)}}\frac{e^{-y}}{(1+e^{-y})^{2}}$.
+2. For parameters with support $(0,\infty)$, a log-transformation
+   may be used.  Specifically, if a random variable $X$ with density $f_X(x)$
+   has positive support, then $Y = \log(X)$ has pdf
+   $f_Y(y) = f_X(e^y) e^y$.
+
+
 # Derivation of Full Conditionals
 
 
@@ -207,10 +310,11 @@ p(y_{inj}\mid \mus_{j,\lin}, \sigma_i^2, e_{inj}=x)
 \\
 =&~
 \frac{
-\pi_{ij}\delta_0(y_{inj})
+\pi_{ij}\likeone
 }{
 \pi_{ij} \delta_0(y_{inj}) + 
-(1-\pi_{ij})\logNpdf{y_{inj}}{\mus_{j,\lin}}{\sigma_i^2}
+(1-\pi_{ij}) p(y_{inj}\mid \mus_{j,\lin}, \sigma_i^2, e_{inj}=1)
+%\likezero{\mus_{j,\lin}}
 } \\
 \end{align*}
 
@@ -219,27 +323,15 @@ $$
 p(e_{inj} = 0\mid z_{j,\lin}=0, \pi_{ij}, \rest)
 =
 \frac{
-(1-\pi_{ij})\logNpdf{y_{inj}}{\mus_{j,\lin}}{\sigma_i^2}
+(1-\pi_{ij}) \pone{\lin}
 }{
 \pi_{ij} \delta_0(y_{inj}) + 
-(1-\pi_{ij})\logNpdf{y_{inj}}{\mus_{j,\lin}}{\sigma_i^2}
+(1-\pi_{ij}) \pone{\lin}
 }
 $$
 
 
 ## Full Conditional for $\bm\mu^*$
-
-Let the prior for $\mu_{jk}^*$ be 
-
-\begin{align*}
-\mus_{jk} \mid \psi_j, \tau^2_j, z_{jk}=1 ~~&\sim~~ 
-\N(\psi_j, \tau_j^2)\Ind{\mus_{jk} > 0} \\
-%
-\mus_{jk} \mid \psi_j, \tau^2_j, z_{jk}=0 ~~&\sim~~ 
-\N(\psi_j, \tau_j^2)\Ind{\mus_{jk} < 0} \\
-\end{align*}
-
-Then,
 
 \begin{align*}
 p(\mus_{jk} \mid \y,\rest) \propto&~~ p(\mus_{jk}\mid z_{jk}, \psi_j, \tau_j^2) 
@@ -248,38 +340,25 @@ p(\mus_{jk} \mid \y,\rest) \propto&~~ p(\mus_{jk}\mid z_{jk}, \psi_j, \tau_j^2)
 p(y_{inj}\mid \mus_{j,\lin}, \sigma_i^2, e_{inj})\\
 \\
 \propto&~~ 
-p(\mus_{jk}\mid \psi_j, \tau_j^2, z_{jk}=1)^{\Ind{\mus_{jk}>0}} \times
-p(\mus_{jk}\mid \psi_j, \tau_j^2, z_{jk}=0)^{\Ind{\mus_{jk}<0}} \times
+p(\mus_{jk}\mid \psi_j, \tau_j^2, z_{jk}=1)^{\Ind{\mus_{jk}>\log(2)}} \times
+p(\mus_{jk}\mid \psi_j, \tau_j^2, z_{jk}=0)^{\Ind{\mus_{jk}<\log(2)}} \times
 \\ &~~
 \prod_{i=1}^I\prod_{n=1}^{N_i}
 p(y_{inj}\mid \mus_{j,\lin}, \sigma_i^2, e_{inj})\\
 \\
 \propto&~~
-\bc{
-\frac{\exp\bc{-\frac{(\mus_{jk}-\psi_j)^2}{2\tau_j^2}}}
-{\Phi\p{\frac{\mus_{jk}-\psi_j}{\tau_j}}}
-}^{\Ind{\mus_{jk}>0,~z_{jk}=1}}
-\bc{
-\frac{\exp\bc{-\frac{(\mus_{jk}-\psi_j)^2}{2\tau_j^2}}}
-{1-\Phi\p{\frac{\mus_{jk}-\psi_j}{\tau_j}}}
-}^{\Ind{\mus_{jk}<0,~z_{jk}=0}}
+\pmugt{k}
+\times \\
+&~~
+\pmult{k}
 \times \\
 &~~\prod_{i=1}^I\prod_{n=1}^{N_i}
-\likeone
-\times\\
-&
-\likezero{k}
+\likeone[,\lin=k]
+\times
+\likezero[,\lin=k]{k}
 \end{align*}
 
-The full conditional is not available in closed form. But, it can be sampled
-from by a Metropolis step with a Normal proposal. More precisely, we sample 
-a candidate value $\widetilde{\mus_{jk}}$ from a Normal proposal distribution
-centered at the current iterate (say $\mus_{jk}$) of the MCMC. The proposed state
-is accepted with probability 
-
-$$
-\min\bc{1, \frac{p(\widetilde{\mus_{jk}}\mid \y, \rest)}{p(\mus_{jk}\mid \y, \rest)}}.
-$$
+\mhSpiel{\mus_{jk}}
 
 ## Full Conditional for $\bm\psi$
 $\psi_j$ has prior distribution $\psi_j \sim \N(m_\psi, s^2_\psi)$.
@@ -295,30 +374,14 @@ p(\mu_{j,\lin}\mid \psi_j, \tau_j^2, z_{j,\lin}) \\
 \\
 &~~
 \prod_{i=1}^I\prod_{n=1}^{N_i}
-\bc{
-\frac{\exp\bc{-\frac{(\mus_{j,\lin}-\psi_j)^2}{2\tau_j^2}}}
-{\Phi\p{\frac{\mus_{j,\lin}-\psi_j}{\tau_j}}}
-}^{\Ind{\mus_{j,\lin}>0,~z_{j,\lin}=1}}
+\pmugt{\lin}
 \times \\
-&\hspace{4em}\bc{
-\frac{\exp\bc{-\frac{(\mus_{j,\lin}-\psi_j)^2}{2\tau_j^2}}}
-{1-\Phi\p{\frac{\mus_{j,\lin}-\psi_j}{\tau_j}}}
-}^{\Ind{\mus_{j,\lin}<0,~z_{j,\lin}=0}}
+&\hspace{4em}
+\pmult{\lin}
 \end{split}
 $$
 
-The full conditional is not available in closed form. But, it can be sampled
-from by a Metropolis step with a Normal proposal. More precisely, we sample 
-a candidate value $\tilde{\psi_j}$ from a Normal proposal distribution
-centered at the current iterate (say $\psi_j$) of the MCMC. 
-The proposed state is accepted with probability 
-
-$$
-\min\bc{1, 
-\frac{p(\tilde{\psi_{j}}\mid \y, \rest)}
-     {p(\psi_{j}\mid \y, \rest)}
-}.
-$$
+\mhSpiel{\psi_j}
 
 
 ## Full Conditional for $\bm{\tau^2}$
@@ -333,65 +396,14 @@ p(\tau_j^2 \mid \y, \rest) \propto&~~ p(\tau_j^2) \times
 \propto&~~ (\tau_j^2)^{-a_\tau-1} \exp\bc{-b_\tau/\tau_j^2} \times \\
 &~~
 \prod_{i=1}^I\prod_{n=1}^{N_i}
-\bc{
-\frac{\exp\bc{-\frac{(\mus_{j,\lin}-\psi_j)^2}{2\tau_j^2}}}
-{\Phi\p{\frac{\mus_{j,\lin}-\psi_j}{\tau_j}}}
-}^{\Ind{\mus_{j,\lin}>0,~z_{j,\lin}=1}}
+\pmugt{\lin}
 \times \\
-&\hspace{4em}\bc{
-\frac{\exp\bc{-\frac{(\mus_{j,\lin}-\psi_j)^2}{2\tau_j^2}}}
-{1-\Phi\p{\frac{\mus_{j,\lin}-\psi_j}{\tau_j}}}
-}^{\Ind{\mus_{j,\lin}<0,~z_{j,\lin}=0}}
+&\hspace{4em}
+\pmult{\lin}
 \end{split}
 $$
 
-As the full conditional for $\tau_j^2$ is not available in closed form,
-it needs to be approximated. This can be done with a metropolis step
-by log-transforming $\tau_j^2$ and using a (symmetric) Normal 
-proposal distribution. 
-
-Note that if a random variable $X$ has pdf $f_X(x)$ then $Y = \log(X)$ has pdf
-$f_Y(y) = f_X(e^y) e^y$. So, the pdf for $\zeta_i = \log(\tau_j^2)$ is 
-
-$$
-\begin{split}
-p(\zeta_j) &= \frac{b^a}{\Gamma(a)} (e^{\zeta_j})^{-a-1} \exp\bc{-b/e^{\zeta_j}} e^{\gamma_j}\\
-&\propto \exp\bc{-a\zeta_j - be^{-\zeta_j}}
-\end{split}
-$$
-
-So, the full conditional of $\zeta_j$ is
-
-$$
-\begin{split}
-p(\zeta_j\mid\y,\rest) \propto&~~ 
-\exp\bc{-a_\tau\zeta_j -b_\tau e^{-\zeta_i}}
-\times \\
-&~~
-\prod_{i=1}^I\prod_{n=1}^{N_i}
-\bc{
-\frac{\exp\bc{-\frac{(\mus_{j,\lin}-\psi_j)^2}{2\exp(\zeta_j)}}}
-{\Phi\p{\frac{\mus_{j,\lin}-\psi_j}{\exp(\zeta_j)/2}}}
-}^{\Ind{\mus_{j,\lin}>0,~z_{j,\lin}=1}}
-\times \\
-&\hspace{4em}\bc{
-\frac{\exp\bc{-\frac{(\mus_{j,\lin}-\psi_j)^2}{2\exp(\zeta_j)}}}
-{1-\Phi\p{\frac{\mus_{j,\lin}-\psi_j}{\exp(\zeta_j)/2}}}
-}^{\Ind{\mus_{j,\lin}<0,~z_{j,\lin}=0}}
-\end{split}
-$$
-
-The parameter $\tau_j^2$ can be updated vicariously by updating $\zeta_j$
-and then exponentiating the result. That is, we sample a candidate value for
-the parameter $\tilde{\zeta_j}$ from a Normal proposal centered at the current
-iterate (say $\zeta_j$) of the MCMC. The proposed state is accepted with 
-probability
-
-$$
-\min\bc{1, \frac{p(\tilde{\zeta_j}\mid \y,\rest)}
-                {p(\zeta_j\mid \y,\rest)}}.
-$$
-
+\mhLogSpiel{{\tau_j^2}}{{\zeta_j}}
 
 
 ## Full Conditional for $\bm\pi$
@@ -461,22 +473,15 @@ p(y_{inj} \mid \mu_{j,\lin}^*, \sigma_i^2, e_{inj}) \\
 \likezero{\lin} \\
 %
 \\
-\propto&~~
-(\sigma_i^2)^{-a_\sigma-1} \exp(-b_\sigma/\sigma_i^2)\times \\
-&
-(\sigma_i^2)^{-\p{JN_i - \p{\sumjn e_{inj}}}/2} \times \\
-& 
-\exp\bc{-\frac{\sumjn(1-e_{inj})\p{\log(y_{inj}-\mus_{j,\lin})}^2}{2\sigma_i^2}}\\
+%\propto&~~
+%(\sigma_i^2)^{-a_\sigma-1} \exp(-b_\sigma/\sigma_i^2)\times \\
+%&
+%(\sigma_i^2)^{-\p{JN_i - \p{\sumjn e_{inj}}}/2} \times \\
+%& 
+%\exp\bc{-\frac{\sumjn(1-e_{inj})\p{\log(y_{inj}-\mus_{j,\lin})}^2}{2\sigma_i^2}}\\
 \end{align*}
 
-Therefore, the full conditional can be sampled from:
-
-$$
-(\sigma_i^2 \mid \y, \rest) \sim \IG\p{
-a_\sigma + \frac{JN_i - \sumjn e_{inj}}{2},
-b_\sigma + \frac{\sumjn(1-e_{inj})\p{\log(y_{inj}-\mus_{j,\lin})}^2}{2}
-}
-$$
+\mhLogSpiel{{\sigma_i^2}}{{\xi_i}}
 
 
 
@@ -502,74 +507,47 @@ v_k^{\alpha-1}
 \likezero[,~\lin \ge k]{k}
 \end{align*}
 
-For each $k = 1, \cdots, K$, the full conditional cannot be sampled from
-conveniently. So, a metropolis update is required for each $v_k$.
-This requires logit-transforming the $v_k$'s and using a Normal proposal
-distribution centered at the current $v_k$ in the metropolis update.
-Specifically, if a random variable $X$ has support in the unit interval, the
-$Y=\logit(X)=\log\p{\frac{p}{1-p}}$ will have pdf $f_Y(y) =
-f_X\p{\frac{1}{1+\exp(-y)}}e^{-y}(1+e^{-y})^{-2}$. So, the prior density for
-$\phi_k = \logit(v_k)$ is
+Note that, if $\mus_{jk}>0$ then $z_{jk}=1$ by definition, which in turn affects
+$v_k$. This behavior is undesirable. So, we will jointly update $\mus_{jk}$ and
+$v_k$. More accurately, we will jointly update $(\bm\mus_{k:K}, \phi_k)$,
+where $\phi_k$ is the logit-transformation of the parameter $v_k$.
+A metropolis update is required.  Let $Q_1$ be the proposal distribution.
+The proposal mechanism will be as follows:
+
+1. Given the current state $(\phi_k, \bm\mus_{k:K})$,
+   sample a proposed state $\tilde\phi_k$ from $\N(\cdot \mid \phi_k, \Sigma)$ 
+   for $\phi_k$, where $\Sigma$ is some positive real number to be tuned.
+2. Compute the new $z_{jk}$ for $j = 1,...,J$.
+3. If $z_{jk}$ is unchanged, then the proposed state for $\mus_{jk}$ is simply
+   it's current state. Otherwise, the proposed state is 
+   $\tilde{\mus_{jk}} \sim \N(\cdot \mid \psi_j, \tau_j^2, z_{jk})$ 
+4. Compute the proposal density as 
+   $$
+   \begin{split}
+   q_1((\tilde{\phi}_k, \tilde\mus_{j,k:K}) \mid (\phi_k, \mus_{j,k:K}))
+   =
+   \Npdf{\tilde\phi_k}{\phi_k}{\Sigma} \times  \\
+   \end{split}
+   $$
+
+
+
+The proposed state $\widetilde{(v_k, \bm\mus_{k:K})}$ will be
+accepted with probability 
 
 $$
-\begin{split}
-p(\phi_k \mid\alpha) &= 
-\frac{\Gamma(\alpha+1)}{\Gamma(\alpha)\Gamma(1)}
-\p{\frac{1}{1+\exp(-\phi_k)}}^{\alpha-1}
-\p{\frac{1}{1+\exp(\phi_k)}}^{1 - 1}
-\frac{e^{\phi_k}}{\p{1+e^{\phi_k}}^2} \\
-%
-&\propto
-\p{\frac{1}{1+\exp(-\phi_k)}}^{\alpha-1}
-\frac{e^{\phi_k}}{\p{1+e^{\phi_k}}^2} \\
-\end{split}
+\min\bc{1, 
+  \frac{
+    p(\tilde{v_k}) p(\widetilde{\bm\mus_{k:K}}) p(\y \mid \bm{\mus, \sigma_2, e})
+    \times
+    q_1((v_k, \bm\mus_{k:K}) \mid (\tilde{v_k}, \widetilde{\bm\mus_{k:K}})) 
+  }{
+    p(v_k) p(\bm\mus_{k:K}) p(\y \mid \bm{\mus, \sigma_2, e})
+    \times
+    q_1( (\tilde{v_k}, \widetilde{\bm\mus_{k:K}}) \mid (v_k, \bm\mus_{k:K}) )
+  }
+}.
 $$
-
-So, the full conditional of $\phi_k$ is
-
-$$
-\begin{split}
-p(\phi_k \mid \y,\rest) \propto&~
-\p{\frac{1}{1+\exp(-\phi_k)}}^{\alpha-1}
-\frac{e^{\phi_k}}{\p{1+e^{\phi_k}}^2} 
-\times \\
-&~
-\prod_{i=1}^I\prod_{n=1}^{N_i} \prod_{j=1}^J
-%\bc{\delta_0(y_{inj})}^{\Ind{e_{inj}=1,~\lin\ge k}}
-\likeone[,~\lin\ge k]
-\times \\
-&\hspace{5em}
-\likezero[,~\lin\ge k]{\lin}
-\end{split}
-$$
-
-The parameter $\phi_k$ can be updated vicariously by updating $\phi_k$ and
-then taking the inverse-logit the result. That is, we sample a candidate value
-for the parameter $\tilde{\phi_k}$ from a Normal proposal centered at the
-current iterate (say $\phi_k$) of the MCMC. The proposed state is accepted
-with probability
-
-$$
-\min\bc{1, \frac{p(\tilde{\phi_k}\mid \y,\rest)}
-                {p(\phi_k\mid \y,\rest)}}.
-$$
-
-**In practice, however, this method will depend on $\mus_{jk}$**. That is, if
-$\mus_{jk}>0$ then $z_{jk}=1$ by necessity. This behavior is undesired.  So, we
-will jointly update $\mus_{jk}$ and $v_k$. More accurately, we will jointly
-update $(\bm{\mus_{k}}, \phi_k)$.  A metropolis update is required.  A
-multivariate Normal proposal distribution centered at the current
-$(\bm{\mus_{k}}, \phi_k)$ can be used in the metropolis update.
-The proposed state $\widetilde{(\bm{\mus_{k}}, \phi_k)}$ will be accepted
-with probability 
-
-$$
-\min\bc{1, \frac{p(\tilde{\phi_k}, \widetilde{\mus_{j,(k:K)}}\mid \y,\rest)}
-                {p(\phi_k, \mus_{j,(k:K)}\mid \y,\rest)}}
-$$
-
-The new state in the MCMC for $(v_k,\bm\mus_k)$ are then $\p{\frac{1}{1+\exp\bc{-\phi_k}},\bm\mus_k}$.
-
 
 ## Full Conditional for $\h$ (FIXME)
 The prior for $\h_k$ is $\h_k \sim \N_J(0, \Gamma)$.
@@ -750,4 +728,3 @@ The new state in the MCMC for $d$ is then $\exp(\rho)$.
   No strange spell checks in the commetns.
   $$\alpha$$
 %)
-
