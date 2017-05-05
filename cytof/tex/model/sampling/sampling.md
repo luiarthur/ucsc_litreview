@@ -206,7 +206,7 @@ $$
 p(\bm\theta \mid K, \y, \alpha) \propto& \bc{\prod_{i=1}^I 
 p(\sigma_i^2) p(\bm{w_i})
 \prod_{n=1}^{N_i} p(\lambda_{i,n}\mid \bm {w_i})  \prod_{j=1}^J p(y_{inj} \mid 
-\mus_{j,\lambda_{i,n}} , \sigma^2_i, z_{j,\lambda_{i,n}}) } \\
+\mus_{j,\lambda_{i,n}} , \sigma^2_i, e_{inj}) } \\
 &\prod_{j=1}^J p(\tau_j^2) p(\psi_j) \prod_{j=1,k=1}^{J,K}  
 %p_{z_{jk}}(\mu^*_{jk} \mid \psi_j, \tau_j^2) 
 p(\mus_{jk} \mid \psi_j, \tau_j^2, z_{jk}) 
@@ -485,38 +485,37 @@ p(y_{inj} \mid \mu_{j,\lin}^*, \sigma_i^2, e_{inj}) \\
 
 
 
-## Full Conditional for $\v$ (FIXME: Check this)
+## Full Conditional for $\v$
 
-The prior distribution for $v_l$ are $v_l \mid \alpha \ind \Be(\alpha, 1)$, for 
-$l = 1,...,K$. So, $p(v_l \mid \alpha) \propto v_l^{\alpha-1}$. Also, let
-$v_0 = 1$ (deterministically). Then,
-
-\begin{align*}
-p(v_k \mid \y,\rest)
-\propto&~
-p(v_k \mid \alpha) 
-\prod_{i=1}^I\prod_{n=1}^{N_i} \prod_{j=1}^J
-p(y_{inj} \mid \mus_{j,\lin}, \sigma_i^2, e_{inj})^{\Ind{\lin\ge k}} \\
-%
-\propto&~
-v_k^{\alpha-1}
-\prod_{i=1}^I\prod_{n=1}^{N_i} \prod_{j=1}^J
-\likeone[,~\lin \ge k]
-\times \\
-&\hspace{7em}
-\likezero[,~\lin \ge k]{k}
-\end{align*}
+The prior distribution for $v_k$ are $v_k \mid \alpha \ind \Be(\alpha, 1)$, for 
+$k = 1,...,K$. So, $p(v_k \mid \alpha) = \alpha v_l^{\alpha-1}$. 
 
 Note that, if $\mus_{jk}>0$ then $z_{jk}=1$ by definition, which in turn affects
 $v_k$. This behavior is undesirable. So, we will jointly update $\mus_{jk}$ and
 $v_k$. More accurately, we will jointly update $(\bm\mus_{k:K}, \phi_k)$,
 where $\phi_k$ is the logit-transformation of the parameter $v_k$.
-A metropolis update is required.  Let $Q_1$ be the proposal distribution.
-The proposal mechanism will be as follows:
+
+The full conditional for $(\phi_k, \mus_{j,k:K})$ is:
+$$
+\begin{split}
+p(\phi_k, \mus_{k:K} \mid \y, \rest) 
+&\propto
+p(\phi_k) \times
+\prod_{j=1}^J \prod_{l=k}^K 
+p(\mus_{jk}\mid\psi_j, \tau^2_j, z_{jk}) \times \\
+&~~
+\prod_{i=1}^I \prod_{n=1}^{N_i} \prod_{j=1}^J 
+p(e_{inj} \mid z_{j,\lin}, \pi_{ij})^{\Ind{\lin \ge k}, z_{j,\lin}=0} \\
+\end{split}
+$$
+
+Since the full conditional cannot be sampled from directly, a metropolis update
+is required. Let $Q_1$ be the proposal distribution. The proposal mechanism
+will be as follows:
 
 1. Given the current state $(\phi_k, \bm\mus_{k:K})$,
-   sample a proposed state $\tilde\phi_k$ from $\N(\cdot \mid \phi_k, \Sigma)$ 
-   for $\phi_k$, where $\Sigma$ is some positive real number to be tuned.
+   sample a proposed state $\tilde\phi_k$ from $\N(\cdot \mid \phi_k, \Sigma_\phi)$ 
+   for $\phi_k$, where $\Sigma_\phi$ is some positive real number to be tuned.
 2. Compute the new $z_{jk}$ (from the updated $\phi_k \Rightarrow v_k$) 
    for $j = 1,...,J$.
 3. If $z_{jk}$ is unchanged, then the proposed state for $\mus_{jk}$ is simply
@@ -527,66 +526,90 @@ The proposal mechanism will be as follows:
    \begin{split}
    q_1((\tilde{\phi}_k, \tilde\mus_{j,k:K}) \mid (\phi_k, \mus_{j,k:K}))
    =
-   \Npdf{\tilde\phi_k}{\phi_k}{\Sigma} \times  \\
-   \prod_{j=1}^{l=k:K} 
-   p(\mus_{jl} \mid \psi_j, \tau_j^2, z_{jl})^{\tilde z_{jl} \ne z_{jl}}
+   \Npdf{\tilde\phi_k}{\phi_k}{\Sigma_\phi} \times  \\
+   \prod_{j=1}^J \prod_{l=k}^{K}
+   p(\tilde\mus_{jl} \mid \psi_j, \tau_j^2, z_{jl})^{\Ind{\tilde z_{jl} \ne z_{jl}}}
    \end{split}
    $$
-
-
-
-The proposed state $\widetilde{(\phi_k, \bm\mus_{k:K})}$ will be
-accepted with probability 
-
-$$
-\min\bc{1, 
-  \frac{
-    p(\tilde{\phi_k}) p(\widetilde{\bm\mus_{k:K}}) p(\y \mid \bm{\mus, \sigma_2, e})
-    \times
-    q_1((\phi_k, \bm\mus_{k:K}) \mid (\tilde{\phi_k}, \widetilde{\bm\mus_{k:K}})) 
-  }{
-    p(\phi_k) p(\bm\mus_{k:K}) p(\y \mid \bm{\mus, \sigma_2, e})
-    \times
-    q_1( (\tilde{\phi_k}, \widetilde{\bm\mus_{k:K}}) \mid (\phi_k, \bm\mus_{k:K}) )
-  }
-}.
-$$
+5. The proposed state $\widetilde{(\phi_k, \bm\mus_{k:K})}$ will be
+   accepted with probability 
+   $$
+   \min\bc{1, 
+     \frac{
+       p(\tilde\phi_k, \tilde\mus_{k:K}) \mid \y, \rest) 
+       \times
+       q_1((\phi_k, \bm\mus_{k:K}) \mid 
+       (\tilde{\phi_k}, \widetilde{\bm\mus_{k:K}})) 
+     }{
+       p(\phi_k, \mus_{k:K} \mid \y, \rest) 
+       \times
+       q_1( (\tilde{\phi_k}, \widetilde{\bm\mus_{k:K}}) \mid 
+       (\phi_k, \bm\mus_{k:K}) )
+     }
+   }.
+   $$
 
 To obtain the new state for $v_k$, we simply need to take the 
-inverse-transformation of $\phi_k$.
+inverse-logit transformation of $\phi_k$.
 
-## Full Conditional for $\h$ (FIXME)
+## Full Conditional for $\h$
 The prior for $\h_k$ is $\h_k \sim \N_J(0, \Gamma)$.
 
+Note again that if $\mus_{jk}>0$, then $z_{jk}=1$ by definition, which in turn
+affects $\h_k$. So, we will jointly update $\mus_{jk}$ and $\h_k$. 
+
+The full conditional for $(\h_k, \mus_{jk})$ is:
 $$
 \begin{split}
-p(\h_k \mid \y, -) 
-\propto&~~ 
-p(\h_k) 
-\prod_{i=1}^I\prod_{n=1}^{N_i}\prod_{j=1}^J
-p(y_{inj} \mid \mu_{jk}, \sigma_i^2, z_{jk}) ^{\Ind{\lin=k}}\\
-%
-\propto&~~ 
-p(\h_k) 
-\prod_{i=1}^I\prod_{n=1}^{N_i}\prod_{j=1}^J
-p_1(y_{inj}\mid \mus_{j,\lin}, \sigma_i^2) ^ {\Ind{\lin\ge k,~z_{jk}=1}} \times \\
-&\hspace{7em}
-p_0(y_{inj}\mid \mus_{j,\lin}, \sigma_i^2) ^ {\Ind{\lin\ge k,~z_{jk}=0}}
+p(\h_k, \bm\mus_k \mid \y, \rest) 
+&\propto
+p(\h_k) \times
+\prod_{j=1}^J \prod_{l=k}^K 
+p(\mus_{jk}\mid\psi_j, \tau^2_j, z_{jk}) \times \\
+&~~
+\prod_{i=1}^I \prod_{n=1}^{N_i} \prod_{j=1}^J 
+p(e_{inj} \mid z_{j,\lin}, \pi_{ij})^{\Ind{\lin \ge k}, z_{j,\lin}=0} \\
 \end{split}
 $$
 
-Similarly to $v_k$, we need to jointly update $(\h_k,\bm\mus_{k})$ so 
-as to fully explore the sample space. This can be done with a metropolis
-step with a 
-multivariate Normal proposal distribution centered at the current
-iterate $(\bm{\mus_{k}}, \h_k)$.
-The proposed state $\widetilde{(\bm{\mus_{k}}, \h_k)}$ will be accepted
-with probability 
+Since the full conditional cannot be sampled from directly, a metropolis update
+is required. Let $Q_2$ be the proposal distribution. The proposal mechanism
+will be as follows:
 
-$$
-\min\bc{1, \frac{p(\tilde{\h_k}\mid \y,\rest)p(\tilde{\bm\mus_{k}}\mid \y, \rest)}
-                {p(\h_k\mid \y,\rest)p(\bm\mus_{k}\mid \y, \rest)}}.
-$$
+1. Given the current state $(\h_k, \bm\mus_k)$,
+   sample a proposed state $\tilde\h_k$ from $\N_J(\cdot \mid \h_k, \Sigma_h)$ 
+   for $\h_k$, where $\Sigma_h$ is some covariance matrix to be tuned.
+2. Compute the new $z_{jk}$ (from the updated $\h_k$).
+3. If $z_{jk}$ is unchanged, then the proposed state for $\mus_{jk}$ is simply
+   it's current state. Otherwise, the proposed state is 
+   $\tilde{\mus_{jk}} \sim \N(\cdot \mid \psi_j, \tau_j^2, z_{jk})$ 
+4. Compute the proposal density as 
+   $$
+   \begin{split}
+   q_2((\tilde{\h}_k, \tilde\mus_{jk}) \mid (\h_k, \mus_{jk}))
+   \propto \exp\bc{-\frac{(\tilde\h_k'-\h_k) \Sigma_h^{-1} (\tilde\h_k - \h_k)}{2}}
+   \\ 
+   \prod_{j=1}^J
+   p(\tilde\mus_{jk} \mid \psi_j, \tau_j^2, z_{jk})^{\Ind{\tilde z_{jk} \ne z_{jk}}}
+   \end{split}
+   $$
+5. The proposed state $\widetilde{(\h_k, \bm\mus_{k})}$ will be
+   accepted with probability 
+   $$
+   \min\bc{1, 
+     \frac{
+       p(\tilde\h_k, \tilde{\bm\mus_{k}}) \mid \y, \rest) 
+       \times
+       q_2((\h_k, \bm\mus_{k}) \mid 
+       (\tilde{\h_k}, \widetilde{\bm\mus_{k}})) 
+     }{
+       p(\h_k, \bm\mus_{k} \mid \y, \rest) 
+       \times
+       q_2( (\tilde{\h_k}, \widetilde{\bm\mus_{k}}) \mid 
+       (\h_k, \bm\mus_{k}) )
+     }
+   }.
+   $$
 
 
 ## Full Conditional for $\bm\lambda$
