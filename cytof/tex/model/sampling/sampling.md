@@ -485,7 +485,7 @@ p(y_{inj} \mid \mu_{j,\lin}^*, \sigma_i^2, e_{inj}) \\
 
 
 
-## Full Conditional for $\v$ (FIXME)
+## Full Conditional for $\v$ (FIXME: Check this)
 
 The prior distribution for $v_l$ are $v_l \mid \alpha \ind \Be(\alpha, 1)$, for 
 $l = 1,...,K$. So, $p(v_l \mid \alpha) \propto v_l^{\alpha-1}$. Also, let
@@ -517,7 +517,8 @@ The proposal mechanism will be as follows:
 1. Given the current state $(\phi_k, \bm\mus_{k:K})$,
    sample a proposed state $\tilde\phi_k$ from $\N(\cdot \mid \phi_k, \Sigma)$ 
    for $\phi_k$, where $\Sigma$ is some positive real number to be tuned.
-2. Compute the new $z_{jk}$ for $j = 1,...,J$.
+2. Compute the new $z_{jk}$ (from the updated $\phi_k \Rightarrow v_k$) 
+   for $j = 1,...,J$.
 3. If $z_{jk}$ is unchanged, then the proposed state for $\mus_{jk}$ is simply
    it's current state. Otherwise, the proposed state is 
    $\tilde{\mus_{jk}} \sim \N(\cdot \mid \psi_j, \tau_j^2, z_{jk})$ 
@@ -527,27 +528,32 @@ The proposal mechanism will be as follows:
    q_1((\tilde{\phi}_k, \tilde\mus_{j,k:K}) \mid (\phi_k, \mus_{j,k:K}))
    =
    \Npdf{\tilde\phi_k}{\phi_k}{\Sigma} \times  \\
+   \prod_{j=1}^{l=k:K} 
+   p(\mus_{jl} \mid \psi_j, \tau_j^2, z_{jl})^{\tilde z_{jl} \ne z_{jl}}
    \end{split}
    $$
 
 
 
-The proposed state $\widetilde{(v_k, \bm\mus_{k:K})}$ will be
+The proposed state $\widetilde{(\phi_k, \bm\mus_{k:K})}$ will be
 accepted with probability 
 
 $$
 \min\bc{1, 
   \frac{
-    p(\tilde{v_k}) p(\widetilde{\bm\mus_{k:K}}) p(\y \mid \bm{\mus, \sigma_2, e})
+    p(\tilde{\phi_k}) p(\widetilde{\bm\mus_{k:K}}) p(\y \mid \bm{\mus, \sigma_2, e})
     \times
-    q_1((v_k, \bm\mus_{k:K}) \mid (\tilde{v_k}, \widetilde{\bm\mus_{k:K}})) 
+    q_1((\phi_k, \bm\mus_{k:K}) \mid (\tilde{\phi_k}, \widetilde{\bm\mus_{k:K}})) 
   }{
-    p(v_k) p(\bm\mus_{k:K}) p(\y \mid \bm{\mus, \sigma_2, e})
+    p(\phi_k) p(\bm\mus_{k:K}) p(\y \mid \bm{\mus, \sigma_2, e})
     \times
-    q_1( (\tilde{v_k}, \widetilde{\bm\mus_{k:K}}) \mid (v_k, \bm\mus_{k:K}) )
+    q_1( (\tilde{\phi_k}, \widetilde{\bm\mus_{k:K}}) \mid (\phi_k, \bm\mus_{k:K}) )
   }
 }.
 $$
+
+To obtain the new state for $v_k$, we simply need to take the 
+inverse-transformation of $\phi_k$.
 
 ## Full Conditional for $\h$ (FIXME)
 The prior for $\h_k$ is $\h_k \sim \N_J(0, \Gamma)$.
