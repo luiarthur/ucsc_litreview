@@ -79,14 +79,18 @@ header-includes:
     - \newcommand{\likeone}[1][]{
         \bc{\delta_0(y_{inj})}^{\Ind{e_{inj}=1#1}}
       }
-      #- \newcommand{\likezero}[2][]{
-      #    \bc{
-      #    \logNpdf{y_{inj}}{\mus_{j#2}}{\sigma_i^2}
-      #    }^{\Ind{e_{inj}=0#1}}
-      #  }
     - \newcommand{\likezero}[2][]{
         \bc{
         \TNpdf{y_{inj}}{\mus_{j#2}}{\sigma_i}
+        }^{\Ind{e_{inj}=0#1}}
+      }
+    - \newcommand{\likezeroc}[2][]{
+        \bc{
+          \frac{
+            \exp\bc{\frac{(y_{inj}-\mus_{j#2})^2}{2 \sigma^2_i}}
+          }{
+            \Phi\p{\frac{y_{inj}-\mus_{j#2}}{\sigma_i}}
+          }
         }^{\Ind{e_{inj}=0#1}}
       }
     - \newcommand{\pone}[1]{
@@ -98,7 +102,7 @@ header-includes:
           \frac{
             \Npdf{\mus_{j,#1}}{\psi_j}{\tau_j^2}
           }{
-            1-\Phi\p{ \frac{(\mus_{j,#1}-\psi_j)-\log(2)}{\tau_j} }
+            1-\Phi\p{ \frac{\mus_{j,#1}-\psi_j-\log(2)}{\tau_j} }
           }
         }^{\Ind{\mus_{j,#1}>\log(2),~z_{j#1}=1}}
       }
@@ -107,25 +111,25 @@ header-includes:
           \frac{
             \Npdf{\mus_{j,#1}}{\psi_j}{\tau_j^2}
           }{
-            \Phi\p{ \frac{(\mus_{j,#1}-\psi_j)-\log(2)}{\tau_j} }
+            \Phi\p{ \frac{\mus_{j,#1}-\psi_j-\log(2)}{\tau_j} }
           }
         }^{\Ind{\mus_{j,#1}<\log(2),~z_{j#1}=0}}
       }
     - \newcommand{\pmugtc}[1]{
         \bc{
           \frac{
-            \exp\bc{-\frac{(\mus{j,#1}-\psi_j)^2}{2tau_j^2}}
+            \exp\bc{-\frac{(\mus_{j,#1}-\psi_j)^2}{2\tau_j^2}}
           }{
-            1-\Phi\p{ \frac{(\mus_{j,#1}-\psi_j)-\log(2)}{\tau_j} }
+            1-\Phi\p{ \frac{\mus_{j,#1}-\psi_j-\log(2)}{\tau_j} }
           }
         }^{\Ind{\mus_{j,#1}>\log(2),~z_{j#1}=1}}
       }
     - \newcommand{\pmultc}[1]{
         \bc{
           \frac{
-            \exp\bc{-\frac{(\mus{j,#1}-\psi_j)^2}{2tau_j^2}}
+            \exp\bc{-\frac{(\mus_{j,#1}-\psi_j)^2}{2\tau_j^2}}
           }{
-            \Phi\p{ \frac{(\mus_{j,#1}-\psi_j)-\log(2)}{\tau_j} }
+            \Phi\p{ \frac{\mus_{j,#1}-\psi_j-\log(2)}{\tau_j} }
           }
         }^{\Ind{\mus_{j,#1}<\log(2),~z_{j#1}=0}}
       }
@@ -306,26 +310,16 @@ p(y_{inj}\mid \mus_{j,\lin}, \sigma_i^2, e_{inj}=x)
 } \\
 %
 \\
-=&~
-\frac{
+\propto&~
 \pi_{ij}\likeone
-}{
-\pi_{ij} \delta_0(y_{inj}) + 
-(1-\pi_{ij}) p(y_{inj}\mid \mus_{j,\lin}, \sigma_i^2, e_{inj}=1)
-%\likezero{\mus_{j,\lin}}
-} \\
+\\
 \end{align*}
 
 Similarly,
 $$
 p(e_{inj} = 0\mid z_{j,\lin}=0, \pi_{ij}, \rest)
-=
-\frac{
+\propto
 (1-\pi_{ij}) \pone{\lin}
-}{
-\pi_{ij} \delta_0(y_{inj}) + 
-(1-\pi_{ij}) \pone{\lin}
-}
 $$
 
 
@@ -345,15 +339,13 @@ p(\mus_{jk}\mid \psi_j, \tau_j^2, z_{jk}=0)^{\Ind{\mus_{jk}<\log(2)}} \times
 p(y_{inj}\mid \mus_{j,\lin}, \sigma_i^2, e_{inj})\\
 \\
 \propto&~~
-\pmugt{k}
+\pmugtc{k}
 \times \\
 &~~
-\pmult{k}
+\pmultc{k}
 \times \\
 &~~\prod_{i=1}^I\prod_{n=1}^{N_i}
-\likeone[,\lin=k]
-\times
-\likezero[,\lin=k]{k}
+\likezeroc[,~\lin=k]{k}
 \end{align*}
 
 \mhSpiel{\mus_{jk}}
@@ -365,18 +357,19 @@ So, it's full conditional is
 $$
 \begin{split}
 p(\psi_j \mid \y, \rest) \propto&~~ p(\psi_j) \times 
-\prod_{i=1}^I \prod_{n=1}^{N_i}
+\prod_{k=1}^K 
 p(\mu_{j,\lin}\mid \psi_j, \tau_j^2, z_{j,\lin}) \\
 %
 \propto&~~ \exp\bc{-\frac{(\psi_j-m_\psi)^2}{2s^2_\psi}} \times 
 \\
 &~~
-\prod_{i=1}^I\prod_{n=1}^{N_i}
-\pmugt{\lin}
+\prod_{k=1}^K
+\pmugtc{k}
 \times \\
-&\hspace{4em}
-\pmult{\lin}
+&\hspace{2em}
+\pmultc{k}
 \end{split}
+% FIXME Need to get rid of mus < log(2)
 $$
 
 \mhSpiel{\psi_j}
@@ -393,12 +386,13 @@ p(\tau_j^2 \mid \y, \rest) \propto&~~ p(\tau_j^2) \times
 %
 \propto&~~ (\tau_j^2)^{-a_\tau-1} \exp\bc{-b_\tau/\tau_j^2} \times \\
 &~~
-\prod_{i=1}^I\prod_{n=1}^{N_i}
-\pmugt{\lin}
+\prod_{k=1}^K
+\pmugt{k}
 \times \\
 &\hspace{4em}
-\pmult{\lin}
+\pmult{k}
 \end{split}
+% FIXME Need to get rid of mus < log(2)
 $$
 
 \mhLogSpiel{{\tau_j^2}}{{\zeta_j}}
@@ -471,12 +465,6 @@ p(y_{inj} \mid \mu_{j,\lin}^*, \sigma_i^2, e_{inj}) \\
 \likezero{\lin} \\
 %
 \\
-%\propto&~~
-%(\sigma_i^2)^{-a_\sigma-1} \exp(-b_\sigma/\sigma_i^2)\times \\
-%&
-%(\sigma_i^2)^{-\p{JN_i - \p{\sumjn e_{inj}}}/2} \times \\
-%& 
-%\exp\bc{-\frac{\sumjn(1-e_{inj})\p{\log(y_{inj}-\mus_{j,\lin})}^2}{2\sigma_i^2}}\\
 \end{align*}
 
 \mhLogSpiel{{\sigma_i^2}}{{\xi_i}}
@@ -488,10 +476,10 @@ p(y_{inj} \mid \mu_{j,\lin}^*, \sigma_i^2, e_{inj}) \\
 The prior distribution for $v_k$ are $v_k \mid \alpha \ind \Be(\alpha, 1)$, for 
 $k = 1,...,K$. So, $p(v_k \mid \alpha) = \alpha v_l^{\alpha-1}$. 
 
-Note that, if $\mus_{jk}>0$ then $z_{jk}=1$ by definition, which in turn affects
-$v_k$. This behavior is undesirable. So, we will jointly update $\mus_{jk}$ and
-$v_k$. More accurately, we will jointly update $(\bm\mus_{k:K}, \phi_k)$,
-where $\phi_k$ is the logit-transformation of the parameter $v_k$.
+Note that, if $\mus_{jk}>\log(2)$ then $z_{jk}=1$ by definition, which in turn
+affects $v_k$. This behavior is undesirable. So, we will jointly update
+$\mus_{jk}$ and $v_k$. More accurately, we will jointly update $(\bm\mus_{k:K},
+\phi_k)$, where $\phi_k$ is the logit-transformation of the parameter $v_k$.
 
 The full conditional for $(\phi_k, \mus_{j,k:K})$ is:
 $$
@@ -617,19 +605,24 @@ The prior for $\lin$ is $p(\lin\mid \w_i) = w_{ik}$.
 $$
 \begin{split}
 p(\lin=k\mid \y,\rest) \propto&~~ p(\lin=k) 
-\prod_{i=1}^I\prod_{n=1}^{N_i}\prod_{j=1}^J
-p(y_{inj}\mid \mu_{jk}^*, \sigma_i^2, e_{inj})^{\Ind{\lin=k}}\\
+\times \\
+&~~
+\prod_{j=1}^J
+p(y_{inj}\mid \mu_{jk}^*, \sigma_i^2, e_{inj})^{\Ind{\lin=k}}
+\times
+p(e_{inj}\mid z_{jk}=0, \pi_{ij})^{\Ind{\lin=k,~z_{j\lin}=0}}
+\\
 \propto&~~ 
 w_{ik}
-\prod_{i=1}^I\prod_{n=1}^{N_i}\prod_{j=1}^J
-\likeone[,~\lin = k]
+\prod_{j=1}^J
+\likeone[,~\lin = k] \pi_{ij}^{\Ind{\lin=k}}(1-\pi_{ij})^{1-\Ind{\lin=k}}
 \times \\
-&\hspace{7em}
+&\hspace{3em}
 \likezero[,~\lin=k]{k}
 \end{split}
 $$
 
-Since $\lin$ has a discrete support, it's full conditional can be sampled from
+Since $\lin$ has a discrete support, its full conditional can be sampled from
 by sampling one number from $1,...,K$ with probabilities proportional to the
 full conditional evaluated at $k\in\bc{1,...,K}$.
 
