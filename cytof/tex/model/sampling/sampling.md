@@ -70,7 +70,7 @@ header-includes:
     - \pagenumbering{gobble}
     - \newcommand{\logNpdf}[3]{\frac{1}{#1\sqrt{2\pi#3}}\exp\bc{-\frac{\p{\log(#1)-#2}^2}{2{#3}}}}
     - \newcommand{\Npdf}[3]{\frac{1}{\sqrt{2\pi{#3}}}\exp\bc{-\frac{\p{#1-#2}^2}{2#3}}}
-    - \newcommand{\TNpdf}[3]{\frac{\Npdf{#1}{#2}{#3}}{\Phi\p{\frac{#1-#2}{#3}}}}
+    - \newcommand{\TNpdf}[3]{\frac{\Npdf{#1}{#2}{{#3}^2}}{\Phi\p{\frac{#1-#2}{#3}}}}
     - \newcommand{\rest}{\text{rest}}
     - \newcommand{\logit}{\text{logit}}
     - \newcommand{\piconsta}{\frac{\exp(\rho)}{1+\exp(-\kappa_j)}}
@@ -86,7 +86,7 @@ header-includes:
       #  }
     - \newcommand{\likezero}[2][]{
         \bc{
-        \TNpdf{y_{inj}}{\mus_{j#2}}{\sigma_i^2}
+        \TNpdf{y_{inj}}{\mus_{j#2}}{\sigma_i}
         }^{\Ind{e_{inj}=0#1}}
       }
     - \newcommand{\pone}[1]{
@@ -144,9 +144,7 @@ $$
 y_{inj} \mid \mus_{j,\lin}, \sigma^2_i, e_{inj} &\sim&
 \begin{cases}
 \delta_0(y_{inj}) & \text{if } e_{inj}=1 \\
-%\LN(\mus_{j,\lin}, \sigma^2_i), & \text{if } e_{inj}=0 \\
-%\TN^+(\mus_{j,\lin}, \sigma^2_i), & \text{if } e_{inj}=0 \\
-\TNpdf{y_{inj}}{\mus_{j,\lin}}{\sigma_i^2}, & \text{if } e_{inj}=0 \\
+\TNpdf{y_{inj}}{\mus_{j,\lin}}{\sigma_i}, & \text{if } e_{inj}=0 \\
 \end{cases}
 \\
 \\

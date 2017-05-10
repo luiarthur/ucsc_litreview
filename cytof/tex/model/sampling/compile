@@ -4,8 +4,9 @@
 # --toc     =>  create table of contents
 # --natbib  =>  use the natbib package in latex
 # -o        =>  output file name
+# --number-sections => numbers section headings
 
-pandoc sampling.md -s --natbib -o sampling.tex
+pandoc sampling.md -s --natbib -o sampling.tex --number-sections
 
 pdflatex sampling.tex
 bibtex sampling.aux
