@@ -1,0 +1,15 @@
+\begin{thebibliography}{1}
+\providecommand{\natexlab}[1]{#1}
+\providecommand{\url}[1]{\texttt{#1}}
+\expandafter\ifx\csname urlstyle\endcsname\relax
+  \providecommand{\doi}[1]{doi: #1}\else
+  \providecommand{\doi}{doi: \begingroup \urlstyle{rm}\Url}\fi
+
+\bibitem[Doshi-Velez et~al.(2009)Doshi-Velez, Miller, Van~Gael, Teh, and
+  Unit]{doshi2009variational}
+Finale Doshi-Velez, Kurt~T Miller, Jurgen Van~Gael, Yee~Whye Teh, and Gatsby
+  Unit.
+\newblock Variational inference for the indian buffet process.
+\newblock 2009.
+
+\end{thebibliography}

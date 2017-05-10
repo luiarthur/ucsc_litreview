@@ -50,7 +50,7 @@ header-includes:
     - \newcommand{\muin}{\bm{\mu}_{i,n}}
     - \newcommand{\bmu}{\bm{\mu}}
     - \newcommand{\mus}{\mu^\star}
-    - \newcommand{\mlins}{\mu_{\lambda_{i,n}}^*}
+    - \newcommand{\tmus}{{\tilde\mu}^\star}
     - \newcommand{\lin}{{\lambda_{i,n}}}
     - \newcommand{\Z}{\mathbf{Z}}
     - \newcommand{\z}{\bm{z}}
@@ -70,6 +70,7 @@ header-includes:
     - \pagenumbering{gobble}
     - \newcommand{\logNpdf}[3]{\frac{1}{#1\sqrt{2\pi#3}}\exp\bc{-\frac{\p{\log(#1)-#2}^2}{2{#3}}}}
     - \newcommand{\Npdf}[3]{\frac{1}{\sqrt{2\pi{#3}}}\exp\bc{-\frac{\p{#1-#2}^2}{2#3}}}
+    - \newcommand{\Npdfc}[3]{\exp\bc{-\frac{\p{#1-#2}^2}{2#3}}}
     - \newcommand{\TNpdf}[3]{\frac{\Npdf{#1}{#2}{{#3}^2}}{\Phi\p{\frac{#1-#2}{#3}}}}
     - \newcommand{\rest}{\text{rest}}
     - \newcommand{\logit}{\text{logit}}
@@ -97,41 +98,41 @@ header-includes:
         p(y_{inj}\mid \mus_{j,#1}, \sigma_i^2, e_{inj}=1)
       }
     - \newcommand{\sumjn}{\sum_{j=1}^J\sum_{n=1}^{N_i}}
-    - \newcommand{\pmugt}[1]{
+    - \newcommand{\pmugt}[2][]{
         \bc{
           \frac{
-            \Npdf{\mus_{j,#1}}{\psi_j}{\tau_j^2}
+            \Npdf{\mus_{j,#2}}{\psi_j}{\tau_j^2}
           }{
-            1-\Phi\p{ \frac{\mus_{j,#1}-\psi_j-\log(2)}{\tau_j} }
+            1-\Phi\p{ \frac{\mus_{j,#2}-\psi_j-\log(2)}{\tau_j} }
           }
-        }^{\Ind{\mus_{j,#1}>\log(2),~z_{j#1}=1}}
+        }^{\Ind{\mus_{j,#2}>\log(2),~z_{j#2}=1#1}}
       }
-    - \newcommand{\pmult}[1]{
+    - \newcommand{\pmult}[2][]{
         \bc{
           \frac{
-            \Npdf{\mus_{j,#1}}{\psi_j}{\tau_j^2}
+            \Npdf{\mus_{j,#2}}{\psi_j}{\tau_j^2}
           }{
-            \Phi\p{ \frac{\mus_{j,#1}-\psi_j-\log(2)}{\tau_j} }
+            \Phi\p{ \frac{\mus_{j,#2}-\psi_j-\log(2)}{\tau_j} }
           }
-        }^{\Ind{\mus_{j,#1}<\log(2),~z_{j#1}=0}}
+        }^{\Ind{\mus_{j,#2}<\log(2),~z_{j#2}=0#1}}
       }
-    - \newcommand{\pmugtc}[1]{
+    - \newcommand{\pmugtc}[2][]{
         \bc{
           \frac{
-            \exp\bc{-\frac{(\mus_{j,#1}-\psi_j)^2}{2\tau_j^2}}
+            \exp\bc{-\frac{(\mus_{j,#2}-\psi_j)^2}{2\tau_j^2}}
           }{
-            1-\Phi\p{ \frac{\mus_{j,#1}-\psi_j-\log(2)}{\tau_j} }
+            1-\Phi\p{ \frac{\mus_{j,#2}-\psi_j-\log(2)}{\tau_j} }
           }
-        }^{\Ind{\mus_{j,#1}>\log(2),~z_{j#1}=1}}
+        }^{\Ind{\mus_{j,#2}>\log(2),~z_{j#2}=1#1}}
       }
-    - \newcommand{\pmultc}[1]{
+    - \newcommand{\pmultc}[2][]{
         \bc{
           \frac{
-            \exp\bc{-\frac{(\mus_{j,#1}-\psi_j)^2}{2\tau_j^2}}
+            \exp\bc{-\frac{(\mus_{j,#2}-\psi_j)^2}{2\tau_j^2}}
           }{
-            \Phi\p{ \frac{\mus_{j,#1}-\psi_j-\log(2)}{\tau_j} }
+            \Phi\p{ \frac{\mus_{j,#2}-\psi_j-\log(2)}{\tau_j} }
           }
-        }^{\Ind{\mus_{j,#1}<\log(2),~z_{j#1}=0}}
+        }^{\Ind{\mus_{j,#2}<\log(2),~z_{j#2}=0#1}}
       }
     - \input{mh.tex}
 ---
@@ -540,21 +541,63 @@ inverse-logit transformation of $\phi_k$.
 
 ## Full Conditional for $\h$
 The prior for $\h_k$ is $\h_k \sim \N_J(0, \Gamma)$.
+Using Normal theory, we can find the conditional distribution 
+$h_{j,k} \mid \h_{-j,k}$, which is 
+
+$$
+h_{jk}  \mid \h_{-j,k} \sim \N(m_j, S^2_j),
+$$
+
+where
+
+$$
+\begin{cases}
+m_j &= \Gamma_{j,-j}\Gamma_{-j,-j}^{-1}(\h_{-j,k})\\
+S_j^2 &= \Gamma_{j,j} - \Gamma_{j,-j}\Gamma_{-j,-j}^{-1}\Gamma_{-j,j}\\
+\end{cases}
+$$
+
+and the notation $\h_{-j,k}$ refers to the vector $h_k$ excluding the element in
+the $j^{th}$ position. Likewise, $\Gamma_{-j,k}$ refers to the $k^{th}$ column 
+of the matrix $\Gamma$ excluding the $j^{th}$ row.
 
 Note again that if $\mus_{jk}>0$, then $z_{jk}=1$ by definition, which in turn
 affects $\h_k$. So, we will jointly update $\mus_{jk}$ and $\h_k$. 
 
-The full conditional for $(\h_k, \mus_{jk})$ is:
+The full conditional for $(\h_{jk}, \mus_{jk})$ is:
 $$
 \begin{split}
-p(\h_k, \bm\mus_k \mid \y, \rest) 
+p(h_{jk}, \mus_{jk} \mid \h_{-j,k}, \y, \rest) 
 &\propto
-p(\h_k) \times
-\prod_{j=1}^J \prod_{l=k}^K 
+p(h_{jk}\mid \h_{-j,k}) \times
 p(\mus_{jk}\mid\psi_j, \tau^2_j, z_{jk}) \times \\
 &~~
-\prod_{i=1}^I \prod_{n=1}^{N_i} \prod_{j=1}^J 
-p(e_{inj} \mid z_{j,\lin}, \pi_{ij})^{\Ind{\lin \ge k}, z_{j,\lin}=0} \\
+\prod_{i=1}^I \prod_{n=1}^{N_i}
+p(e_{inj} \mid z_{j,\lin}, \pi_{ij})^{\Ind{\lin = k,~z_{j,\lin}=0}}
+\times
+\\
+&~~
+\prod_{i=1}^I \prod_{n=1}^{N_i}
+p(y_{inj} \mid \mus_{jk}, \sigma_i^2, e_{inj}) ^ {\Ind{\lin=k}} \\
+%
+&\propto
+%p(h_{jk}\mid \h_{-j,k})
+\Npdfc{h_{jk}}{m_j}{S_j^2}
+\times \\
+%p(\mus_{jk}\mid\psi_j, \tau^2_j, z_{jk})
+&~~ \pmugtc{k} \times \\
+&~~ \pmultc{k} \times \\
+&~~
+\prod_{i=1}^I \prod_{n=1}^{N_i}
+\bc{
+  \p{\pi_{ij}^{e_{inj}}}
+  \p{1-\pi_{ij}^{1-e_{inj}}}
+}^{\Ind{\lin = k,~z_{j,\lin}=0}}
+\times
+\\
+&~~
+\hspace{3em}
+\likezero[,~\lin=k]{k} \\
 \end{split}
 $$
 
@@ -562,37 +605,49 @@ Since the full conditional cannot be sampled from directly, a metropolis update
 is required. Let $Q_2$ be the proposal distribution. The proposal mechanism
 will be as follows:
 
-1. Given the current state $(\h_k, \bm\mus_k)$,
-   sample a proposed state $\tilde\h_k$ from $\N_J(\cdot \mid \h_k, \Sigma_h)$ 
-   for $\h_k$, where $\Sigma_h$ is some covariance matrix to be tuned.
-2. Compute the new $z_{jk}$ (from the updated $\h_k$).
+1. Given the current state $(h_{jk}, \mus_{jk})$,
+   sample a proposed state $\tilde h_{jk}$ from $\N(\cdot \mid h_{jk}, \Sigma_h)$ 
+   for $h_{jk}$, where $\Sigma_h$ is some covariance matrix to be tuned.
+2. Compute the new $z_{jk}$ (from the updated $h_{jk}$).
 3. If $z_{jk}$ is unchanged, then the proposed state for $\mus_{jk}$ is simply
    it's current state. Otherwise, the proposed state is 
-   $\tilde{\mus_{jk}} \sim \N(\cdot \mid \psi_j, \tau_j^2, z_{jk})$ 
+   $\tmus_{jk} \sim \N(\cdot \mid \psi_j, \tau_j^2, z_{jk})$ 
 4. Compute the proposal density as 
    $$
    \begin{split}
-   q_2((\tilde{\h}_k, \tilde\mus_{jk}) \mid (\h_k, \mus_{jk}))
-   \propto \exp\bc{-\frac{(\tilde\h_k'-\h_k) \Sigma_h^{-1} (\tilde\h_k - \h_k)}{2}}
+   q_2(\tilde h_{jk}, \tmus_{jk} \mid h_{jk}, \mus_{jk})
+   &\propto \exp\bc{-\frac{(\tilde h_{jk}-h_{jk})^2}{2\Sigma_h}}
    \\ 
+   &~~
    \prod_{j=1}^J
-   p(\tilde\mus_{jk} \mid \psi_j, \tau_j^2, z_{jk})^{\Ind{\tilde z_{jk} \ne z_{jk}}}
+   p(\tmus_{jk} \mid \psi_j, \tau_j^2, z_{jk})^{\Ind{\tilde z_{jk} \ne z_{jk}}}
+   \\
+   %
+   &\propto \exp\bc{-\frac{(\tilde h_{jk}-h_{jk})^2}{2\Sigma_h}}
+   \\ 
+   &~~
+   \prod_{j=1}^J
+   \pmugtc[,~\tilde z_{jk} \ne z_{jk}]{k} \times \\
+   &~~ \hspace{2em}
+   \pmultc[~\tilde z_{jk} \ne z_{jk}]{k}
+   \\
    \end{split}
    $$
-5. The proposed state $\widetilde{(\h_k, \bm\mus_{k})}$ will be
+5. The proposed state $(h_{jk}, \tmus_{jk})$ will be
    accepted with probability 
    $$
+   % FIXME: WRITE OUT EXPLICITLY
    \min\bc{1, 
      \frac{
-       p(\tilde\h_k, \tilde{\bm\mus_{k}}) \mid \y, \rest) 
+       p(\tilde h_{jk}, \tmus_{jk} \mid \y, \rest) 
        \times
-       q_2((\h_k, \bm\mus_{k}) \mid 
-       (\tilde{\h_k}, \widetilde{\bm\mus_{k}})) 
+       q_2( h_{jk}, \mus_{jk} \mid 
+       \tilde h_{jk}, \tmus_{jk}) 
      }{
-       p(\h_k, \bm\mus_{k} \mid \y, \rest) 
+       p(h_{jk}, \mus_{jk} \mid \y, \rest) 
        \times
-       q_2( (\tilde{\h_k}, \widetilde{\bm\mus_{k}}) \mid 
-       (\h_k, \bm\mus_{k}) )
+       q_2( \tilde h_{jk}, \tmus_{jk} \mid 
+       h_{jk}, \mus_{jk} )
      }
    }.
    $$
@@ -657,19 +712,19 @@ The full conditional for $\kappa_j$ is then:
 p(\kappa_j \mid \rest) 
 \propto&~~ 
 p(\kappa_j)\times
-\prod_{i=1}^{I} \prod_{j=1}^J p(\pi_{ij} \mid c_j, d)\\
+\prod_{i=1}^{I} p(\pi_{ij} \mid c_j, d)\\
 %
 \propto&~~ 
 \exp\p{-\frac{\kappa_j^2}{2s_c^2}}
 \times \\
 &~~ 
-\prod_{i=1}^{I} \prod_{j=1}^J 
+\prod_{i=1}^{I}
 \piconst (\pi_{ij})^{\piconsta-1} (1-\pi_{ij})^{\piconstb-1} \\
 \\
 %
 \propto&~~ 
 \exp\p{-\frac{\kappa_j^2}{2s_c^2}}
-\prod_{i=1}^{I} \prod_{j=1}^J 
+\prod_{i=1}^{I}
 \frac{(\pi_{ij})^{\piconsta}(1-\pi_{ij})^{\piconstb}}{\Gamma(\piconsta)\Gamma(\piconstb)}
 %
 \end{align*}
