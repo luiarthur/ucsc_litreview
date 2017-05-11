@@ -45,6 +45,7 @@ header-includes:
     - \def\M{\mathcal{M}}
 #}}}1
     # FOR THIS PROJECT:
+    - \usepackage{xifthen}
     - \newcommand{\y}{\bm{y}}
     - \newcommand{\yin}{\y_{i,n}}
     - \newcommand{\muin}{\bm{\mu}_{i,n}}
@@ -70,8 +71,11 @@ header-includes:
     - \pagenumbering{gobble}
     - \newcommand{\logNpdf}[3]{\frac{1}{#1\sqrt{2\pi#3}}\exp\bc{-\frac{\p{\log(#1)-#2}^2}{2{#3}}}}
     - \newcommand{\Npdf}[3]{\frac{1}{\sqrt{2\pi{#3}}}\exp\bc{-\frac{\p{#1-#2}^2}{2#3}}}
-    - \newcommand{\Npdfc}[3]{\exp\bc{-\frac{\p{#1-#2}^2}{2#3}}}
+    - \newcommand{\Npdfc}[3]{\exp\bc{ -\frac{\p{#1-#2}^2}{2#3} }}
     - \newcommand{\TNpdf}[3]{\frac{\Npdf{#1}{#2}{{#3}^2}}{\Phi\p{\frac{#1-#2}{#3}}}}
+    - \newcommand{\TNpdm}[3]{\frac{\Npdf{#1}{#2}{{#3}^2}}{1-\Phi\p{\frac{#1-#2}{#3}}}}
+    - \newcommand{\TNpdfc}[3]{\frac{\Npdfc{#1}{#2}{{#3}^2}}{\Phi\p{\frac{#1-#2}{#3}}}}
+    - \newcommand{\TNpdfcm}[3]{\frac{\Npdfc{#1}{#2}{{#3}^2}}{1-\Phi\p{\frac{#1-#2}{#3}}}}
     - \newcommand{\rest}{\text{rest}}
     - \newcommand{\logit}{\text{logit}}
     - \newcommand{\piconsta}{\frac{\exp(\rho)}{1+\exp(-\kappa_j)}}
@@ -105,7 +109,12 @@ header-includes:
           }{
             1-\Phi\p{ \frac{\mus_{j,#2}-\psi_j-\log(2)}{\tau_j} }
           }
-        }^{\Ind{\mus_{j,#2}>\log(2),~z_{j#2}=1#1}}
+        }^{\Ind{
+            \ifthenelse{\equal{#1}{}}{
+              \mus_{j,#2}>\log(2),~z_{j#2}=1
+            }{#1}
+          }
+        }
       }
     - \newcommand{\pmult}[2][]{
         \bc{
@@ -114,7 +123,12 @@ header-includes:
           }{
             \Phi\p{ \frac{\mus_{j,#2}-\psi_j-\log(2)}{\tau_j} }
           }
-        }^{\Ind{\mus_{j,#2}<\log(2),~z_{j#2}=0#1}}
+        }^{\Ind{
+            \ifthenelse{\equal{#1}{}}{
+              \mus_{j,#2}<\log(2),~z_{j#2}=0
+            }{#1}
+          }
+        }
       }
     - \newcommand{\pmugtc}[2][]{
         \bc{
@@ -123,7 +137,12 @@ header-includes:
           }{
             1-\Phi\p{ \frac{\mus_{j,#2}-\psi_j-\log(2)}{\tau_j} }
           }
-        }^{\Ind{\mus_{j,#2}>\log(2),~z_{j#2}=1#1}}
+        }^{\Ind{
+            \ifthenelse{\equal{#1}{}}{
+              \mus_{j,#2}>\log(2),~z_{j#2}=1
+            }{#1}
+          }
+        }
       }
     - \newcommand{\pmultc}[2][]{
         \bc{
@@ -132,7 +151,12 @@ header-includes:
           }{
             \Phi\p{ \frac{\mus_{j,#2}-\psi_j-\log(2)}{\tau_j} }
           }
-        }^{\Ind{\mus_{j,#2}<\log(2),~z_{j#2}=0#1}}
+        }^{\Ind{
+            \ifthenelse{\equal{#1}{}}{
+              \mus_{j,#2}<\log(2),~z_{j#2}=0
+            }{#1}
+          }
+        }
       }
     - \input{mh.tex}
 ---
@@ -365,12 +389,11 @@ p(\mu_{j,\lin}\mid \psi_j, \tau_j^2, z_{j,\lin}) \\
 \\
 &~~
 \prod_{k=1}^K
-\pmugtc{k}
+\pmugtc[z_{jk}=1]{k}
 \times \\
 &\hspace{2em}
-\pmultc{k}
+\pmultc[z_{jk}=0]{k}
 \end{split}
-% FIXME Need to get rid of mus < log(2)
 $$
 
 \mhSpiel{\psi_j}
@@ -388,12 +411,11 @@ p(\tau_j^2 \mid \y, \rest) \propto&~~ p(\tau_j^2) \times
 \propto&~~ (\tau_j^2)^{-a_\tau-1} \exp\bc{-b_\tau/\tau_j^2} \times \\
 &~~
 \prod_{k=1}^K
-\pmugt{k}
+\pmugt[z_{jk}=1]{k}
 \times \\
 &\hspace{4em}
-\pmult{k}
+\pmult[z_{jk}=0]{k}
 \end{split}
-% FIXME Need to get rid of mus < log(2)
 $$
 
 \mhLogSpiel{{\tau_j^2}}{{\zeta_j}}
@@ -489,10 +511,14 @@ p(\phi_k, \mus_{k:K} \mid \y, \rest)
 &\propto
 p(\phi_k) \times
 \prod_{j=1}^J \prod_{l=k}^K 
-p(\mus_{jk}\mid\psi_j, \tau^2_j, z_{jk}) \times \\
+p(\mus_{jl}\mid\psi_j, \tau^2_j, z_{jl}) \times \\
 &~~
 \prod_{i=1}^I \prod_{n=1}^{N_i} \prod_{j=1}^J 
-p(e_{inj} \mid z_{j,\lin}, \pi_{ij})^{\Ind{\lin \ge k}, z_{j,\lin}=0} \\
+p(e_{inj} \mid z_{j,\lin}, \pi_{ij})^{\Ind{\lin \ge k,~z_{j,\lin}=0}} 
+\times \\
+&~~
+\prod_{i=1}^I \prod_{n=1}^{N_i} \prod_{j=1}^J 
+p(y_{inj} \mid \mus_{jk}, \sigma_i^2, e_{inj})^{\Ind{e_{inj}=0, \lin\ge k}}
 \end{split}
 $$
 
@@ -518,22 +544,124 @@ will be as follows:
    p(\tilde\mus_{jl} \mid \psi_j, \tau_j^2, z_{jl})^{\Ind{\tilde z_{jl} \ne z_{jl}}}
    \end{split}
    $$
-5. The proposed state $\widetilde{(\phi_k, \bm\mus_{k:K})}$ will be
+5. The proposed state $(\tilde\phi_k, \bm\tmus_{k:K})$ will be
    accepted with probability 
+   $$\min(1, \Lambda)$$ where
    $$
-   \min\bc{1, 
+   \begin{split}
+     \Lambda &= 
      \frac{
-       p(\tilde\phi_k, \tilde\mus_{k:K}) \mid \y, \rest) 
+       p(\tilde\phi_k, \bm\tmus_{k:K}) \mid \y, \rest) 
        \times
        q_1((\phi_k, \bm\mus_{k:K}) \mid 
-       (\tilde{\phi_k}, \widetilde{\bm\mus_{k:K}})) 
+       (\tilde\phi_k, \bm\tmus_{k:K})) 
      }{
-       p(\phi_k, \mus_{k:K} \mid \y, \rest) 
+       p(\phi_k, \bm\mus_{k:K} \mid \y, \rest) 
        \times
-       q_1( (\tilde{\phi_k}, \widetilde{\bm\mus_{k:K}}) \mid 
+       q_1( (\tilde\phi_k, \bm\tmus_{k:K}) \mid 
        (\phi_k, \bm\mus_{k:K}) )
      }
-   }.
+     \\
+     \\
+     %%%%%%
+     &\propto
+     \frac{p(\tilde\phi_k)}{p(\phi_k)}
+     \prod_{j=1}^J\prod_{l=k}^K
+     \frac{
+       p(\tmus_{jl} \mid \psi_j, \tau_j^2, \tilde z_{jl})
+     }{
+       p(\mus_{jl} \mid \psi_j, \tau_j^2, z_{jl})
+     }
+     \times
+     \prod_{i=1}^I\prod_{n=1}^{N_i}\prod_{j=1}^J
+     \frac{
+       p(e_{inj} \mid z_{j,\lin}, \pi_{ij})^{
+         \Ind{\lin \ge k,~z_{j,\lin} = 0}
+       }
+     }{
+       p(e_{inj} \mid \tilde z_{j,\lin}, \pi_{ij})^{
+         \Ind{\lin \ge k,~\tilde z_{j,\lin} = 0}
+       }
+     }
+     \times
+     \\
+     &~~~
+     \prod_{i=1}^I\prod_{n=1}^{N_i}\prod_{j=1}^J
+     \frac{
+      p(y_{inj} \mid \tmus_{j,\lin}, \psi_j, \tau_j^2, e_{inj})^{
+      \Ind{e_{inj}=0,~\lin\ge k}}
+     }{
+      p(y_{inj} \mid \mus_{j,\lin}, \psi_j, \tau_j^2, e_{inj})^{
+      \Ind{e_{inj}=0,~\lin\ge k}}
+     }
+     \times
+     \\
+     &~~~
+     \frac{q_1(\phi_k \mid \tilde\phi_k)}
+          {q_1(\tilde\phi_k \mid \phi_k)}
+     \prod_{j=1}^J\prod_{l=k}^K
+     \bc{
+       \frac{
+         p(\mus_{jl} \mid \psi_j, \tau_j^2, z_{jl})
+       }{
+         p(\tmus_{jl} \mid \psi_j, \tau_j^2, \tilde z_{jl})
+       }
+     }^{\Ind{z_{jl} \ne \tilde z_{jl}}}
+     \\
+     \\
+     %%%%%%
+     &\propto
+     \frac{p(\tilde\phi_k)}{p(\phi_k)}
+     \prod_{\bc{(i,n): \lin \ge k}}\prod_{j=1}^J
+     \frac{
+       \p{
+         \pi_{ij}^{e_{inj}}(1-\pi_{ij})^{1-e_{inj}}
+       }^{
+         1-z_{j,\lin}
+       }
+     }{
+       \p{
+         \pi_{ij}^{e_{inj}}(1-\pi_{ij})^{1-e_{inj}}
+       }^{
+         1-\tilde z_{j,\lin}
+       }
+     }
+     \times \\
+     &~~~
+     \prod_{\bc{(i,n): \lin \ge k}}\prod_{j=1}^J
+     \bc{
+       \frac{
+         \exp\bc{-\frac{\p{y_{inj} - \tmus_{j,\lin}}^2}{2\sigma_i^2}}
+         \Phi\p{\frac{y_{inj} - \mus_{j,\lin}}{\sigma_i}}
+       }{
+         \exp\bc{-\frac{\p{y_{inj} - \mus_{j,\lin}}^2}{2\sigma_i^2}}
+         \Phi\p{\frac{y_{inj} - \tmus_{j,\lin}}{\sigma_i}}
+       }
+     }^{\Ind{e_{inj}=0}}
+     \\
+     \\
+     %%%%%%%%
+     &\propto
+     \frac{p(\tilde\phi_k)}{p(\phi_k)}
+     \prod_{\bc{(i,n): \lin \ge k}}\prod_{j=1}^J
+     \p{
+       \pi_{ij}^{e_{inj}}(1-\pi_{ij})^{1-e_{inj}}
+     }^{
+       \tilde z_{j,\lin} - z_{j,\lin}
+     }
+     \times \\
+     &~~~
+     \prod_{\bc{(i,n): \lin \ge k}}\prod_{j=1}^J
+     \bc{
+       \frac{
+         \exp\bc{-\frac{\p{y_{inj} - \tmus_{j,\lin}}^2}{2\sigma_i^2}}
+         \Phi\p{\frac{y_{inj} - \mus_{j,\lin}}{\sigma_i}}
+       }{
+         \exp\bc{-\frac{\p{y_{inj} - \mus_{j,\lin}}^2}{2\sigma_i^2}}
+         \Phi\p{\frac{y_{inj} - \tmus_{j,\lin}}{\sigma_i}}
+       }
+     }^{\Ind{e_{inj}=0}}
+   \end{split}
    $$
 
 To obtain the new state for $v_k$, we simply need to take the 
@@ -567,37 +695,35 @@ affects $\h_k$. So, we will jointly update $\mus_{jk}$ and $\h_k$.
 The full conditional for $(\h_{jk}, \mus_{jk})$ is:
 $$
 \begin{split}
-p(h_{jk}, \mus_{jk} \mid \h_{-j,k}, \y, \rest) 
-&\propto
+&p(h_{jk}, \mus_{jk} \mid \h_{-j,k}, \y, \rest) 
+\\
+\\
+\propto~&
 p(h_{jk}\mid \h_{-j,k}) \times
 p(\mus_{jk}\mid\psi_j, \tau^2_j, z_{jk}) \times \\
-&~~
-\prod_{i=1}^I \prod_{n=1}^{N_i}
-p(e_{inj} \mid z_{j,\lin}, \pi_{ij})^{\Ind{\lin = k,~z_{j,\lin}=0}}
-\times
-\\
-&~~
-\prod_{i=1}^I \prod_{n=1}^{N_i}
-p(y_{inj} \mid \mus_{jk}, \sigma_i^2, e_{inj}) ^ {\Ind{\lin=k}} \\
-%
-&\propto
-%p(h_{jk}\mid \h_{-j,k})
-\Npdfc{h_{jk}}{m_j}{S_j^2}
-\times \\
-%p(\mus_{jk}\mid\psi_j, \tau^2_j, z_{jk})
-&~~ \pmugtc{k} \times \\
-&~~ \pmultc{k} \times \\
-&~~
+&
 \prod_{i=1}^I \prod_{n=1}^{N_i}
 \bc{
-  \p{\pi_{ij}^{e_{inj}}}
-  \p{1-\pi_{ij}^{1-e_{inj}}}
-}^{\Ind{\lin = k,~z_{j,\lin}=0}}
-\times
+  p(e_{inj} \mid z_{j,\lin}, \pi_{ij})^{\Ind{\lin = k,~z_{j,\lin}=0}}
+  p(y_{inj} \mid \mus_{jk}, \sigma_i^2, e_{inj}) ^ {\Ind{\lin=k}}
+}
 \\
-&~~
-\hspace{3em}
-\likezero[,~\lin=k]{k} \\
+\\
+%%%%%%%%
+\propto~&
+\Npdfc{h_{jk}}{m_j}{S_j^2}
+\times \\
+& \pmugtc{k} \pmultc{k} \times \\
+&
+\prod_{(i,n):\lin=k}
+\bc{
+  \p{
+    \pi_{ij}^{e_{inj}}
+    \p{1-\pi_{ij}}^{1-e_{inj}}
+  }^{\Ind{z_{j,\lin}=0}}
+  \times
+  \likezeroc{k} 
+}\\
 \end{split}
 $$
 
@@ -611,69 +737,164 @@ will be as follows:
 2. Compute the new $z_{jk}$ (from the updated $h_{jk}$).
 3. If $z_{jk}$ is unchanged, then the proposed state for $\mus_{jk}$ is simply
    it's current state. Otherwise, the proposed state is 
-   $\tmus_{jk} \sim \N(\cdot \mid \psi_j, \tau_j^2, z_{jk})$ 
+   $\tmus_{jk} \sim \N(\cdot \mid \psi_j, \tau_j^2, \tilde z_{jk})$ 
 4. Compute the proposal density as 
    $$
    \begin{split}
    q_2(\tilde h_{jk}, \tmus_{jk} \mid h_{jk}, \mus_{jk})
-   &\propto \exp\bc{-\frac{(\tilde h_{jk}-h_{jk})^2}{2\Sigma_h}}
-   \\ 
-   &~~
-   \prod_{j=1}^J
+   &\propto~
+   \Npdfc{\tilde h_{jk}}{h_{jk}}{\Sigma_h} \times
    p(\tmus_{jk} \mid \psi_j, \tau_j^2, z_{jk})^{\Ind{\tilde z_{jk} \ne z_{jk}}}
-   \\
-   %
-   &\propto \exp\bc{-\frac{(\tilde h_{jk}-h_{jk})^2}{2\Sigma_h}}
-   \\ 
-   &~~
-   \prod_{j=1}^J
-   \pmugtc[,~\tilde z_{jk} \ne z_{jk}]{k} \times \\
-   &~~ \hspace{2em}
-   \pmultc[~\tilde z_{jk} \ne z_{jk}]{k}
    \\
    \end{split}
    $$
 5. The proposed state $(h_{jk}, \tmus_{jk})$ will be
    accepted with probability 
+   $$ \min\bc{1, \Lambda }, $$ where
    $$
-   % FIXME: WRITE OUT EXPLICITLY
-   \min\bc{1, 
+   \begin{split}
+   \Lambda &=
+   \frac{
+     p(\tilde h_{jk}, \tmus_{jk} \mid \y, \rest) 
+     \times
+     q_2( h_{jk}, \mus_{jk} \mid 
+     \tilde h_{jk}, \tmus_{jk}) 
+   }{
+     p(h_{jk}, \mus_{jk} \mid \y, \rest) 
+     \times
+     q_2( \tilde h_{jk}, \tmus_{jk} \mid 
+     h_{jk}, \mus_{jk} )
+   }\\
+   %%%%%%%%%
+   &= \frac{
+     p(\tilde  h_{jk} \mid \tilde \h_{-jk})
+     p(\tmus_{jk} \mid \psi_j, \tau^2_j, \tilde z_{jk})
+   }{
+     p(h_{jk} \mid \h_{-jk})
+     p(\mus_{jk} \mid \psi_j, \tau^2_j, z_{jk})
+   }
+   \times 
+   \\ &~~~~
+   \prod_{(i,n):\lin=k}
+   \bc{
      \frac{
-       p(\tilde h_{jk}, \tmus_{jk} \mid \y, \rest) 
-       \times
-       q_2( h_{jk}, \mus_{jk} \mid 
-       \tilde h_{jk}, \tmus_{jk}) 
+       p(e_{inj} \mid \tilde z_{j,\lin}, \pi_{ij})^{1-\tilde z_{j,\lin}}
+       p(y_{inj} \mid \tmus_{jk}, \sigma_i^2, e_{inj})
      }{
-       p(h_{jk}, \mus_{jk} \mid \y, \rest) 
-       \times
-       q_2( \tilde h_{jk}, \tmus_{jk} \mid 
-       h_{jk}, \mus_{jk} )
+       p(e_{inj} \mid z_{j,\lin}, \pi_{ij})^{1-z_{j,\lin}}
+       p(y_{inj} \mid \mus_{jk}, \sigma_i^2, e_{inj})
      }
-   }.
+   }
+   \times
+   \\ &~~~~
+   \frac{
+     \Npdf{h_{jk}}{\tilde h_{jk}}{\Sigma_h}
+   }{
+     \Npdf{\tilde h_{jk}}{h_{jk}}{\Sigma_h}
+   }
+   \bc{
+   \frac{
+     p(\mus_{jk} \mid \psi_j, \tau_j^2, z_{jk})
+   }{
+     p(\tmus_{jk} \mid \psi_j, \tau_j^2, \tilde z_{jk})
+   }
+   }^{\Ind{z_{jk}\ne \tilde z_{jk}}}
+   \\
+   \\ 
+   %%%%%%%%%%%%%%%
+   &\propto
+   \exp\bc{
+     -\frac{(\tilde h_{jk} - m_j)^2 - (h_{jk} - m_j)^2}
+           {2 S_j}
+   }
+   \times \\
+   &\prod_{(i,n):\lin=k}
+   \bc{
+     \frac{
+       p(e_{inj} \mid \tilde z_{j,\lin}, \pi_{ij})^{1-\tilde z_{j,\lin}}
+       p(y_{inj} \mid \tmus_{jk}, \sigma_i^2, e_{inj})
+     }{
+       p(e_{inj} \mid z_{j,\lin}, \pi_{ij})^{1-z_{j,\lin}}
+       p(y_{inj} \mid \mus_{jk}, \sigma_i^2, e_{inj})
+     }
+   }
+   \\
+   \\
+   %%%%%%%%
+   &\propto~
+   \exp\bc{
+     -\frac{(\tilde h_{jk} - m_j)^2 - (h_{jk} - m_j)^2}
+           {2 S_j}
+   } \times \\
+   &\prod_{(i,n):\lin=k}
+   \bc{
+     \frac{
+       \p{
+         \pi_{ij}^{e_{inj}}
+         \p{1-\pi_{ij}}^{1-e_{inj}}
+       }^{\Ind{z_{j,\lin}=0}}
+       \times
+       \bc{\TNpdfc{y_{inj}}{\mus_{jk}}{\sigma_i}}^{\Ind{e_{inj}=0}}
+     }{
+       \p{
+         \pi_{ij}^{e_{inj}}
+         \p{1-\pi_{ij}}^{1-e_{inj}}
+       }^{\Ind{\tilde z_{j,\lin}=0}}
+       \times
+       \bc{\TNpdfc{y_{inj}}{\tmus_{jk}}{\sigma_i}}^{\Ind{e_{inj}=0}}
+     }
+   }\\
+   \\
+   %%%%%%%%%%%%%%%
+   &\propto~
+   \exp\bc{
+     -\frac{(\tilde h_{jk} - m_j)^2 - (h_{jk} - m_j)^2}
+           {2 S_j}
+   }
+   \prod_{\bc{(i,n): \lin = k}}
+   \p{
+     \pi_{ij}^{e_{inj}}(1-\pi_{ij})^{1-e_{inj}}
+   }^{
+     \tilde z_{j,\lin} - z_{j,\lin}
+   }
+   \times \\
+   &~~~
+   \prod_{\bc{(i,n): \lin = k}}
+   \bc{
+     \frac{
+       \exp\bc{-\frac{\p{y_{inj} - \tmus_{j,\lin}}^2}{2\sigma_i^2}}
+       \Phi\p{\frac{y_{inj} - \mus_{j,\lin}}{\sigma_i}}
+     }{
+       \exp\bc{-\frac{\p{y_{inj} - \mus_{j,\lin}}^2}{2\sigma_i^2}}
+       \Phi\p{\frac{y_{inj} - \tmus_{j,\lin}}{\sigma_i}}
+     }
+   }^{\Ind{e_{inj}=0}}.
+   \end{split}
    $$
 
 
 ## Full Conditional for $\bm\lambda$
 
-The prior for $\lin$ is $p(\lin\mid \w_i) = w_{ik}$.
+The prior for $\lin$ is $p(\lin = k \mid \w_i) = w_{ik}$.
 
 $$
 \begin{split}
-p(\lin=k\mid \y,\rest) \propto&~~ p(\lin=k) 
-\times \\
-&~~
-\prod_{j=1}^J
-p(y_{inj}\mid \mu_{jk}^*, \sigma_i^2, e_{inj})^{\Ind{\lin=k}}
-\times
-p(e_{inj}\mid z_{jk}=0, \pi_{ij})^{\Ind{\lin=k,~z_{j\lin}=0}}
+p(\lin=k\mid \y,\rest) \propto&~~ %p(\lin=k \mid \w_i)
+%\times
 \\
-\propto&~~ 
+&\hspace{-8em}
 w_{ik}
 \prod_{j=1}^J
-\likeone[,~\lin = k] \pi_{ij}^{\Ind{\lin=k}}(1-\pi_{ij})^{1-\Ind{\lin=k}}
-\times \\
-&\hspace{3em}
-\likezero[,~\lin=k]{k}
+\bc{
+  \pi_{ij}\delta_0(y_{inj}) + 
+  (1-\pi_{ij})
+  \TNpdfc{y_{inj}}{\mus_{j,\lin}}{\sigma_i}
+}^{\Ind{z_{jk}=0,~\lin=k}} \times \\
+&\hspace{-5em}
+\bc{
+  \TNpdfc{y_{inj}}{\mus_{j,\lin}}{\sigma_i}
+}^{\Ind{z_{jk}=1,~\lin=k}}
+\\
 \end{split}
 $$
 
