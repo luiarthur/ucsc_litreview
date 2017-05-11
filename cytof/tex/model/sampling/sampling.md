@@ -311,43 +311,6 @@ Some common parameter transformations are therefore presented here:
 # Derivation of Full Conditionals
 
 
-## Full Conditional for $e_{inj}$
-
-First note that for $z_{j,\lin}=1$,
-$$
-e_{inj} \mid (z_{j,\lin}=1, \pi_{ij}, \rest) := 0.\\
-$$
-
-For $z_{j,\lin}=0$,
-
-\begin{align*}
-p(e_{inj} = 1\mid z_{j,\lin}=0, \pi_{ij}, \rest)
-=&~
-\frac{
-p(e_{inj}=1 \mid z_{j,\lin}=0, \pi_{ij})
-\times
-p(y_{inj}\mid \mus_{j,\lin}, \sigma_i^2, e_{inj}=1)
-}{
-\sum_{x\in\bc{0,1}}
-p(e_{inj}=x \mid z_{j,\lin}=0, \pi_{ij})
-\times
-p(y_{inj}\mid \mus_{j,\lin}, \sigma_i^2, e_{inj}=x)
-} \\
-%
-\\
-\propto&~
-\pi_{ij}\likeone
-\\
-\end{align*}
-
-Similarly,
-$$
-p(e_{inj} = 0\mid z_{j,\lin}=0, \pi_{ij}, \rest)
-\propto
-(1-\pi_{ij}) \pone{\lin}
-$$
-
-
 ## Full Conditional for $\bm\mu^*$
 
 \begin{align*}
@@ -532,8 +495,8 @@ will be as follows:
 2. Compute the new $z_{jk}$ (from the updated $\phi_k \Rightarrow v_k$) 
    for $j = 1,...,J$.
 3. If $z_{jk}$ is unchanged, then the proposed state for $\mus_{jk}$ is simply
-   it's current state. Otherwise, the proposed state is 
-   $\tilde{\mus_{jk}} \sim \N(\cdot \mid \psi_j, \tau_j^2, z_{jk})$ 
+   its current state. Otherwise, the proposed state is 
+   $\tmus_{jk} \sim \N(\cdot \mid \psi_j, \tau_j^2, z_{jk})$ 
 4. Compute the proposal density as 
    $$
    \begin{split}
@@ -547,8 +510,7 @@ will be as follows:
 5. The proposed state $(\tilde\phi_k, \bm\tmus_{k:K})$ will be
    accepted with probability 
    $$\min(1, \Lambda)$$ where
-   $$
-   \begin{split}
+   \begin{align*}
      \Lambda &= 
      \frac{
        p(\tilde\phi_k, \bm\tmus_{k:K}) \mid \y, \rest) 
@@ -661,8 +623,7 @@ will be as follows:
          \Phi\p{\frac{y_{inj} - \tmus_{j,\lin}}{\sigma_i}}
        }
      }^{\Ind{e_{inj}=0}}
-   \end{split}
-   $$
+   \end{align*}
 
 To obtain the new state for $v_k$, we simply need to take the 
 inverse-logit transformation of $\phi_k$.
@@ -736,7 +697,7 @@ will be as follows:
    for $h_{jk}$, where $\Sigma_h$ is some covariance matrix to be tuned.
 2. Compute the new $z_{jk}$ (from the updated $h_{jk}$).
 3. If $z_{jk}$ is unchanged, then the proposed state for $\mus_{jk}$ is simply
-   it's current state. Otherwise, the proposed state is 
+   its current state. Otherwise, the proposed state is 
    $\tmus_{jk} \sim \N(\cdot \mid \psi_j, \tau_j^2, \tilde z_{jk})$ 
 4. Compute the proposal density as 
    $$
@@ -751,8 +712,7 @@ will be as follows:
 5. The proposed state $(h_{jk}, \tmus_{jk})$ will be
    accepted with probability 
    $$ \min\bc{1, \Lambda }, $$ where
-   $$
-   \begin{split}
+   \begin{align*}
    \Lambda &=
    \frac{
      p(\tilde h_{jk}, \tmus_{jk} \mid \y, \rest) 
@@ -869,8 +829,7 @@ will be as follows:
        \Phi\p{\frac{y_{inj} - \tmus_{j,\lin}}{\sigma_i}}
      }
    }^{\Ind{e_{inj}=0}}.
-   \end{split}
-   $$
+   \end{align*}
 
 
 ## Full Conditional for $\bm\lambda$
@@ -889,14 +848,51 @@ w_{ik}
   \pi_{ij}\delta_0(y_{inj}) + 
   (1-\pi_{ij})
   \TNpdfc{y_{inj}}{\mus_{j,\lin}}{\sigma_i}
-}^{\Ind{z_{jk}=0,~\lin=k}} \times \\
+}^{\Ind{z_{j,\lin}=0,~\lin=k}} \times \\
 &\hspace{-5em}
 \bc{
   \TNpdfc{y_{inj}}{\mus_{j,\lin}}{\sigma_i}
-}^{\Ind{z_{jk}=1,~\lin=k}}
+}^{\Ind{z_{j,\lin}=1,~\lin=k}}
 \\
 \end{split}
 $$
+
+## Full Conditional for $e_{inj}$
+
+First note that for $z_{j,\lin}=1$,
+$$
+e_{inj} \mid (z_{j,\lin}=1, \pi_{ij}, \rest) := 0.\\
+$$
+
+For $z_{j,\lin}=0$,
+
+\begin{align*}
+p(e_{inj} = 1\mid z_{j,\lin}=0, \pi_{ij}, \rest)
+=&~
+\frac{
+p(e_{inj}=1 \mid z_{j,\lin}=0, \pi_{ij})
+\times
+p(y_{inj}\mid \mus_{j,\lin}, \sigma_i^2, e_{inj}=1)
+}{
+\sum_{x\in\bc{0,1}}
+p(e_{inj}=x \mid z_{j,\lin}=0, \pi_{ij})
+\times
+p(y_{inj}\mid \mus_{j,\lin}, \sigma_i^2, e_{inj}=x)
+} \\
+%
+\\
+\propto&~
+\pi_{ij}\likeone
+\\
+\end{align*}
+
+Similarly,
+$$
+p(e_{inj} = 0\mid z_{j,\lin}=0, \pi_{ij}, \rest)
+\propto
+(1-\pi_{ij}) \pone{\lin}
+$$
+
 
 Since $\lin$ has a discrete support, its full conditional can be sampled from
 by sampling one number from $1,...,K$ with probabilities proportional to the

@@ -3,7 +3,7 @@ Since the full conditional distribution cannot be directly sampled from, it may
 be sampled from by a Metropolis step with a Normal proposal distribution. 
 The proposed state is accepted with probability 
 $$
-\min\bc{1, \frac{p(\widetilde{#1}\mid \y, \rest)}{p(#1\mid \y, \rest)}}.
+\min\bc{1, \frac{p(\tilde #1 \mid \y, \rest)}{p(#1\mid \y, \rest)}}.
 $$
 }
 
@@ -18,7 +18,7 @@ Then, the proposed state of the transformed parameter ($#2$) is accepted with
 probability
 $$
 \min\bc{1, 
-  \frac{p(\widetilde{#2} \mid \y, \rest)}
+  \frac{p(\tilde #2  \mid \y, \rest)}
        {p(#2 \mid \y, \rest)}
 }.
 $$
@@ -37,7 +37,7 @@ The proposed
 state of the transformed parameter ($#2$) is accepted with probability 
 $$
 \min\bc{1, 
-  \frac{p(\widetilde{#2} \mid \y, \rest)}
+  \frac{p(\tilde #2  \mid \y, \rest)}
        {p(#2 \mid \y, \rest)}
 }
 $$
