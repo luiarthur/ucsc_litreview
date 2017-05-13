@@ -162,15 +162,11 @@ header-includes:
 ---
 
 
-# Likelihood
+# Sampling Distribution
 
 $$
-%\begin{cases}
-%y_{inj} \mid \lambda_{i,n}=k, z_{jk}=1, \mus_{jk},\sigma_i^2 &\sim~ \LN(\mus_{jk}, \sigma_i^2)\\
-%y_{inj} \mid \lambda_{i,n}=k, z_{jk}=0, \mus_{jk},\sigma_i^2 &\sim~ \pi_{ij}\delta_0(y_{inj}) + (1-\pi_{ij}) \LN(\mus_{jk}, \sigma_i^2) \\
-%\end{cases}
 \begin{array}{lcl}
-y_{inj} \mid \mus_{j,\lin}, \sigma^2_i, e_{inj} &\sim&
+p(y_{inj} \mid \mus_{j,\lin}, \sigma^2_i, e_{inj}) &=&
 \begin{cases}
 \delta_0(y_{inj}) & \text{if } e_{inj}=1 \\
 \TNpdf{y_{inj}}{\mus_{j,\lin}}{\sigma_i}, & \text{if } e_{inj}=0 \\
@@ -180,6 +176,23 @@ y_{inj} \mid \mus_{j,\lin}, \sigma^2_i, e_{inj} &\sim&
 e_{inj} \mid z_{j,\lin}=0,\pi_{ij} &\sim& \Bern(\pi_{ij}) \\
 e_{inj} \mid z_{j,\lin}=1          &:=& 0 \\
 \end{array}
+$$
+
+## Marginal Sampling Distribution
+
+$$
+\begin{split}
+p(y_{inj} \mid \mus_{jk},\sigma_i^2, z_{j,\lin}=1) 
+&=~
+\TNpdf{y_{inj}}{\mus_{j,\lin}}{\sigma_i}
+\\
+%%%
+p(y_{inj} \mid  \mus_{j,\lin},\sigma_i^2, z_{jk}=0, \pi_{ij})
+&=~
+\pi_{ij}\delta_0(y_{inj}) + 
+(1-\pi_{ij}) \TNpdf{y_{inj}}{\mus_{j,\lin}}{\sigma_i}
+\\
+\end{split}
 $$
 
 # Priors
@@ -317,14 +330,14 @@ Some common parameter transformations are therefore presented here:
 p(\mus_{jk} \mid \y,\rest) \propto&~~ p(\mus_{jk}\mid z_{jk}, \psi_j, \tau_j^2) 
 \times 
 \prod_{i=1,n=1}^{I,N_i}
-p(y_{inj}\mid \mus_{j,\lin}, \sigma_i^2, e_{inj})\\
+\bc{p(y_{inj}\mid \mus_{j,\lin}, \sigma_i^2, e_{inj})}^{\Ind{\lin=k}}\\
 \\
 \propto&~~ 
 p(\mus_{jk}\mid \psi_j, \tau_j^2, z_{jk}=1)^{\Ind{\mus_{jk}>\log(2)}} \times
 p(\mus_{jk}\mid \psi_j, \tau_j^2, z_{jk}=0)^{\Ind{\mus_{jk}<\log(2)}} \times
 \\ &~~
 \prod_{i=1}^I\prod_{n=1}^{N_i}
-p(y_{inj}\mid \mus_{j,\lin}, \sigma_i^2, e_{inj})\\
+\bc{p(y_{inj}\mid \mus_{j,\lin}, \sigma_i^2, e_{inj})}^{\Ind{\lin=k}}\\
 \\
 \propto&~~
 \pmugtc{k}
@@ -340,7 +353,7 @@ p(y_{inj}\mid \mus_{j,\lin}, \sigma_i^2, e_{inj})\\
 
 ## Full Conditional for $\bm\psi$
 $\psi_j$ has prior distribution $\psi_j \sim \N(m_\psi, s^2_\psi)$.
-So, it's full conditional is 
+So, its full conditional is 
 
 $$
 \begin{split}
@@ -460,7 +473,7 @@ p(y_{inj} \mid \mu_{j,\lin}^*, \sigma_i^2, e_{inj}) \\
 ## Full Conditional for $\v$
 
 The prior distribution for $v_k$ are $v_k \mid \alpha \ind \Be(\alpha, 1)$, for 
-$k = 1,...,K$. So, $p(v_k \mid \alpha) = \alpha v_l^{\alpha-1}$. 
+$k = 1,...,K$. So, $p(v_k \mid \alpha) = \alpha v_k^{\alpha-1}$. 
 
 Note that, if $\mus_{jk}>\log(2)$ then $z_{jk}=1$ by definition, which in turn
 affects $v_k$. This behavior is undesirable. So, we will jointly update
@@ -475,13 +488,14 @@ p(\phi_k, \mus_{k:K} \mid \y, \rest)
 p(\phi_k) \times
 \prod_{j=1}^J \prod_{l=k}^K 
 p(\mus_{jl}\mid\psi_j, \tau^2_j, z_{jl}) \times \\
+%&~~
+%\prod_{i=1}^I \prod_{n=1}^{N_i} \prod_{j=1}^J 
+%p(e_{inj} \mid z_{j,\lin}, \pi_{ij})^{\Ind{\lin \ge k,~z_{j,\lin}=0}} 
+%\times \\
+%%% MARGINALIZE OVER e_{inj} INTEAD
 &~~
 \prod_{i=1}^I \prod_{n=1}^{N_i} \prod_{j=1}^J 
-p(e_{inj} \mid z_{j,\lin}, \pi_{ij})^{\Ind{\lin \ge k,~z_{j,\lin}=0}} 
-\times \\
-&~~
-\prod_{i=1}^I \prod_{n=1}^{N_i} \prod_{j=1}^J 
-p(y_{inj} \mid \mus_{jk}, \sigma_i^2, e_{inj})^{\Ind{e_{inj}=0, \lin\ge k}}
+p(y_{inj} \mid \mus_{j,\lin}, \sigma_i^2, z_{j,\lin}, \pi_{ij})^{\Ind{\lin\ge k}}
 \end{split}
 $$
 
@@ -492,11 +506,11 @@ will be as follows:
 1. Given the current state $(\phi_k, \bm\mus_{k:K})$,
    sample a proposed state $\tilde\phi_k$ from $\N(\cdot \mid \phi_k, \Sigma_\phi)$ 
    for $\phi_k$, where $\Sigma_\phi$ is some positive real number to be tuned.
-2. Compute the new $z_{jk}$ (from the updated $\phi_k \Rightarrow v_k$) 
-   for $j = 1,...,J$.
-3. If $z_{jk}$ is unchanged, then the proposed state for $\mus_{jk}$ is simply
+2. Compute the new $z_{jl}$ (from the updated $\phi_k \Rightarrow v_k$) 
+   for $j = 1,...,J$ and $l=k,...,K$.
+3. If $z_{jl}$ is unchanged, then the proposed state for $\mus_{jl}$ is simply
    its current state. Otherwise, the proposed state is 
-   $\tmus_{jk} \sim \N(\cdot \mid \psi_j, \tau_j^2, z_{jk})$ 
+   $\tmus_{jl} \sim \N(\cdot \mid \psi_j, \tau_j^2, z_{jl})$ 
 4. Compute the proposal density as 
    $$
    \begin{split}
@@ -513,20 +527,20 @@ will be as follows:
    \begin{align*}
      \Lambda &= 
      \frac{
-       p(\tilde\phi_k, \bm\tmus_{k:K}) \mid \y, \rest) 
+       p(\tilde\phi_k, \bm\tmus_{k:K} \mid \y, \rest) 
        \times
-       q_1((\phi_k, \bm\mus_{k:K}) \mid 
-       (\tilde\phi_k, \bm\tmus_{k:K})) 
+       q_1(\phi_k, \bm\mus_{k:K} \mid 
+       \tilde\phi_k, \bm\tmus_{k:K}) 
      }{
        p(\phi_k, \bm\mus_{k:K} \mid \y, \rest) 
        \times
-       q_1( (\tilde\phi_k, \bm\tmus_{k:K}) \mid 
-       (\phi_k, \bm\mus_{k:K}) )
+       q_1( \tilde\phi_k, \bm\tmus_{k:K} \mid 
+       \phi_k, \bm\mus_{k:K} )
      }
      \\
      \\
      %%%%%%
-     &\propto
+     &=
      \frac{p(\tilde\phi_k)}{p(\phi_k)}
      \prod_{j=1}^J\prod_{l=k}^K
      \frac{
@@ -535,26 +549,15 @@ will be as follows:
        p(\mus_{jl} \mid \psi_j, \tau_j^2, z_{jl})
      }
      \times
-     \prod_{i=1}^I\prod_{n=1}^{N_i}\prod_{j=1}^J
-     \frac{
-       p(e_{inj} \mid z_{j,\lin}, \pi_{ij})^{
-         \Ind{\lin \ge k,~z_{j,\lin} = 0}
-       }
-     }{
-       p(e_{inj} \mid \tilde z_{j,\lin}, \pi_{ij})^{
-         \Ind{\lin \ge k,~\tilde z_{j,\lin} = 0}
-       }
-     }
-     \times
      \\
      &~~~
      \prod_{i=1}^I\prod_{n=1}^{N_i}\prod_{j=1}^J
      \frac{
-      p(y_{inj} \mid \tmus_{j,\lin}, \psi_j, \tau_j^2, e_{inj})^{
-      \Ind{e_{inj}=0,~\lin\ge k}}
+      p(y_{inj} \mid \tmus_{j,\lin}, \sigma_i^2, \tilde z_{j,\lin}, \pi_{ij})^{
+      \Ind{\lin\ge k}}
      }{
-      p(y_{inj} \mid \mus_{j,\lin}, \psi_j, \tau_j^2, e_{inj})^{
-      \Ind{e_{inj}=0,~\lin\ge k}}
+      p(y_{inj} \mid \mus_{j,\lin}, \sigma_i^2, z_{j,\lin}, \pi_{ij})^{
+      \Ind{\lin\ge k}}
      }
      \times
      \\
@@ -572,61 +575,60 @@ will be as follows:
      \\
      \\
      %%%%%%
-     &\propto
+     %%%%%% CRUX!!!
+     &=
      \frac{p(\tilde\phi_k)}{p(\phi_k)}
-     \prod_{\bc{(i,n): \lin \ge k}}\prod_{j=1}^J
-     \frac{
-       \p{
-         \pi_{ij}^{e_{inj}}(1-\pi_{ij})^{1-e_{inj}}
-       }^{
-         1-z_{j,\lin}
-       }
+     \times
+     \prod_{i=1}^I\prod_{n=1}^{N_i}\prod_{j=1}^J
+     \frac{ % LIKELIHOOD
+      p(y_{inj} \mid \tmus_{j,\lin}, \sigma_i^2, \tilde z_{j,\lin}, \pi_{ij})^{
+      \Ind{\lin\ge k}}
      }{
-       \p{
-         \pi_{ij}^{e_{inj}}(1-\pi_{ij})^{1-e_{inj}}
-       }^{
-         1-\tilde z_{j,\lin}
-       }
+      p(y_{inj} \mid \mus_{j,\lin}, \sigma_i^2, z_{j,\lin}, \pi_{ij})^{
+      \Ind{\lin\ge k}}
      }
-     \times \\
-     &~~~
-     \prod_{\bc{(i,n): \lin \ge k}}\prod_{j=1}^J
-     \bc{
-       \frac{
-         \exp\bc{-\frac{\p{y_{inj} - \tmus_{j,\lin}}^2}{2\sigma_i^2}}
-         \Phi\p{\frac{y_{inj} - \mus_{j,\lin}}{\sigma_i}}
-       }{
-         \exp\bc{-\frac{\p{y_{inj} - \mus_{j,\lin}}^2}{2\sigma_i^2}}
-         \Phi\p{\frac{y_{inj} - \tmus_{j,\lin}}{\sigma_i}}
-       }
-     }^{\Ind{e_{inj}=0}}
      \\
      \\
-     %%%%%%%%
-     &\propto
+     %%%%%%
+     &=
      \frac{p(\tilde\phi_k)}{p(\phi_k)}
-     \prod_{\bc{(i,n): \lin \ge k}}\prod_{j=1}^J
-     \p{
-       \pi_{ij}^{e_{inj}}(1-\pi_{ij})^{1-e_{inj}}
-     }^{
-       \tilde z_{j,\lin} - z_{j,\lin}
+     \prod_{\bc{(i,n,j): \lin \ge k}}
+     \frac{ % LIKELIHOOD
+      p(y_{inj} \mid \tmus_{j,\lin}, \sigma_i^2, \tilde z_{j,\lin}, \pi_{ij})
+     }{
+      p(y_{inj} \mid \mus_{j,\lin}, \sigma_i^2, z_{j,\lin}, \pi_{ij})
      }
+     \\\\
+     &=
+     \exp(\phi_k - \tilde\phi_k)
+     \p{\frac{1+\exp(-\phi_k)}{1+\exp(-\tilde\phi_k)}}^{\alpha+1}
      \times \\
-     &~~~
-     \prod_{\bc{(i,n): \lin \ge k}}\prod_{j=1}^J
-     \bc{
-       \frac{
-         \exp\bc{-\frac{\p{y_{inj} - \tmus_{j,\lin}}^2}{2\sigma_i^2}}
-         \Phi\p{\frac{y_{inj} - \mus_{j,\lin}}{\sigma_i}}
+     &
+     \prod_{\bc{(i,n,j): \lin \ge k, \tilde z_{,\lin} \ne z_{j,\lin}}}
+     \p{
+       \frac{ % LIKELIHOOD
+         \TNpdf{y-_{inj}}{\tmus_{j,\lin}}{\sigma_i^2}
        }{
-         \exp\bc{-\frac{\p{y_{inj} - \mus_{j,\lin}}^2}{2\sigma_i^2}}
-         \Phi\p{\frac{y_{inj} - \tmus_{j,\lin}}{\sigma_i}}
+         \pi_{ij} \delta_0(y_{inj}) + (1-\pi_{ij})
+         \TNpdf{y-_{inj}}{\tmus_{j,\lin}}{\sigma_i^2}
        }
-     }^{\Ind{e_{inj}=0}}
+     }^{\tilde z_{j,\lin} - z_{j,\lin}}
+     \\\\
    \end{align*}
+   To obtain the new state for $v_k$, we simply need to take the 
+   inverse-logit transformation of $\phi_k$.
 
-To obtain the new state for $v_k$, we simply need to take the 
-inverse-logit transformation of $\phi_k$.
+Note that $z_{jl}$ for $l \ge k$ is a function of $v_k$. Therefore, 
+$\tilde z_{jl} = 
+\Ind{\Phi(h_{jk} \mid 0, \Gamma_{jj}) < \prod_{l=1}^k \tilde v_l}$ needs to be
+evaluated in the expressions above. Note also that since $e_{inj}$ was
+marginalized over in the computations above, it is implicitly changed when
+the proposed $v_k$ is accepted. Consequently, $e_{inj}$ needs to be updated
+after $v_k$ is updated. However, the update can be done any time before 
+a parameter which depends on $e_{inj}$ is updated in the MCMC iteration. 
+A suitable time scheme would therefore be to updated $\h_k$ immediately after
+updating $v_k$, then update $e_{inj}$ immediately after. (See 5.9 for updating
+$e_{inj}$.)
 
 ## Full Conditional for $\h$
 The prior for $\h_k$ is $\h_k \sim \N_J(0, \Gamma)$.
@@ -735,15 +737,15 @@ will be as follows:
    }
    \times 
    \\ &~~~~
-   \prod_{(i,n):\lin=k}
-   \bc{
-     \frac{
-       p(e_{inj} \mid \tilde z_{j,\lin}, \pi_{ij})^{1-\tilde z_{j,\lin}}
-       p(y_{inj} \mid \tmus_{jk}, \sigma_i^2, e_{inj})
-     }{
-       p(e_{inj} \mid z_{j,\lin}, \pi_{ij})^{1-z_{j,\lin}}
-       p(y_{inj} \mid \mus_{jk}, \sigma_i^2, e_{inj})
-     }
+   \prod_{(i,n,j):\lin=k}
+   \frac{
+     %p(e_{inj} \mid \tilde z_{j,\lin}, \pi_{ij})^{1-\tilde z_{j,\lin}}
+     %p(y_{inj} \mid \tmus_{jk}, \sigma_i^2, e_{inj})
+     p(y_{inj} \mid \tmus_{jk}, \sigma_i^2, \pi_{ij}, \tilde z_{j,\lin})
+   }{
+     %p(e_{inj} \mid z_{j,\lin}, \pi_{ij})^{1-z_{j,\lin}}
+     %p(y_{inj} \mid \mus_{jk}, \sigma_i^2, e_{inj})
+     p(y_{inj} \mid \mus_{jk}, \sigma_i^2, \pi_{ij}, z_{j,\lin})
    }
    \times
    \\ &~~~~
@@ -762,74 +764,54 @@ will be as follows:
    \\
    \\ 
    %%%%%%%%%%%%%%%
-   &\propto
-   \exp\bc{
-     -\frac{(\tilde h_{jk} - m_j)^2 - (h_{jk} - m_j)^2}
-           {2 S_j}
+   %%%% CRUX !!!
+   &= \frac{
+     p(\tilde  h_{jk} \mid \tilde \h_{-jk})
+   }{
+     p(h_{jk} \mid \h_{-jk})
    }
-   \times \\
-   &\prod_{(i,n):\lin=k}
-   \bc{
-     \frac{
-       p(e_{inj} \mid \tilde z_{j,\lin}, \pi_{ij})^{1-\tilde z_{j,\lin}}
-       p(y_{inj} \mid \tmus_{jk}, \sigma_i^2, e_{inj})
-     }{
-       p(e_{inj} \mid z_{j,\lin}, \pi_{ij})^{1-z_{j,\lin}}
-       p(y_{inj} \mid \mus_{jk}, \sigma_i^2, e_{inj})
-     }
+   \times 
+   \prod_{\bc{(i,n,j):\lin=k}}
+   \frac{
+     p(y_{inj} \mid \tmus_{jk}, \sigma_i^2, \pi_{ij}, \tilde z_{j,\lin})
+   }{
+     p(y_{inj} \mid \mus_{jk}, \sigma_i^2, \pi_{ij}, z_{j,\lin})
    }
    \\
-   \\
-   %%%%%%%%
-   &\propto~
-   \exp\bc{
-     -\frac{(\tilde h_{jk} - m_j)^2 - (h_{jk} - m_j)^2}
-           {2 S_j}
-   } \times \\
-   &\prod_{(i,n):\lin=k}
-   \bc{
-     \frac{
-       \p{
-         \pi_{ij}^{e_{inj}}
-         \p{1-\pi_{ij}}^{1-e_{inj}}
-       }^{\Ind{z_{j,\lin}=0}}
-       \times
-       \bc{\TNpdfc{y_{inj}}{\mus_{jk}}{\sigma_i}}^{\Ind{e_{inj}=0}}
-     }{
-       \p{
-         \pi_{ij}^{e_{inj}}
-         \p{1-\pi_{ij}}^{1-e_{inj}}
-       }^{\Ind{\tilde z_{j,\lin}=0}}
-       \times
-       \bc{\TNpdfc{y_{inj}}{\tmus_{jk}}{\sigma_i}}^{\Ind{e_{inj}=0}}
-     }
-   }\\
    \\
    %%%%%%%%%%%%%%%
-   &\propto~
+   &=
    \exp\bc{
      -\frac{(\tilde h_{jk} - m_j)^2 - (h_{jk} - m_j)^2}
            {2 S_j}
    }
-   \prod_{\bc{(i,n): \lin = k}}
-   \p{
-     \pi_{ij}^{e_{inj}}(1-\pi_{ij})^{1-e_{inj}}
-   }^{
-     \tilde z_{j,\lin} - z_{j,\lin}
+   \times \\
+   &\prod_{\bc{(i,n,j):\lin=k,~\tilde z_{j,\lin} \ne z_{j,\lin}}}
+   \frac{
+     p(y_{inj} \mid \tmus_{jk}, \sigma_i^2, \pi_{ij}, \tilde z_{j,\lin})
+   }{
+     p(y_{inj} \mid \mus_{jk}, \sigma_i^2, \pi_{ij}, z_{j,\lin})
+   }
+   \\
+   \\
+   &=
+   \exp\bc{
+     -\frac{(\tilde h_{jk} - m_j)^2 - (h_{jk} - m_j)^2}
+           {2 S_j}
    }
    \times \\
-   &~~~
-   \prod_{\bc{(i,n): \lin = k}}
-   \bc{
-     \frac{
-       \exp\bc{-\frac{\p{y_{inj} - \tmus_{j,\lin}}^2}{2\sigma_i^2}}
-       \Phi\p{\frac{y_{inj} - \mus_{j,\lin}}{\sigma_i}}
+   &\prod_{\bc{(i,n,j): \lin \ge k, \tilde z_{,\lin} \ne z_{j,\lin}}}
+   \p{
+     \frac{ % LIKELIHOOD
+       \TNpdf{y-_{inj}}{\tmus_{j,\lin}}{\sigma_i^2}
      }{
-       \exp\bc{-\frac{\p{y_{inj} - \mus_{j,\lin}}^2}{2\sigma_i^2}}
-       \Phi\p{\frac{y_{inj} - \tmus_{j,\lin}}{\sigma_i}}
+       \pi_{ij} \delta_0(y_{inj}) + (1-\pi_{ij})
+       \TNpdf{y-_{inj}}{\tmus_{j,\lin}}{\sigma_i^2}
      }
-   }^{\Ind{e_{inj}=0}}.
+   }^{\tilde z_{j,\lin} - z_{j,\lin}}
+   \\\\
    \end{align*}
+6. Update $e_{inj}$.
 
 
 ## Full Conditional for $\bm\lambda$
