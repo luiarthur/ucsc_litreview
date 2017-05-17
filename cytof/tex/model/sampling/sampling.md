@@ -1000,7 +1000,14 @@ The new state in the MCMC for $d$ is then $\exp(\rho)$.
 
 ## Sampling $K$
 
+So far, we have treated the dimensions $K$ of the latent feature
+matrix $\Z$ as fixed. This may be limiting as learning the number of 
+latent features is the motivation for using the IBP as a prior for 
+the latent feature matrix. We will now introduce an algorithm for
+sampling $K$. The idea is to ...
 
+1. Update $\bm\theta, K$ using Metropolis-Hastings
+  
 
 ### Possible issues:
 
