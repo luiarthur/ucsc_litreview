@@ -187,7 +187,7 @@ p(y_{inj} \mid \mus_{jk},\sigma_i^2, z_{j,\lin}=1)
 \TNpdf{y_{inj}}{\mus_{j,\lin}}{\sigma_i}
 \\
 %%%
-p(y_{inj} \mid  \mus_{j,\lin},\sigma_i^2, z_{jk}=0, \pi_{ij})
+p(y_{inj} \mid  \mus_{j,\lin},\sigma_i^2, z_{j,\lin}=0, \pi_{ij})
 &=~
 \pi_{ij}\delta_0(y_{inj}) + 
 (1-\pi_{ij}) \TNpdf{y_{inj}}{\mus_{j,\lin}}{\sigma_i}
@@ -200,10 +200,10 @@ $$
 - $\mus_{jk}$:
 $$\begin{cases}
 p(\mus_{jk} \mid \psi_j, \tau^2_j, z_{jk}=1) ~~&=~~ 
-\pmugt{k} \\
+\pmugt[\mus_{jk} > \log(2)]{k} \\
 %
 p(\mus_{jk} \mid \psi_j, \tau^2_j, z_{jk}=0) ~~&=~~ 
-\pmult{k} \\
+\pmult[\mus_{jk} < \log(2)]{k} \\
 \end{cases}
 $$
 - $\psi_j$: 
@@ -265,7 +265,7 @@ Note that here, $K$ and $\alpha$ are fixed.
 # Sampling via MCMC
 Sampling can be done via Gibbs sampling by repeatedly updating each parameter
 one at a time until convergence. Parameter updates are made by sampling from
-it's full conditional distribution. Where this cannot be done conveniently, 
+it full conditional distribution. Where this cannot be done conveniently, 
 a metropolis step will be necessary.
 
 To sample from a distribution which is otherwise difficult to sample from, the
@@ -327,16 +327,9 @@ Some common parameter transformations are therefore presented here:
 ## Full Conditional for $\bm\mu^*$
 
 \begin{align*}
-p(\mus_{jk} \mid \y,\rest) \propto&~~ p(\mus_{jk}\mid z_{jk}, \psi_j, \tau_j^2) 
+p(\mus_{jk} \mid \y,\rest) \propto&~~ p(\mus_{jk}\mid \psi_j, \tau_j^2, z_{jk}) 
 \times 
 \prod_{i=1,n=1}^{I,N_i}
-\bc{p(y_{inj}\mid \mus_{j,\lin}, \sigma_i^2, e_{inj})}^{\Ind{\lin=k}}\\
-\\
-\propto&~~ 
-p(\mus_{jk}\mid \psi_j, \tau_j^2, z_{jk}=1)^{\Ind{\mus_{jk}>\log(2)}} \times
-p(\mus_{jk}\mid \psi_j, \tau_j^2, z_{jk}=0)^{\Ind{\mus_{jk}<\log(2)}} \times
-\\ &~~
-\prod_{i=1}^I\prod_{n=1}^{N_i}
 \bc{p(y_{inj}\mid \mus_{j,\lin}, \sigma_i^2, e_{inj})}^{\Ind{\lin=k}}\\
 \\
 \propto&~~
@@ -359,7 +352,7 @@ $$
 \begin{split}
 p(\psi_j \mid \y, \rest) \propto&~~ p(\psi_j) \times 
 \prod_{k=1}^K 
-p(\mu_{j,\lin}\mid \psi_j, \tau_j^2, z_{j,\lin}) \\
+p(\mu_{j,k}\mid \psi_j, \tau_j^2, z_{j,k}) \\
 %
 \propto&~~ \exp\bc{-\frac{(\psi_j-m_\psi)^2}{2s^2_\psi}} \times 
 \\
@@ -377,7 +370,7 @@ $$
 
 ## Full Conditional for $\bm{\tau^2}$
 Let $\tau_j^2$ have prior distribution $\tau_j^2 \sim \IG(a_\tau, b_\tau)$.
-So, it's full conditional is 
+So, its full conditional is 
 
 $$
 \begin{split}
@@ -403,8 +396,7 @@ conditional is
 
 $$
 \begin{split}
-p(\pi_{ij}\mid \y,\rest) \propto&~~ p(\pi_{ij}) \times \\
-&~~
+p(\pi_{ij}\mid \y,\rest) \propto&~~ p(\pi_{ij}) \times
 \prod_{n=1}^{N_i} 
 p(e_{inj} \mid z_{j,\lin}, \pi_{ij})^{1-z_{j,\lin}}
 \\
@@ -510,7 +502,7 @@ will be as follows:
    for $j = 1,...,J$ and $l=k,...,K$.
 3. If $z_{jl}$ is unchanged, then the proposed state for $\mus_{jl}$ is simply
    its current state. Otherwise, the proposed state is 
-   $\tmus_{jl} \sim \N(\cdot \mid \psi_j, \tau_j^2, z_{jl})$ 
+   $\tmus_{jl} \sim \N(\cdot \mid \psi_j, \tau_j^2, \tilde z_{jl})$ 
 4. Compute the proposal density as 
    $$
    \begin{split}
@@ -518,7 +510,7 @@ will be as follows:
    =
    \Npdf{\tilde\phi_k}{\phi_k}{\Sigma_\phi} \times  \\
    \prod_{j=1}^J \prod_{l=k}^{K}
-   p(\tilde\mus_{jl} \mid \psi_j, \tau_j^2, z_{jl})^{\Ind{\tilde z_{jl} \ne z_{jl}}}
+   p(\tilde\mus_{jl} \mid \psi_j, \tau_j^2, \tilde z_{jl})^{\Ind{\tilde z_{jl} \ne z_{jl}}}
    \end{split}
    $$
 5. The proposed state $(\tilde\phi_k, \bm\tmus_{k:K})$ will be
@@ -603,16 +595,29 @@ will be as follows:
      \exp(\phi_k - \tilde\phi_k)
      \p{\frac{1+\exp(-\phi_k)}{1+\exp(-\tilde\phi_k)}}^{\alpha+1}
      \times \\
+     %%% LIKELIHOOD %%%
      &
-     \prod_{\bc{(i,n,j): \lin \ge k, \tilde z_{,\lin} \ne z_{j,\lin}}}
+     \prod_{\bc{(i,n,j):~\lin \ge k,~\tilde z_{j,\lin}=1,~z_{j,\lin}=0}}
      \p{
        \frac{ % LIKELIHOOD
-         \TNpdf{y-_{inj}}{\tmus_{j,\lin}}{\sigma_i^2}
+         \TNpdf{y_{inj}}{\tmus_{j,\lin}}{\sigma_i}
        }{
          \pi_{ij} \delta_0(y_{inj}) + (1-\pi_{ij})
-         \TNpdf{y-_{inj}}{\tmus_{j,\lin}}{\sigma_i^2}
+         \TNpdf{y_{inj}}{\mus_{j,\lin}}{\sigma_i}
        }
-     }^{\tilde z_{j,\lin} - z_{j,\lin}}
+     } \times
+     \\\\
+     &
+     \prod_{\bc{(i,n,j):~\lin \ge k,~\tilde z_{j,\lin}=0,~z_{j,\lin}=1}}
+     \p{
+       \frac{ % LIKELIHOOD
+         \pi_{ij} \delta_0(y_{inj}) + (1-\pi_{ij})
+         \TNpdf{y_{inj}}{\tmus_{j,\lin}}{\sigma_i}
+       }{
+         \TNpdf{y_{inj}}{\mus_{j,\lin}}{\sigma_i}
+       }
+     }
+     %%% END OF LIKELIHOOD $$$
      \\\\
    \end{align*}
    To obtain the new state for $v_k$, we simply need to take the 
@@ -697,7 +702,7 @@ will be as follows:
 1. Given the current state $(h_{jk}, \mus_{jk})$,
    sample a proposed state $\tilde h_{jk}$ from $\N(\cdot \mid h_{jk}, \Sigma_h)$ 
    for $h_{jk}$, where $\Sigma_h$ is some covariance matrix to be tuned.
-2. Compute the new $z_{jk}$ (from the updated $h_{jk}$).
+2. Compute the new $\tilde z_{jk}$ (from the updated $h_{jk}$).
 3. If $z_{jk}$ is unchanged, then the proposed state for $\mus_{jk}$ is simply
    its current state. Otherwise, the proposed state is 
    $\tmus_{jk} \sim \N(\cdot \mid \psi_j, \tau_j^2, \tilde z_{jk})$ 
@@ -707,11 +712,11 @@ will be as follows:
    q_2(\tilde h_{jk}, \tmus_{jk} \mid h_{jk}, \mus_{jk})
    &\propto~
    \Npdfc{\tilde h_{jk}}{h_{jk}}{\Sigma_h} \times
-   p(\tmus_{jk} \mid \psi_j, \tau_j^2, z_{jk})^{\Ind{\tilde z_{jk} \ne z_{jk}}}
+   p(\tmus_{jk} \mid \psi_j, \tau_j^2, \tilde z_{jk})^{\Ind{\tilde z_{jk} \ne z_{jk}}}
    \\
    \end{split}
    $$
-5. The proposed state $(h_{jk}, \tmus_{jk})$ will be
+5. The proposed state $(\tilde h_{jk}, \tmus_{jk})$ will be
    accepted with probability 
    $$ \min\bc{1, \Lambda }, $$ where
    \begin{align*}
@@ -800,15 +805,29 @@ will be as follows:
            {2 S_j}
    }
    \times \\
-   &\prod_{\bc{(i,n,j): \lin \ge k, \tilde z_{,\lin} \ne z_{j,\lin}}}
+   %%% LIKELIHOOD %%%
+   &
+   \prod_{\bc{(i,n,j):~\lin \ge k,~\tilde z_{j,\lin}=1,~z_{j,\lin}=0}}
    \p{
      \frac{ % LIKELIHOOD
-       \TNpdf{y-_{inj}}{\tmus_{j,\lin}}{\sigma_i^2}
+       \TNpdf{y_{inj}}{\tmus_{j,\lin}}{\sigma_i}
      }{
        \pi_{ij} \delta_0(y_{inj}) + (1-\pi_{ij})
-       \TNpdf{y-_{inj}}{\tmus_{j,\lin}}{\sigma_i^2}
+       \TNpdf{y_{inj}}{\mus_{j,\lin}}{\sigma_i}
      }
-   }^{\tilde z_{j,\lin} - z_{j,\lin}}
+   } \times
+   \\\\
+   &
+   \prod_{\bc{(i,n,j):~\lin \ge k,~\tilde z_{j,\lin}=0,~z_{j,\lin}=1}}
+   \p{
+     \frac{ % LIKELIHOOD
+       \pi_{ij} \delta_0(y_{inj}) + (1-\pi_{ij})
+       \TNpdf{y_{inj}}{\tmus_{j,\lin}}{\sigma_i}
+     }{
+       \TNpdf{y_{inj}}{\mus_{j,\lin}}{\sigma_i}
+     }
+   }
+   %%% END OF LIKELIHOOD $$$
    \\\\
    \end{align*}
 6. Update $e_{inj}$.
@@ -829,13 +848,11 @@ w_{ik}
 \bc{
   \pi_{ij}\delta_0(y_{inj}) + 
   (1-\pi_{ij})
-  \TNpdfc{y_{inj}}{\mus_{j,\lin}}{\sigma_i}
-}^{\Ind{z_{j,\lin}=0,~\lin=k}} \times \\
+  \TNpdfc{y_{inj}}{\mus_{j,k}}{\sigma_i}
+}^{\Ind{z_{j,k}=0}} \times \\
 &\hspace{-5em}
 \bc{
-  \TNpdfc{y_{inj}}{\mus_{j,\lin}}{\sigma_i}
-}^{\Ind{z_{j,\lin}=1,~\lin=k}}
-\\
+  \TNpdfc{y_{inj}}{\mus_{j,k}}{\sigma_i} }^{\Ind{z_{j,k}=1}}
 \end{split}
 $$
 
@@ -872,7 +889,7 @@ Similarly,
 $$
 p(e_{inj} = 0\mid z_{j,\lin}=0, \pi_{ij}, \rest)
 \propto
-(1-\pi_{ij}) \pone{\lin}
+(1-\pi_{ij}) \likezero{\lin}
 $$
 
 
@@ -962,6 +979,7 @@ p(\rho)\times
 %
 \propto&~~ 
 \exp\p{-\frac{(\rho-m_d)^2}{2s_d^2}}
+\Gamma(\exp(\rho))
 \prod_{i=1}^{I} \prod_{j=1}^J 
 \frac{(\pi_{ij})^{\piconsta}(1-\pi_{ij})^{\piconstb}}{\Gamma(\piconsta)\Gamma(\piconstb)}
 %
@@ -979,6 +997,9 @@ $$
 $$
 
 The new state in the MCMC for $d$ is then $\exp(\rho)$.
+
+## Sampling $K$
+
 
 
 ### Possible issues:
