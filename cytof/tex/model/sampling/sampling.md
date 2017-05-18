@@ -1,7 +1,7 @@
 ---
-title: "DRAFT"
-author: Arthur Lui
-date: "29 April 2017"
+title:    "Sampling Scheme for CYTOF Model"
+author:   "Arthur Lui"
+date:     "\\today"
 geometry: margin=1in
 fontsize: 12pt
 
@@ -62,6 +62,7 @@ header-includes:
     - \newcommand{\LN}{\text{Log-}\N}
     - \newcommand{\IBP}{\text{IBP}}
     - \newcommand{\TN}{\text{TN}}
+    - \newcommand{\Unif}{\text{Uniform}}
     - \newcommand{\Dir}{\text{Dirichlet}}
     - \newcommand{\IG}{\text{IG}}
     - \newcommand{\Be}{\text{Beta}}
@@ -1006,8 +1007,94 @@ latent features is the motivation for using the IBP as a prior for
 the latent feature matrix. We will now introduce an algorithm for
 sampling $K$. The idea is to ...
 
-1. Update $\bm\theta, K$ using Metropolis-Hastings
-  
+1. Update $(\bm\theta, K)$ using a small *training set* via Metropolis-Hastings
+2. Update $(\bm\theta \mid K)$ using a larger *testing set* via Metropolis-Hastings
+
+The algorithm will be described below. 
+
+# Updating $(\bm\theta, K)$ using Small Training Set
+
+Let $\y^{TR}$ refer to a (predetermined) randomly selected 
+subset of observations of the entire data. We will call this 
+the testing set.  This set should be small -- the number of 
+rows in $\y^{TR}$ should be about 5% that of the entire 
+data $\y$. To ensure that the sample is representative of 
+the data, 5% from each sample $i$ will be taken.  Let 
+$\y^{TE}$ refer to the remaining observations. That is, 
+$\y = \y^{TE} \cup \y^{TR}$. 
+
+Let the prior distribution for $K$ be 
+$K \sim \Unif(1, K^{\max})$, where $K^{\max}$ is some integer
+**sufficient large** (trial and error, start with 15?). 
+Also, let $p\star(\bm\theta) = p(\bm\theta \mid \y^{TR}, K)$ 
+be the posterior distribution of $\bm\theta$ given the 
+training set and $K$.
+
+The joint posterior for $(\bm\theta, K)$ is then
+
+\begin{align*}
+p(\theta,K \mid \y^{TE}) &\propto p(K)p^\star(\bm\theta)
+p(\y^{TE} \mid \bm\theta, K) \\
+%%%
+&\propto p(K)
+p(\bm\theta \mid K, \y^{TR}) p(\y^{TE} \mid \bm\theta, K) \\
+%%%
+&\propto p(K)
+p(\bm\theta\mid K) p(\y^{TR} \mid \bm\theta, K) p(\y^{TE} \mid \bm\theta, K) \\
+&\propto p(K, \bm\theta)
+p(\y^{TR} \mid \bm\theta, K) p(\y^{TE} \mid \bm\theta, K) \\
+&\propto p(K, \bm\theta)
+p(\y \mid \bm\theta, K) \\
+\end{align*}
+
+Notice this is the same as the posterior distribution of 
+$\bm\theta, K$ given the entire data.
+
+Simplifying the expression, we get
+
+$$
+p(\theta,K \mid \y^{TE})
+\propto 
+p(\bm\theta \mid K, \y^{TR}) p(\y^{TE} \mid \bm\theta, K).
+$$
+
+Note that $p(K)$ is missing from the expression as it is 
+a constant with respect to $K$.
+
+We can sample from the distribution using a Metropolis-Hastings
+step. The proposal mechanism is as follows:
+
+1. Propose $\tilde K \mid K \sim$
+   $$
+   \begin{cases}
+   \Unif(K-a, K+a) &\text{ if } a+1 \le K \le K^{\max} -a \\
+   \Unif(1, K+a) &\text{ if } K-a < 1 \\
+   \Unif(K-a, K^{\max}) &\text{ if } K+a > K^{\max} \\
+   \end{cases}
+   $$
+   That is, draw $\tilde K$ from a uniform distribution centered
+   at the previous state $K$, within a neighbourhood of size
+   $a$ which is a constant to be tuned, but is constrained
+   such that $2a \le K^{\max}$.
+2. Given $\tilde K$, we then propose 
+   $\tilde{\bm\theta} \mid \tilde K$ with the proposal 
+   distribution
+   being the prior. To clarify, the prior here refers to the
+   posterior distribution of $\bm\theta$ given the smaller
+   training data. That is, 
+   $q_\theta(\bm\theta) = p(\bm\theta \mid K, \y^{TR})$.
+3. We accept the proposed draw $(\tilde K, \bm{\tilde\theta})$
+   with probability $\min{1, \Lambda}$ where 
+   \begin{align*}
+   \Lambda & = 
+   \frac{
+     p(\tilde K) p()
+   }{
+   }
+   \end{align*}
+
+
+# Updating $\bm\theta  \mid K$
 
 ### Possible issues:
 
