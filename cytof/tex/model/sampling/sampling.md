@@ -1086,6 +1086,7 @@ step. The proposal mechanism is as follows:
 3. We accept the proposed draw $(\tilde K, \bm{\tilde\theta})$
    with probability $\min{1, \Lambda}$ where 
    \begin{align*}
+   %%% FIXME
    \Lambda & = 
    \frac{
      p(\tilde K) p()
