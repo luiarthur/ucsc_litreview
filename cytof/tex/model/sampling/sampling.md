@@ -1074,10 +1074,28 @@ step. The proposal mechanism is as follows:
    \Unif(K-a, K^{\max}) &\text{ if } K+a > K^{\max} \\
    \end{cases}
    $$
-   That is, draw $\tilde K$ from a uniform distribution centered
+   That is, draw $\tilde K$ from a discrete uniform 
+   distribution centered
    at the previous state $K$, within a neighbourhood of size
    $a$ which is a constant to be tuned, but is constrained
    such that $2a \le K^{\max}$.
+
+   For clarity, the corresponding proposal densities for 
+   $\tilde K$ are:
+
+   $$
+   \begin{cases}
+   q_K(\tilde{K} \mid K) = (2a +1)^{-1} 
+   & \text{ if } a+1 \le K \le K^{\max} -a\\
+   q_K(\tilde{K} \mid K) = (K+a)^{-1}  
+   & \text{ if } K-a < 1 \\
+   q_K(\tilde{K} \mid K) = (K^{max} - K+a +1)^{-1} 
+   &\text{ if } K+a > K^{\max} \\
+   \end{cases}
+   $$
+
+
+
 2. Given $\tilde K$, we then propose 
    $\tilde{\bm\theta} \mid \tilde K$ with the proposal 
    distribution
@@ -1088,7 +1106,6 @@ step. The proposal mechanism is as follows:
 3. We accept the proposed draw $(\tilde K, \bm{\tilde\theta})$
    with probability $\min\bc{1, \Lambda}$ where 
    \begin{align*}
-   %%% FIXME
    \Lambda & = 
    \frac{
      p(\tilde K) p^\star(\tilde\btheta) p(\y^{TE} \mid \tilde\btheta, \tilde K)
@@ -1129,7 +1146,6 @@ step. The proposal mechanism is as follows:
    }.
    \end{align*}
 
-
 Note that sampling from $(\btheta \mid K, \y^{TR})$ can be done by sampling
 from the full conditional of each parameter in $\btheta$. Note that
 the steps for sampling from the full conditional of each parameter
@@ -1158,8 +1174,8 @@ Sampling from $\btheta \mid K, \y^{TE}$ can be done
 by sampling from the full conditional of each parameter in $\btheta$ given
 a large subset of the data $\y^{TE}$. Again, the steps for sampling from 
 the full conditional of each parameter in $\btheta$ given $K$ is provided
-previously. This time, the only modification needed is that a large subset of
-the data $\y^{TE}$ is used instead of the entire data $\y$.
+previously. 
+This time, the only modification needed is that the entire data $\y$ is used.
 
 
 # Possible issues:
