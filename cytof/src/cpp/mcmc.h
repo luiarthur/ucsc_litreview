@@ -146,3 +146,18 @@ double lp_log_invgamma_with_const(double log_x, double a, double bNumer) {
 double lp_logit_unif(double logit_u) {
   return logit_u - 2 * log(1+ exp(logit_u));
 }
+
+// only kernel for mean parameter
+double log_dtnorm(double x, double m, double s, double thresh, bool lt) {
+  double z = (x - m) / s;
+  double out;
+  double Phi = R::pnorm(z - thresh / s, 0, 1, 1, 0);
+
+  if (lt) {
+    out = -log(s) - z*z / 2 - log(Phi);
+  } else {
+    out = -log(s) - z*z / 2 - log(1 - Phi);
+  }
+
+  return out;
+}

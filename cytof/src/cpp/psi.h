@@ -1,16 +1,38 @@
 // Updating psi_j. See Section 5.2 of manual.
 
-double log_fc_psi(State &state, const Data &y, const Prior &prior, 
-                  const int j, const int k);
+double log_fc_psi(double psi_j, State &state, const Data &y,
+                  const Prior &prior, const int j) {
 
+  double out = R::dnorm(psi_j, prior.m_psi, sqrt(prior.s2_psi), 1);
+  const int K = state.K;
+  double mus_jk;
+  double tau_j = sqrt(state.tau2(j));
+  double thresh = prior.mus_cutoff;
+  
+  for (int k=0; k < K; k++) {
+    mus_jk = state.mus(j,k);
 
+    if (state.Z(j,k) == 1) {
+      out += log_dtnorm(mus_jk, psi_j, tau_j, thresh, 0);
+    } else {
+      out += log_dtnorm(mus_jk, psi_j, tau_j, thresh, 1);
+    }
 
-void update_psi(State &state, const Data &y, const Prior &prior, 
-                const int j, const int k) {
+  }
 
-  //auto log_fc = [&](double psi_j) {
-  //  return log_fc_psi(psi_j, state, y, prior, j, k);
-  //};
+  return out;
+};
 
-  //metropolis::uni(state.psi(j), log_fc, prior.cs_psi);
+void update_psi(State &state, const Data &y, const Prior &prior) {
+
+  const int J = y[0].n_rows;
+  for (int j=0; j < J; j++) {
+
+    auto log_fc = [&](double psi_j) {
+      return log_fc_psi(psi_j, state, y, prior, j);
+    };
+
+    state.psi(j) = metropolis::uni(state.psi(j), log_fc, prior.cs_psi);
+  }
+
 };

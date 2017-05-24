@@ -1,0 +1,6 @@
+#!/usr/bin/Rscript
+
+library(Rcpp)
+Sys.setenv("PKG_CXXFLAGS"="-std=c++11")
+compile.time <- system.time(sourceCpp("cpp/cytof.cpp"))[3]
+cat("Compile time: ", compile.time, "\t", toString(Sys.time()), "\n")

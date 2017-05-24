@@ -6,6 +6,8 @@ struct State {
   arma::vec psi;    // J
   arma::vec tau2;   // J
   arma::mat pi;     // I x J
+  arma::vec c;      // J
+  double d; 
   arma::vec sig2;   // I
   arma::vec v;      // K
   arma::mat H;      // J x K

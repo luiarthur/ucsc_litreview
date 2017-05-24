@@ -3,6 +3,22 @@
 #include "State.h"
 #include "Prior.h"
 #include "mus.h"
+#include "psi.h"
+#include "tau2.h"
+#include "pi.h"
+#include "sig2.h"
+
+/*
+#include "v.h"     // 5.6
+#include "H.h"     // 5.7
+#include "lam.h"   // 5.8
+#include "e.h"     // 5.9
+#include "w.h"     // 5.10
+#include "c.h"     // 5.11
+#include "d.h"     // 5.12
+#include "K.h"     // 5.13.1
+#include "theta.h" // 5.13.2
+ */
 
 //[[Rcpp::export]]
 List cytof_fit(List y) {
