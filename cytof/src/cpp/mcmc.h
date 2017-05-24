@@ -8,7 +8,6 @@ using namespace Rcpp;
 
 // [[Rcpp::depends(RcppArmadillo)]]
 
-
 // Generic Gibbs Sampler
 template <typename S>
 void gibbs(S state, 
@@ -57,6 +56,7 @@ int wsample_index(double p[], int n) { // GOOD
   return i-1;
 }
 
+//[[Rcpp::export]]
 arma::vec rmvnorm(arma::vec m, arma::mat S) {
   int n = m.n_rows;
   arma::mat e = arma::randn(n);
@@ -77,14 +77,14 @@ double logdmvnorm(arma::vec y, arma::vec m, arma::mat S) {
 namespace metropolis {
 
   // Uniariate Metropolis step with Normal proposal
-  double uni(double curr, std::function<double(double)> ll, 
-             std::function<double(double)> lp, double stepSig) {
+  double uni(double curr, std::function<double(double)> log_fc, 
+             double stepSig) {
 
     const double cand = R::rnorm(curr,stepSig);
     const double u = R::runif(0,1);
     double out;
 
-    if (ll(cand) + lp(cand) - ll(curr) - lp(curr) > log(u)) {
+    if (log_fc(cand) - log_fc(curr) > log(u)) {
       out = cand;
     } else {
       out = curr;
@@ -94,14 +94,14 @@ namespace metropolis {
   }
 
   // Uniariate Metropolis step with Normal proposal
-  arma::vec mv(arma::vec curr, std::function<double(arma::vec)> ll, 
-               std::function<double(arma::vec)> lp, arma::mat stepSig) {
+  arma::vec mv(arma::vec curr, std::function<double(arma::vec)> log_fc, 
+               arma::mat stepSig) {
 
     const auto cand = rmvnorm(curr, stepSig);
     const double u = R::runif(0, 1);
     arma::vec out;
 
-    if (ll(cand) + lp(cand) - ll(curr) - lp(curr) > log(u)) {
+    if (log_fc(cand) - log_fc(curr) > log(u)) {
       out = cand;
     } else {
       out = curr;

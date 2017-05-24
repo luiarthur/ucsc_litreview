@@ -2,7 +2,6 @@ library(rcommon)
 library(Rcpp)
 Sys.setenv("PKG_CXXFLAGS"="-std=c++11")
 sourceCpp("test_mcmc.cpp") 
-source("../util/util.R")
 
 sig2 <- 1.5
 k <- 10
