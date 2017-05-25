@@ -11,9 +11,7 @@ double update_lin(State &state, const Data &y, const Prior &prior,
   double pi_ij;
 
   // use metropolis with aux variable to speed up?
-
   double log_p[K];
-  double p[K];
 
   for (int k=0; k<K; k++) {
     log_p[k] = log(state.W(i, k));
@@ -32,16 +30,10 @@ double update_lin(State &state, const Data &y, const Prior &prior,
     }
   }
 
-  const double log_p_max = *std::max_element(log_p, log_p+K);
-
-  for (int k=0; k<K; k++) {
-    p[k] = exp(log_p[k] - log_p_max);
-  }
-  
-  return wsample_index(p, K);
+  return wsample_index_log_prob(log_p, K);
 }
 
-double update_lam(State &state, const Data &y, const Prior &prior) {
+void update_lam(State &state, const Data &y, const Prior &prior) {
 
   const int I = get_I(y);
   int N_i;

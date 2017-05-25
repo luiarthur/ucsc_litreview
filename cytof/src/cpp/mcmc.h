@@ -41,7 +41,7 @@ double inv_logit(double x, double a, double b) {
 
 
 // Weighted sampling: takes prob. array and size; returns index.
-int wsample_index(double p[], int n) { // GOOD
+int wsample_index(const double p[], int n) { // GOOD
   const double p_sum = std::accumulate(p, p+n, 0.0);
   const double u = R::runif(0,p_sum);
 
@@ -54,6 +54,17 @@ int wsample_index(double p[], int n) { // GOOD
   } while (cumsum < u);
 
   return i-1;
+}
+
+int wsample_index_log_prob(const double log_p[], const int n) {
+  double p[n];
+  const double log_p_max = *std::max_element(log_p, log_p+n);
+
+  for (int i=0; i<n; i++) {
+    p[i] = exp(log_p[i] - log_p_max);
+  }
+
+  return wsample_index(p, n);
 }
 
 //[[Rcpp::export]]
@@ -164,4 +175,17 @@ double log_dtnorm(double x, double m, double s, double thresh, bool lt) {
 
 int delta_0(double x) {
   return x == 0 ? 1 : 0;
+}
+
+arma::rowvec rdir(const arma::vec &a) {
+  const int n = a.size();
+  arma::rowvec x(n);
+  double sum_x = 0;
+
+  for (int i=0; i<n; i++) {
+    x[i] = R::rgamma(a[i], 1);
+    sum_x += x[i];
+  }
+
+  return x / sum_x;
 }

@@ -26,6 +26,6 @@ struct Prior {
   arma::mat S_h;
 
   // W
-  arma::vec a_w;
+  arma::rowvec a_w;
 };
 

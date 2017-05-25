@@ -5,9 +5,28 @@ log full conditional (log likelihood + log prior) for the parameter.
 
 `update_param_name` is a function which updates the parameter.
 
-# 25 May 
+# Progress
+- [x] `Data.h`
+- [x] `State.h`
+- [x] `Prior.h`
+- [x] `mus.h`
+- [x] `psi.h`
+- [x] `tau2.h`
+- [x] `pi.h`
+- [x] `sig2.h`
+- [ ] `v.h`
+- [ ] `H.h`
 - [x] `lam.h`
-- [ ] `e.h`
-- [ ] `w.h`
+- [x] `e.h`
+- [x] `w.h`
 - [ ] `c.h`
 - [ ] `d.h`
+- [ ] `K.h`
+- [ ] `theta.h`
+
+
+# 25 May, 2017
+
+Created `get_I`, `get_J`, and `get_N_i` for consistent access of 
+data sizes.
+
