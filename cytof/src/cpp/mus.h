@@ -13,7 +13,8 @@ double log_fc_mus(double mus_jk, State &state, const Data &y,
 
   double z;
   double tau_j = sqrt(state.tau2(j));
-  const int I = y.size();
+  const int I = get_I(y);
+  int N_i;
 
   double out = -INFINITY;
   if (mus_jk > prior.mus_cutoff && state.Z(j,k) == 1) {
@@ -23,7 +24,7 @@ double log_fc_mus(double mus_jk, State &state, const Data &y,
   }
 
   for (int i=0; i<I; i++) {
-    const int N_i = y[i].n_cols;
+    N_i = get_Ni(y,i);
 
     for (int n=0; n<N_i; n++) {
 
@@ -41,7 +42,7 @@ double log_fc_mus(double mus_jk, State &state, const Data &y,
 
 void update_mus(State &state, const Data &y, const Prior &prior) {
 
-  const int J = y[0].n_rows;
+  const int J = get_J(y);
   const int K = state.K;
 
   for (int j = 0; j < J; j++) {

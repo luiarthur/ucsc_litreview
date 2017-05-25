@@ -6,14 +6,14 @@ double log_fc_log_sig2(double log_sig2_i, State &state, const Data &y,
   double ll = 0;
   const double sig_i = sqrt(exp(log_sig2_i));
 
-  const int J = y[0].n_rows;
+  const int J = get_J(y);
   double lin;
   double mus_jlin;
   int N_i;
 
 
   for (int j=0; j < J; j++) {
-    N_i = y[0].n_cols;
+    N_i = get_Ni(y, i);
     for (int n=0; n < N_i; n++) {
       if (state.e[i][n][j]) {
         lin = state.lam[i][n];
@@ -28,7 +28,7 @@ double log_fc_log_sig2(double log_sig2_i, State &state, const Data &y,
 
 void update_sig2(State &state, const Data &y, const Prior &prior) {
 
-  const int I = y.size();
+  const int I = get_I(y);
   for (int i=0; i < I; i++) {
 
     auto log_fc = [&](double log_sig2_j) {

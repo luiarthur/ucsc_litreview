@@ -161,3 +161,7 @@ double log_dtnorm(double x, double m, double s, double thresh, bool lt) {
 
   return out;
 }
+
+int delta_0(double x) {
+  return x == 0 ? 1 : 0;
+}

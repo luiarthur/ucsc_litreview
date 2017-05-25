@@ -25,7 +25,7 @@ double log_fc_log_tau2(double log_tau2_j, State &state, const Data &y,
 
 void update_tau2(State &state, const Data &y, const Prior &prior) {
 
-  const int J = y[0].n_rows;
+  const int J = get_J(y);
   for (int j=0; j < J; j++) {
 
     auto log_fc = [&](double log_tau2_j) {

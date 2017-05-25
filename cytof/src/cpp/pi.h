@@ -1,9 +1,9 @@
-// Updating tau^2_j. See Section 5.4 of manual.
+// Updating pi_i. See Section 5.4 of manual.
 
 void update_pi(State &state, const Data &y, const Prior &prior) {
 
-  const int I = y.size();
-  const int J = y[0].n_rows;
+  const int I = get_I(y);
+  const int J = get_J(y);
   double a_new, b_new;
   double c_j;
   double d = state.d;

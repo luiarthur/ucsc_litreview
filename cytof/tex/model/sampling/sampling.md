@@ -850,7 +850,7 @@ w_{ik}
 \bc{
   \pi_{ij}\delta_0(y_{inj}) + 
   (1-\pi_{ij})
-  \TNpdfc{y_{inj}}{\mus_{j,k}}{\sigma_i}
+  \TNpdf{y_{inj}}{\mus_{j,k}}{\sigma_i}
 }^{\Ind{z_{j,k}=0}} \times \\
 &\hspace{-5em}
 \bc{

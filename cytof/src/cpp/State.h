@@ -11,9 +11,9 @@ struct State {
   arma::vec sig2;   // I
   arma::vec v;      // K
   arma::mat H;      // J x K
-  type_lambda lam;  // I x N
+  type_lambda lam;  // I x N_i
   arma::mat W;      // I x K
   arma::mat Z;      // J x K
-  type_e e;         // I x N x J
+  type_e e;         // I x N_i x J
   int K;
 };
