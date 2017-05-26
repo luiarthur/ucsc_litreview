@@ -10,7 +10,7 @@ double log_fc_log_d(double log_d, State &state, const Data &y,
 
   const double lp = R::dnorm(log_d, prior.m_d, sqrt(prior.s2_d), 1);
   double logit_c_j;
-  double ll = 0;
+  double ll = R::lgammafn(d);
   double pi_ij;
 
   for (int i=0; i<I; i++) {
@@ -21,8 +21,8 @@ double log_fc_log_d(double log_d, State &state, const Data &y,
       a = d / (1+exp(-logit_c_j));
       b = d / (1+exp( logit_c_j));
 
-      ll += (a - 1)*log(pi_ij) + (b - 1)*log(1-pi_ij) +
-            R::lgammafn(d) - R::lgammafn(a) - R::lgammafn(b);
+      ll += (a-1)*log(pi_ij) + (b-1)*log(1-pi_ij) - 
+            (R::lgammafn(a) + R::lgammafn(b));
     }
   }
   
