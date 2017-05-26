@@ -19,7 +19,7 @@ log full conditional (log likelihood + log prior) for the parameter.
 - [x] `lam.h`
 - [x] `e.h`
 - [x] `w.h`
-- [ ] `c.h`
+- [x] `c.h`
 - [ ] `d.h`
 - [ ] `K.h`
 - [ ] `theta.h`

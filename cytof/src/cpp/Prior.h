@@ -10,10 +10,10 @@ struct Prior {
   double a_tau; double b_tau; double cs_tau2;
 
   // c
-  double s2_c;
+  double s2_c; double cs_c;
 
   // d
-  double m_d; double s2_d;
+  double m_d; double s2_d; double cs_d;
 
   // sig2
   double a_sig; double b_sig; double cs_sig2;

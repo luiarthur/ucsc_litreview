@@ -1,3 +1,5 @@
+// Updating W. See Section 5.10 of manual.
+
 void update_W(State &state, const Data&y, const Prior &prior) {
   const int I = get_I(y);
   const int K = state.K;
