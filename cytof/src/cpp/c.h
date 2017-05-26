@@ -8,7 +8,7 @@ double log_fc_logit_cj(double logit_c_j, State &state, const Data &y,
   const double log_d = log(state.d);
 
   // Note that this is simply a Normal
-  const double lp = R::dnorm(logit_c_j, 0, prior.s2_c, 1);
+  const double lp = R::dnorm(logit_c_j, 0, sqrt(prior.s2_c), 1);
   double ll = 0;
   double pi_ij;
 
@@ -28,11 +28,11 @@ void update_c(State &state, const Data &y, const Prior &prior) {
 
   for (int j=0; j<J; j++) {
 
-    auto log_fc = [&](double log_cj) {
-      return log_fc_logit_cj(log_cj, state, y, prior, j);
+    auto log_fc = [&](double logit_cj) {
+      return log_fc_logit_cj(logit_cj, state, y, prior, j);
     };
 
     state.c(j) = inv_logit(metropolis::uni(logit(state.c(j), 0, 1),
-                                            log_fc, prior.cs_c), 0, 1);
+                                           log_fc, prior.cs_c), 0, 1);
   }
 }
