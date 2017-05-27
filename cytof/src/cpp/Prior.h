@@ -21,9 +21,13 @@ struct Prior {
   // alpha
   double alpha;
 
+  // v
+  double cs_v;
+
   // H
   arma::vec m_h;
   arma::mat S_h;
+  double cs_h;
 
   // W
   arma::rowvec a_w;

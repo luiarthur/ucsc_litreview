@@ -158,16 +158,16 @@ double lp_logit_unif(double logit_u) {
   return logit_u - 2 * log(1+ exp(logit_u));
 }
 
-// only kernel for mean parameter
+// log density of truncated normal
 double log_dtnorm(double x, double m, double s, double thresh, bool lt) {
-  double z = (x - m) / s;
+  double ldnorm = R::dnorm(x, m, s, 1);
+  double Phi = R::pnorm(x, m, s, 1, 0);
   double out;
-  double Phi = R::pnorm(z - thresh / s, 0, 1, 1, 0);
 
   if (lt) {
-    out = -log(s) - z*z / 2 - log(Phi);
+    out = ldnorm - log(Phi);
   } else {
-    out = -log(s) - z*z / 2 - log(1 - Phi);
+    out = ldnorm - log(1 - Phi);
   }
 
   return out;

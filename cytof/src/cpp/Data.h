@@ -12,6 +12,17 @@ int get_J(const Data &y) {
   return y[0].n_cols;
 }
 
+double marginal_lf(double y, double mu, double sig, int z, double pi) {
+  double ld = log_dtnorm(y, mu, sig, 0, 1);
+  double out;
+  if (z == 1) {
+    out = ld;
+  } else {
+    out = log(pi * delta_0(y) + (1-pi) * exp(ld));
+  }
+  return out;
+}
+
 /*
  * Data y:
  *   

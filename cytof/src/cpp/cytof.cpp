@@ -10,10 +10,8 @@
 #include "pi.h"    // 5.4
 #include "sig2.h"  // 5.5
 
-/*
-#include "v.h"     // 5.6
-#include "H.h"     // 5.7
-*/
+#include "v_mus.h"     // 5.6
+#include "H_mus.h"     // 5.7
 
 #include "lam.h"   // 5.8
 #include "e.h"     // 5.9

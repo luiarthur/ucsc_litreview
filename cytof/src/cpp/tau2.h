@@ -2,13 +2,13 @@
 
 double log_fc_log_tau2(double log_tau2_j, State &state, const Data &y,
                        const Prior &prior, const int j) {
-  double ll = 0;
   const int K = state.K;
   const double thresh = prior.mus_cutoff; // log(2)
   double mus_jk;
   const double psi_j = state.psi(j);
   const double tau_j = sqrt(exp(log_tau2_j));
   const double lp = lp_log_invgamma(log_tau2_j, prior.a_tau, prior.b_tau);
+  double ll;
   
   for (int k=0; k < K; k++) {
     mus_jk = state.mus(j,k);
