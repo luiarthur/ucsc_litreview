@@ -196,13 +196,13 @@ arma::rowvec rdir(const arma::vec &a) {
 
 // TODO: check this function
 double rtnorm(double m, double s, double lo, double hi) {
-  double draw = 0.0;
+
+  double draw, cand;
   bool valid = false;
-  double cand;
 
   while (!valid) {
-    cand = R::rnorm(0, 1);
-    if ((cand <= hi) && (cand >= lo)) {
+    cand = R::rnorm(m, s);
+    if ((lo < cand) && (cand < hi)) {
       draw = cand;
       valid = true;
     }
