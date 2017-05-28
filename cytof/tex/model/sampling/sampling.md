@@ -809,7 +809,7 @@ will be as follows:
    \times \\
    %%% LIKELIHOOD %%%
    &
-   \prod_{\bc{(i,n,j):~\lin \ge k,~\tilde z_{j,\lin}=1,~z_{j,\lin}=0}}
+   \prod_{\bc{(i,n,j):~\lin = k,~\tilde z_{j,\lin}=1,~z_{j,\lin}=0}}
    \p{
      \frac{ % LIKELIHOOD
        \TNpdf{y_{inj}}{\tmus_{j,\lin}}{\sigma_i}
@@ -820,7 +820,7 @@ will be as follows:
    } \times
    \\\\
    &
-   \prod_{\bc{(i,n,j):~\lin \ge k,~\tilde z_{j,\lin}=0,~z_{j,\lin}=1}}
+   \prod_{\bc{(i,n,j):~\lin = k,~\tilde z_{j,\lin}=0,~z_{j,\lin}=1}}
    \p{
      \frac{ % LIKELIHOOD
        \pi_{ij} \delta_0(y_{inj}) + (1-\pi_{ij})

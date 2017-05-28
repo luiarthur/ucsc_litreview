@@ -60,3 +60,15 @@ void update_mus(State &state, const Data &y, const Prior &prior) {
 };
 
 
+// TODO: check this
+double rmus(double psi, double tau, int z, double thresh) {
+  double draw;
+
+  if (z == 1) {
+    draw = rtnorm(psi, tau, thresh, INFINITY);
+  } else {
+    draw = rtnorm(psi, tau, -INFINITY, thresh);
+  }
+
+  return draw;
+}

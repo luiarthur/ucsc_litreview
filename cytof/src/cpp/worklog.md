@@ -14,7 +14,7 @@ log full conditional (log likelihood + log prior) for the parameter.
 - [x] `tau2.h`
 - [x] `pi.h`
 - [x] `sig2.h`
-- [ ] `v.h`
+- [x] `v.h`
 - [ ] `H.h`
 - [x] `lam.h`
 - [x] `e.h`
@@ -24,6 +24,12 @@ log full conditional (log likelihood + log prior) for the parameter.
 - [ ] `K.h`
 - [ ] `theta.h`
 
+
+# 27 May, 2017
+Found typo in manual:
+
+- 5.7 (updating $h_k$): in last line of computing acceptance probability,
+  changed $\ge k$ to $= k$.
 
 # 25 May, 2017
 

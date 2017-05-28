@@ -10,6 +10,7 @@
 #include "pi.h"    // 5.4
 #include "sig2.h"  // 5.5
 
+#include "z.h"
 #include "v_mus.h"     // 5.6
 #include "H_mus.h"     // 5.7
 

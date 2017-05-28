@@ -177,6 +177,10 @@ int delta_0(double x) {
   return x == 0 ? 1 : 0;
 }
 
+int Ind(bool x) {
+  return x ? 1 : 0;
+}
+
 arma::rowvec rdir(const arma::vec &a) {
   const int n = a.size();
   arma::rowvec x(n);
@@ -188,4 +192,21 @@ arma::rowvec rdir(const arma::vec &a) {
   }
 
   return x / sum_x;
+}
+
+// TODO: check this function
+double rtnorm(double m, double s, double lo, double hi) {
+  double draw = 0.0;
+  bool valid = false;
+  double cand;
+
+  while (!valid) {
+    cand = R::rnorm(0, 1);
+    if ((cand <= hi) && (cand >= lo)) {
+      draw = cand;
+      valid = true;
+    }
+  }
+
+  return draw;
 }

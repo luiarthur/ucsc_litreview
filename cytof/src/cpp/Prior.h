@@ -27,6 +27,7 @@ struct Prior {
   // H
   arma::vec m_h;
   arma::mat S_h;
+  arma::mat G;
   double cs_h;
 
   // W
