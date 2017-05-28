@@ -15,7 +15,7 @@ log full conditional (log likelihood + log prior) for the parameter.
 - [x] `pi.h`
 - [x] `sig2.h`
 - [x] `v.h`
-- [ ] `H.h`
+- [x] `H.h`
 - [x] `lam.h`
 - [x] `e.h`
 - [x] `w.h`
@@ -23,6 +23,7 @@ log full conditional (log likelihood + log prior) for the parameter.
 - [x] `d.h`
 - [ ] `K.h`
 - [ ] `theta.h`
+- [ ] `cytof.cpp`
 
 
 # 27 May, 2017
