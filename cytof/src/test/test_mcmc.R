@@ -11,10 +11,11 @@ b <- 1:k
 
 y <- X %*% b + rnorm(n, 0, sqrt(sig2))
 
-sourceCpp("test_mcmc.cpp") 
+system.time(
 out <- fit(y=y, X=X, init_beta=rep(0,k), cs_beta=1, 
-           a_sig=2, b_sig=1, init_sig2=1, cs_sig2=.5,
+           a_sig=2, b_sig=1, init_sig2=1, cs_sig2=.2,
            B=2000, burn=3000, pr=100)
+)
 colnames(out) <- c(paste0('b',1:k), 'sig2')
 
 plotPost(out[,11])

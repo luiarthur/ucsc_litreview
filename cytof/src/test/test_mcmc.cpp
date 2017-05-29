@@ -33,9 +33,12 @@ arma::mat fit(arma::vec y, arma::mat X,
       return -ss[0] / (2 * state.sig2);
     };
 
-    auto lp_beta = [&](arma::vec beta) { return 0; };
+    auto lp_beta = [&](arma::vec b) { return 0; };
+    auto lfc_beta = [&](arma::vec b) {
+      return lp_beta(b) + ll_beta(b);
+    };
 
-    state.beta = metropolis::mv(state.beta, ll_beta, lp_beta, XXi);
+    state.beta = metropolis::mv(state.beta, lfc_beta, XXi);
      
     // update sig2
     const auto Xb = X * state.beta;
@@ -48,8 +51,11 @@ arma::mat fit(arma::vec y, arma::mat X,
     auto lp_sig2 = [&](double log_sig2) {
       return lp_log_invgamma(log_sig2, a_sig, b_sig);
     };
+    auto lfc_sig2 = [&](double log_sig2) {
+      return lp_sig2(log_sig2) + ll_sig2(log_sig2);
+    };
 
-    state.sig2 = exp(metropolis::uni(log(state.sig2), ll_sig2, lp_sig2, cs_sig2));
+    state.sig2 = exp(metropolis::uni(log(state.sig2), lfc_sig2, cs_sig2));
   };
 
   //// Assign Function
