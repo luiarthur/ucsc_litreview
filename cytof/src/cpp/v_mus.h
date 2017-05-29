@@ -30,7 +30,7 @@ void update_vk_mus_kToK(State &state, const Data &y, const Prior &prior, int k) 
         if (cand_Z_k_to_K(j,l) != state.Z(j,k-l)) {
           cand_mus_k_to_K(j,l) = rmus(state.psi(j), sqrt(state.tau2(j)), 
                                       cand_Z_k_to_K(j,l),
-                                      prior.mus_cutoff);
+                                      prior.mus_thresh);
         }
       }
     } else if (l == k) {

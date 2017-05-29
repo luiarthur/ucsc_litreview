@@ -48,7 +48,7 @@ void update_Hjk_mus_jk(State &state, const Data &y, const Prior &prior,
   double cand_mus_jk = state.mus(j, k);
   if (cand_z_jk != state.Z(j,k)) {
     cand_mus_jk = rtnorm(state.psi(j), sqrt(state.tau2(j)), 
-                         cand_z_jk, prior.mus_cutoff);
+                         cand_z_jk, prior.mus_thresh);
   }
 
   const double u = R::runif(0,1);

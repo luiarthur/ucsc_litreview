@@ -3,7 +3,7 @@
 double log_fc_log_tau2(double log_tau2_j, State &state, const Data &y,
                        const Prior &prior, const int j) {
   const int K = state.K;
-  const double thresh = prior.mus_cutoff; // log(2)
+  const double thresh = prior.mus_thresh; // log(2)
   double mus_jk;
   const double psi_j = state.psi(j);
   const double tau_j = sqrt(exp(log_tau2_j));

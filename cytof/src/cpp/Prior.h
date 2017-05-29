@@ -1,6 +1,6 @@
 struct Prior {
   // mus
-  double mus_cutoff; // log(2)
+  double mus_thresh; // log(2)
   double cs_mu;
 
   // psi

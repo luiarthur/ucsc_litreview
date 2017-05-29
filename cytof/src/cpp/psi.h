@@ -7,7 +7,7 @@ double log_fc_psi(double psi_j, State &state, const Data &y,
   const int K = state.K;
   double mus_jk;
   double tau_j = sqrt(state.tau2(j));
-  double thresh = prior.mus_cutoff;
+  double thresh = prior.mus_thresh;
   
   for (int k=0; k < K; k++) {
     mus_jk = state.mus(j,k);

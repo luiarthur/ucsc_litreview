@@ -17,10 +17,11 @@ double log_fc_mus(double mus_jk, State &state, const Data &y,
   int N_i;
 
   double out = -INFINITY;
-  if (mus_jk > prior.mus_cutoff && state.Z(j,k) == 1) {
-    out = log_dtnorm(mus_jk, state.psi(j), tau_j, prior.mus_cutoff, 0);
-  } else if (mus_jk < prior.mus_cutoff && state.Z(j,k) == 0) {
-    out = log_dtnorm(mus_jk, state.psi(j), tau_j, prior.mus_cutoff, 1);
+  const double thresh = prior.mus_thresh;
+  if (mus_jk > thresh && state.Z(j,k) == 1) {
+    out = log_dtnorm(mus_jk, state.psi(j), tau_j, thresh, 0);
+  } else if (mus_jk < thresh && state.Z(j,k) == 0) {
+    out = log_dtnorm(mus_jk, state.psi(j), tau_j, thresh, 1);
   }
 
   for (int i=0; i<I; i++) {
