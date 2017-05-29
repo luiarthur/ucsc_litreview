@@ -30,5 +30,10 @@ struct Prior {
 
   // W
   arma::rowvec a_w;
+  
+  // K
+  int K_min;  // 1?
+  int K_max;  // 15?
+  double a_K; // constraint: 2 * a_K <= K_max - K_min
 };
 

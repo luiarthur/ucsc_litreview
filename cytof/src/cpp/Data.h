@@ -5,7 +5,7 @@ int get_I(const Data &y) {
 }
 
 int get_Ni(const Data &y, int i) {
-  return y[i].n_cols;
+  return y[i].n_rows;
 }
 
 int get_J(const Data &y) {
@@ -23,8 +23,11 @@ double marginal_lf(double y, double mu, double sig, int z, double pi) {
   return out;
 }
 
+
+
+
 /*
  * Data y:
  *   
- *   is a length (I) vector of (J x N_i) matrices. 
+ *   is a length (I) vector of (N_i x J) matrices. 
  */

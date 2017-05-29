@@ -20,13 +20,11 @@
 #include "c.h"     // 5.11
 #include "d.h"     // 5.12
 
-/*
-#include "K.h"     // 5.13.1
-#include "theta.h" // 5.13.2
- */
+#include "theta.h"     // 5.13.2
+#include "K_theta.h"   // 5.13.1
 
 //[[Rcpp::export]]
-List cytof_fit(List y) {
+List cytof_fit(List y, int B, int burn, int print_freq) {
   return List::create(Named("mus") = 1.0);
 }
 

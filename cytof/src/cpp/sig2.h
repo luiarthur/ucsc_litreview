@@ -15,10 +15,10 @@ double log_fc_log_sig2(double log_sig2_i, State &state, const Data &y,
   for (int j=0; j < J; j++) {
     N_i = get_Ni(y, i);
     for (int n=0; n < N_i; n++) {
-      if (state.e[i][n][j]) {
-        lin = state.lam[i][n];
+      if (state.e[i](n,j)) {
+        lin = state.lam(i,n);
         mus_jlin = state.mus(j, lin);
-        ll += log_dtnorm(y[i](j,n), mus_jlin, sig_i, 0, 0);
+        ll += log_dtnorm(y[i](n,j), mus_jlin, sig_i, 0, 0);
       }
     }
   }

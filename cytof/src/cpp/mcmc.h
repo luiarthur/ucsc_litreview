@@ -210,3 +210,7 @@ double rtnorm(double m, double s, double lo, double hi) {
 
   return draw;
 }
+
+int runif_discrete(int a, int b) {
+  return floor(R::runif(a, b+1));
+}

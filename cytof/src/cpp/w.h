@@ -13,7 +13,7 @@ void update_W(State &state, const Data&y, const Prior &prior) {
     N_i = get_Ni(y, i);
 
     for (int n=0; n<N_i; n++) {
-      a_new[ state.lam[i][n] ] += 1;
+      a_new[ state.lam(i,n) ] += 1;
     }
 
     state.W.row(i) = rdir(a_new);

@@ -9,7 +9,6 @@ void update_Hjk_mus_jk(State &state, const Data &y, const Prior &prior,
   const int J = get_J(y);
   int N_i;
   int lin;
-  double acc_prob;
   double b_k = 1;
   const double h_jk = state.H(j, k);
 
