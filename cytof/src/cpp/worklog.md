@@ -26,6 +26,11 @@ log full conditional (log likelihood + log prior) for the parameter.
 - [ ] `cytof.cpp`
 
 
+# 30 May, 2017
+Found typo:
+
+- 1.1 $p(y_{inj} \mid \mu^\star_{j,k})$ to $p(y_{inj} \mid \mu^\star_{j,\lambda_{in}})$
+
 # 29 May, 2017
 $y$ is indexed by $(i,n,j)$. If only a subset of $i$ is taken for $y^{TR}$, then $N_i$
 will change. Changing $N_i$ will then change the dimensions of $e$ and $\lambda$. ($e$
