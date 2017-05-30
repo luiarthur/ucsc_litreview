@@ -183,7 +183,7 @@ $$
 
 $$
 \begin{split}
-p(y_{inj} \mid \mus_{jk},\sigma_i^2, z_{j,\lin}=1) 
+p(y_{inj} \mid \mus_{j,\lin},\sigma_i^2, z_{j,\lin}=1) 
 &=~
 \TNpdf{y_{inj}}{\mus_{j,\lin}}{\sigma_i}
 \\
