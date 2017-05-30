@@ -15,7 +15,7 @@ header-includes:
     - \usepackage{bm}
     - \usepackage{bbm}
     - \usepackage{graphicx}
-    - \pagestyle{empty}
+    #- \pagestyle{empty}
     - \newcommand{\norm}[1]{\left\lVert#1\right\rVert}
     - \newcommand{\p}[1]{\left(#1\right)}
     - \newcommand{\bk}[1]{\left[#1\right]}
@@ -70,7 +70,6 @@ header-includes:
     - \newcommand{\Bern}{\text{Bernoulli}}
     - \newcommand{\Ind}[1]{\mathbbm{1}\bc{#1}}
     - \newcommand{\sign}[1]{\text{sign}\p{#1}}
-    - \pagenumbering{gobble}
     - \newcommand{\logNpdf}[3]{\frac{1}{#1\sqrt{2\pi#3}}\exp\bc{-\frac{\p{\log(#1)-#2}^2}{2{#3}}}}
     - \newcommand{\Npdf}[3]{\frac{1}{\sqrt{2\pi{#3}}}\exp\bc{-\frac{\p{#1-#2}^2}{2#3}}}
     - \newcommand{\Npdfc}[3]{\exp\bc{ -\frac{\p{#1-#2}^2}{2#3} }}
