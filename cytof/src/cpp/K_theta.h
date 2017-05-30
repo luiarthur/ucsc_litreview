@@ -18,7 +18,7 @@ double marginal_lf_all(const State &state, const Data &y,
     for (int j=0; j<J; j++) {
       pi_ij = state.pi(i,j);
       for (int n=0; n<N_i; n++) {
-        lin = state.lam(i,n);
+        lin = state.lam[i][n];
         mus_jlin = state.mus(j,lin);
         z_jlin = state.Z(j,lin); 
         out += marginal_lf(y[i](n,j), mus_jlin, sig_i, z_jlin, pi_ij);
@@ -29,7 +29,8 @@ double marginal_lf_all(const State &state, const Data &y,
   return out;
 }
 
-void update_K_theta(State &state, const Data &y_TR, const Data &y_TE,
+void update_K_theta(State &state, 
+                    const Data &y_TR, const Data &y_TE, const Data &y,
                     const Prior &prior, std::vector<State> &thetas) {
 
   // Propose K, theta
@@ -68,15 +69,26 @@ void update_K_theta(State &state, const Data &y_TR, const Data &y_TE,
 
   const int K_curr = state.K;
   const int K_cand = sample_k(K_curr);
-  update_theta(thetas[K_cand - K_min], y_TR, prior);
 
+  // TODO: Check all this to the end
   double log_acc_prob = lq_k_from(K_cand) - lq_k_from(K_curr);
+
+  adjust_lam_e_dim(thetas[K_curr-K_min], y_TE, prior);
+  log_acc_prob -= marginal_lf_all(thetas[K_curr-K_min], y_TE, prior);
+  adjust_lam_e_dim(thetas[K_curr-K_min], y_TR, prior);
+
+  // propose a new theta_K
+  update_theta(thetas[K_cand - K_min], y_TR, prior);
+  adjust_lam_e_dim(thetas[K_cand-K_min], y_TE, prior);
   log_acc_prob += marginal_lf_all(thetas[K_cand-K_min], y_TE, prior);
-  log_acc_prob -= marginal_lf_all(state, y_TE, prior);
+  adjust_lam_e_dim(thetas[K_cand-K_min], y_TR, prior);
 
   const double u = R::runif(0, 1);
 
   if (log_acc_prob > log(u)) {
     state = thetas[K_cand - K_min];
+    // update lambda and e because the dimensions depends on dimensions
+    // of the full data
+    adjust_lam_e_dim(state, y, prior);
   }
 }

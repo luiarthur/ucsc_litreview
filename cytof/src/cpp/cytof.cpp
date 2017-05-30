@@ -35,7 +35,7 @@ std::vector<List> cytof_fit(const Data &y_TE, const Data &y_TR,
                             double alpha, double cs_v,
                             arma::mat G, double cs_h, 
                             arma::rowvec a_w,
-                            int K_min, int K_max, double a_K,
+                            int K_min, int K_max, int a_K,
                             int burn_small,
                             int B, int burn, int print_freq) {
 
@@ -56,33 +56,87 @@ std::vector<List> cytof_fit(const Data &y_TE, const Data &y_TR,
   std::vector<arma::mat> y = y_TE;
   y.insert( y.end(), y_TR.begin(), y_TR.end() );
 
+  const int I = get_I(y);
+  const int J = get_J(y);
+  int N_i;
+
+
   // init thetas
+  // TODO: enable setting this from function
   std::vector<State> thetas(K_max - K_min + 1);
   for (int K=0; K<(K_max-K_min); K++) {
-    // TODO
+    // 1-D params
+    const int KK = thetas[K].K;
+
+    thetas[K].mus = arma::mat(J,KK);
+    thetas[K].mus.fill(m_psi);
+    thetas[K].psi = arma::vec(J);
+    thetas[K].psi.fill(m_psi);
+    thetas[K].tau2 = arma::vec(J);
+    thetas[K].tau2.fill(b_tau);
+    thetas[K].pi = arma::mat(I,J);
+    thetas[K].pi.fill(.5);
+    thetas[K].c = arma::vec(J);
+    thetas[K].c.fill(0);
+    thetas[K].d = exp(m_d);
+    thetas[K].sig2 = arma::vec(I);
+    thetas[K].sig2.fill(b_sig);
+    thetas[K].v = arma::vec(KK);
+    thetas[K].v.fill(.5);
+    thetas[K].H = arma::mat(J,KK);
+    thetas[K].H.fill(0);
+    thetas[K].W = arma::mat(I,KK);
+    thetas[K].W.fill(a_w[0]);
+    thetas[K].Z = arma::Mat<int>(J,KK);
+    double b_k = 1;
+    for (int j=0; j<J; j++) {
+      for (int k=0; k<KK; k++) {
+        b_k *= thetas[K].v[k];
+        thetas[K].Z(j,k) = compute_z(0, G(j,j), b_k);
+      }
+    }
+    thetas[K].K = KK;
+
+    adjust_lam_e_dim(thetas[K], y_TR, prior);
+
     // little burn in for theta | K, for K = K_min, ... , K_max
-    for (int i=0; i<burn_small; i++) {
+    for (int b=0; b<burn_small; b++) {
       update_theta(thetas[K], y_TR, prior);
     }
   }
   
   // init theta
-  State init_theta;
-  // TODO
+  State init_theta = thetas[0];
+  // update lambda and e because the dimensions depends on dimensions
+  // of the full data
+  adjust_lam_e_dim(init_theta, y, prior);
 
   auto update = [&](State &state) {
-    update_K_theta(state, y_TR, y_TE, prior, thetas);
+    update_K_theta(state, y_TR, y_TE, y, prior, thetas);
     update_theta(state, y, prior); // y_TE or y???
   };
 
   std::vector<List> out(B);
 
-  auto ass = [&](const State &state, int i) {
-    // TODO
+  auto ass = [&out](const State &state, int i) {
+    out[i] = List::create(Named("mus") = state.mus,
+                          Named("psi") = state.psi,
+                          Named("tau2") = state.tau2,
+                          Named("pi") = state.pi,
+                          Named("c") = state.c,
+                          Named("d") = state.d,
+                          Named("sig2") = state.sig2,
+                          Named("v") = state.v,
+                          Named("H") = state.H,
+                          Named("lam") = state.lam,
+                          Named("W") = state.W,
+                          Named("Z") = state.Z,
+                          Named("e") = state.e,
+                          Named("K") = state.K);
   };
 
 
-  //gibbs<State>(init, update, ass, B, burn, print_freq);
+  gibbs<State>(init_theta, update, ass, B, burn, print_freq);
 
   return out;
 }

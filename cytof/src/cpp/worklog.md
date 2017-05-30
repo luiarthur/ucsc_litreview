@@ -26,6 +26,16 @@ log full conditional (log likelihood + log prior) for the parameter.
 - [ ] `cytof.cpp`
 
 
+# 29 May, 2017
+$y$ is indexed by $(i,n,j)$. If only a subset of $i$ is taken for $y^{TR}$, then $N_i$
+will change. Changing $N_i$ will then change the dimensions of $e$ and $\lambda$. ($e$
+is indexed by $(i,n,j)$ and $\lambda$ is indexed by $(i,n)$).
+
+Doesn't this introduce complications in computing $p(y^{TR}\mid \theta,K)$
+, $p(y^{TE}\mid \theta,K)$, and $p(y\mid \theta,K)$ as the dimensions of the
+data also changes the dimensions of the parameters?
+
+
 # 27 May, 2017
 Found typo in manual:
 

@@ -45,7 +45,7 @@ void update_vk_mus_kToK(State &state, const Data &y, const Prior &prior, int k) 
     for (int j=0; j<J; j++) {
       N_i = get_Ni(y, i);
       for (int n=0; n<N_i; n++) {
-        lin = state.lam(i,n);
+        lin = state.lam[i][n];
 
         if (lin >= k && state.Z(j,lin) != cand_Z_k_to_K(j, lin-k)) {
           log_acc_prob += marginal_lf(y[i](n,j), 

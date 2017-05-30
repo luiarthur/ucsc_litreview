@@ -40,7 +40,7 @@ void update_lam(State &state, const Data &y, const Prior &prior) {
   for (int i=0; i<I; i++) {
     N_i = get_Ni(y,i);
     for (int n=0; n<N_i; n++) {
-      state.lam(i,n) = update_lin(state, y, prior, i, n);
+      state.lam[i][n] = update_lin(state, y, prior, i, n);
     }
   }
 }

@@ -29,7 +29,7 @@ double log_fc_mus(double mus_jk, State &state, const Data &y,
 
     for (int n=0; n<N_i; n++) {
 
-      if (state.e[i](n,j) == 0 && state.lam(i,n) == k) {
+      if (state.e[i](n,j) == 0 && state.lam[i][n] == k) {
         out += log_dtnorm(y[i](n,j), mus_jk, tau_j, 0, 1);
       }
 

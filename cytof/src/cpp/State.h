@@ -1,3 +1,4 @@
+using type_lam = std::vector<std::vector<int>>;
 using type_e = std::vector<arma::Mat<int>>;
 
 struct State {
@@ -10,7 +11,7 @@ struct State {
   arma::vec sig2;     // I
   arma::vec v;        // K
   arma::mat H;        // J x K
-  arma::Mat<int> lam; // I x N_i
+  type_lam lam;       // I x N_i
   arma::mat W;        // I x K
   arma::Mat<int> Z;   // J x K
   type_e e;           // I x N_i x J

@@ -19,8 +19,8 @@ void update_pi(State &state, const Data &y, const Prior &prior) {
       N_i = get_Ni(y, i);
 
       for (int n=0; n < N_i; n++) {
-        a_new += state.e[i](n,j) * (1-state.Z(j, state.lam(i,n)));
-        b_new += (1-state.e[i](n,j)) * (1-state.Z(j, state.lam(i,n)));
+        a_new += state.e[i](n,j) * (1-state.Z(j, state.lam[i][n]));
+        b_new += (1-state.e[i](n,j)) * (1-state.Z(j, state.lam[i][n]));
       }
 
       state.pi(i, j) = R::rbeta(a_new, b_new);
