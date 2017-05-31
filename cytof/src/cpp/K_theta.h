@@ -31,7 +31,10 @@ double marginal_lf_all(const State &state, const Data &y,
 
 void update_K_theta(State &state, 
                     const Data &y_TR, const Data &y_TE, const Data &y,
+                    const std::vector<int> N_TE,
                     const Prior &prior, std::vector<State> &thetas) {
+
+  const int I = get_I();
 
   // Propose K, theta
   const int K_min = prior.K_min;
@@ -67,8 +70,18 @@ void update_K_theta(State &state,
     return out;
   };
 
+
+  // current K
   const int K_curr = state.K;
+  // propose a new K
   const int K_cand = sample_k(K_curr);
+
+  // current theta
+  const auto curr_theta = state;
+  for (int i=0; i<I;
+  curr_theta.lam
+
+
 
   // TODO: Check all this to the end
   double log_acc_prob = lq_k_from(K_cand) - lq_k_from(K_curr);

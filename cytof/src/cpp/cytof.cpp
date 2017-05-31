@@ -52,13 +52,21 @@ std::vector<List> cytof_fit(const Data &y_TE, const Data &y_TR,
     K_min, K_max, a_K
   };
 
-  // create y by concatenating y_TE & y_TR. Better way?
-  std::vector<arma::mat> y = y_TE;
-  y.insert( y.end(), y_TR.begin(), y_TR.end() );
+  assert(y_TE.size() == y_TR.size());
+  
+  std::vector<arma::mat> y(y_TE.size());
+  for (int i=0; i<y.size(); i++) {
+    y[i] = arma::join_cols(y_TE[i], y_TE[i]);
+  }
 
   const int I = get_I(y);
   const int J = get_J(y);
   int N_i;
+
+  std::vector<int> N_TE(I);
+  for (int i=0; i<I; i++) {
+    N_TE[i] = y_TE[i].n_rows;
+  }
 
 
   // init thetas
@@ -104,6 +112,7 @@ std::vector<List> cytof_fit(const Data &y_TE, const Data &y_TR,
       update_theta(thetas[K], y_TR, prior);
     }
   }
+  Rcout << "Hi" ;
   
   // init theta
   State init_theta = thetas[0];
@@ -112,7 +121,7 @@ std::vector<List> cytof_fit(const Data &y_TE, const Data &y_TR,
   adjust_lam_e_dim(init_theta, y, prior);
 
   auto update = [&](State &state) {
-    update_K_theta(state, y_TR, y_TE, y, prior, thetas);
+    update_K_theta(state, y_TR, y_TE, y, N_TE, prior, thetas);
     update_theta(state, y, prior); // y_TE or y???
   };
 

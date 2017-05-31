@@ -32,4 +32,5 @@ train_idx <- sapply(N_i, function(N) sample(1:N, round(N*.05)))
 y_TE <- lapply(as.list(1:I), function(i) y[[i]][-train_idx[[i]],])
 y_TR <- lapply(as.list(1:I), function(i) y[[i]][ train_idx[[i]],])
 
+source("cytof.R")
 out <- cytof(y_TE, y_TR)

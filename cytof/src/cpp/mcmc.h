@@ -1,5 +1,6 @@
 #include<RcppArmadillo.h> // linear algebra
 #include<functional>      // std::function
+#include<assert.h>
 
 using namespace Rcpp;
 
@@ -161,7 +162,7 @@ double lp_logit_unif(double logit_u) {
 // log density of truncated normal
 double log_dtnorm(double x, double m, double s, double thresh, bool lt) {
   double ldnorm = R::dnorm(x, m, s, 1);
-  double Phi = R::pnorm(x, m, s, 1, 0);
+  double Phi = R::pnorm(x, m+thresh, s, 1, 0);
   double out;
 
   if (lt) {
