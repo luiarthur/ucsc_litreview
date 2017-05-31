@@ -162,7 +162,7 @@ double lp_logit_unif(double logit_u) {
 // log density of truncated normal
 double log_dtnorm(double x, double m, double s, double thresh, bool lt) {
   double ldnorm = R::dnorm(x, m, s, 1);
-  double Phi = R::pnorm(x, m+thresh, s, 1, 0);
+  double Phi = R::pnorm(x, m+thresh, s, 1, 0); // less than, no log
   double out;
 
   if (lt) {
@@ -198,13 +198,12 @@ arma::rowvec rdir(const arma::vec &a) {
 // TODO: check this function
 double rtnorm(double m, double s, double lo, double hi) {
 
-  double draw, cand;
+  double draw;
   bool valid = false;
 
   while (!valid) {
-    cand = R::rnorm(m, s);
-    if ((lo < cand) && (cand < hi)) {
-      draw = cand;
+    draw = R::rnorm(m, s);
+    if ((lo < draw) && (draw < hi)) {
       valid = true;
     }
   }
