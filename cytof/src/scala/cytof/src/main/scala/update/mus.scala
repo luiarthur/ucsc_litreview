@@ -8,18 +8,19 @@ object mus {
 
   def lfc(mus_jk:Double, state:State, y:Data, prior:Prior, j:Int,k:Int) = {
 
-    var ll = 0.0
-    for (i <- 0 until getI(y)) {
-      val sigi = sqrt( state.sig2(i) )
-      for (n <- 0 until getNi(y,i)) {
-        if (state.e(i)(n)(j) == 0 && state.lam(i)(n) ==k)
-        ll += Metropolis.logpdfTnorm(y(i)(n)(j),mus_jk,sigi,0,lt=true)
-      }
-    }
+    val ll = List.range(0,getI(y)).map{ i =>
+      List.range(0,getNi(y,i)).map { n =>
+        if (state.e(i)(n)(j) == 0 && state.lam(i)(n) == k) {
+          val sigi = sqrt(state.sig2(i))
+          Metropolis.logpdfTnorm(y(i)(n)(j), mus_jk, sigi, 0, lt=true)
+        } else 0
+      }.sum
+    }.sum
 
     val tauj = sqrt(state.tau2(j))
     val psij = state.psi(j)
     val thresh = prior.musThresh
+
     val lp = if (mus_jk > thresh && state.z(j)(k) == 0) {
       Metropolis.logpdfTnorm(mus_jk, psij, tauj, thresh, lt=true)
     } else if (mus_jk < thresh && state.z(j)(k) == 1) {
