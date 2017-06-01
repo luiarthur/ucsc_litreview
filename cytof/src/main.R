@@ -33,4 +33,4 @@ y_TE <- lapply(as.list(1:I), function(i) y[[i]][-train_idx[[i]],])
 y_TR <- lapply(as.list(1:I), function(i) y[[i]][ train_idx[[i]],])
 
 source("cytof.R")
-out <- cytof(y_TE, y_TR)
+out <- cytof(y_TE, y_TR, burn_small=10)

@@ -1,6 +1,7 @@
 #include<RcppArmadillo.h> // linear algebra
 #include<functional>      // std::function
 #include<assert.h>
+#include<ctime>
 
 using namespace Rcpp;
 
@@ -231,3 +232,10 @@ double rtnorm(double m, double s, double lo, double hi) {
 int runif_discrete(int a, int b) {
   return floor(R::runif(a, b+1));
 }
+
+/* For timing
+  clock_t start;
+  start = clock();
+  // stuff to time
+  Rcout << double(clock()- start) / CLOCKS_PER_SEC << std::endl;
+*/

@@ -71,7 +71,7 @@ void update_K_theta(State &state,
 
   // current K
   const int K_curr = state.K;
-  // proposd K
+  // proposed K
   const int K_cand = sample_k(K_curr);
   double wi_cand[K_cand];
 
@@ -86,38 +86,40 @@ void update_K_theta(State &state,
   state.e = get_e_TE(curr_e, y_TE);
   // swap back later
 
-  // TODO: Check all this to the end
-  double log_acc_prob = lq_k_from(K_cand) - lq_k_from(K_curr);
-
-  log_acc_prob -= marginal_lf_all(state, y_TE, prior);
 
   /* propose a new theta_K */
-  const auto *proposed_theta = &thetas[K_cand - K_min];
-  // TODO: LEFT OFF HERE
   update_theta(thetas[K_cand - K_min], y_TR, prior);
+  auto *proposed_theta = &thetas[K_cand - K_min];
 
-  auto proposed_lam = thetas[K_cand- K_min].lam;
-  for (int i=0; i<I; i++) {
-    thetas[K_cand - K_min].lam.resize(N_TE[i]);
-    for (int k=0; k<K_cand; k++) {
-      wi_cand[k] = thetas[K_cand-K_min].W(i,k);
-    }
-    for (int n=0; n<N_TE[i]; n++) {
-      // sample from prior
-      thetas[K_cand-K_min].lam[i][n] = wsample_index(wi_cand,K_cand);
-    }
-  }
+  // proposed lambda
+  const auto proposed_lam_TR = proposed_theta->lam;
+  const auto proposed_lam_ALL = sample_lam_prior(proposed_theta->W, y);
+  const auto proposed_lam_TE = get_lam_TE(proposed_lam_ALL, y_TE);
 
-  log_acc_prob += marginal_lf_all(thetas[K_cand-K_min], y_TE, prior);
+  // proposed e
+  const auto proposed_e_TR = proposed_theta->e;
+  const auto proposed_e_ALL = sample_e_prior(proposed_theta->Z, 
+                                             proposed_lam_ALL,
+                                             proposed_theta->pi, y);
+  const auto proposed_e_TE = get_e_TE(proposed_e_ALL, y_TE);
+
+  // Compute acceptance probability
+  proposed_theta->lam = proposed_lam_TE;
+  proposed_theta->e = proposed_e_TE;
+
+  double log_acc_prob = lq_k_from(K_cand) - lq_k_from(K_curr);
+  log_acc_prob += marginal_lf_all(*proposed_theta, y_TE, prior);
+  log_acc_prob -= marginal_lf_all(state, y_TE, prior);
 
   const double u = R::runif(0, 1);
 
   if (log_acc_prob > log(u)) {
-    state = thetas[K_cand - K_min];
-    // impute lambda and e because the dimensions depends on dimensions
-    // of the full data
-    adjust_lam_e_dim(state, y, prior); // is this ok?
+    // swap back the states
+    proposed_theta->lam = proposed_lam_ALL;
+    proposed_theta->e = proposed_e_ALL;
+    state = *proposed_theta;
   } else {
     state.lam = curr_lam;
+    state.e = curr_e;
   }
 }

@@ -54,7 +54,7 @@ type_lam sample_lam_prior(const arma::mat &W, const Data &y) {
     const int N_i = get_Ni(y, i);
     lam[i].resize(N_i);
     for (int n=0; n<N_i; n++) {
-      lam[i][n] = wsample_index_vec(W.row(i));
+      lam[i][n] = wsample_index_vec(W.row(i).t()); // don't add 1
     }
   }
   

@@ -39,19 +39,6 @@ std::vector<List> cytof_fit(const Data &y_TE, const Data &y_TR,
                             int burn_small,
                             int B, int burn, int print_freq) {
 
-  // Set up priors
-  const auto prior = Prior {
-    mus_thresh, cs_mu,
-    m_psi, s2_psi, cs_psi,
-    a_tau, b_tau, cs_tau2,
-    s2_c, cs_c, 
-    m_d, s2_d, cs_d,
-    a_sig, b_sig, cs_sig2,
-    alpha, cs_v, 
-    G, cs_h, a_w,
-    K_min, K_max, a_K
-  };
-
   assert(y_TE.size() == y_TR.size());
   
   std::vector<arma::mat> y(y_TE.size());
@@ -63,6 +50,39 @@ std::vector<List> cytof_fit(const Data &y_TE, const Data &y_TR,
   const int J = get_J(y);
   int N_i;
 
+  // precompute matrix inverses for update_H
+  arma::vec S2(J);
+  arma::mat R(J, J-1);
+
+  for (int j=0; j<J; j++) {
+    const auto j_idx = arma::regspace<arma::vec>(0, J-1);
+    const arma::uvec minus_j = arma::find(j_idx != j);
+    const arma::mat G_minus_j_inv = G(minus_j, minus_j).i();
+    const double G_jj = G(j,j);
+    arma::uvec at_j; at_j << j;
+    const arma::rowvec G_j_minus_j = G(at_j, minus_j);
+
+    R.row(j) = G_j_minus_j * G_minus_j_inv;
+    const arma::vec S2j = G_jj - R.row(j) * G_j_minus_j.t();
+
+    S2(j) = S2j(0);
+  }
+
+  // Set up priors
+  const auto prior = Prior {
+    mus_thresh, cs_mu,
+    m_psi, s2_psi, cs_psi,
+    a_tau, b_tau, cs_tau2,
+    s2_c, cs_c, 
+    m_d, s2_d, cs_d,
+    a_sig, b_sig, cs_sig2,
+    alpha, cs_v, 
+    G, R, S2, cs_h,
+    a_w,
+    K_min, K_max, a_K
+  };
+
+
   std::vector<int> N_TE(I);
   for (int i=0; i<I; i++) {
     N_TE[i] = y_TE[i].n_rows;
@@ -72,10 +92,11 @@ std::vector<List> cytof_fit(const Data &y_TE, const Data &y_TR,
   // init thetas
   // TODO: enable setting this from function
   std::vector<State> thetas(K_max - K_min + 1);
-  for (int K=0; K<(K_max-K_min); K++) {
+  for (int K=0; K<(K_max - K_min + 1); K++) {
     // 1-D params
-    const int KK = thetas[K].K;
+    const int KK = K + K_min;
 
+    thetas[K].K = KK;
     thetas[K].mus = arma::mat(J,KK);
     thetas[K].mus.fill(m_psi);
     thetas[K].psi = arma::vec(J);
@@ -103,22 +124,22 @@ std::vector<List> cytof_fit(const Data &y_TE, const Data &y_TR,
         thetas[K].Z(j,k) = compute_z(0, G(j,j), b_k);
       }
     }
-    thetas[K].K = KK;
 
-    adjust_lam_e_dim(thetas[K], y_TR, prior);
+    adjust_lam_e_dim(thetas[K], y_TR);
 
     // little burn in for theta | K, for K = K_min, ... , K_max
+    Rcout << "Start burn-in" << std::endl;
     for (int b=0; b<burn_small; b++) {
+      Rcout << "\r" << b << " / " << burn_small;
       update_theta(thetas[K], y_TR, prior);
     }
   }
-  Rcout << "Hi" ;
   
   // init theta
   State init_theta = thetas[0];
   // update lambda and e because the dimensions depends on dimensions
   // of the full data
-  adjust_lam_e_dim(init_theta, y, prior);
+  adjust_lam_e_dim(init_theta, y);
 
   auto update = [&](State &state) {
     update_K_theta(state, y_TR, y_TE, y, N_TE, prior, thetas);
@@ -144,7 +165,7 @@ std::vector<List> cytof_fit(const Data &y_TE, const Data &y_TR,
                           Named("K") = state.K);
   };
 
-
+  Rcout << "Start Gibbs..." << std::endl;
   gibbs<State>(init_theta, update, ass, B, burn, print_freq);
 
   return out;
