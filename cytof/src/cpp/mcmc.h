@@ -68,6 +68,23 @@ int wsample_index_log_prob(const double log_p[], const int n) {
   return wsample_index(p, n);
 }
 
+// [[Rcpp::export]]
+int wsample_index_vec(const arma::vec p) { // GOOD
+  const int n = p.size();
+  const double p_sum = arma::sum(p);
+  const double u = R::runif(0,p_sum);
+
+  int i = 0;
+  double cumsum = 0;
+
+  do {
+    cumsum += p[i];
+    i++;
+  } while (cumsum < u);
+
+  return i-1;
+}
+
 //[[Rcpp::export]]
 arma::vec rmvnorm(arma::vec m, arma::mat S) {
   int n = m.n_rows;

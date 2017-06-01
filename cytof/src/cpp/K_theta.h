@@ -71,7 +71,7 @@ void update_K_theta(State &state,
 
   // current K
   const int K_curr = state.K;
-  // propose a new K
+  // proposd K
   const int K_cand = sample_k(K_curr);
   double wi_cand[K_cand];
 
@@ -80,13 +80,10 @@ void update_K_theta(State &state,
   const int J = get_J(y);
 
   // current theta
-  auto curr_lam = state.lam;
-  for (int i=0; i<I; i++) {
-    state.lam[i].resize(N_TE[i]);
-    for (int n=0; n<N_TE[i]; n++) {
-      state.lam[i][n] = curr_lam[i][n];
-    }
-  }
+  const auto curr_lam = state.lam;
+  const auto curr_e = state.e;
+  state.lam = get_lam_TE(curr_lam, y_TE);
+  state.e = get_e_TE(curr_e, y_TE);
   // swap back later
 
   // TODO: Check all this to the end
@@ -95,7 +92,10 @@ void update_K_theta(State &state,
   log_acc_prob -= marginal_lf_all(state, y_TE, prior);
 
   /* propose a new theta_K */
+  auto *proposed_theta = &thetas[K_cand - K_min];
+  // TODO: LEFT OFF HERE
   update_theta(thetas[K_cand - K_min], y_TR, prior);
+
   auto proposed_lam = thetas[K_cand- K_min].lam;
   for (int i=0; i<I; i++) {
     thetas[K_cand - K_min].lam.resize(N_TE[i]);

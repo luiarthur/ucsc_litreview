@@ -33,4 +33,27 @@ RCPP_MODULE(mod) {
   ;
 }
 
+// [[Rcpp::export]]
+int wsample_index_vec(const arma::vec p) { // GOOD
+  const int n = p.size();
+  const double p_sum = arma::sum(p);
+  const double u = R::runif(0,p_sum);
+
+  int i = 0;
+  double cumsum = 0;
+
+  do {
+    cumsum += p[i];
+    i++;
+  } while (cumsum < u);
+
+  return i-1;
+}
+
+
+// [[Rcpp::export]]
+arma::mat submatX(const arma::mat X, int i, int j) { // GOOD
+  return X.submat(0, 0, i-1, j-1);
+}
+
 
