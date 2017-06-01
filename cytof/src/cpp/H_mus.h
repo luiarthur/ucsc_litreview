@@ -7,7 +7,6 @@ void update_Hjk_mus_jk(State &state, const Data &y, const Prior &prior,
   const int I = get_I(y);
   const int J = get_J(y);
   int N_i;
-  int lin;
   const double h_jk = state.H(j, k);
 
   auto log_fc = [&](double h_jk, double mus_jk, int z_jk) {
@@ -17,8 +16,10 @@ void update_Hjk_mus_jk(State &state, const Data &y, const Prior &prior,
     for (int i=0; i<I; i++) {
       N_i = get_Ni(y, i);
       for (int n=0; n<N_i; n++) {
-        ll += marginal_lf(y[i](n,j), mus_jk, sqrt(state.sig2(i)),
-                          z_jk, state.pi(i,j));
+        if (state.lam[i][n] == k) {
+          ll += marginal_lf(y[i](n,j), mus_jk, sqrt(state.sig2(i)),
+                            z_jk, state.pi(i,j));
+        }
       }
     }
 
@@ -27,7 +28,7 @@ void update_Hjk_mus_jk(State &state, const Data &y, const Prior &prior,
 
 
   double b_k = 1;
-  for (int l=0; l<k; l++) { b_k *= state.v(k); }
+  for (int l=0; l<=k; l++) { b_k *= state.v(k); }
   const double cand_h_jk = R::rnorm(h_jk, prior.cs_h);
   const double cand_z_jk = compute_z(cand_h_jk, prior.G(j,j), b_k);
 

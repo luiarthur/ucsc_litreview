@@ -20,23 +20,26 @@ void update_vk_mus_kToK(State &state, const Data &y, const Prior &prior, int k) 
 
   log_acc_prob = log(cand_logit_vk - logit_vk) + (prior.alpha + 1) * log((1 + exp(-logit_vk)) / (1 + exp(-cand_logit_vk)));
 
-  double cand_b_k = 1;
 
   // update Z, mu
-  for (int l=0; l<K; l++) {
-    if (l > k) {
-      for (int j=0; j<J; j++) {
-        cand_Z_k_to_K(j,l) = compute_z(state.H(j,l),prior.G(j,j),cand_b_k);
-        if (cand_Z_k_to_K(j,l) != state.Z(j,k-l)) {
-          cand_mus_k_to_K(j,l) = rmus(state.psi(j), sqrt(state.tau2(j)), 
-                                      cand_Z_k_to_K(j,l),
+  //update cand_b_k
+  double cand_b_k = 1;
+  for (int l=0; l<k; l++) {
+    cand_b_k *= state.v(l);
+  }
+  cand_b_k *= cand_vk;
+
+  for (int l=k; l<K; l++) {
+    for (int j=0; j<J; j++) {
+      cand_Z_k_to_K(j,l-k) = compute_z(state.H(j,l-k),
+                                       prior.G(j,j),
+                                       cand_b_k);
+
+      if (cand_Z_k_to_K(j,l-k) != state.Z(j,l)) {
+        cand_mus_k_to_K(j,l-k) = rmus(state.psi(j), sqrt(state.tau2(j)), 
+                                      cand_Z_k_to_K(j,l-k),
                                       prior.mus_thresh);
-        }
       }
-    } else if (l == k) {
-      cand_b_k *= cand_vk;
-    } else { // l < k
-      cand_b_k *= state.v(l);
     }
   }
 

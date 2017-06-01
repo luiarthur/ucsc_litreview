@@ -31,7 +31,7 @@ struct Prior {
   double cs_h;
 
   // W
-  arma::rowvec a_w;
+  double a_w;
   
   // K
   int K_min;  // 1?

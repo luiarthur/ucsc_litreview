@@ -6,10 +6,10 @@ void update_W(State &state, const Data&y, const Prior &prior) {
   int N_i;
 
   arma::rowvec a_new(K);
-  
+
   for (int i=0; i<I; i++) {
 
-    a_new = prior.a_w;
+    a_new.fill(prior.a_w);
     N_i = get_Ni(y, i);
 
     for (int n=0; n<N_i; n++) {
@@ -18,4 +18,5 @@ void update_W(State &state, const Data&y, const Prior &prior) {
 
     state.W.row(i) = rdir(a_new);
   }
+
 }

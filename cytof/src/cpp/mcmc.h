@@ -200,7 +200,7 @@ int Ind(bool x) {
   return x ? 1 : 0;
 }
 
-arma::rowvec rdir(const arma::vec &a) {
+arma::rowvec rdir(const arma::rowvec &a) {
   const int n = a.size();
   arma::rowvec x(n);
   double sum_x = 0;
@@ -213,20 +213,21 @@ arma::rowvec rdir(const arma::vec &a) {
   return x / sum_x;
 }
 
-// TODO: check this function
+Function R_rtruncnorm = Environment("package:truncnorm")["rtruncnorm"];
 double rtnorm(double m, double s, double lo, double hi) {
 
-  double draw;
-  bool valid = false;
+  //double draw;
+  //bool valid = false;
 
-  while (!valid) {
-    draw = R::rnorm(m, s);
-    if ((lo < draw) && (draw < hi)) {
-      valid = true;
-    }
-  }
+  //while (!valid) {
+  //  draw = R::rnorm(m, s);
+  //  if ((lo < draw) && (draw < hi)) {
+  //    valid = true;
+  //  }
+  //}
 
-  return draw;
+  //return draw;
+  return as<double>(wrap(R_rtruncnorm(1, lo, hi, m, s)));
 }
 
 int runif_discrete(int a, int b) {

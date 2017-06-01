@@ -28,9 +28,10 @@ y <- lapply(as.list(1:I), function(i)
 
 p <- .05
 N_i <- sapply(y, nrow)
-train_idx <- sapply(N_i, function(N) sample(1:N, round(N*.05)))
+train_idx <- sapply(N_i, function(N) sample(1:N, round(N*p)))
 y_TE <- lapply(as.list(1:I), function(i) y[[i]][-train_idx[[i]],])
 y_TR <- lapply(as.list(1:I), function(i) y[[i]][ train_idx[[i]],])
 
+set.seed(1)
 source("cytof.R")
-out <- cytof(y_TE, y_TR, burn_small=10)
+out <- cytof(y_TE, y_TR, burn_small=200, K_max=10, burn=30, B=30, pr=1)

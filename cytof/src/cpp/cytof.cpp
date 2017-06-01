@@ -1,4 +1,5 @@
 #include "mcmc.h"
+#include "mytime.h"
 
 #include "Data.h"
 #include "State.h"
@@ -23,6 +24,9 @@
 #include "theta.h"     // 5.13.2
 #include "K_theta.h"   // 5.13.1
 
+#include <omp.h> // openmp for shared memory parallel
+// [[Rcpp::plugins(openmp)]]
+
 
 //[[Rcpp::export]]
 std::vector<List> cytof_fit(const Data &y_TE, const Data &y_TR, 
@@ -34,7 +38,7 @@ std::vector<List> cytof_fit(const Data &y_TE, const Data &y_TR,
                             double a_sig, double b_sig, double cs_sig2,
                             double alpha, double cs_v,
                             arma::mat G, double cs_h, 
-                            arma::rowvec a_w,
+                            double a_w,
                             int K_min, int K_max, int a_K,
                             int burn_small,
                             int B, int burn, int print_freq) {
@@ -48,7 +52,6 @@ std::vector<List> cytof_fit(const Data &y_TE, const Data &y_TR,
 
   const int I = get_I(y);
   const int J = get_J(y);
-  int N_i;
 
   // precompute matrix inverses for update_H
   arma::vec S2(J);
@@ -92,7 +95,13 @@ std::vector<List> cytof_fit(const Data &y_TE, const Data &y_TR,
   // init thetas
   // TODO: enable setting this from function
   std::vector<State> thetas(K_max - K_min + 1);
-  for (int K=0; K<(K_max - K_min + 1); K++) {
+  int K;
+
+  //omp_set_num_threads(4); 
+  //#pragma omp parallel shared(thetas) private(K)
+  //{
+  //#pragma omp for
+  for (K=0; K<(K_max - K_min + 1); K++) {
     // 1-D params
     const int KK = K + K_min;
 
@@ -106,7 +115,7 @@ std::vector<List> cytof_fit(const Data &y_TE, const Data &y_TR,
     thetas[K].pi = arma::mat(I,J);
     thetas[K].pi.fill(.5);
     thetas[K].c = arma::vec(J);
-    thetas[K].c.fill(0);
+    thetas[K].c.fill(.5);
     thetas[K].d = exp(m_d);
     thetas[K].sig2 = arma::vec(I);
     thetas[K].sig2.fill(b_sig);
@@ -115,7 +124,7 @@ std::vector<List> cytof_fit(const Data &y_TE, const Data &y_TR,
     thetas[K].H = arma::mat(J,KK);
     thetas[K].H.fill(0);
     thetas[K].W = arma::mat(I,KK);
-    thetas[K].W.fill(a_w[0]);
+    thetas[K].W.fill(1/KK);
     thetas[K].Z = arma::Mat<int>(J,KK);
     double b_k = 1;
     for (int j=0; j<J; j++) {
@@ -128,13 +137,16 @@ std::vector<List> cytof_fit(const Data &y_TE, const Data &y_TR,
     adjust_lam_e_dim(thetas[K], y_TR);
 
     // little burn in for theta | K, for K = K_min, ... , K_max
-    Rcout << "Start burn-in" << std::endl;
+    Rcout << "Start burn-in, K: " << KK << std::endl;
     for (int b=0; b<burn_small; b++) {
-      Rcout << "\r" << b << " / " << burn_small;
+      Rcout << "\r" << b+1 << " / " << burn_small;
       update_theta(thetas[K], y_TR, prior);
     }
+    Rcout << std::endl;
   }
-  
+
+  //}  // end of parallel loop
+
   // init theta
   State init_theta = thetas[0];
   // update lambda and e because the dimensions depends on dimensions
@@ -142,7 +154,11 @@ std::vector<List> cytof_fit(const Data &y_TE, const Data &y_TR,
   adjust_lam_e_dim(init_theta, y);
 
   auto update = [&](State &state) {
+    Rcout << std::endl << std::endl;
+    Rcout << "Current K: " << state.K << std::endl;
+    Rcout << "Update K & theta" << std::endl;
     update_K_theta(state, y_TR, y_TE, y, N_TE, prior, thetas);
+    Rcout << "Update theta" << std::endl;
     update_theta(state, y, prior); // y_TE or y???
   };
 
