@@ -92,7 +92,7 @@ void update_K_theta(State &state,
   log_acc_prob -= marginal_lf_all(state, y_TE, prior);
 
   /* propose a new theta_K */
-  auto *proposed_theta = &thetas[K_cand - K_min];
+  const auto *proposed_theta = &thetas[K_cand - K_min];
   // TODO: LEFT OFF HERE
   update_theta(thetas[K_cand - K_min], y_TR, prior);
 
