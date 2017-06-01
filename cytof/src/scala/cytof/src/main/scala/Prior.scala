@@ -10,17 +10,6 @@ case class Prior (
   alpha: Double =1, csV: Double =1,
   G: Array[Array[Double]], csH: Double=1,
   w: Array[Double],
-  kMin:Int=1, kMax:Int=15, aK:Int // a_K <= K_max - K_min
+  kMin:Int=1, kMax:Int=15, aK:Int // 2 * a_K <= K_max - K_min
 )
-
-
-//struct Prior {
-//  // W
-//  arma::rowvec a_w;
-//  
-//  // K
-//  int K_min;  // 1?
-//  int K_max;  // 15?
-//  int a_K; // constraint: 2 * a_K <= K_max - K_min
-//};
 
