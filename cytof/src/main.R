@@ -33,5 +33,11 @@ y_TE <- lapply(as.list(1:I), function(i) y[[i]][-train_idx[[i]],])
 y_TR <- lapply(as.list(1:I), function(i) y[[i]][ train_idx[[i]],])
 
 set.seed(1)
+library(rcommon)
 source("cytof.R")
-out <- cytof(y_TE, y_TR, burn_small=200, K_max=10, burn=30, B=30, pr=1)
+out <- cytof(y_TE, y_TR, burn_small=20, K_max=5, burn=30, B=30, pr=1)
+
+psi <- sapply(out, function(o) o$psi)
+plotPosts(psi[,1:4])
+
+Z <- sapply(out, function(o) o$Z)

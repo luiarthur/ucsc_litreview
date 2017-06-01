@@ -180,7 +180,8 @@ double lp_logit_unif(double logit_u) {
 // log density of truncated normal
 double log_dtnorm(double x, double m, double s, double thresh, bool lt) {
   double ldnorm = R::dnorm(x, m, s, 1);
-  double Phi = R::pnorm(x, m+thresh, s, 1, 0); // less than, no log
+  //double Phi = R::pnorm(x, m+thresh, s, 1, 0); // less than, no log
+  double Phi = R::pnorm(thresh, m, s, 1, 0); // less than, no log
   double out;
 
   if (lt) {

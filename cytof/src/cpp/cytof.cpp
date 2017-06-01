@@ -165,20 +165,21 @@ std::vector<List> cytof_fit(const Data &y_TE, const Data &y_TR,
   std::vector<List> out(B);
 
   auto ass = [&out](const State &state, int i) {
-    out[i] = List::create(Named("mus") = state.mus,
-                          Named("psi") = state.psi,
-                          Named("tau2") = state.tau2,
-                          Named("pi") = state.pi,
-                          Named("c") = state.c,
-                          Named("d") = state.d,
-                          Named("sig2") = state.sig2,
-                          Named("v") = state.v,
-                          Named("H") = state.H,
-                          Named("lam") = state.lam,
-                          Named("W") = state.W,
-                          Named("Z") = state.Z,
-                          Named("e") = state.e,
-                          Named("K") = state.K);
+    out[i] = List::create(
+        Named("mus") = state.mus,
+        Named("psi") = state.psi,
+        Named("tau2") = state.tau2,
+        Named("pi") = state.pi,
+        Named("c") = state.c,
+        Named("d") = state.d,
+        Named("sig2") = state.sig2,
+        Named("v") = state.v,
+        Named("H") = state.H,
+        //Named("lam") = state.lam,
+        Named("W") = state.W,
+        Named("Z") = state.Z,
+        //Named("e") = state.e,
+        Named("K") = state.K);
   };
 
   Rcout << "Start Gibbs..." << std::endl;
