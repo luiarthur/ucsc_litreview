@@ -177,21 +177,6 @@ double lp_logit_unif(double logit_u) {
   return logit_u - 2 * log(1+ exp(logit_u));
 }
 
-// log density of truncated normal
-double log_dtnorm(double x, double m, double s, double thresh, bool lt) {
-  double ldnorm = R::dnorm(x, m, s, 1);
-  //double Phi = R::pnorm(x, m+thresh, s, 1, 0); // less than, no log
-  double Phi = R::pnorm(thresh, m, s, 1, 0); // less than, no log
-  double out;
-
-  if (lt) {
-    out = ldnorm - log(Phi);
-  } else {
-    out = ldnorm - log(1 - Phi);
-  }
-
-  return out;
-}
 
 int delta_0(double x) {
   return x == 0 ? 1 : 0;
@@ -229,6 +214,23 @@ double rtnorm(double m, double s, double lo, double hi) {
 
   //return draw;
   return as<double>(wrap(R_rtruncnorm(1, lo, hi, m, s)));
+}
+
+//Function R_rtruncnorm = Environment("package:truncnorm")["dtruncnorm"];
+// log density of truncated normal
+double log_dtnorm(double x, double m, double s, double thresh, bool lt) {
+  double ldnorm = R::dnorm(x, m, s, 1);
+  //double Phi = R::pnorm(x, m+thresh, s, 1, 0); // less than, no log
+  double Phi = R::pnorm(thresh, m, s, 1, 0); // less than, no log
+  double out;
+
+  if (lt) {
+    out = ldnorm - log(Phi);
+  } else {
+    out = ldnorm - log(1 - Phi);
+  }
+
+  return out;
 }
 
 int runif_discrete(int a, int b) {
