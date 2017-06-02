@@ -41,3 +41,4 @@ psi <- sapply(out, function(o) o$psi)
 plotPosts(psi[,1:4])
 
 Z <- sapply(out, function(o) o$Z)
+

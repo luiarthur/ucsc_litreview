@@ -13,9 +13,9 @@ double log_fc_log_tau2(double log_tau2_j, State &state, const Data &y,
   for (int k=0; k < K; k++) {
     mus_jk = state.mus(j,k);
     if (state.Z(j,k) == 1) {
-      ll += log_dtnorm(mus_jk, psi_j, tau_j, thresh, 1);
+      ll += log_dtnorm(mus_jk, psi_j, tau_j, thresh, 0); // lt = false
     } else {
-      ll += log_dtnorm(mus_jk, psi_j, tau_j, thresh, 0);
+      ll += log_dtnorm(mus_jk, psi_j, tau_j, thresh, 1); // lt = true
     }
 
   }

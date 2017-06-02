@@ -13,9 +13,9 @@ double log_fc_psi(double psi_j, State &state, const Data &y,
     mus_jk = state.mus(j,k);
 
     if (state.Z(j,k) == 1) {
-      out += log_dtnorm(mus_jk, psi_j, tau_j, thresh, 0);
+      out += log_dtnorm(mus_jk, psi_j, tau_j, thresh, 0); // lt = false
     } else {
-      out += log_dtnorm(mus_jk, psi_j, tau_j, thresh, 1);
+      out += log_dtnorm(mus_jk, psi_j, tau_j, thresh, 1); // lt = true
     }
 
   }

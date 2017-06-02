@@ -12,13 +12,22 @@ int get_J(const Data &y) {
   return y[0].n_cols;
 }
 
+double marginal_lfz0(double y, double mu, double sig, double pi) {
+  double ld = log_dtnorm(y, mu, sig, 0, 0); // lt = false
+  return log(pi * delta_0(y) + (1-pi) * exp(ld));
+}
+
+double marginal_lfz1(double y, double mu, double sig, double pi) {
+  return log_dtnorm(y, mu, sig, 0, 0); // lt = false
+}
+
+
 double marginal_lf(double y, double mu, double sig, int z, double pi) {
-  double ld = log_dtnorm(y, mu, sig, 0, 1);
   double out;
   if (z == 1) {
-    out = ld;
+    out = marginal_lfz1(y, mu, sig, pi);
   } else {
-    out = log(pi * delta_0(y) + (1-pi) * exp(ld));
+    out = marginal_lfz0(y, mu, sig, pi);
   }
   return out;
 }

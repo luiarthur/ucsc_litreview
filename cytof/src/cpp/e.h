@@ -5,7 +5,7 @@ void update_einj(State &state, const Data &y, const Prior &prior,
 
   double p[2];
   double x = log_dtnorm(y[i](n,j), state.mus(j,state.lam[i][n]), 
-                        state.sig2[i], 0, 1);
+                        state.sig2[i], 0, 0);
 
   p[0] = (1 - state.pi(i,j)) * exp(x);
   p[1] = state.pi(i,j) * delta_0(y[i](n,j));

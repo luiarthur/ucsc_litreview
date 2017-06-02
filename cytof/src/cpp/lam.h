@@ -18,7 +18,7 @@ double update_lin(State &state, const Data &y, const Prior &prior,
     x = 0;
     for (int j=0; j<J; j++) {
       pi_ij = state.pi(i,j);
-      x += log_dtnorm(y[i](n, j), state.mus(j,k), state.sig2[i], 0, 1); 
+      x += log_dtnorm(y[i](n, j), state.mus(j,k), state.sig2[i], 0, 0); 
       x += -.5 * log(state.sig2[i]); // normalizing constant
       x = exp(x);
       z_jk = state.Z(j,k);
