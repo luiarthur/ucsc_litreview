@@ -21,9 +21,9 @@ object mus {
     val psij = state.psi(j)
     val thresh = prior.musThresh
 
-    val lp = if (mus_jk > thresh && state.z(j)(k) == 0) {
+    val lp = if (mus_jk < thresh && state.z(j)(k) == 0) {
       Metropolis.logpdfTnorm(mus_jk, psij, tauj, thresh, lt=true)
-    } else if (mus_jk < thresh && state.z(j)(k) == 1) {
+    } else if (mus_jk > thresh && state.z(j)(k) == 1) {
       Metropolis.logpdfTnorm(mus_jk, psij, tauj, thresh, lt=false)
     } else Double.NegativeInfinity // shouldn't ever happen
 

@@ -216,22 +216,28 @@ double rtnorm(double m, double s, double lo, double hi) {
   return as<double>(wrap(R_rtruncnorm(1, lo, hi, m, s)));
 }
 
-//Function R_rtruncnorm = Environment("package:truncnorm")["dtruncnorm"];
+//Function R_dtruncnorm = Environment("package:truncnorm")["dtruncnorm"];
 // log density of truncated normal
 double log_dtnorm(double x, double m, double s, double thresh, bool lt) {
-  double ldnorm = R::dnorm(x, m, s, 1);
-  //double Phi = R::pnorm(x, m+thresh, s, 1, 0); // less than, no log
+  double ldnorm = R::dnorm(x, m, s, 1); // log
   double Phi = R::pnorm(thresh, m, s, 1, 0); // less than, no log
   double out;
 
-  if (lt) {
+  if (lt && (x < thresh)) {
     out = ldnorm - log(Phi);
-  } else {
+  } else if ( (!lt) && (x > thresh) ) {
     out = ldnorm - log(1 - Phi);
+  } else {
+    out = - INFINITY;
   }
 
   return out;
 }
+
+double dtnorm(double x, double m, double s, double thresh, bool lt) {
+  return exp(log_dtnorm(x, m, s, thresh, lt));
+}
+
 
 int runif_discrete(int a, int b) {
   return floor(R::runif(a, b+1));

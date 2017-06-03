@@ -3,24 +3,25 @@
 double log_fc_psi(double psi_j, State &state, const Data &y,
                   const Prior &prior, const int j) {
 
-  double out = R::dnorm(psi_j, prior.m_psi, sqrt(prior.s2_psi), 1);
+  double lp = R::dnorm(psi_j, prior.m_psi, sqrt(prior.s2_psi), 1);
   const int K = state.K;
   double mus_jk;
   double tau_j = sqrt(state.tau2(j));
   double thresh = prior.mus_thresh;
+  double ll;
   
   for (int k=0; k < K; k++) {
     mus_jk = state.mus(j,k);
 
     if (state.Z(j,k) == 1) {
-      out += log_dtnorm(mus_jk, psi_j, tau_j, thresh, 0); // lt = false
-    } else {
-      out += log_dtnorm(mus_jk, psi_j, tau_j, thresh, 1); // lt = true
+      ll = log_dtnorm(mus_jk, psi_j, tau_j, thresh, 0); // lt = false
+    } else { // state.Z(j,k) == 0
+      ll = log_dtnorm(mus_jk, psi_j, tau_j, thresh, 1); // lt = true
     }
 
   }
 
-  return out;
+  return ll + lp;
 };
 
 void update_psi(State &state, const Data &y, const Prior &prior) {

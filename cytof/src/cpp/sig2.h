@@ -2,6 +2,7 @@
 
 double log_fc_log_sig2(double log_sig2_i, State &state, const Data &y,
                        const Prior &prior, const int i) {
+
   const double lp = lp_log_invgamma(log_sig2_i, prior.a_sig, prior.b_sig);
   double ll = 0;
   const double sig_i = sqrt(exp(log_sig2_i));
@@ -10,7 +11,6 @@ double log_fc_log_sig2(double log_sig2_i, State &state, const Data &y,
   double lin;
   double mus_jlin;
   int N_i;
-
 
   for (int j=0; j < J; j++) {
     N_i = get_Ni(y, i);

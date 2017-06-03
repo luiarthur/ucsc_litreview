@@ -145,7 +145,7 @@ std::vector<List> cytof_fit(const Data &y_TE, const Data &y_TR,
     Rcout << std::endl;
   }
 
-  //}  // end of parallel loop
+  //}  // end of omp parallel loop
 
   // init theta
   State init_theta = thetas[0];

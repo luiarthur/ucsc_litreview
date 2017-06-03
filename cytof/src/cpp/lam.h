@@ -5,7 +5,6 @@ double update_lin(State &state, const Data &y, const Prior &prior,
 
   const int J = get_J(y);
   const int K = state.K;
-  double out = 0;
   double x;
   int z_jk;
   double pi_ij;
@@ -15,17 +14,15 @@ double update_lin(State &state, const Data &y, const Prior &prior,
 
   for (int k=0; k<K; k++) {
     log_p[k] = log(state.W(i, k));
-    x = 0;
     for (int j=0; j<J; j++) {
       pi_ij = state.pi(i,j);
-      x += log_dtnorm(y[i](n, j), state.mus(j,k), state.sig2[i], 0, 0); 
-      x += -.5 * log(state.sig2[i]); // normalizing constant
-      x = exp(x);
       z_jk = state.Z(j,k);
       if (z_jk == 0) {
+        x = dtnorm(y[i](n, j), state.mus(j,k), state.sig2[i], 0, 0); 
         log_p[k] += log(pi_ij * delta_0(y[i](n,j)) + (1- pi_ij) * x);
       } else {
-        log_p[k] += log(x);
+        x = log_dtnorm(y[i](n, j), state.mus(j,k), state.sig2[i], 0, 0); 
+        log_p[k] += x;
       }
     }
   }

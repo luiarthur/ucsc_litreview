@@ -3,6 +3,7 @@
 
 // TODO: Check this
 void update_vk_mus_kToK(State &state, const Data &y, const Prior &prior, int k) {
+
   const int I = get_I(y);
   const int J = get_J(y);
   const int K = state.K;

@@ -115,7 +115,7 @@ object Metropolis {
   def logpdfTnorm(x:Double,m:Double,s:Double,thresh:Double,lt:Boolean) = {
     import org.apache.commons.math3.distribution.NormalDistribution
     val ldnorm = logpdfnorm(x, m, s)
-    val Phi = new NormalDistribution(m+thresh,s).cumulativeProbability(x)
+    val Phi = new NormalDistribution(m,s).cumulativeProbability(thresh)
 
     if (lt) {
       ldnorm - log(Phi)
@@ -135,6 +135,7 @@ object Metropolis {
     x.map(_ / xsum)
   }
 
+  // FIXME: This is slow. Cannot use this!
   def rtnorm(m:Double, s:Double, lo:Double, hi:Double) = {
 
     def loop(draw:Double):Double = {

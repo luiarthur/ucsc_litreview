@@ -1,6 +1,7 @@
 library(rcommon)
 source("cytof.R")
 source("../dat/readExpression.R")
+source("../dat/myimage.R")
 
 ### PATH to DATA ###
 PATH <- "../dat/cytof_data_lili/cytof_data_lili/"
@@ -35,10 +36,14 @@ y_TR <- lapply(as.list(1:I), function(i) y[[i]][ train_idx[[i]],])
 set.seed(1)
 library(rcommon)
 source("cytof.R")
-out <- cytof(y_TE, y_TR, burn_small=20, K_max=5, burn=30, B=30, pr=1)
+out <- cytof(y_TE, y_TR, burn_small=100, K_min=2, K_max=3, burn=100, B=200, pr=1)
 
-psi <- sapply(out, function(o) o$psi)
-plotPosts(psi[,1:4])
+psi <- t(sapply(out, function(o) o$psi))
+plotPost(psi[,32])
+plot(apply(psi, 2, function(pj) length(unique(pj)) / length(out)),
+     ylim=0:1, main="Acceptance rate for psi")
+abline(h=c(.25, .4), col='grey')
 
-Z <- sapply(out, function(o) o$Z)
-
+Z <- lapply(out, function(o) o$Z)
+Z_mean <- Reduce("+", Z) / length(Z)
+my.image(Z_mean >= .4)
