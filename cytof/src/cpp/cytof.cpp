@@ -43,8 +43,6 @@ std::vector<List> cytof_fit(const Data &y_TE, const Data &y_TR,
                             int burn_small,
                             int B, int burn, int print_freq) {
 
-  assert(y_TE.size() == y_TR.size());
-  
   std::vector<arma::mat> y(y_TE.size());
   for (int i=0; i<y.size(); i++) {
     y[i] = arma::join_cols(y_TE[i], y_TE[i]);

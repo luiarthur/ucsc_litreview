@@ -36,6 +36,6 @@ struct Prior {
   // K
   int K_min;  // 1?
   int K_max;  // 15?
-  int a_K; // constraint: 2 * a_K <= K_max - K_min
+  int a_K; // constraint: 2 * a_K <= K_max - K_min + 1
 };
 

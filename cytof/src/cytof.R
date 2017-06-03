@@ -17,6 +17,9 @@ cytof <- function(y_TE, y_TR,
                   burn_small=3000,
                   B=2000, burn=5000, print_freq=10) {
 
+  stopifnot(2*a_K <= K_max - K_min + 1) # require step size small enough
+  stopifnot(length(y_TE) == length(y_TR)) # require the same "I" for both
+
   cytof_fit(y_TE, y_TR, 
             mus_thresh, cs_mu,
             m_psi, s2_psi, cs_psi,

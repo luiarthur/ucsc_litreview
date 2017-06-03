@@ -36,7 +36,8 @@ y_TR <- lapply(as.list(1:I), function(i) y[[i]][ train_idx[[i]],])
 set.seed(1)
 library(rcommon)
 source("cytof.R")
-out <- cytof(y_TE, y_TR, burn_small=100, K_min=2, K_max=3, burn=100, B=200, pr=1)
+out <- cytof(y_TE, y_TR, burn_small=100, K_min=2, K_max=3, a_K=1,
+             burn=100, B=200, pr=1)
 
 psi <- t(sapply(out, function(o) o$psi))
 plotPost(psi[,32])
