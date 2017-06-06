@@ -73,8 +73,6 @@ void update_K_theta(State &state,
   const int K_curr = state.K;
   // proposed K
   const int K_cand = sample_k(K_curr);
-  double wi_cand[K_cand];
-
 
   const int I = get_I(y);
   const int J = get_J(y);
@@ -88,6 +86,7 @@ void update_K_theta(State &state,
 
 
   /* propose a new theta_K */
+  //Rcout << K_cand;
   update_theta(thetas[K_cand - K_min], y_TR, prior);
   auto *proposed_theta = &thetas[K_cand - K_min];
 
@@ -111,8 +110,14 @@ void update_K_theta(State &state,
   log_acc_prob += marginal_lf_all(*proposed_theta, y_TE, prior);
   log_acc_prob -= marginal_lf_all(state, y_TE, prior);
 
+  //Rcout << "lq_k_from(K_cand)" << lq_k_from(K_cand) << std::endl;
+  //Rcout << "lq_k_from(K_curr)" << lq_k_from(K_curr) << std::endl;
+  //Rcout << "m(cand)" << marginal_lf_all(*proposed_theta, y_TE, prior) << std::endl;
+  //Rcout << "m(curr)" << marginal_lf_all(state, y_TE, prior) << std::endl;
+
   const double u = R::runif(0, 1);
 
+  //Rcout << "log_acc_prob" << log_acc_prob << std::endl;
   if (log_acc_prob > log(u)) {
     // swap back the states
     proposed_theta->lam = proposed_lam_ALL;

@@ -24,7 +24,8 @@ void gibbs(S state,
     }
 
     if (print_freq > 0 && (i+1) % print_freq == 0) {
-      Rcout << "\rProgress:  " << i+1 << "/" << B+burn << "\t";
+      //Rcout << "\rProgress:  " << i+1 << "/" << B+burn << "\t";
+      Rcout << "\tProgress:  " << i+1 << "/" << B+burn << "\t";
     }
   }
 
@@ -218,6 +219,7 @@ double rtnorm(double m, double s, double lo, double hi) {
 
 //Function R_dtruncnorm = Environment("package:truncnorm")["dtruncnorm"];
 // log density of truncated normal
+// [[Rcpp::export]]
 double log_dtnorm(double x, double m, double s, double thresh, bool lt) {
   double ldnorm = R::dnorm(x, m, s, 1); // log
   double Phi = R::pnorm(thresh, m, s, 1, 0); // less than, no log

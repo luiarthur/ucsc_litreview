@@ -152,11 +152,11 @@ std::vector<List> cytof_fit(const Data &y_TE, const Data &y_TR,
   adjust_lam_e_dim(init_theta, y);
 
   auto update = [&](State &state) {
-    Rcout << std::endl << std::endl;
-    Rcout << "Current K: " << state.K << std::endl;
-    Rcout << "Update K & theta" << std::endl;
+    //Rcout << std::endl << std::endl;
+    Rcout << "\rCurrent K: " << state.K;
+    //Rcout << "Update K & theta" << std::endl;
     update_K_theta(state, y_TR, y_TE, y, N_TE, prior, thetas);
-    Rcout << "Update theta" << std::endl;
+    //Rcout << "Update theta" << std::endl;
     update_theta(state, y, prior); // y_TE or y???
   };
 
