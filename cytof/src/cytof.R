@@ -13,12 +13,18 @@ cytof <- function(y_TE, y_TR,
                   alpha=1, cs_v=1,
                   G=diag(ncol(y_TE[[1]])), cs_h=1,
                   a_w=1,
-                  K_min=1, K_max=15, a_K = 3,
+                  K_min=1, K_max=15, a_K=1,
                   burn_small=3000,
                   B=2000, burn=5000, print_freq=10) {
 
   stopifnot(2*a_K <= K_max - K_min + 1) # require step size small enough
   stopifnot(length(y_TE) == length(y_TR)) # require the same "I" for both
+  I <- length(y_TE)
+  J <- ncol(y_TE[[1]])
+  if (length(cs_mu) == 1) cs_mu <- rep(cs_mu, J)
+  if (length(cs_psi) == 1) cs_psi <- rep(cs_psi, J)
+  if (length(cs_tau2) == 1) cs_tau2 <- rep(cs_tau2, J)
+  if (length(cs_sig2) == 1) cs_sig2 <- rep(cs_sig2, I)
 
   cytof_fit(y_TE, y_TR, 
             mus_thresh, cs_mu,
@@ -34,4 +40,11 @@ cytof <- function(y_TE, y_TR,
             burn_small,
             B, burn, print_freq)
 
+}
+
+extend_mat <- function(X, final_cols) {
+  ncol_X <- NCOL(X)
+  nrow_X <- NROW(X)
+  stopifnot(NCOL(X) <= final_cols)
+  cbind(X, matrix(0, nrow_X, final_cols - ncol_X))
 }

@@ -8,15 +8,18 @@ double log_fc_psi(double psi_j, State &state, const Data &y,
   double mus_jk;
   double tau_j = sqrt(state.tau2(j));
   double thresh = prior.mus_thresh;
-  double ll;
-  
+
+  double ll = 0;
   for (int k=0; k < K; k++) {
     mus_jk = state.mus(j,k);
 
-    if (state.Z(j,k) == 1) {
-      ll = log_dtnorm(mus_jk, psi_j, tau_j, thresh, 0); // lt = false
-    } else { // state.Z(j,k) == 0
-      ll = log_dtnorm(mus_jk, psi_j, tau_j, thresh, 1); // lt = true
+    if (state.Z(j,k) == 1 && mus_jk > thresh) {
+      ll += log_dtnorm(mus_jk, psi_j, tau_j, thresh, false); // lt = false
+    } else if (state.Z(j,k) == 0 && mus_jk < thresh) {
+      ll += log_dtnorm(mus_jk, psi_j, tau_j, thresh, true); // lt = true
+    } else {
+      ll = -INFINITY;
+      break;
     }
 
   }
@@ -33,7 +36,7 @@ void update_psi(State &state, const Data &y, const Prior &prior) {
       return log_fc_psi(psi_j, state, y, prior, j);
     };
 
-    state.psi(j) = metropolis::uni(state.psi(j), log_fc, prior.cs_psi);
+    state.psi(j) = metropolis::uni(state.psi(j), log_fc, prior.cs_psi[j]);
   }
 
 };

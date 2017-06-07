@@ -2,6 +2,7 @@
 #include<functional>      // std::function
 #include<assert.h>
 #include<ctime>
+#include<math.h>
 
 using namespace Rcpp;
 
@@ -219,7 +220,6 @@ double rtnorm(double m, double s, double lo, double hi) {
 
 //Function R_dtruncnorm = Environment("package:truncnorm")["dtruncnorm"];
 // log density of truncated normal
-// [[Rcpp::export]]
 double log_dtnorm(double x, double m, double s, double thresh, bool lt) {
   double ldnorm = R::dnorm(x, m, s, 1); // log
   double Phi = R::pnorm(thresh, m, s, 1, 0); // less than, no log
@@ -230,7 +230,7 @@ double log_dtnorm(double x, double m, double s, double thresh, bool lt) {
   } else if ( (!lt) && (x > thresh) ) {
     out = ldnorm - log(1 - Phi);
   } else {
-    out = - INFINITY;
+    out = -INFINITY;
   }
 
   return out;
@@ -251,3 +251,19 @@ int runif_discrete(int a, int b) {
   // stuff to time
   Rcout << double(clock()- start) / CLOCKS_PER_SEC << std::endl;
 */
+
+double autotune(double accept, double target, double k) {
+
+  /*
+   * accept: current acceptance rate
+   * target: target acceptance rate
+   * k:      some tuning parameter
+   */
+
+  const double x = accept - target;
+  const double numer = (cosh(x)-1) * (k-1);
+  const double denom = cosh(target - ceil(x)) - 1;
+  const double sign = x < 0 ? -1.0 : 1.0;
+
+  return pow( 1 + numer / denom, sign);
+}

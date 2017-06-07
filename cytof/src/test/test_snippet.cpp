@@ -20,16 +20,20 @@ std::vector<double> test2(double a, double b){
   return out;
 }
 
-struct State {
+class State {
+public:
+  State(double x_) : x(x_) {}
+  double get_x() { return x; }
+  void set_x(double x_) { x = x_; }
+private:
   double x;
-  double y;
 };
 
 
 RCPP_MODULE(mod) {
   class_<State>( "State" )
-  .field( "x", &State::x )
-  .field( "y", &State::y )
+  .constructor<double>()
+  .property("x", &State::get_x, &State::set_x)
   ;
 }
 

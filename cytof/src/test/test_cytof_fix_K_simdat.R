@@ -1,12 +1,14 @@
 library(rcommon)
-source("../cytof.R", chdir=TRUE)
+source("../cytof_fixed_K.R", chdir=TRUE)
 source("../cytof_simdat.R")
 source("../../dat/myimage.R")
 
+last <- function(lst) lst[[length(lst)]]
 
-set.seed(1)
-dat <- cytof_simdat(I=3, N=list(2000, 3000, 1000), J=10, K=4, p=.5,
-                    psi=rnorm(10, 1, 2), tau2=rep(3,10), sig2=rep(.1,3),
+set.seed(3)
+dat <- cytof_simdat(I=3, N=list(200, 300, 100), J=12, K=4,
+                    psi=rnorm(12, 0, 3),
+                    tau2=rep(.1,12), sig2=rep(.1,3),
                     W=matrix(c(.3, .4, .2, .1,
                                .1, .7, .1, .1,
                                .2, .3, .3, .2), 3, 4, byrow=TRUE))
@@ -19,38 +21,38 @@ my.image(cor(dat$y[[2]]), xaxt='n',yaxt='n',xlab="",ylab="",
 my.image(cor(dat$y[[3]]), xaxt='n',yaxt='n',xlab="",ylab="",
          main="y3 Correlation b/w Markers",addLegend=TRUE)
 my.image(dat$Z)
+mean(dat$y[[1]] == 0)
 
 ### Compute
 y <- dat$y
 I <- dat$I
 J <- dat$J
 
-p <- .1
-N_i <- sapply(y, nrow)
-train_idx <- lapply(N_i, function(N) sample(1:N, round(N*p), repl=FALSE))
-y_TE <- lapply(as.list(1:I), function(i) y[[i]][-train_idx[[i]],])
-y_TR <- lapply(as.list(1:I), function(i) y[[i]][ train_idx[[i]],])
 
-source("../cytof.R", chdir=TRUE)
-out <- cytof(y_TE, y_TR, burn_small=300, K_min=1, K_max=6, a_K=2,
-             burn=100, B=200, pr=100, 
-             cs_psi=1, cs_sig2=.01, cs_tau2=1)
+source("../cytof_fixed_K.R", chdir=TRUE)
+set.seed(2)
 
-#out <- cytof(y_TE, y_TR, burn_small=10, K_min=1, K_max=6, a_K=2,
-#             burn=100, B=20, pr=100, cs_psi=.05)
-
-### K 
-K <- sapply(out, function(o) o$K)
-plot(K, type='l')
+### Sensitive priors
+### depend on starting values
+### Z recovered sometimes
+burn <- cytof_fixed_K(y, K=dat$K,
+                      burn=1000, B=1000, pr=10, 
+                      b_sig=.1, b_tau=.1,
+                      cs_psi=1,
+                      cs_sig2=1,
+                      cs_tau2=1,
+                      window=1000)
+out <- tail(burn, 1000)
 
 ### psi
 psi <- t(sapply(out, function(o) o$psi))
+my.pairs(psi[,1:5])
 plotPosts(psi[,1:5])
+
 plot(apply(psi, 2, function(pj) length(unique(pj)) / length(out)),
      ylim=0:1, main="Acceptance rate for psi")
 abline(h=c(.25, .4), col='grey')
-colMeans(psi)
-dat$psi
+cbind(colMeans(psi), dat$psi)
 
 ### sig2
 sig2 <- t(sapply(out, function(o) o$sig2))
@@ -58,26 +60,26 @@ plotPosts(sig2)
 plot(apply(sig2, 2, function(sj) length(unique(sj)) / length(out)),
      ylim=0:1, main="Acceptance rate for sig2")
 abline(h=c(.25, .4), col='grey')
-colMeans(sig2)
-dat$sig2
+cbind( colMeans(sig2), dat$sig2 )
 
 ### tau2
 tau2 <- t(sapply(out, function(o) o$tau2))
 plotPosts(tau2[,1:5])
-colMeans(tau2)
-dat$tau2
+my.pairs(tau2[,1:5])
 plot(apply(tau2, 2, function(tj) length(unique(tj)) / length(out)),
      ylim=0:1, main="Acceptance rate for tau2")
 abline(h=c(.25, .4), col='grey')
+cbind(colMeans(tau2), dat$tau2)
 
 
-#
-Z <- lapply(out, function(o) extend_mat(o$Z, 3))
+### Z
+Z <- lapply(out, function(o) o$Z)
 Z_mean <- Reduce("+", Z) / length(Z)
 my.image(Z_mean, addLegend=T)
 my.image(dat$Z, addLegend=T)
 
-W <- lapply(out, function(o) extend_mat(o$W, 6))
+### W
+W <- lapply(out, function(o) o$W)
 W_mean <- Reduce("+", W) / length(W)
 W_mean
 dat$W
@@ -91,3 +93,17 @@ lam3 <- sapply(lam, function(l) l[[3]] + 1)
 
 rowMeans(lam1)
 dat$lam[[1]]
+
+### v 
+v <- t(sapply(out, function(o) o$v))
+colMeans(v)
+
+### mus
+dat$mus
+mus <- lapply(out, function(o) o$mus)
+mus_mean <- Reduce("+", mus) / length(mus)
+
+plotPost(sapply(mus, function(m) m[1,1]))
+plotPost(sapply(mus, function(m) m[1,2]))
+plotPost(sapply(mus, function(m) m[1,3]))
+plotPost(sapply(mus, function(m) m[1,4]))

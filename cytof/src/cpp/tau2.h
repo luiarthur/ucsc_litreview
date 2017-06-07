@@ -8,14 +8,17 @@ double log_fc_log_tau2(double log_tau2_j, State &state, const Data &y,
   const double psi_j = state.psi(j);
   const double tau_j = sqrt(exp(log_tau2_j));
   const double lp = lp_log_invgamma(log_tau2_j, prior.a_tau, prior.b_tau);
-  double ll;
-  
+
+  double ll=0;
   for (int k=0; k < K; k++) {
     mus_jk = state.mus(j,k);
-    if (state.Z(j,k) == 1) {
-      ll = log_dtnorm(mus_jk, psi_j, tau_j, thresh, 0); // lt = false
+    if (state.Z(j,k) == 1 && mus_jk > thresh) {
+      ll += log_dtnorm(mus_jk, psi_j, tau_j, thresh, false); // lt = false
+    } else if (state.Z(j,k) == 0 && mus_jk < thresh) {
+      ll += log_dtnorm(mus_jk, psi_j, tau_j, thresh, true); // lt = true
     } else {
-      ll = log_dtnorm(mus_jk, psi_j, tau_j, thresh, 1); // lt = true
+      ll = -INFINITY;
+      break;
     }
 
   }
@@ -33,7 +36,7 @@ void update_tau2(State &state, const Data &y, const Prior &prior) {
     };
 
     state.tau2(j) = exp(metropolis::uni(log(state.tau2(j)), 
-                                        log_fc, prior.cs_tau2));
+                                        log_fc, prior.cs_tau2[j]));
   }
 
 };

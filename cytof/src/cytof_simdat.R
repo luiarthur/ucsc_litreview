@@ -1,22 +1,15 @@
 library(truncnorm)
 ### y_i: N_i x J
 
-cytof_simdat <- function(I, N, J, K, thresh=log(2), psi, tau2, W, sig2,
-                         p=.3) {
+cytof_simdat <- function(I, N, J, K, thresh=log(2), psi, tau2, W, sig2) {
   stopifnot(length(N) == I)
   stopifnot(nrow(W) == I && ncol(W) == K)
   stopifnot(all(rowSums(W) == 1))
   stopifnot(length(psi) == J)
   stopifnot(length(tau2) == J)
+  stopifnot(J %% K == 0)
 
-  Z <- matrix(NA, J, K)
-  valid_Z <- FALSE
-  while(!valid_Z) {
-    Z <- matrix(rbinom(J*K, size=1, prob=p), J, K)
-    if ( all(colSums(Z) >= 1) && ncol(unique(Z, MAR=2)) ) {
-      valid_Z <- TRUE
-    }
-  }
+  Z <- diag(K) %x% rep(1, J/K)
 
   lam <- lapply(1:I, function(i)
                 sample(1:K, N[[i]], prob=W[i,], replace=TRUE))
@@ -31,16 +24,21 @@ cytof_simdat <- function(I, N, J, K, thresh=log(2), psi, tau2, W, sig2,
     }
   }
 
+  pi_var <- matrix(rbeta(I*J, .8, .8), I, J)
+
   y <- as.list(1:I)
   for (i in 1:I) {
     Ni <- N[[i]]
     y[[i]] <- matrix(NA, Ni, J)
     for (n in 1:Ni) for (j in 1:J) {
-      y[[i]][n,j] <-
-        rtruncnorm(1, 0, Inf, mus[j, lam[[i]][n]], sqrt(sig2[i]))
+      lin <- lam[[i]][n]
+      y[[i]][n,j] <- if (Z[j,lin] == 1 || 1-pi_var[i,j] > runif(1)) {
+        rtruncnorm(1, 0, Inf, mus[j,lin], sqrt(sig2[i]))
+      } else 0
     }
   }
 
-  list(Z=Z, lam=lam, mus=mus, psi=psi, tau2=tau2, W=W,
+
+  list(Z=Z, lam=lam, mus=mus, psi=psi, tau2=tau2, W=W, pi_var=pi_var,
        I=I, N=N, J=J, K=K, thresh=thresh, y=y, sig2=sig2)
 }

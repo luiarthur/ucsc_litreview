@@ -30,12 +30,12 @@
 
 //[[Rcpp::export]]
 std::vector<List> cytof_fit(const Data &y_TE, const Data &y_TR, 
-                            double mus_thresh, double cs_mu,
-                            double m_psi, double s2_psi, double cs_psi,
-                            double a_tau, double b_tau, double cs_tau2,
+                            double mus_thresh, arma::vec cs_mu,
+                            double m_psi, double s2_psi, arma::vec cs_psi,
+                            double a_tau, double b_tau, arma::vec cs_tau2,
                             double s2_c, double cs_c,
                             double m_d, double s2_d, double cs_d,
-                            double a_sig, double b_sig, double cs_sig2,
+                            double a_sig, double b_sig, arma::vec cs_sig2,
                             double alpha, double cs_v,
                             arma::mat G, double cs_h, 
                             double a_w,
@@ -45,7 +45,7 @@ std::vector<List> cytof_fit(const Data &y_TE, const Data &y_TR,
 
   std::vector<arma::mat> y(y_TE.size());
   for (int i=0; i<y.size(); i++) {
-    y[i] = arma::join_cols(y_TE[i], y_TE[i]);
+    y[i] = arma::join_cols(y_TE[i], y_TR[i]);
   }
 
   const int I = get_I(y);
@@ -122,7 +122,7 @@ std::vector<List> cytof_fit(const Data &y_TE, const Data &y_TR,
     thetas[K].H = arma::mat(J,KK);
     thetas[K].H.fill(0);
     thetas[K].W = arma::mat(I,KK);
-    thetas[K].W.fill(1/KK);
+    thetas[K].W.fill(1.0 / KK);
     thetas[K].Z = arma::Mat<int>(J,KK);
     double b_k = 1;
     for (int j=0; j<J; j++) {
@@ -146,6 +146,7 @@ std::vector<List> cytof_fit(const Data &y_TE, const Data &y_TR,
   //}  // end of omp parallel loop
 
   // init theta
+  // TODO: Make this initializable 
   State init_theta = thetas[0];
   // update lambda and e because the dimensions depends on dimensions
   // of the full data
@@ -153,7 +154,7 @@ std::vector<List> cytof_fit(const Data &y_TE, const Data &y_TR,
 
   auto update = [&](State &state) {
     //Rcout << std::endl << std::endl;
-    Rcout << "\rCurrent K: " << state.K;
+    Rcout << "\rCurrent K: " << state.K << "  ";
     //Rcout << "Update K & theta" << std::endl;
     update_K_theta(state, y_TR, y_TE, y, N_TE, prior, thetas);
     //Rcout << "Update theta" << std::endl;
@@ -171,8 +172,8 @@ std::vector<List> cytof_fit(const Data &y_TE, const Data &y_TR,
         //Named("c") = state.c,
         //Named("d") = state.d,
         Named("sig2") = state.sig2,
-        //Named("v") = state.v,
-        //Named("H") = state.H,
+        Named("v") = state.v, // remove
+        //Named("H") = state.H, // remove
         Named("lam") = state.lam,
         Named("W") = state.W,
         Named("Z") = state.Z,

@@ -17,13 +17,8 @@ double update_lin(State &state, const Data &y, const Prior &prior,
     for (int j=0; j<J; j++) {
       pi_ij = state.pi(i,j);
       z_jk = state.Z(j,k);
-      if (z_jk == 0) {
-        x = dtnorm(y[i](n, j), state.mus(j,k), state.sig2[i], 0, 0); 
-        log_p[k] += log(pi_ij * delta_0(y[i](n,j)) + (1- pi_ij) * x);
-      } else {
-        x = log_dtnorm(y[i](n, j), state.mus(j,k), state.sig2[i], 0, 0); 
-        log_p[k] += x;
-      }
+      log_p[k] += marginal_lf(y[i](n,j), state.mus(j,k),
+                              sqrt(state.sig2[i]), z_jk, pi_ij);
     }
   }
 

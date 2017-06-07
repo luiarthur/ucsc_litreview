@@ -7,7 +7,6 @@ void update_Hjk_mus_jk(State &state, const Data &y, const Prior &prior,
   const int I = get_I(y);
   const int J = get_J(y);
   int N_i;
-  const double h_jk = state.H(j, k);
 
   auto log_fc = [&](double h_jk, double mus_jk, int z_jk) {
     const double lp = R::dnorm(h_jk, mj, sqrt(S2j), 1);
@@ -27,8 +26,9 @@ void update_Hjk_mus_jk(State &state, const Data &y, const Prior &prior,
   };
 
 
+  const double h_jk = state.H(j, k);
   double b_k = 1;
-  for (int l=0; l<=k; l++) { b_k *= state.v(k); }
+  for (int l=0; l<=k; l++) { b_k *= state.v(l); }
   const double cand_h_jk = R::rnorm(h_jk, prior.cs_h);
   const double cand_z_jk = compute_z(cand_h_jk, prior.G(j,j), b_k);
 
@@ -39,7 +39,7 @@ void update_Hjk_mus_jk(State &state, const Data &y, const Prior &prior,
   }
 
   const double u = R::runif(0,1);
-  if (log_fc(cand_h_jk, cand_mus_jk, cand_z_jk) - 
+  if (log_fc(cand_h_jk, cand_mus_jk, cand_z_jk) -
       log_fc(state.H(j, k), state.mus(j,k), state.Z(j,k)) > log(u)) {
     state.Z(j, k) = cand_z_jk;
     state.mus(j, k) = cand_mus_jk;
