@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# -s        =>  create standalone file (in this case report.tex latex file)
+# --toc     =>  create table of contents
+# --natbib  =>  use the natbib package in latex
+# -o        =>  output file name
+
+pandoc dataSim.md -s -o dataSim.tex --number-sections
+
+pdflatex dataSim.tex
+bibtex dataSim.aux
+pdflatex dataSim.tex
+pdflatex dataSim.tex
+rm -f *.{log,aux,nav,out,snm,toc,blg,bbl}
+rm -f dataSim.tex
+

@@ -73,10 +73,10 @@ header-includes:
     - \newcommand{\logNpdf}[3]{\frac{1}{#1\sqrt{2\pi#3}}\exp\bc{-\frac{\p{\log(#1)-#2}^2}{2{#3}}}}
     - \newcommand{\Npdf}[3]{\frac{1}{\sqrt{2\pi{#3}}}\exp\bc{-\frac{\p{#1-#2}^2}{2#3}}}
     - \newcommand{\Npdfc}[3]{\exp\bc{ -\frac{\p{#1-#2}^2}{2#3} }}
-    - \newcommand{\TNpdf}[3]{\frac{\Npdf{#1}{#2}{{#3}^2}}{\Phi\p{\frac{#1-#2}{#3}}}}
-    - \newcommand{\TNpdm}[3]{\frac{\Npdf{#1}{#2}{{#3}^2}}{1-\Phi\p{\frac{#1-#2}{#3}}}}
-    - \newcommand{\TNpdfc}[3]{\frac{\Npdfc{#1}{#2}{{#3}^2}}{\Phi\p{\frac{#1-#2}{#3}}}}
-    - \newcommand{\TNpdfcm}[3]{\frac{\Npdfc{#1}{#2}{{#3}^2}}{1-\Phi\p{\frac{#1-#2}{#3}}}}
+    - \newcommand{\TNpdf}[4]{\frac{\Npdf{#1}{#2}{{#3}^2}}{\Phi\p{\frac{#4-#2}{#3}}}}
+    - \newcommand{\TNpdm}[4]{\frac{\Npdf{#1}{#2}{{#3}^2}}{1-\Phi\p{\frac{#4-#2}{#3}}}}
+    - \newcommand{\TNpdfc}[4]{\frac{\Npdfc{#1}{#2}{{#3}^2}}{\Phi\p{\frac{#4-#2}{#3}}}}
+    - \newcommand{\TNpdfcm}[4]{\frac{\Npdfc{#1}{#2}{{#3}^2}}{1-\Phi\p{\frac{#4-#2}{#3}}}}
     - \newcommand{\rest}{\text{rest}}
     - \newcommand{\logit}{\text{logit}}
     - \newcommand{\piconsta}{\frac{\exp(\rho)}{1+\exp(-\kappa_j)}}
@@ -87,7 +87,7 @@ header-includes:
       }
     - \newcommand{\likezero}[2][]{
         \bc{
-        \TNpdf{y_{inj}}{\mus_{j#2}}{\sigma_i}
+        \TNpdm{y_{inj}}{\mus_{j#2}}{\sigma_i}{}
         }^{\Ind{e_{inj}=0#1}}
       }
     - \newcommand{\likezeroc}[2][]{
@@ -95,7 +95,7 @@ header-includes:
           \frac{
             \exp\bc{\frac{(y_{inj}-\mus_{j#2})^2}{2 \sigma^2_i}}
           }{
-            \Phi\p{\frac{y_{inj}-\mus_{j#2}}{\sigma_i}}
+            1-\Phi\p{\frac{-\mus_{j#2}}{\sigma_i}}
           }
         }^{\Ind{e_{inj}=0#1}}
       }
@@ -108,7 +108,7 @@ header-includes:
           \frac{
             \Npdf{\mus_{j,#2}}{\psi_j}{\tau_j^2}
           }{
-            1-\Phi\p{ \frac{\mus_{j,#2}-\psi_j-\log(2)}{\tau_j} }
+            1-\Phi\p{ \frac{\log(2) - \psi_j}{\tau_j} }
           }
         }^{\Ind{
             \ifthenelse{\equal{#1}{}}{
@@ -122,7 +122,7 @@ header-includes:
           \frac{
             \Npdf{\mus_{j,#2}}{\psi_j}{\tau_j^2}
           }{
-            \Phi\p{ \frac{\mus_{j,#2}-\psi_j-\log(2)}{\tau_j} }
+            \Phi\p{ \frac{\log(2) - \psi_j}{\tau_j} }
           }
         }^{\Ind{
             \ifthenelse{\equal{#1}{}}{
@@ -136,7 +136,7 @@ header-includes:
           \frac{
             \exp\bc{-\frac{(\mus_{j,#2}-\psi_j)^2}{2\tau_j^2}}
           }{
-            1-\Phi\p{ \frac{\mus_{j,#2}-\psi_j-\log(2)}{\tau_j} }
+            1-\Phi\p{ \frac{\log(2) - \psi_j}{\tau_j} }
           }
         }^{\Ind{
             \ifthenelse{\equal{#1}{}}{
@@ -150,7 +150,7 @@ header-includes:
           \frac{
             \exp\bc{-\frac{(\mus_{j,#2}-\psi_j)^2}{2\tau_j^2}}
           }{
-            \Phi\p{ \frac{\mus_{j,#2}-\psi_j-\log(2)}{\tau_j} }
+            \Phi\p{ \frac{\log(2) -\psi_j}{\tau_j} }
           }
         }^{\Ind{
             \ifthenelse{\equal{#1}{}}{
@@ -170,7 +170,7 @@ $$
 p(y_{inj} \mid \mus_{j,\lin}, \sigma^2_i, e_{inj}) &=&
 \begin{cases}
 \delta_0(y_{inj}) & \text{if } e_{inj}=1 \\
-\TNpdf{y_{inj}}{\mus_{j,\lin}}{\sigma_i}, & \text{if } e_{inj}=0 \\
+\TNpdm{y_{inj}}{\mus_{j,\lin}}{\sigma_i}{}, & \text{if } e_{inj}=0 \\
 \end{cases}
 \\
 \\
@@ -185,13 +185,13 @@ $$
 \begin{split}
 p(y_{inj} \mid \mus_{j,\lin},\sigma_i^2, z_{j,\lin}=1) 
 &=~
-\TNpdf{y_{inj}}{\mus_{j,\lin}}{\sigma_i}
+\TNpdm{y_{inj}}{\mus_{j,\lin}}{\sigma_i}{}
 \\
 %%%
 p(y_{inj} \mid  \mus_{j,\lin},\sigma_i^2, z_{j,\lin}=0, \pi_{ij})
 &=~
 \pi_{ij}\delta_0(y_{inj}) + 
-(1-\pi_{ij}) \TNpdf{y_{inj}}{\mus_{j,\lin}}{\sigma_i}
+(1-\pi_{ij}) \TNpdm{y_{inj}}{\mus_{j,\lin}}{\sigma_i}{}
 \\
 \end{split}
 $$
@@ -601,10 +601,10 @@ will be as follows:
      \prod_{\bc{(i,n,j):~\lin \ge k,~\tilde z_{j,\lin}=1,~z_{j,\lin}=0}}
      \p{
        \frac{ % LIKELIHOOD
-         \TNpdf{y_{inj}}{\tmus_{j,\lin}}{\sigma_i}
+         \TNpdm{y_{inj}}{\tmus_{j,\lin}}{\sigma_i}{}
        }{
          \pi_{ij} \delta_0(y_{inj}) + (1-\pi_{ij})
-         \TNpdf{y_{inj}}{\mus_{j,\lin}}{\sigma_i}
+         \TNpdm{y_{inj}}{\mus_{j,\lin}}{\sigma_i}{}
        }
      } \times
      \\\\
@@ -613,9 +613,9 @@ will be as follows:
      \p{
        \frac{ % LIKELIHOOD
          \pi_{ij} \delta_0(y_{inj}) + (1-\pi_{ij})
-         \TNpdf{y_{inj}}{\tmus_{j,\lin}}{\sigma_i}
+         \TNpdm{y_{inj}}{\tmus_{j,\lin}}{\sigma_i}{}
        }{
-         \TNpdf{y_{inj}}{\mus_{j,\lin}}{\sigma_i}
+         \TNpdm{y_{inj}}{\mus_{j,\lin}}{\sigma_i}{}
        }
      }
      %%% END OF LIKELIHOOD $$$
@@ -811,10 +811,10 @@ will be as follows:
    \prod_{\bc{(i,n,j):~\lin = k,~\tilde z_{j,\lin}=1,~z_{j,\lin}=0}}
    \p{
      \frac{ % LIKELIHOOD
-       \TNpdf{y_{inj}}{\tmus_{j,\lin}}{\sigma_i}
+       \TNpdm{y_{inj}}{\tmus_{j,\lin}}{\sigma_i}{}
      }{
        \pi_{ij} \delta_0(y_{inj}) + (1-\pi_{ij})
-       \TNpdf{y_{inj}}{\mus_{j,\lin}}{\sigma_i}
+       \TNpdm{y_{inj}}{\mus_{j,\lin}}{\sigma_i}{}
      }
    } \times
    \\\\
@@ -823,9 +823,9 @@ will be as follows:
    \p{
      \frac{ % LIKELIHOOD
        \pi_{ij} \delta_0(y_{inj}) + (1-\pi_{ij})
-       \TNpdf{y_{inj}}{\tmus_{j,\lin}}{\sigma_i}
+       \TNpdm{y_{inj}}{\tmus_{j,\lin}}{\sigma_i}{}
      }{
-       \TNpdf{y_{inj}}{\mus_{j,\lin}}{\sigma_i}
+       \TNpdm{y_{inj}}{\mus_{j,\lin}}{\sigma_i}{}
      }
    }
    %%% END OF LIKELIHOOD $$$
@@ -849,11 +849,11 @@ w_{ik}
 \bc{
   \pi_{ij}\delta_0(y_{inj}) + 
   (1-\pi_{ij})
-  \TNpdf{y_{inj}}{\mus_{j,k}}{\sigma_i}
+  \TNpdm{y_{inj}}{\mus_{j,k}}{\sigma_i}{}
 }^{\Ind{z_{j,k}=0}} \times \\
 &\hspace{-5em}
 \bc{
-  \TNpdfc{y_{inj}}{\mus_{j,k}}{\sigma_i} }^{\Ind{z_{j,k}=1}}
+  \TNpdfcm{y_{inj}}{\mus_{j,k}}{\sigma_i}{} }^{\Ind{z_{j,k}=1}}
 \end{split}
 $$
 
