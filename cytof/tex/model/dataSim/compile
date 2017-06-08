@@ -12,5 +12,5 @@ bibtex dataSim.aux
 pdflatex dataSim.tex
 pdflatex dataSim.tex
 rm -f *.{log,aux,nav,out,snm,toc,blg,bbl}
-rm -f dataSim.tex
+#rm -f dataSim.tex
 
