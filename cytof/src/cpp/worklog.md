@@ -31,6 +31,8 @@ Bad Mixing:
   - Fix all parameters and see if $\mu^\star$ can be estimated.
       - If, $\mu^\star$ can be estimated, then gradually unfix parameters and see 
         if they can be estimated.
+ - need to update `sampling.md` on how I'm sampling $\lambda$ and $e$ because of 
+   the different dimensions of $y$ and $y^{TE}$.
 
 
 # 30 May, 2017
