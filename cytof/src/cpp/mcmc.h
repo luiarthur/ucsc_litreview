@@ -15,14 +15,12 @@ using namespace Rcpp;
 template <typename S>
 void gibbs(S state, 
           std::function<void(S&)> update, // function to update state
-          std::function<void(const S&, int)> assign_to_out, // function to assign to out
+          std::function<void(const S&, int)> assign_to_out, // function to assign to out and perhaps do adaptive mcmc
           int B, int burn, int print_freq) {
 
   for (int i=0; i<B+burn; i++) {
     update(state);
-    if (i >= burn) {
-      assign_to_out(state, i-burn);
-    }
+    assign_to_out(state, i);
 
     if (print_freq > 0 && (i+1) % print_freq == 0) {
       //Rcout << "\rProgress:  " << i+1 << "/" << B+burn << "\t";
@@ -267,3 +265,5 @@ double autotune(double accept, double target, double k) {
 
   return pow( 1 + numer / denom, sign);
 }
+
+//double autotune2

@@ -17,8 +17,8 @@ last <- function(lst) lst[[length(lst)]]
 
 set.seed(3)
 dat <- cytof_simdat(I=3, N=list(200, 300, 100), J=12, K=4,
-                    psi=rnorm(12, 5, 1),
-                    tau2=rep(.1,12), sig2=rep(1,3),
+                    psi=rnorm(12, 2, 1),
+                    tau2=1/rgamma(12,3,.2), sig2=1/rgamma(3,3,2),
                     W=matrix(c(.3, .4, .2, .1,
                                .1, .7, .1, .1,
                                .2, .3, .3, .2), 3, 4, byrow=TRUE))
@@ -47,14 +47,14 @@ set.seed(2)
 ### Sensitive priors
 ### depend on starting values
 ### Z recovered sometimes
-burn <- cytof_fixed_K(y, K=dat$K,
-                      burn=1000, B=1000, pr=10, 
-                      b_sig=dat$sig2[1], b_tau=dat$tau2[1],
-                      cs_psi=1,
-                      cs_sig2=1,
-                      cs_tau2=1,
-                      window=1000)
-out <- tail(burn, 1000)
+out <- cytof_fixed_K(y, K=dat$K,
+                     burn=4000, B=1000, pr=20, 
+                     b_sig=dat$sig2[1], b_tau=dat$tau2[1],
+                     cs_psi=1,
+                     cs_sig2=1,
+                     cs_tau2=.05,
+                     window=100)
+length(out)
 
 ### Z
 Z <- lapply(out, function(o) o$Z)
@@ -75,7 +75,7 @@ dat$W
 sink()
 
 ### v 
-v <- t(sapply(out, function(o) o$v))
+v <- t(apply(t(sapply(out, function(o) o$v)), 1, cumprod))
 colMeans(v)
 
 ### psi

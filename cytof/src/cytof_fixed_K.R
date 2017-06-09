@@ -5,7 +5,7 @@ system.time(sourceCpp("cpp/cytof_fix_K.cpp"))
 
 cytof_fixed_K <- function(y,
                   mus_thresh=log(2), cs_mu=1,
-                  m_psi=0, s2_psi=10, cs_psi=1,
+                  m_psi=2, s2_psi=1, cs_psi=1,
                   a_tau=2, b_tau=1, cs_tau2=1,
                   s2_c=10, cs_c=1,
                   m_d=0, s2_d=10, cs_d=1,

@@ -1,7 +1,10 @@
 library(truncnorm)
 ### y_i: N_i x J
 
-cytof_simdat <- function(I, N, J, K, thresh=log(2), psi, tau2, W, sig2) {
+cytof_simdat <- function(I, N, J, K, W, thresh=log(2),
+                         pi_a=.5, pi_b=1,
+                         psi=rnorm(J, 2, 1), tau2=1/rgamma(J,3,.2),
+                         sig2=1/rgamma(3,2)) {
   stopifnot(length(N) == I)
   stopifnot(nrow(W) == I && ncol(W) == K)
   stopifnot(all(rowSums(W) == 1))
@@ -24,7 +27,7 @@ cytof_simdat <- function(I, N, J, K, thresh=log(2), psi, tau2, W, sig2) {
     }
   }
 
-  pi_var <- matrix(rbeta(I*J, 2, 8), I, J)
+  pi_var <- matrix(rbeta(I*J, .5, 1), I, J)
 
   y <- as.list(1:I)
   for (i in 1:I) {

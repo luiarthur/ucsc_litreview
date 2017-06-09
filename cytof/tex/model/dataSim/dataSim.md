@@ -206,12 +206,17 @@ be a multiple of $K$, but is merely a convenient choice in a simulation
 study. 
 
 # Simulating $\psi_{j}$
-Simulate $\psi_{j}$ from a Normal distribution with mean $\log(2)$ and
+Simulate $\psi_{j}$ from a Normal distribution with mean $2$ and
 variance 1. That is, sample:
 
 $$
-\psi_j \iid \N(\log(2), 1).
+\psi_j \iid \N(2, .5^2).
 $$
+
+This is chosen to reflect that from (real) observed data, the value
+$y_{inj} = \log(\text{expression level} / \text{cutoff} + 1)$ has
+a range of about (0,4). (Consequently, a suitable prior for $\psi_j$
+may be $\N(2,1)$.)
 
 # Simulating $\tau^2_j$
 Simulate $\tau^2_{j}$ from an inverse gamma distribution
@@ -221,6 +226,9 @@ $$
 \tau^2_j \iid \IG(3, .2).
 $$
 
+Since this parameter governs the prior variance of $\mus_{jk}$ it 
+is reasonable make it small to reflect that within a marker,
+the variance should be smaller.
 
 # Simulating $\mus_{jk}$
 Next, sample the parameter $\mus_{jk}$ from a truncated Normal
@@ -251,6 +259,9 @@ $$
 \sigma^2_i \iid \IG(3, 2).
 $$
 
+This is to reflect the variation of real data. It is typical for 
+$y_{in}$ to have variance between 0 and 1. 
+
 # Simulating $\pi_{ij}$
 $1-\pi_{ij}$ is the probability that $y_{inj}$ is expressed
 when $z_{j,\lin} = 0$. To have a rich dataset, $1-\pi_{ij}$ should be
@@ -259,12 +270,25 @@ simulate $\pi_{ij}$ from a Beta distribution with parameters 1 and 9.
 That is, sample:
 
 $$
-\pi_{ij} \iid \text{Beta}(1, 9).
+\pi_{ij} \iid \text{Beta}(.5, 1).
 $$
 
-This results in a beta distribution with mean .1 and standard 
-deviation about .092.
+This results in a beta distribution with mean of about .31 and standard 
+deviation about .083. Figure \ref{hist} shows the distribution of 
+the proportion of markers across all observations for all samples gathered
+for patient 5 (in CYTOF data) that are 0 (i.e. not expressed). No
+expressions occur in about 22% of the observations. For a $\Z$ matrix with
+slightly more white 0's than 1's, it may be more appropriate to choose
+a Beta distribution with a similar shape, but higher mean. Here,
+for instance, I have chosen a Beta distribution with a mean of .3.
 
+\beginmyfig
+![bla](img/perczero.pdf){height=40%}
+![bla](img/beta.pdf){height=40%}
+\caption{Histogram of percentage of zeros in "patient 5" data (left).
+Histogram of draws from Beta(.5, 1) distribution (right).}
+\label{hist}
+\endmyfig
 
 # Simulating $y_{inj}$
 Finally simulate $y_{inj}$ from a truncated Normal distribution
