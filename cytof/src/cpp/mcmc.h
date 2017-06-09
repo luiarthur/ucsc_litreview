@@ -266,4 +266,31 @@ double autotune(double accept, double target, double k) {
   return pow( 1 + numer / denom, sign);
 }
 
-//double autotune2
+// FIXME: Broken?
+void autotune2(double curr_x, double prev_x, double &a, double &b, double &acc, 
+               int window, int i, double &cs) {
+// http://www2.warwick.ac.uk/fac/sci/maths/research/miraw/days/montecarlo/abstracts/adaptivemiraw11_roberts.pdf
+  if ( (i+1) % window == 0 ) {
+    const double abs_x = abs(curr_x);
+    const bool x_large = abs_x > 10;
+    const bool x_small = abs_x > .1;
+    const double acc_rate = acc / window;
+    const bool acc_too_small = acc_rate < .2;
+    const bool acc_too_big = acc_rate > .4;
+    const double delta = 1.0 / ((i + 1) / window);
+    
+    if (acc_too_small) {
+      a -= delta;
+      if (x_large) b -= delta; else b += delta;
+    } else if (acc_too_big) {
+      a += delta;
+      if (x_small) b += delta; b -= delta;
+    }
+
+    cs = sqrt(exp(a) * pow(1 + abs_x, b));
+    acc = 0;
+    Rcout << acc_rate << std::endl;
+  } else if (curr_x != prev_x) {
+    acc++;
+  }
+}

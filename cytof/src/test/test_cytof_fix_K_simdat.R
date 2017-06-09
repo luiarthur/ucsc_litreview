@@ -48,12 +48,12 @@ set.seed(2)
 ### depend on starting values
 ### Z recovered sometimes
 out <- cytof_fixed_K(y, K=dat$K,
-                     burn=4000, B=1000, pr=20, 
+                     burn=2000, B=1000, pr=20, 
                      b_sig=dat$sig2[1], b_tau=dat$tau2[1],
                      cs_psi=1,
                      cs_sig2=1,
                      cs_tau2=.05,
-                     window=100)
+                     window=0)
 length(out)
 
 ### Z

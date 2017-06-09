@@ -110,22 +110,23 @@ my.image(t(summary_zeros)>p,xlab="",ylab="Markers",xaxt="n",yaxt="n",
          })
 
 
-### log(y/c) ### 
+### log(1 + y/c) ### 
 pdf("img/hist.pdf")
 par(mfrow=c(3,1),mar=c(2,4,3,2))
 for (i in 1:ncol(pat5_d54)) {
-  hist(log((pat5_d54[,i]+1E-3) / pat5_d54_cutoff[i]),xlab="",
-       main=paste0("Patient 5 Day 54 -- ", colnames(pat5_d54)[i],": log(expression / cutoff)"),prob=TRUE,ylab="Probability")
+  hist(log(1 + pat5_d54[,i] / pat5_d54_cutoff[i]),xlab="",
+       main=paste0("Patient 5 Day 54 -- ", colnames(pat5_d54)[i],": log(1 + expression / cutoff)"),prob=TRUE,ylab="Probability")
 
-  hist(log((pat5_d70[,i]+1E-3) / pat5_d70_cutoff[i]),xlab="",
-       main=paste0("Patient 5 Day 70 -- ", colnames(pat5_d54)[i],": log(expression / cutoff)"),prob=TRUE,ylab="Probability")
+  hist(log(1 + pat5_d70[,i] / pat5_d70_cutoff[i]),xlab="",
+       main=paste0("Patient 5 Day 70 -- ", colnames(pat5_d54)[i],": log(1 + expression / cutoff)"),prob=TRUE,ylab="Probability")
 
-  hist(log((pat5_d93[,i]+1E-5) / pat5_d93_cutoff[i]),xlab="",
-       main=paste0("Patient 5 Day 93 -- ", colnames(pat5_d54)[i],": log(expression / cutoff)"),prob=TRUE,ylab="Probability")
+  hist(log(1 + pat5_d93[,i] / pat5_d93_cutoff[i]),xlab="",
+       main=paste0("Patient 5 Day 93 -- ", colnames(pat5_d54)[i],": log(1 + expression / cutoff)"),prob=TRUE,ylab="Probability")
   #readline()
 }
 par(mfrow=c(1,1),mar=c(5.1,4.1,4.1,2.1))
 dev.off()
+
 
 
 ### Log((Expression+eps) / Cutoff) PLOTS FOR PB & CB ### 
