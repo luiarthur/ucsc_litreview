@@ -25,6 +25,13 @@ log full conditional (log likelihood + log prior) for the parameter.
 - [ ] `theta.h`
 - [ ] `cytof.cpp`
 
+# June 9
+Bad Mixing:
+  - try multivariate proposal for $\psi^2$, $\tau^2$, $\sigma^2$ (adaptive)
+  - Fix all parameters and see if $\mu^\star$ can be estimated.
+      - If, $\mu^\star$ can be estimated, then gradually unfix parameters and see 
+        if they can be estimated.
+
 
 # 30 May, 2017
 Found typo:

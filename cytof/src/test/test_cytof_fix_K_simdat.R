@@ -53,7 +53,7 @@ out <- cytof_fixed_K(y, K=dat$K,
                      cs_psi=1,
                      cs_sig2=1,
                      cs_tau2=.05,
-                     window=0)
+                     window=0) # do adaptive by making window>0
 length(out)
 
 ### Z

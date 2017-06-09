@@ -115,12 +115,6 @@ std::vector<List> cytof_fix_K_fit(
   std::vector<List> out(B);
 
   // Adaptive MCMC
-  std::vector<double> A_sig2(I);
-  std::vector<double> A_psi(J);
-  std::vector<double> A_tau2(J);
-  std::vector<double> B_sig2(I);
-  std::vector<double> B_psi(J);
-  std::vector<double> B_tau2(J);
   std::vector<double> acc_sig2(I);
   std::vector<double> acc_psi(J);
   std::vector<double> acc_tau2(J);
@@ -143,18 +137,21 @@ std::vector<List> cytof_fix_K_fit(
           Named("W") = state.W,
           //Named("e") = state.e,
           Named("Z") = state.Z);
-    } else {
+    } else { // ii < burn
       // TODO: adaptive MCMC
-      if ( window > 0 && ii > 0 && ii < burn) {
+      if ( window > 0 && ii > 0) {
         for (int i=0; i<I; i++) {
-          autotune2(state.sig2[i], prev_state.sig2[i], A_sig2[i], B_sig2[i], 
-                    acc_sig2[i], window, ii, prior.cs_sig2[i]);
+          autotune(acc_sig2[i], prior.cs_sig2[i],
+                   state.sig2[i], prev_state.sig2[i],
+                   ii, window, target, t);
         }
         for (int j=0; j<J; j++) {
-          autotune2(state.psi[j], prev_state.psi[j], A_psi[j], B_psi[j], 
-                    acc_psi[j], window, ii, prior.cs_psi[j]);
-          autotune2(state.tau2[j], prev_state.tau2[j], A_tau2[j], B_tau2[j], 
-                    acc_tau2[j], window, ii, prior.cs_tau2[j]);
+          autotune(acc_psi[j], prior.cs_psi[j],
+                   state.psi[j], prev_state.psi[j],
+                   ii, window, target, t);
+          autotune(acc_tau2[j], prior.cs_tau2[j],
+                   state.tau2[j], prev_state.tau2[j],
+                   ii, window, target, t);
         }
       }
       prev_state = state;
