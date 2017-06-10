@@ -40,19 +40,29 @@ y <- dat$y
 I <- dat$I
 J <- dat$J
 
-
 source("../cytof_fixed_K.R", chdir=TRUE)
 set.seed(2)
 
 ### Sensitive priors
 ### depend on starting values
 ### Z recovered sometimes
+
+#TODO: Now try AMCMC to recover mus
 out <- cytof_fixed_K(y, K=dat$K,
-                     burn=2000, B=1000, pr=20, 
+                     burn=2000, B=2000, pr=20, 
                      b_sig=dat$sig2[1], b_tau=dat$tau2[1],
                      cs_psi=1,
                      cs_sig2=1,
                      cs_tau2=.05,
+                     # Fix params:
+                     true_Z=dat$Z,
+                     true_psi=dat$psi,
+                     true_tau2=dat$tau2,
+                     true_sig2=dat$sig2,
+                     true_pi=dat$pi,
+                     true_lam=dat$lam_index_0,
+                     true_W=dat$W,
+                     #true_mu=dat$mus,
                      window=0) # do adaptive by making window>0
 length(out)
 
@@ -133,6 +143,10 @@ dat$lam[[1]]
 dat$mus
 mus <- lapply(out, function(o) o$mus)
 mus_mean <- Reduce("+", mus) / length(mus)
+exp(dat$mus - mus_mean)
+mus_vec <- sapply(mus, function(m) c(m))
+## QQ
+plot(c(dat$mus), apply(mus_vec,1,mean)); abline(0,1)
 
 plotPost(sapply(mus, function(m) m[1,1]))
 plotPost(sapply(mus, function(m) m[1,2]))

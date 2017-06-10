@@ -4,6 +4,7 @@
 #include "Data.h"
 #include "State.h"
 #include "Prior.h"
+#include "Fixed.h" // struct of fixed variables
 
 #include "mus.h"   // 5.1
 #include "psi.h"   // 5.2
@@ -36,11 +37,46 @@ std::vector<List> cytof_fix_K_fit(
     double alpha, double cs_v,
     arma::mat G, double cs_h, 
     double a_w, int K,
+    Nullable<arma::mat> true_mus, Nullable<arma::vec> true_psi,
+    Nullable<arma::vec> true_tau2, Nullable<arma::vec> true_sig2,
+    Nullable<arma::Mat<int>> true_Z, Nullable<type_lam> true_lam,
+    Nullable<arma::mat> true_W, Nullable<arma::mat> true_pi,
     int window, double target, double t,
     int B, int burn, int print_freq) {
 
   const int I = get_I(y);
   const int J = get_J(y);
+  
+  /// Messages:
+  const bool fixed_mus = true_mus.isNotNull();
+  if (fixed_mus) Rcout << "mu is fixed" << std::endl;
+  const bool fixed_psi = true_psi.isNotNull();
+  if (fixed_psi) Rcout << "psi is fixed" << std::endl;
+  const bool fixed_tau2 = true_tau2.isNotNull();
+  if (fixed_tau2) Rcout << "tau2 is fixed" << std::endl;
+  const bool fixed_sig2 = true_sig2.isNotNull();
+  if (fixed_sig2) Rcout << "sig2 is fixed" << std::endl;
+  const bool fixed_Z = true_Z.isNotNull();
+  if (fixed_Z) Rcout << "Z is fixed" << std::endl;
+  const bool fixed_lam = true_lam.isNotNull();
+  if (fixed_lam) Rcout << "lam is fixed" << std::endl;
+  const bool fixed_W = true_W.isNotNull();
+  if (fixed_W) Rcout << "W is fixed" << std::endl;
+  const bool fixed_pi = true_pi.isNotNull();
+  if (fixed_pi) Rcout << "pi is fixed" << std::endl;
+
+  // create fixed params object
+  const auto fixed_params = Fixed {
+    fixed_mus,
+    fixed_psi,
+    fixed_tau2,
+    fixed_sig2,
+    fixed_Z,
+    fixed_lam,
+    fixed_W,
+    fixed_pi
+  };
+
 
   // precompute matrix inverses for update_H
   arma::vec S2(J);
@@ -77,6 +113,7 @@ std::vector<List> cytof_fix_K_fit(
 
   State init;
 
+  // start init
   init.K = K;
   init.mus = arma::mat(J,K);
   init.mus.fill(m_psi);
@@ -106,10 +143,21 @@ std::vector<List> cytof_fix_K_fit(
     }
   }
   adjust_lam_e_dim(init, y);
+  // reset init if parameters are fixed
+  if (fixed_mus)   init.mus = as<arma::mat>(true_mus);
+  if (fixed_psi)   init.psi = as<arma::vec>(true_psi);
+  if (fixed_tau2)  init.tau2 = as<arma::vec>(true_tau2);
+  if (fixed_sig2)  init.sig2 = as<arma::vec>(true_sig2);
+  if (fixed_Z)     init.Z = as<arma::Mat<int>>(true_Z);
+  if (fixed_lam)   init.lam = as<type_lam>(true_lam);
+  if (fixed_W)     init.W = as<arma::mat>(true_W);
+  if (fixed_pi)    init.pi = as<arma::mat>(true_pi);
+  init.e = sample_e_prior(init.Z, init.lam, init.pi, y);
+  // end of init
 
-  auto update = [&y, &prior](State &state) {
+  auto update = [&y, &prior, &fixed_params](State &state) {
     Rcout << "\r";
-    update_theta(state, y, prior);
+    update_theta(state, y, prior, fixed_params);
   };
 
   std::vector<List> out(B);

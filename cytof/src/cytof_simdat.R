@@ -43,5 +43,6 @@ cytof_simdat <- function(I, N, J, K, W, thresh=log(2),
 
 
   list(Z=Z, lam=lam, mus=mus, psi=psi, tau2=tau2, W=W, pi_var=pi_var,
-       I=I, N=N, J=J, K=K, thresh=thresh, y=y, sig2=sig2)
+       I=I, N=N, J=J, K=K, thresh=thresh, y=y, sig2=sig2,
+       lam_index_0=lapply(lam, function(l) l-1))
 }

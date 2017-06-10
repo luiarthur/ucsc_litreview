@@ -14,10 +14,10 @@ cytof_fixed_K <- function(y,
                   G=diag(ncol(y[[1]])), cs_h=1,
                   a_w=1, K,
                   ### For debugging
-                  true_mu=matrix(0), true_psi=double(1),
-                  true_tau2=double(1),true_sig2=double(1),
-                  true_Z=matrix(0), true_lam=list(),
-                  true_W=matrix(0), true_pi=matrix(0),
+                  true_mus=NULL, true_psi=NULL,
+                  true_tau2=NULL,true_sig2=NULL,
+                  true_Z=NULL, true_lam=NULL,
+                  true_W=NULL, true_pi=NULL,
                   ###
                   window=100, target=.25, tt=max(1.1, window/50),
                   B=2000, burn=5000, print_freq=10) {
@@ -39,6 +39,12 @@ cytof_fixed_K <- function(y,
                   G, cs_h, 
                   a_w,
                   K,
+                  ### For debugging
+                  true_mus, true_psi,
+                  true_tau2,true_sig2,
+                  true_Z, true_lam,
+                  true_W, true_pi,
+                  ###
                   window, target, tt,
                   B, burn, print_freq)
 

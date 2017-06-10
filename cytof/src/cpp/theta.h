@@ -1,34 +1,35 @@
 // Updating theta given K. See section 5.13.2 of manual.
 
 // there should be twelve updates
-void update_theta(State &state, const Data &y, const Prior &prior) {
+void update_theta(State &state, const Data &y, const Prior &prior, const Fixed &fixed_params) {
   //Rcout << "mus ";
-  update_mus(state, y, prior);
+  if (!fixed_params.mus)    update_mus(state, y, prior);
   //Rcout << "psi ";
-  update_psi(state, y, prior);
+  if (!fixed_params.psi)    update_psi(state, y, prior);
   //Rcout << "tau2 ";
-  update_tau2(state, y, prior);
+  if (!fixed_params.tau2)   update_tau2(state, y, prior);
 
   //Rcout << "pi ";
-  update_pi(state, y, prior);
+  if (!fixed_params.pi)     update_pi(state, y, prior);
   //Rcout << "sig2 ";
-  update_sig2(state, y, prior);
+  if (!fixed_params.sig2)   update_sig2(state, y, prior);
   //Rcout << "v ";
-  update_v_mus(state, y, prior);
+  if (!fixed_params.Z)      update_v_mus(state, y, prior);
 
   //Rcout << "H ";
-  update_H_mus(state, y, prior);
+  if (!fixed_params.Z)      update_H_mus(state, y, prior);
   //Rcout << "e ";
-  update_e(state, y, prior);
+  if (!fixed_params.pi || 
+      !fixed_params.mus)    update_e(state, y, prior);
   //Rcout << "lam ";
-  update_lam(state, y, prior);
+  if (!fixed_params.lam)    update_lam(state, y, prior);
 
   //Rcout << "W ";
-  update_W(state, y, prior);
+  if (!fixed_params.W)      update_W(state, y, prior);
   //Rcout << "c ";
-  update_c(state, y, prior);
+  if (!fixed_params.pi)     update_c(state, y, prior);
   //Rcout << "d ";
-  update_d(state, y, prior);
+  if (!fixed_params.pi)     update_d(state, y, prior);
 }
 
 // FIXME: Is this ok?
