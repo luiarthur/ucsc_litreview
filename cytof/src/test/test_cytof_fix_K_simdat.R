@@ -161,5 +161,5 @@ plotPost(sapply(mus, function(m) m[1,2]))
 plotPost(sapply(mus, function(m) m[1,3]))
 plotPost(sapply(mus, function(m) m[1,4]))
 
-my.image(mus_mean)
-my.image(dat$mus)
+my.image(mus_mean, addLegend=T)
+my.image(dat$mus,  addLegend=T)
