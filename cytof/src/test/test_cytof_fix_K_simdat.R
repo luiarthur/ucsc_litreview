@@ -23,7 +23,7 @@ set.seed(1)
 #                               .1, .7, .1, .1,
 #                               .2, .3, .3, .2), 3, 4, byrow=TRUE))
 dat <- cytof_simdat(I=3, N=list(200, 300, 100), J=12, K=4,
-                    a=2,
+                    a=1,
                     tau2=rep(.1,12),
                     sig2=rep(1,3),
                     W=matrix(c(.3, .4, .2, .1,
@@ -56,15 +56,15 @@ set.seed(2)
 source("../cytof_fixed_K.R", chdir=TRUE)
 out <- cytof_fixed_K(y, K=dat$K,
                      burn=10000, B=2000, pr=100, 
-                     m_psi=mean(dat$mus),
+                     m_psi=log(2),#mean(dat$mus),
                      cs_tau = .01,
                      cs_psi = .01,
                      cs_sig = .01,
-                     cs_mu  = .01,
+                     cs_mu  = 2,
                      # Fix params:
-                     #true_psi=rowMeans(dat$mus),
+                     true_psi=rowMeans(dat$mus),
                      true_Z=dat$Z,
-                     true_tau2=dat$tau2,
+                     true_tau2=apply(dat$mus, 1, var),#dat$tau2,
                      true_sig2=dat$sig2,
                      true_pi=dat$pi,
                      true_lam=dat$lam_index_0,
@@ -160,3 +160,6 @@ plotPost(sapply(mus, function(m) m[1,1]))
 plotPost(sapply(mus, function(m) m[1,2]))
 plotPost(sapply(mus, function(m) m[1,3]))
 plotPost(sapply(mus, function(m) m[1,4]))
+
+my.image(mus_mean)
+my.image(dat$mus)
