@@ -28,7 +28,7 @@
 //[[Rcpp::export]]
 std::vector<List> cytof_fix_K_fit(
     const Data &y,
-    double mus_thresh, arma::vec cs_mu,
+    double mus_thresh, arma::mat cs_mu,
     double m_psi, double s2_psi, arma::vec cs_psi,
     double a_tau, double b_tau, arma::vec cs_tau2,
     double s2_c, double cs_c,
@@ -120,14 +120,14 @@ std::vector<List> cytof_fix_K_fit(
   init.psi = arma::vec(J);
   init.psi.fill(m_psi);
   init.tau2 = arma::vec(J);
-  init.tau2.fill(b_tau);
+  init.tau2.fill(b_tau / (a_tau - 1));
   init.pi = arma::mat(I,J);
   init.pi.fill(.5);
   init.c = arma::vec(J);
   init.c.fill(.5);
   init.d = exp(m_d);
   init.sig2 = arma::vec(I);
-  init.sig2.fill(b_sig);
+  init.sig2.fill(b_sig / (a_sig - 1));
   init.v = arma::vec(K);
   init.v.fill(.5);
   init.H = arma::mat(J,K);
@@ -163,9 +163,10 @@ std::vector<List> cytof_fix_K_fit(
   std::vector<List> out(B);
 
   // Adaptive MCMC
-  std::vector<double> acc_sig2(I);
-  std::vector<double> acc_psi(J);
-  std::vector<double> acc_tau2(J);
+  arma::vec acc_sig2(I);  acc_sig2.fill(0);
+  arma::vec acc_psi(J);   acc_psi.fill(0);
+  arma::vec acc_tau2(J);  acc_tau2.fill(0);
+  arma::mat acc_mus(J,K); acc_mus.fill(0);
   State prev_state = init;
 
   auto ass = [&](const State &state, int ii) {
@@ -191,15 +192,22 @@ std::vector<List> cytof_fix_K_fit(
         for (int i=0; i<I; i++) {
           autotune(acc_sig2[i], prior.cs_sig2[i],
                    state.sig2[i], prev_state.sig2[i],
-                   ii, window, target, t);
+                   ii, window);
         }
         for (int j=0; j<J; j++) {
           autotune(acc_psi[j], prior.cs_psi[j],
                    state.psi[j], prev_state.psi[j],
-                   ii, window, target, t);
+                   ii, window);
+          //Rcout << ii << " " << acc_tau2[j] << " " << prior.cs_tau2[j] << std::endl;
           autotune(acc_tau2[j], prior.cs_tau2[j],
                    state.tau2[j], prev_state.tau2[j],
-                   ii, window, target, t);
+                   ii, window);
+          for (int k=0; k<K; k++) {
+            //if ( (ii + 1) % window == 0 ) Rcout << prior.cs_mu[j,k] << std::endl;
+            autotune(acc_mus[j,k], prior.cs_mu[j,k],
+                     state.mus[j,k], prev_state.mus[j,k],
+                     ii, window);
+          }
         }
       }
       prev_state = state;

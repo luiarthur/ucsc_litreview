@@ -3,12 +3,14 @@ library(truncnorm)
 
 cytof_simdat <- function(I, N, J, K, W, thresh=log(2),
                          pi_a=.5, pi_b=1,
-                         psi=rnorm(J, 2, 1), tau2=1/rgamma(J,3,.2),
-                         sig2=1/rgamma(3,2)) {
+                         a=1,
+                         tau2=1/rgamma(J,3,.2),
+                         sig2=1/rgamma(I,3,2)
+                         ) {
   stopifnot(length(N) == I)
   stopifnot(nrow(W) == I && ncol(W) == K)
   stopifnot(all(rowSums(W) == 1))
-  stopifnot(length(psi) == J)
+  #stopifnot(length(psi) == J)
   stopifnot(length(tau2) == J)
   stopifnot(J %% K == 0)
 
@@ -20,9 +22,11 @@ cytof_simdat <- function(I, N, J, K, W, thresh=log(2),
   for (j in 1:J) {
     for (k in 1:K) {
       if (Z[j,k] == 0) {
-        mus[j,k] <- rtruncnorm(1, -Inf, thresh, psi[j], sqrt(tau2[j]))
+        #mus[j,k] <- rtruncnorm(1, -Inf, thresh, psi[j], sqrt(tau2[j]))
+        mus[j,k] <- rtruncnorm(1, -Inf, thresh, log(2)-a, sqrt(tau2[j]))
       } else { # Z[j,k] == 1
-        mus[j,k] <- rtruncnorm(1, thresh,  Inf, psi[j], sqrt(tau2[j]))
+        #mus[j,k] <- rtruncnorm(1, thresh,  Inf, psi[j], sqrt(tau2[j]))
+        mus[j,k] <- rtruncnorm(1, thresh, Inf, log(2)+a, sqrt(tau2[j]))
       }
     }
   }
@@ -42,7 +46,7 @@ cytof_simdat <- function(I, N, J, K, W, thresh=log(2),
   }
 
 
-  list(Z=Z, lam=lam, mus=mus, psi=psi, tau2=tau2, W=W, pi_var=pi_var,
+  list(Z=Z, lam=lam, mus=mus, tau2=tau2, W=W, pi_var=pi_var,
        I=I, N=N, J=J, K=K, thresh=thresh, y=y, sig2=sig2,
        lam_index_0=lapply(lam, function(l) l-1))
 }

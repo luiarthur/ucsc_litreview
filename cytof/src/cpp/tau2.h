@@ -12,12 +12,14 @@ double log_fc_log_tau2(double log_tau2_j, State &state, const Data &y,
   double ll=0;
   for (int k=0; k < K; k++) {
     mus_jk = state.mus(j,k);
+    //ll += log_dtnorm(mus_jk, psi_j, tau_j, thresh, 1-state.Z(j,k)); // lt = false
     if (state.Z(j,k) == 1 && mus_jk > thresh) {
       ll += log_dtnorm(mus_jk, psi_j, tau_j, thresh, false); // lt = false
     } else if (state.Z(j,k) == 0 && mus_jk < thresh) {
       ll += log_dtnorm(mus_jk, psi_j, tau_j, thresh, true); // lt = true
     } else {
       ll = -INFINITY;
+      Rcout << "Inf" << std::endl;
       break;
     }
 

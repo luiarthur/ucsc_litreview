@@ -18,9 +18,12 @@ void update_theta(State &state, const Data &y, const Prior &prior, const Fixed &
 
   //Rcout << "H ";
   if (!fixed_params.Z)      update_H_mus(state, y, prior);
+
   //Rcout << "e ";
-  if (!fixed_params.pi || 
-      !fixed_params.mus)    update_e(state, y, prior);
+  //if (!fixed_params.pi || 
+  //    !fixed_params.mus)    update_e(state, y, prior);
+  update_e(state, y, prior);
+
   //Rcout << "lam ";
   if (!fixed_params.lam)    update_lam(state, y, prior);
 

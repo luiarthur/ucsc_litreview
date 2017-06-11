@@ -24,7 +24,7 @@ cytof_fixed_K <- function(y,
 
   J <- ncol(y[[1]])
   I <- length(y)
-  if (length(cs_mu) == 1) cs_mu <- rep(cs_mu, J)
+  if (length(cs_mu) == 1) cs_mu <- matrix(cs_mu, J, K)
   if (length(cs_psi) == 1) cs_psi <- rep(cs_psi, J)
   if (length(cs_tau2) == 1) cs_tau2 <- rep(cs_tau2, J)
   if (length(cs_sig2) == 1) cs_sig2 <- rep(cs_sig2, I)

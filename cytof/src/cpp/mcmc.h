@@ -3,6 +3,7 @@
 #include<assert.h>
 #include<ctime>
 #include<math.h>
+#include<algorithm>       // std::max(a,b) returns the larger of a and b
 
 using namespace Rcpp;
 
@@ -252,31 +253,27 @@ int runif_discrete(int a, int b) {
 
 // FIXME: Broken?
 void autotune(double &acc, double &cs, double cur, double pre, 
-              int i, int window, double target, double k) {
+              int i, int window, double acc_min=.15, double acc_max=.44) {
 
   /*
    * accept: current acceptance rate
-   * target: target acceptance rate
-   * k:      some tuning parameter
+   * cs:     candidate sigma
+   * cur:    current draw
+   * pre:    previous draw
+   * i:      mcmc iteration
+   * window: how often to adapt candidate sigma
+   * acc_min: minimum acceptance rate desired
+   * acc_max: maximum acceptance rate desired
    */
-
-  if ( (i + 1) % window  == 0 ) {
-    const double x = acc / window - target;
-    const double numer = (cosh(x)-1) * (k-1);
-    const double denom = cosh(target - ceil(x)) - 1;
-    const double sign = x < 0 ? -1.0 : 1.0;
-    const double factor = pow( 1 + numer / denom, sign);
-
-    // set new cs
-    Rcout << acc / window << ":\t";
-    Rcout << cs << " ";
-    cs *= factor;
-    Rcout << cs << " " << std::endl;
-    // reset acceptance count
+  const double acc_rate = acc / window;
+  if ( (i + 1) % window == 0) {
+    const double delta = std::max(window / (i + window + 1.0), .1);
+    if (acc_rate > acc_max) {
+      cs = cs * (1 + delta);
+    } else if (acc_rate < acc_min) {
+      cs = cs * (1 - delta);
+    }
     acc = 0;
-  } else {
-    if (cur != pre) acc++;
-  }
-
+  } else if (cur != pre) acc++;
 }
 

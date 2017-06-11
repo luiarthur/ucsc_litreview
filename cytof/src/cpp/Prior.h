@@ -1,7 +1,7 @@
 struct Prior {
   // mus
   double mus_thresh; // log(2)
-  arma::vec cs_mu;
+  arma::mat cs_mu;
 
   // psi
   double m_psi; double s2_psi; arma::vec cs_psi;
