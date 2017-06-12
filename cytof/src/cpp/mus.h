@@ -97,45 +97,45 @@ void update_mus(State &state, const Data &y, const Prior &prior) {
       };
 
 
-      //state.mus(j,k) = metropolis::uni(state.mus(j,k), log_fc, prior.cs_mu[j,k]);
+      state.mus(j,k) = metropolis::uni(state.mus(j,k), log_fc, prior.cs_mu[j,k]);
 
       // new version
-      mus_jk = state.mus(j,k);
-      z_jk = state.Z(j,k);
-      cs = prior.cs_mu[j,k];
-      const bool valid = ( (mus_jk >= thresh) && (z_jk == 1) ) ||
-                         ( (mus_jk <  thresh) && (z_jk == 0) );
+      //mus_jk = state.mus(j,k);
+      //z_jk = state.Z(j,k);
+      //cs = prior.cs_mu[j,k];
+      //const bool valid = ( (mus_jk >= thresh) && (z_jk == 1) ) ||
+      //                   ( (mus_jk <  thresh) && (z_jk == 0) );
 
-      double cand;
-      if (valid) {
-        // sample with random walk
-        if (z_jk == 1) {
-          cand = rtnorm(mus_jk, cs, thresh, INFINITY);
-        } else {
-          cand = rtnorm(mus_jk, cs, -INFINITY, thresh);
-        }
-      } else {
-        // sample from prior
-        cand = rmus(state.psi(j), state.tau2(j), z_jk, thresh);
-      }
+      //double cand;
+      //if (valid) {
+      //  // sample with random walk
+      //  if (z_jk == 1) {
+      //    cand = rtnorm(mus_jk, cs, thresh, INFINITY);
+      //  } else {
+      //    cand = rtnorm(mus_jk, cs, -INFINITY, thresh);
+      //  }
+      //} else {
+      //  // sample from prior
+      //  cand = rmus(state.psi(j), state.tau2(j), z_jk, thresh);
+      //}
 
-      const double u = R::runif(0,1);
+      //const double u = R::runif(0,1);
 
-      // compute acceptance probability
-      if (valid) {
-        acc_prob = log_fc_mus(cand,   state, y, prior, j, k) + 
-                   log_dtnorm(mus_jk, cand, cs, thresh, z_jk==0) -
-                   log_fc_mus(mus_jk, state, y, prior, j, k) - 
-                   log_dtnorm(cand, mus_jk, cs, thresh, z_jk==0);
-      } else {
-        // prior cancels with proposal
-        acc_prob = ll_mus(cand,   state, y, prior, j ,k) -
-                   ll_mus(mus_jk, state, y, prior, j ,k);
-      }
+      //// compute acceptance probability
+      //if (valid) {
+      //  acc_prob = log_fc_mus(cand,   state, y, prior, j, k) + 
+      //             log_dtnorm(mus_jk, cand, cs, thresh, z_jk==0) -
+      //             log_fc_mus(mus_jk, state, y, prior, j, k) - 
+      //             log_dtnorm(cand, mus_jk, cs, thresh, z_jk==0);
+      //} else {
+      //  // prior cancels with proposal
+      //  acc_prob = ll_mus(cand,   state, y, prior, j ,k) -
+      //             ll_mus(mus_jk, state, y, prior, j ,k);
+      //}
 
-      if (acc_prob > log(u)) {
-        state.mus(j,k) = cand;
-      }
+      //if (acc_prob > log(u)) {
+      //  state.mus(j,k) = cand;
+      //}
       // end of new version
 
     }
