@@ -29,7 +29,8 @@ my.image <- function(Z,col=grey(seq(0,1,len=12)),fg='grey',
     layout(matrix(c(rep(1,9*10),rep(2,1*10)),10,10))
   }
 
-  image(1:K, 1:N, max(Z)-t(Z), fg=FG,col=COL, ...)
+  #image(1:K, 1:N, max(Z)-t(Z), fg=FG,col=COL, ...)
+  image(1:K, 1:N, mx-t(Z), fg=FG,col=COL, ...)
   f(Z)
 
   if (addLegend) {

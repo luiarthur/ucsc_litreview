@@ -23,7 +23,7 @@ set.seed(1)
 #                               .1, .7, .1, .1,
 #                               .2, .3, .3, .2), 3, 4, byrow=TRUE))
 dat <- cytof_simdat(I=3, N=list(200, 300, 100), J=12, K=4,
-                    a=1,
+                    a=.5,
                     tau2=rep(.1,12),
                     sig2=rep(1,3),
                     W=matrix(c(.3, .4, .2, .1,
@@ -32,14 +32,15 @@ dat <- cytof_simdat(I=3, N=list(200, 300, 100), J=12, K=4,
 
 ### PLOT DATA
 pdf("out/data.pdf")
+hist(dat$mus)
 my.image(cor(dat$y[[1]]), xaxt='n',yaxt='n',xlab="",ylab="",
          main="y1 Correlation b/w Markers",addLegend=TRUE)
 my.image(cor(dat$y[[2]]), xaxt='n',yaxt='n',xlab="",ylab="",
          main="y2 Correlation b/w Markers",addLegend=TRUE)
 my.image(cor(dat$y[[3]]), xaxt='n',yaxt='n',xlab="",ylab="",
          main="y3 Correlation b/w Markers",addLegend=TRUE)
-dev.off()
 my.image(dat$Z)
+dev.off()
 mean(dat$y[[1]] == 0)
 
 ### Compute
@@ -55,12 +56,12 @@ K <- ncol(dat$mus)
 set.seed(2)
 source("../cytof_fixed_K.R", chdir=TRUE)
 out <- cytof_fixed_K(y, K=dat$K,
-                     burn=3000, B=2000, pr=100, 
+                     burn=10000, B=2000, pr=100, 
                      m_psi=log(2),#mean(dat$mus),
                      cs_tau = .01,
                      cs_psi = .01,
                      cs_sig = .01,
-                     cs_mu  = .1,
+                     cs_mu  = 1,
                      # Fix params:
                      true_psi=rowMeans(dat$mus),
                      true_Z=dat$Z,
@@ -147,26 +148,41 @@ dat$lam_index_0[[1]]
 
 
 ### mus
+pdf("out/postmus.pdf")
 dat$mus
 mus_ls <- lapply(out, function(o) o$mus)
 mus <- array(unlist(mus_ls), dim=c(J, K, length(out)))
 mus_mean <- apply(mus, 1:2, mean)
-exp(dat$mus - mus_mean)
-my.image( exp(dat$mus - mus_mean), addLegend=T)
-my.image(dat$mus - mus_mean, addLegend=T)
+#exp(dat$mus - mus_mean)
+#my.image( exp(dat$mus - mus_mean), addLegend=T)
+#my.image(dat$mus - mus_mean, addLegend=T)
 ## QQ
 plot(c(dat$mus), c(mus_mean), col=c(dat$Z) + 3, pch=20, cex=2,
-     xlab="mu*_true", ylab="mu* posterior mean", fg='grey')
+     xlab="mu*_true", ylab="mu* posterior mean", fg='grey',
+     main="mu* posterior mean vs truth")
 abline(0,1, col='grey')
+mus_ci <- apply(mus, 1:2, quantile, c(.025,.975))
 
 ### Acceptance Rates
 apply(mus, 1:2, function(x) length(unique(x)) / length(out))
 
-plotPost(apply(mus, 3, function(m) m[1,1]))
-plotPost(apply(mus, 3, function(m) m[1,2]))
-plotPost(apply(mus, 3, function(m) m[1,3]))
-plotPost(apply(mus, 3, function(m) m[1,4]))
-plotPost(apply(mus, 3, function(m) m[2,1]))
+plot_mus_post <- function(i,j, main=paste0("mu*[",i,",",j,"]"), ...) {
+  MAIN <- main
+  plotPost(apply(mus, 3, function(m) m[i,j]), float=TRUE,
+           main=MAIN, ...)
+  abline(v=dat$mus[i,j], col='grey')
+}
 
-my.image(mus_mean, addLegend=T)
-my.image(dat$mus,  addLegend=T)
+plot_mus_post(1,1)
+plot_mus_post(1,2)
+plot_mus_post(1,3)
+plot_mus_post(1,4)
+plot_mus_post(2,1)
+plot_mus_post(2,2)
+plot_mus_post(9,2)
+
+my.image(mus_mean, xlab='', ylab='', mx=2, mn=-2.5, addLegend=T, main='mu* posterior mean')
+my.image(dat$mus,  xlab='', ylab='', mx=2, mn=-2.5, addLegend=T, main='mu* Truth')
+hist(mus_mean)
+hist(dat$mus)
+dev.off()
