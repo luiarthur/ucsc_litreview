@@ -29,11 +29,12 @@ double lp_mus(double mus_jk, State &state, const Data &y, const Prior &prior,
 
   double lp;
   const double thresh = prior.mus_thresh;
-  if (mus_jk > thresh && z_jk == 1) {
+  if (mus_jk >= thresh && z_jk == 1) {
     lp = log_dtnorm(mus_jk, psi_j, tau_j, thresh, false); //lt=false
   } else if (mus_jk < thresh && z_jk == 0) {
     lp = log_dtnorm(mus_jk, psi_j, tau_j, thresh, true);  //lt=true
   } else {
+    Rcout << "This shouldn't be happening! (mus.h)"<< std::endl;
     lp = -INFINITY;
   }
 
@@ -54,8 +55,11 @@ double ll_mus(double mus_jk, State &state, const Data &y, const Prior &prior,
     N_i = get_Ni(y,i);
     sig_i = sqrt(state.sig2[i]);
     for (int n=0; n<N_i; n++) {
-      if (state.e[i](n,j) == 0 && state.lam[i][n] == k) {
-        ll += log_dtnorm(y[i](n,j), mus_jk, sig_i, 0, false); //lt=false
+      //if (state.e[i](n,j) == 0 && state.lam[i][n] == k) {
+      //  ll += log_dtnorm(y[i](n,j), mus_jk, sig_i, 0, false); //lt=false
+      //}
+      if (state.lam[i][n] == k) {
+        ll += marginal_lf(y[i](n,j), mus_jk, sig_i, state.Z[j,k], state.pi[i,j]);
       }
     }
 
@@ -99,8 +103,8 @@ void update_mus(State &state, const Data &y, const Prior &prior) {
       mus_jk = state.mus(j,k);
       z_jk = state.Z(j,k);
       cs = prior.cs_mu[j,k];
-      const bool valid = (mus_jk > thresh && z_jk == 1) ||
-                         (mus_jk < thresh && z_jk == 0);
+      const bool valid = ( (mus_jk >= thresh) && (z_jk == 1) ) ||
+                         ( (mus_jk <  thresh) && (z_jk == 0) );
 
       double cand;
       if (valid) {
@@ -118,11 +122,13 @@ void update_mus(State &state, const Data &y, const Prior &prior) {
       const double u = R::runif(0,1);
 
       // compute acceptance probability
-      // TODO: compute ll and lp separately
       if (valid) {
-        acc_prob = log_fc_mus(cand,   state, y, prior, j, k) -
-                   log_fc_mus(mus_jk, state, y, prior, j, k);
+        acc_prob = log_fc_mus(cand,   state, y, prior, j, k) + 
+                   log_dtnorm(mus_jk, cand, cs, thresh, z_jk==0) -
+                   log_fc_mus(mus_jk, state, y, prior, j, k) - 
+                   log_dtnorm(cand, mus_jk, cs, thresh, z_jk==0);
       } else {
+        // prior cancels with proposal
         acc_prob = ll_mus(cand,   state, y, prior, j ,k) -
                    ll_mus(mus_jk, state, y, prior, j ,k);
       }

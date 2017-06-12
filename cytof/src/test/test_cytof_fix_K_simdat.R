@@ -46,7 +46,7 @@ mean(dat$y[[1]] == 0)
 y <- dat$y
 I <- dat$I
 J <- dat$J
-
+K <- ncol(dat$mus)
 
 ### Sensitive priors
 ### depend on starting values
@@ -55,12 +55,12 @@ J <- dat$J
 set.seed(2)
 source("../cytof_fixed_K.R", chdir=TRUE)
 out <- cytof_fixed_K(y, K=dat$K,
-                     burn=10000, B=2000, pr=100, 
+                     burn=3000, B=2000, pr=100, 
                      m_psi=log(2),#mean(dat$mus),
                      cs_tau = .01,
                      cs_psi = .01,
                      cs_sig = .01,
-                     cs_mu  = 2,
+                     cs_mu  = .1,
                      # Fix params:
                      true_psi=rowMeans(dat$mus),
                      true_Z=dat$Z,
@@ -70,7 +70,7 @@ out <- cytof_fixed_K(y, K=dat$K,
                      true_lam=dat$lam_index_0,
                      true_W=dat$W,
                      #true_mu=dat$mus,
-                     window=500) # do adaptive by making window>0
+                     window=0) # do adaptive by making window>0
 length(out)
 
 ### Z
@@ -148,18 +148,25 @@ dat$lam_index_0[[1]]
 
 ### mus
 dat$mus
-mus <- lapply(out, function(o) o$mus)
-mus_mean <- Reduce("+", mus) / length(mus)
-mus_mean
+mus_ls <- lapply(out, function(o) o$mus)
+mus <- array(unlist(mus_ls), dim=c(J, K, length(out)))
+mus_mean <- apply(mus, 1:2, mean)
 exp(dat$mus - mus_mean)
-dat$mus - mus_mean
+my.image( exp(dat$mus - mus_mean), addLegend=T)
+my.image(dat$mus - mus_mean, addLegend=T)
 ## QQ
-plot(c(dat$mus), c(mus_mean)); abline(0,1)
+plot(c(dat$mus), c(mus_mean), col=c(dat$Z) + 3, pch=20, cex=2,
+     xlab="mu*_true", ylab="mu* posterior mean", fg='grey')
+abline(0,1, col='grey')
 
-plotPost(sapply(mus, function(m) m[1,1]))
-plotPost(sapply(mus, function(m) m[1,2]))
-plotPost(sapply(mus, function(m) m[1,3]))
-plotPost(sapply(mus, function(m) m[1,4]))
+### Acceptance Rates
+apply(mus, 1:2, function(x) length(unique(x)) / length(out))
+
+plotPost(apply(mus, 3, function(m) m[1,1]))
+plotPost(apply(mus, 3, function(m) m[1,2]))
+plotPost(apply(mus, 3, function(m) m[1,3]))
+plotPost(apply(mus, 3, function(m) m[1,4]))
+plotPost(apply(mus, 3, function(m) m[2,1]))
 
 my.image(mus_mean, addLegend=T)
 my.image(dat$mus,  addLegend=T)

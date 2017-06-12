@@ -13,12 +13,13 @@ double log_fc_psi(double psi_j, State &state, const Data &y,
   for (int k=0; k < K; k++) {
     mus_jk = state.mus(j,k);
 
-    if (state.Z(j,k) == 1 && mus_jk > thresh) {
+    if (state.Z(j,k) == 1 && mus_jk >= thresh) {
       ll += log_dtnorm(mus_jk, psi_j, tau_j, thresh, false); // lt = false
     } else if (state.Z(j,k) == 0 && mus_jk < thresh) {
       ll += log_dtnorm(mus_jk, psi_j, tau_j, thresh, true); // lt = true
     } else {
       ll = -INFINITY;
+      Rcout << "This should not happen (psi.h)" << std::endl;
       break;
     }
 

@@ -226,7 +226,7 @@ double log_dtnorm(double x, double m, double s, double thresh, bool lt) {
 
   if (lt && (x < thresh)) {
     out = ldnorm - log(Phi);
-  } else if ( (!lt) && (x > thresh) ) {
+  } else if ( (!lt) && (x >= thresh) ) {
     out = ldnorm - log(1 - Phi);
   } else {
     out = -INFINITY;
