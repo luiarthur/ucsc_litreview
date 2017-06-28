@@ -22,7 +22,7 @@ set.seed(1)
 #                    W=matrix(c(.3, .4, .2, .1,
 #                               .1, .7, .1, .1,
 #                               .2, .3, .3, .2), 3, 4, byrow=TRUE))
-dat <- cytof_simdat(I=3, N=list(200, 300, 100), J=12, K=4,
+dat <- cytof_simdat(I=3, N=list(2000, 3000, 1000), J=12, K=4,
                     a=.5,
                     tau2=rep(.1,12),
                     sig2=rep(1,3),
@@ -61,17 +61,17 @@ out <- cytof_fixed_K(y, K=dat$K,
                      cs_tau = .01,
                      cs_psi = .01,
                      cs_sig = .01,
-                     cs_mu  = 1,
+                     cs_mu  = .01,
                      # Fix params:
-                     true_psi=rowMeans(dat$mus),
-                     true_Z=dat$Z,
-                     true_tau2=apply(dat$mus, 1, var),#dat$tau2,
-                     true_sig2=dat$sig2,
-                     true_pi=dat$pi,
-                     true_lam=dat$lam_index_0,
-                     true_W=dat$W,
+                     #true_psi=rowMeans(dat$mus),
+                     #true_Z=dat$Z,
+                     #true_tau2=apply(dat$mus, 1, var),#dat$tau2,
+                     #true_sig2=dat$sig2,
+                     #true_pi=dat$pi,
+                     #true_lam=dat$lam_index_0,
+                     #true_W=dat$W,
                      #true_mu=dat$mus,
-                     window=0) # do adaptive by making window>0
+                     window=300) # do adaptive by making window>0
 length(out)
 
 ### Z
@@ -181,8 +181,13 @@ plot_mus_post(2,1)
 plot_mus_post(2,2)
 plot_mus_post(9,2)
 
-my.image(mus_mean, xlab='', ylab='', mx=2, mn=-2.5, addLegend=T, main='mu* posterior mean')
-my.image(dat$mus,  xlab='', ylab='', mx=2, mn=-2.5, addLegend=T, main='mu* Truth')
+my.image(mus_mean, xlab='', ylab='', mx=1, mn=-1, addLegend=T, main='mu* posterior mean')
+my.image(dat$mus,  xlab='', ylab='', mx=1, mn=-1, addLegend=T, main='mu* Truth')
+my.image(mus_mean-dat$mus, xlab='', ylab='', mx=1, mn=-1, addLegend=T, main='mu* posterior mean')
+
 hist(mus_mean)
 hist(dat$mus)
 dev.off()
+
+dat$mus
+mus_mean

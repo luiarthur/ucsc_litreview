@@ -34,7 +34,7 @@ double lp_mus(double mus_jk, State &state, const Data &y, const Prior &prior,
   } else if (mus_jk < thresh && z_jk == 0) {
     lp = log_dtnorm(mus_jk, psi_j, tau_j, thresh, true);  //lt=true
   } else {
-    Rcout << "This shouldn't be happening! (mus.h)"<< std::endl;
+    //Rcout << "This shouldn't be happening! (mus.h)"<< std::endl;
     lp = -INFINITY;
   }
 
