@@ -56,7 +56,7 @@ K <- ncol(dat$mus)
 set.seed(2)
 source("../cytof_fixed_K.R", chdir=TRUE)
 out <- cytof_fixed_K(y, K=dat$K,
-                     burn=10000, B=2000, pr=100, 
+                     burn=20000, B=2000, pr=100, 
                      m_psi=log(2),#mean(dat$mus),
                      cs_tau = .01,
                      cs_psi = .01,
