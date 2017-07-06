@@ -1,3 +1,4 @@
+library(rstan)
 library(rcommon)
 source("../../cytof_simdat.R")
 source("../../../dat/myimage.R")
@@ -15,12 +16,6 @@ last <- function(lst) lst[[length(lst)]]
 #    5     .1      1  bad
 
 set.seed(1)
-#dat <- cytof_simdat(I=3, N=list(200, 300, 100), J=12, K=4,
-#                    tau2=rep(.1,12),
-#                    sig2=rep(1,3),
-#                    W=matrix(c(.3, .4, .2, .1,
-#                               .1, .7, .1, .1,
-#                               .2, .3, .3, .2), 3, 4, byrow=TRUE))
 dat <- cytof_simdat(I=3, N=list(2000, 3000, 1000), J=12, K=4,
                     a=.5,
                     tau2=rep(.1,12),
@@ -47,27 +42,23 @@ y <- dat$y
 I <- dat$I
 J <- dat$J
 K <- ncol(dat$mus)
+N <- sapply(y, length)
 
 ### Sensitive priors
 ### depend on starting values
 ### Z recovered sometimes
 #TODO: Now try AMCMC to recover mus
 set.seed(2)
-out <- cytof_fixed_K(y, K=dat$K,
-                     burn=20000, B=2000, pr=100, 
-                     m_psi=log(2),#mean(dat$mus),
-                     cs_tau = .01,
-                     cs_psi = .01,
-                     cs_sig = .01,
-                     cs_mu  = .01,
-                     # Fix params:
-                     #true_psi=rowMeans(dat$mus),
-                     #true_Z=dat$Z,
-                     #true_tau2=apply(dat$mus, 1, var),#dat$tau2,
-                     #true_sig2=dat$sig2,
-                     #true_pi=dat$pi,
-                     #true_lam=dat$lam_index_0,
-                     #true_W=dat$W,
-                     #true_mu=dat$mus,
-                     window=300) # do adaptive by making window>0
-l
+Y <- array(dim=c(I, max(N), J))
+for (i in 1:I) {
+  Y[i, 1:N[i], ] <- y[[i]]
+  #Y[i, -c(1:N[i]), ] <- Inf
+}
+stan_dat <- list(I=I, J=J, K=K, N=sapply(y, length), maxN = max(N), 
+                 h_mean=rep(0,J), G=diag(J), thresh=log(2),
+                 alpha=1, a=rep(1, K), y=Y)
+
+out <- stan(file='cytof.stan', data=stan_dat, 
+            iter=2000, chain=4, model_name="cytof")
+
+
