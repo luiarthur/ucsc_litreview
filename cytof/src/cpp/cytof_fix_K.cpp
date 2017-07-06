@@ -163,11 +163,18 @@ std::vector<List> cytof_fix_K_fit(
   std::vector<List> out(B);
 
   // Adaptive MCMC
-  arma::vec acc_sig2(I);  acc_sig2.fill(0);
-  arma::vec acc_psi(J);   acc_psi.fill(0);
-  arma::vec acc_tau2(J);  acc_tau2.fill(0);
-  arma::mat acc_mus(J,K); acc_mus.fill(0);
-  State prev_state = init;
+  // sum of param
+  arma::vec sum_sig2(I);  sum_sig2.fill(0);
+  arma::vec sum_psi(J);   sum_psi.fill(0);
+  arma::vec sum_tau2(J);  sum_tau2.fill(0);
+  arma::mat sum_mus(J,K); sum_mus.fill(0);
+  // TODO. need also for: c, d, v, h
+  // squared sum of param
+  arma::vec sum2_sig2(I);  sum2_sig2.fill(0);
+  arma::vec sum2_psi(J);   sum2_psi.fill(0);
+  arma::vec sum2_tau2(J);  sum2_tau2.fill(0);
+  arma::mat sum2_mus(J,K); sum2_mus.fill(0);
+  // TODO. need also for: c, d, v, h
 
   auto ass = [&](const State &state, int ii) {
 
@@ -190,27 +197,17 @@ std::vector<List> cytof_fix_K_fit(
       // TODO: adaptive MCMC
       if ( window > 0 && ii > 0) {
         for (int i=0; i<I; i++) {
-          autotune(acc_sig2[i], prior.cs_sig2[i],
-                   state.sig2[i], prev_state.sig2[i],
-                   ii, window);
+          autotune2(log(state.sig2[i]), sum_sig2[i], sum2_sig2[i], prior.cs_sig2[i], ii);
         }
         for (int j=0; j<J; j++) {
-          autotune(acc_psi[j], prior.cs_psi[j],
-                   state.psi[j], prev_state.psi[j],
-                   ii, window);
-          //Rcout << ii << " " << acc_tau2[j] << " " << prior.cs_tau2[j] << std::endl;
-          autotune(acc_tau2[j], prior.cs_tau2[j],
-                   state.tau2[j], prev_state.tau2[j],
-                   ii, window);
+          autotune2(state.psi[j], sum_psi[j], sum2_psi[j], prior.cs_psi[j], ii);
+          autotune2(log(state.tau2[j]), sum_tau2[j], sum2_tau2[j], prior.cs_psi[j], ii);
           for (int k=0; k<K; k++) {
-            //if ( (ii + 1) % window == 0 ) Rcout << prior.cs_mu[j,k] << std::endl;
-            autotune(acc_mus[j,k], prior.cs_mu[j,k],
-                     state.mus[j,k], prev_state.mus[j,k],
-                     ii, window);
+            autotune2(state.mus[j,k], sum_mus[j,k], sum2_mus[j,k], 
+                      prior.cs_mu[j,k], ii);
           }
         }
       }
-      prev_state = state;
     }
   };
 

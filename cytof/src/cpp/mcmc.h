@@ -277,3 +277,15 @@ void autotune(double &acc, double &cs, double cur, double pre,
   } else if (cur != pre) acc++;
 }
 
+void autotune2(double x, double& sum_x2, double& sum_x, double& cs, int i,
+               int window=100, double s_mult=2.4, double eps=1E-6) {
+  if ((i+1) % window == 0) {
+    const double var_x = (sum_x2 - sum_x*sum_x) / window;
+    cs = s_mult * sqrt(var_x + eps);
+    sum_x = 0;
+    sum_x2 = 0;
+  } else {
+    sum_x += x;
+    sum_x2 += x*x;
+  }
+}

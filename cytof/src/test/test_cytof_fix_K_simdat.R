@@ -52,7 +52,8 @@ K <- ncol(dat$mus)
 ### Sensitive priors
 ### depend on starting values
 ### Z recovered sometimes
-#TODO: Now try AMCMC to recover mus
+#TODO: Now try AMCMC to recover mus. cand_sig2 = (2.4^2 / d) * cov(X + 1E-6)
+
 set.seed(2)
 source("../cytof_fixed_K.R", chdir=TRUE)
 out <- cytof_fixed_K(y, K=dat$K,
@@ -191,3 +192,5 @@ dev.off()
 
 dat$mus
 mus_mean
+
+# source("test_cytof_fix_K_simdat.R")
