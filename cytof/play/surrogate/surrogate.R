@@ -1,6 +1,5 @@
 set.seed(1)
 source("gp.R")
-library(fields)
 library(rcommon)
 
 mu_true <- 3
@@ -17,9 +16,10 @@ param_grid <- as.matrix(expand.grid(mu_grid, sig2_grid))
 D <- dist(param_grid)
 
 ll <- sapply(1:nrow(param_grid), function(i) sum(dnorm(y, param_grid[i,1], sqrt(param_grid[i,2]), log=TRUE)))
+i.max <- which.max(ll)
 
+#library(fields)
 #quilt.plot(param_grid[,1], param_grid[,2], ll, ylab='sig2', xlab='mu')
-#i.max <- which.max(ll)
 #points(param_grid[i.max,1], param_grid[i.max,2], pch=4, cex=3, lwd=3, col='grey85')
 
 
