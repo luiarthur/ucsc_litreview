@@ -23,7 +23,7 @@ set.seed(1)
 #                               .1, .7, .1, .1,
 #                               .2, .3, .3, .2), 3, 4, byrow=TRUE))
 dat <- cytof_simdat(I=3, N=list(2000, 3000, 1000), J=12, K=4,
-                    a=.5,
+                    a=.5, pi_a=1, pi_b=9,
                     tau2=rep(.1,12),
                     sig2=rep(1,3),
                     W=matrix(c(.3, .4, .2, .1,
@@ -58,7 +58,7 @@ set.seed(2)
 source("../cytof_fixed_K.R", chdir=TRUE)
 out <- cytof_fixed_K(y, K=dat$K,
                      #burn=20000, B=2000, pr=100, 
-                     burn=1000, B=1000, pr=100, 
+                     burn=5000, B=2000, pr=100, 
                      m_psi=log(2),#mean(dat$mus),
                      cs_tau = .01,
                      cs_psi = .01,

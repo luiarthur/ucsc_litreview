@@ -31,7 +31,7 @@ cytof_simdat <- function(I, N, J, K, W, thresh=log(2),
     }
   }
 
-  pi_var <- matrix(rbeta(I*J, .5, 1), I, J)
+  pi_var <- matrix(rbeta(I*J, pi_a, pi_b), I, J)
 
   y <- as.list(1:I)
   for (i in 1:I) {
