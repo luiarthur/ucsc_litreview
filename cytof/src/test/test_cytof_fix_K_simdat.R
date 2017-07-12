@@ -42,6 +42,8 @@ my.image(cor(dat$y[[3]]), xaxt='n',yaxt='n',xlab="",ylab="",
 my.image(dat$Z)
 dev.off()
 mean(dat$y[[1]] == 0)
+mean(dat$y[[2]] == 0)
+mean(dat$y[[3]] == 0)
 
 ### Compute
 y <- dat$y
@@ -196,4 +198,46 @@ dev.off()
 dat$mus
 mus_mean
 
-# source("test_cytof_fix_K_simdat.R")
+
+# Compare Data to Posterior Predictive:
+one_post_pred <- function(param) {
+  Y <- dat$y
+  for (i in 1:I) {
+    sig_i <- sqrt(param$sig2[i])
+    for (n in 1:dat$N[[i]]) {
+      lin <- param$lam[[i]][n] + 1
+      for (j in 1:J) {
+        Y[[i]][n,j] <- ifelse(param$pi[i,j] > runif(1), 0, rtruncnorm(1, 0, Inf, param$mus[j,lin], sig_i))
+      }
+    }
+  }
+  return(Y)
+}
+
+join <- function(pp) {
+  B <- length(pp)
+  out <- as.list(1:I)
+  for (i in 1:I) {
+    out[[i]] <- Reduce("+", lapply(pp, function(f) f[[i]])) / B
+  }
+  out
+}
+
+system.time(post_pred <- join(lapply(tail(out,1000), one_post_pred)))
+#post_pred <- one_post_pred(last(out))
+
+my.image(cor(post_pred[[1]]), xaxt='n',yaxt='n',xlab="",ylab="",
+         main="y1 Correlation b/w Markers",addLegend=TRUE)
+my.image(cor(post_pred[[2]]), xaxt='n',yaxt='n',xlab="",ylab="",
+         main="y2 Correlation b/w Markers",addLegend=TRUE)
+my.image(cor(post_pred[[3]]), xaxt='n',yaxt='n',xlab="",ylab="",
+         main="y3 Correlation b/w Markers",addLegend=TRUE)
+mean(post_pred[[1]] == 0)
+
+#source("test_cytof_fix_K_simdat.R")
+
+par(mfrow=c(3,1))
+plot(dat$y[[1]], post_pred[[1]], pch=20, col=rgb(0,0,1,.1)); abline(0,1,col='grey') 
+plot(dat$y[[2]], post_pred[[2]], pch=20, col=rgb(0,0,1,.1)); abline(0,1,col='grey') 
+plot(dat$y[[3]], post_pred[[3]], pch=20, col=rgb(0,0,1,.1)); abline(0,1,col='grey') 
+par(mfrow=c(1,1))
