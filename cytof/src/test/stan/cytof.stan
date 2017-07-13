@@ -72,11 +72,11 @@ model {
   // Priors
   for (j in 1:J) for (k in 1:K) {
     if (Z[j,k] == 1) {
-      //mus[j,k] ~ normal(psi[j], sqrt(tau2[j])) T[thresh,];
-      mus[j,k] ~ normal(thresh + psi[j], sqrt(tau2[j]));
+      mus[j,k] ~ normal(psi[j], sqrt(tau2[j])) T[thresh,];
+      //mus[j,k] ~ normal(thresh + psi[j], sqrt(tau2[j]));
     } else {
-      //mus[j,k] ~ normal(psi[j], sqrt(tau2[j])) T[,thresh];
-      mus[j,k] ~ normal(thresh - psi[j], sqrt(tau2[j]));
+      mus[j,k] ~ normal(psi[j], sqrt(tau2[j])) T[,thresh];
+      //mus[j,k] ~ normal(thresh - psi[j], sqrt(tau2[j]));
     }
   }
 

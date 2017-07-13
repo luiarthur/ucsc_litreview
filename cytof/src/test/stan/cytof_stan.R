@@ -21,7 +21,7 @@ last <- function(lst) lst[[length(lst)]]
 #    5     .1      1  bad
 
 set.seed(1)
-dat <- cytof_simdat(I=3, N=list(200, 300, 100), J=12, K=4,
+dat <- cytof_simdat(I=3, N=list(2000, 3000, 1000), J=12, K=4,
                     pi_a=1, pi_b=9,
                     a=.5,
                     tau2=rep(.1,12),
@@ -51,23 +51,47 @@ K <- ncol(dat$mus)
 N <- sapply(y, nrow)
 
 ### Sensitive priors
-### depend on starting values
-### Z recovered sometimes
-#TODO: Now try AMCMC to recover mus
+#TODO: FIX stan code
+#        - mus should be truncated normal
+#        - provide starting values
+#        - something about the maximum tree depth?
 set.seed(2)
 Y <- array(dim=c(I, max(N), J))
 for (i in 1:I) {
   Y[i, 1:N[i], ] <- y[[i]]
   Y[i, -c(1:N[i]), ] <- Inf
 }
+
+init <- list(
+  mus=matrix(log(2)*1.1, J, K),
+  psi=rep(log(2)*1.1, J),
+  tau2=rep(1, J),
+  sig2=rep(1, I),
+  v=rep(.9999, K)
+)
+
 stan_dat <- list(I=I, J=J, K=K, N=N, maxN = max(N), 
                  h_mean=rep(0,J), G=diag(J), thresh=log(2),
                  alpha=1, a=rep(1, K), y=Y)
 
-out <- stan(file='cytof.stan', data=stan_dat, 
+adapt <- list(adapt_delta=.9) # .8 is the Dedault
+
+out <- stan(file='cytof.stan', data=stan_dat, init=list(init), control=adapt,
             iter=2000, chain=1, model_name="cytof")
 
 post <- extract(out)
-post$mu
+#ord <- c(1,4,2,3)
+ord <- 1:4
+my.image(apply(post$mu, 2:3, mean)[,ord])
+my.image(apply(post$Z, 2:3, mean)[,ord])
+plotPosts(post$psi[,1:4])
+plotPosts(post$tau2[,1:4])
+plotPosts(post$sig2)
+plotPosts(post$v[,ord])
+apply(post$W, 2:3, mean)[,ord]
+dat$W
+
+
+
 
 #source("cytof_stan.R")
