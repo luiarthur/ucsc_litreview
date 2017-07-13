@@ -1,4 +1,9 @@
 library(rstan)
+### STAN Options
+rstan_options(auto_write = TRUE) # save compiled file 
+options(mc.cores = parallel::detectCores()) # auto-detect and use number of cores available
+
+
 library(rcommon)
 source("../../cytof_simdat.R")
 source("../../../dat/myimage.R")
@@ -16,7 +21,8 @@ last <- function(lst) lst[[length(lst)]]
 #    5     .1      1  bad
 
 set.seed(1)
-dat <- cytof_simdat(I=3, N=list(2000, 3000, 1000), J=12, K=4,
+dat <- cytof_simdat(I=3, N=list(200, 300, 100), J=12, K=4,
+                    pi_a=1, pi_b=9,
                     a=.5,
                     tau2=rep(.1,12),
                     sig2=rep(1,3),
@@ -42,7 +48,7 @@ y <- dat$y
 I <- dat$I
 J <- dat$J
 K <- ncol(dat$mus)
-N <- sapply(y, length)
+N <- sapply(y, nrow)
 
 ### Sensitive priors
 ### depend on starting values
@@ -52,13 +58,16 @@ set.seed(2)
 Y <- array(dim=c(I, max(N), J))
 for (i in 1:I) {
   Y[i, 1:N[i], ] <- y[[i]]
-  #Y[i, -c(1:N[i]), ] <- Inf
+  Y[i, -c(1:N[i]), ] <- Inf
 }
-stan_dat <- list(I=I, J=J, K=K, N=sapply(y, length), maxN = max(N), 
+stan_dat <- list(I=I, J=J, K=K, N=N, maxN = max(N), 
                  h_mean=rep(0,J), G=diag(J), thresh=log(2),
                  alpha=1, a=rep(1, K), y=Y)
 
 out <- stan(file='cytof.stan', data=stan_dat, 
-            iter=2000, chain=4, model_name="cytof")
+            iter=2000, chain=1, model_name="cytof")
 
+post <- extract(out)
+post$mu
 
+#source("cytof_stan.R")
