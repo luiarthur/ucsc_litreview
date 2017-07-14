@@ -55,7 +55,7 @@ transformed parameters {
     b[k] = (k == 1 ? v[k] : b[k-1] * v[k]);
 
   for (j in 1:J) for (k in 1:K)
-    Z[j,k] = (normal_lcdf(h[k][j] | 0, G[j,j]) < log(b[k]) ?  1 : 0);
+    Z[j,k] = (normal_lcdf(h[k][j] | 0, sqrt(G[j,j])) < log(b[k]) ?  1 : 0);
 
   //for (j in 1:J) {
   //  cj = 1 / (1 + exp(-logit_c[j]));
