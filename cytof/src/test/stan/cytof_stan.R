@@ -64,7 +64,8 @@ for (i in 1:I) {
 
 init <- list(
   mus=matrix(log(2)*1.1, J, K),
-  psi=rep(log(2)*1.1, J),
+  #psi=rep(log(2)*1.1, J),
+  psi=rowMeans(dat$mus),
   tau2=rep(1, J),
   sig2=rep(1, I),
   v=rep(.9999, K)
