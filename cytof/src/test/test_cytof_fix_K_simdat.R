@@ -77,7 +77,8 @@ out <- cytof_fixed_K(y, K=dat$K,
                      #true_lam=dat$lam_index_0,
                      #true_W=dat$W,
                      #true_mu=dat$mus,
-                     window=300) # do adaptive by making window>0
+                     #window=300) # do adaptive by making window>0
+                     window=0) # do adaptive by making window>0
 length(out)
 
 ### Z
