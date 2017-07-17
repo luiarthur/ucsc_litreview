@@ -35,49 +35,49 @@ parameters {
   real mus[J,K];
   real psi[J];
   real<lower=0> tau2[J];
-  //real<lower=0, upper=1> Pi[I,J];
+  real<lower=0, upper=1> Pi[I,J];
   real<lower=0> sig2[I];
   real<lower=0, upper=1> v[K];
   vector[J] h[K];    // K-array of J-dimensional vectors
   simplex[K] W[I];   // I-array of K-dimensional simplexes
-  //real log_d;
-  //real logit_c[J];
+  real log_d;
+  real logit_c[J];
 }
 
 transformed parameters {
   vector[K] b;
   matrix[J,K] Z;
-  //real Pi_a[J];
-  //real Pi_b[J]; 
-  //real cj;
-  //real d;
 
   for (k in 1:K)
     b[k] = (k == 1 ? v[k] : b[k-1] * v[k]);
 
   for (j in 1:J) for (k in 1:K)
     Z[j,k] = (normal_lcdf(h[k][j] | 0, sqrt(G[j,j])) < log(b[k]) ?  1 : 0);
-
-  //for (j in 1:J) {
-  //  cj = 1 / (1 + exp(-logit_c[j]));
-  //  d = exp(log_d);
-  //  Pi_a[j] = cj * d;
-  //  Pi_b[j] = (1-cj) * d;
-  //}
 }
 
 model {
   real loglike[K];
+  real piece[2];
+
+  real Pi_a[J];
+  real Pi_b[J]; 
+  real cj;
+  real d;
+
+  for (j in 1:J) {
+    cj = 1 / (1 + exp(-logit_c[j]));
+    d = exp(log_d);
+    Pi_a[j] = cj * d;
+    Pi_b[j] = (1-cj) * d;
+  }
 
 
   // Priors
   for (j in 1:J) for (k in 1:K) {
     if (Z[j,k] == 1) {
       mus[j,k] ~ normal(psi[j], sqrt(tau2[j])) T[thresh,];
-      //mus[j,k] ~ normal(thresh + psi[j], sqrt(tau2[j]));
     } else {
       mus[j,k] ~ normal(psi[j], sqrt(tau2[j])) T[,thresh];
-      //mus[j,k] ~ normal(thresh - psi[j], sqrt(tau2[j]));
     }
   }
 
@@ -86,9 +86,9 @@ model {
   tau2 ~ inv_gamma(3, 2);
   sig2 ~ inv_gamma(3, 2);
 
-  //for (i in 1:I) for (j in 1:J) Pi[i][j] ~ beta(Pi_a[j], Pi_b[j]);
-  //for (j in 1:J) logit_c ~ normal(0, 3);
-  //log_d ~ normal(0, 3);
+  logit_c ~ normal(0, 3);
+  log_d ~ normal(0, 3);
+  for (i in 1:I) for (j in 1:J) Pi[i][j] ~ beta(Pi_a[j], Pi_b[j]);
 
   for (k in 1:K) v[k] ~ beta(alpha, 1);
   for (k in 1:K) h[K] ~ multi_normal(h_mean, G);
@@ -103,7 +103,10 @@ model {
         loglike[k] = log(W[i][k]) + normal_lpdf(y[i,n,j] | mus[j, k], sqrt(sig2[i])) - normal_lccdf(0 | mus[j, k], sqrt(sig2[i]));
       }
     }
-    target += log_sum_exp(loglike);
+    //target += log_sum_exp(loglike);
+    piece[1] = log(Pi[i][j]) + normal_lpdf(y[i,n,j] | 0, 1E-10);
+    piece[2] = log(1-Pi[i][j]) + log_sum_exp(loglike);
+    target += log_sum_exp(piece);
   }
 }
 
