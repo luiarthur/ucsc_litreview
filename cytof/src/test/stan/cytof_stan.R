@@ -73,9 +73,9 @@ init <- list(
 
 stan_dat <- list(I=I, J=J, K=K, N=N, maxN = max(N), 
                  h_mean=rep(0,J), G=diag(J), thresh=log(2),
-                 alpha=1, a=rep(1, K), y=Y)
+                 alpha=1, a=rep(1, K), psi_prior_mean=init$psi, y=Y)
 
-adapt <- list(adapt_delta=.9) # .8 is the Dedault
+adapt <- list(adapt_delta=.95) # .8 is the Dedault
 
 out <- stan(file='cytof.stan', data=stan_dat, init=list(init), control=adapt,
             iter=2000, chain=1, model_name="cytof")

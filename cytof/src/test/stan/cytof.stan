@@ -25,6 +25,7 @@ data {
   real<lower=0> alpha; // should be 1
   vector[K] a;         // should be (1/K, ..., 1/K)
   vector[J] h_mean;    // should be the zero vector (0_J)
+  vector[J] psi_prior_mean; // prior mean for psi
 
   real<lower=0> y[I, maxN, J]; // Data
 }
@@ -80,7 +81,8 @@ model {
     }
   }
 
-  psi ~ normal(thresh, 2);
+  //psi ~ normal(thresh, 2);
+  psi ~ normal(psi_prior_mean, 2);
   tau2 ~ inv_gamma(3, 2);
   sig2 ~ inv_gamma(3, 2);
 
