@@ -57,6 +57,7 @@ K <- ncol(dat$mus)
 #TODO: Now try AMCMC to recover mus. cand_sig2 = (2.4^2 / d) * cov(X + 1E-6)
 
 ### TODO: Changed delta_0 function. See if it works. Need to log?
+### TODO: logSumExp?
 
 set.seed(2)
 source("../cytof_fixed_K.R", chdir=TRUE)
