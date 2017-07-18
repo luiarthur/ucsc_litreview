@@ -179,7 +179,7 @@ double lp_logit_unif(double logit_u) {
 }
 
 
-int delta_0(double x) {
+double delta_0(double x) {
   //return x == 0 ? 1 : 0;
   return R::dnorm(x, 0, 1E-10, 0);
 }

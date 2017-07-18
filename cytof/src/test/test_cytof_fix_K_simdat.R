@@ -66,12 +66,12 @@ out <- cytof_fixed_K(y, K=dat$K,
                      #burn=20000, B=2000, pr=100, 
                      burn=10000, B=2000, pr=100, 
                      m_psi=log(2),#mean(dat$mus),
-                     cs_tau = .01,
-                     cs_psi = .01,
-                     cs_sig = .01,
-                     cs_mu  = .01,
-                     cs_c = .1, cs_d = .1,
-                     cs_v = .1, cs_h = .1,
+                     cs_psi = 1,
+                     cs_tau = 1,
+                     cs_sig = .1,
+                     cs_mu  = 1,
+                     cs_c = 1, cs_d = 1,
+                     cs_v = 1, cs_h = 1,
                      # Fix params:
                      #true_psi=rowMeans(dat$mus),
                      #true_Z=dat$Z,
@@ -204,6 +204,8 @@ dev.off()
 dat$mus
 mus_mean
 
+post_pi <- array(unlist(lapply(out, function(o) o$pi)), dim=c(I,J,length(out)))
+apply(post_pi, 1:2, mean)
 
 # Compare Data to Posterior Predictive:
 one_post_pred <- function(param) {

@@ -2,23 +2,10 @@
 
 // there should be twelve updates
 void update_theta(State &state, const Data &y, const Prior &prior, const Fixed &fixed_params) {
-  //Rcout << "mus ";
-  if (!fixed_params.mus)    update_mus(state, y, prior);
-  //Rcout << "psi ";
-  if (!fixed_params.psi)    update_psi(state, y, prior);
-  //Rcout << "tau2 ";
-  if (!fixed_params.tau2)   update_tau2(state, y, prior);
-
-  //Rcout << "pi ";
-  if (!fixed_params.pi)     update_pi(state, y, prior);
-  //Rcout << "sig2 ";
-  if (!fixed_params.sig2)   update_sig2(state, y, prior);
   //Rcout << "v ";
   if (!fixed_params.Z)      update_v_mus(state, y, prior);
-
   //Rcout << "H ";
   if (!fixed_params.Z)      update_H_mus(state, y, prior);
-
   //Rcout << "e ";
   //if (!fixed_params.pi || 
   //    !fixed_params.mus)    update_e(state, y, prior);
@@ -33,6 +20,18 @@ void update_theta(State &state, const Data &y, const Prior &prior, const Fixed &
   if (!fixed_params.pi)     update_c(state, y, prior);
   //Rcout << "d ";
   if (!fixed_params.pi)     update_d(state, y, prior);
+
+  //Rcout << "mus ";
+  if (!fixed_params.mus)    update_mus(state, y, prior);
+  //Rcout << "psi ";
+  if (!fixed_params.psi)    update_psi(state, y, prior);
+  //Rcout << "tau2 ";
+  if (!fixed_params.tau2)   update_tau2(state, y, prior);
+
+  //Rcout << "pi ";
+  if (!fixed_params.pi)     update_pi(state, y, prior);
+  //Rcout << "sig2 ";
+  if (!fixed_params.sig2)   update_sig2(state, y, prior);
 }
 
 // FIXME: Is this ok?
