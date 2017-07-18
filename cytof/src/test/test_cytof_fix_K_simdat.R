@@ -61,6 +61,7 @@ K <- ncol(dat$mus)
 
 set.seed(2)
 source("../cytof_fixed_K.R", chdir=TRUE)
+system.time(
 out <- cytof_fixed_K(y, K=dat$K,
                      #burn=20000, B=2000, pr=100, 
                      burn=10000, B=2000, pr=100, 
@@ -82,6 +83,7 @@ out <- cytof_fixed_K(y, K=dat$K,
                      #true_mu=dat$mus,
                      #window=300) # do adaptive by making window>0
                      window=0) # do adaptive by making window>0
+)
 length(out)
 
 ### Z
