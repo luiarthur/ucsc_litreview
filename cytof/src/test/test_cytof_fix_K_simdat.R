@@ -60,7 +60,7 @@ set.seed(2)
 source("../cytof_fixed_K.R", chdir=TRUE)
 out <- cytof_fixed_K(y, K=dat$K,
                      #burn=20000, B=2000, pr=100, 
-                     burn=5000, B=2000, pr=100, 
+                     burn=10000, B=2000, pr=100, 
                      m_psi=log(2),#mean(dat$mus),
                      cs_tau = .01,
                      cs_psi = .01,
@@ -238,7 +238,7 @@ mean(post_pred[[1]] == 0)
 #source("test_cytof_fix_K_simdat.R")
 
 par(mfrow=c(3,1))
-plot(dat$y[[1]], post_pred[[1]], pch=20, col=rgb(0,0,1,.1)); abline(0,1,col='grey') 
-plot(dat$y[[2]], post_pred[[2]], pch=20, col=rgb(0,0,1,.1)); abline(0,1,col='grey') 
-plot(dat$y[[3]], post_pred[[3]], pch=20, col=rgb(0,0,1,.1)); abline(0,1,col='grey') 
+plot(quantile(dat$y[[1]],seq(0,1,len=10)), quantile(post_pred[[1]],seq(0,1,len=10)), pch=20, col=rgb(0,0,1,.1)); abline(0,1,col='grey') 
+plot(quantile(dat$y[[2]],seq(0,1,len=10)), quantile(post_pred[[2]],seq(0,1,len=10)), pch=20, col=rgb(0,0,1,.1)); abline(0,1,col='grey') 
+plot(quantile(dat$y[[3]],seq(0,1,len=10)), quantile(post_pred[[3]],seq(0,1,len=10)), pch=20, col=rgb(0,0,1,.1)); abline(0,1,col='grey') 
 par(mfrow=c(1,1))
