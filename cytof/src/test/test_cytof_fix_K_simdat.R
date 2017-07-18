@@ -69,7 +69,7 @@ out <- cytof_fixed_K(y, K=dat$K,
                      cs_psi = 1,
                      cs_tau = 1,
                      cs_sig = .1,
-                     cs_mu  = 1,
+                     cs_mu  = .01,
                      cs_c = 1, cs_d = 1,
                      cs_v = 1, cs_h = 1,
                      # Fix params:
