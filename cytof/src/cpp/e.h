@@ -10,7 +10,7 @@ void update_einj(State &state, const Data &y, const Prior &prior,
   p[0] = (1 - state.pi(i,j)) * x;
   p[1] = state.pi(i,j) * delta_0(y[i](n,j));
 
-  if (state.Z[j, state.lam[i][n]] == 1) {
+  if (state.Z(j, state.lam[i][n]) == 1) {
     state.e[i](n,j) = 0;
   } else {
     state.e[i](n,j) = wsample_index(p, 2);

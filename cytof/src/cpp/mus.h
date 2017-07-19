@@ -59,7 +59,7 @@ double ll_mus(double mus_jk, State &state, const Data &y, const Prior &prior,
       //  ll += log_dtnorm(y[i](n,j), mus_jk, sig_i, 0, false); //lt=false
       //}
       if (state.lam[i][n] == k) {
-        ll += marginal_lf(y[i](n,j), mus_jk, sig_i, state.Z[j,k], state.pi[i,j]);
+        ll += marginal_lf(y[i](n,j), mus_jk, sig_i, state.Z(j,k), state.pi(i,j));
       }
     }
 
@@ -97,7 +97,7 @@ void update_mus(State &state, const Data &y, const Prior &prior) {
       };
 
 
-      state.mus(j,k) = metropolis::uni(state.mus(j,k), log_fc, prior.cs_mu[j,k]);
+      state.mus(j,k) = metropolis::uni(state.mus(j,k), log_fc, prior.cs_mu(j,k));
 
       // new version
       //mus_jk = state.mus(j,k);

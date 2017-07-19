@@ -203,8 +203,8 @@ std::vector<List> cytof_fix_K_fit(
           autotune2(state.psi[j], sum_psi[j], sum2_psi[j], prior.cs_psi[j], ii);
           autotune2(log(state.tau2[j]), sum_tau2[j], sum2_tau2[j], prior.cs_psi[j], ii);
           for (int k=0; k<K; k++) {
-            autotune2(state.mus[j,k], sum_mus[j,k], sum2_mus[j,k], 
-                      prior.cs_mu[j,k], ii);
+            autotune2(state.mus(j,k), sum_mus(j,k), sum2_mus(j,k), 
+                      prior.cs_mu(j,k), ii);
           }
         }
       }
