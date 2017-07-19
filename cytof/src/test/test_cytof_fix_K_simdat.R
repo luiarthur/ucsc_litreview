@@ -61,6 +61,7 @@ K <- ncol(dat$mus)
 
 ### TODO: Changed delta_0 function. See if it works. Need to log?
 ### TODO: logSumExp?
+### TODO: Compute loglike every 100 iterations?
 
 set.seed(2)
 source("../cytof_fixed_K.R", chdir=TRUE)
@@ -77,9 +78,11 @@ out <- cytof_fixed_K(y, K=dat$K,
                      cs_c = .1, cs_d = .1,
                      cs_v = .1, cs_h = .1,
                      # Fix params:
+                     true_psi=rep(log(2), J),
+                     true_tau2=rep(2, J),
                      #true_psi=rowMeans(dat$mus),
-                     #true_Z=dat$Z,
                      #true_tau2=apply(dat$mus, 1, var),#dat$tau2,
+                     #true_Z=dat$Z,
                      #true_sig2=dat$sig2,
                      #true_pi=dat$pi,
                      #true_lam=dat$lam_index_0,

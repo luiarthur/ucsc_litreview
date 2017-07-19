@@ -25,7 +25,7 @@ left_order <- function(Z) {
 #    5     .1      1  bad
 
 set.seed(1)
-dat <- cytof_simdat(I=3, N=list(2000, 3000, 1000), J=12, K=4,
+dat <- cytof_simdat(I=3, N=list(200, 300, 100), J=12, K=4,
                     pi_a=1, pi_b=9,
                     a=1,#.5,
                     tau2=rep(.1,12),
@@ -67,21 +67,17 @@ for (i in 1:I) {
 }
 
 init <- list(
-  mus=matrix(log(2)*1.1, J, K),
-  #psi=rep(log(2)*1.1, J),
-  psi=rowMeans(dat$mus),
-  tau2=rep(1, J),
-  sig2=rep(1, I),
-  v=rep(.9999, K)
+  mus=matrix(1, J, K),
+  gam=rep(.999, K),
+  sig2=rep(1, I)
 )
 
 stan_dat <- list(I=I, J=J, K=K, N=N, maxN = max(N), 
-                 h_mean=rep(0,J), G=diag(J), thresh=log(2),
-                 alpha=1, a=rep(1, K), psi_prior_mean=init$psi, y=Y)
+                 thresh=log(2), a=rep(1, K), y=Y)
 
 adapt <- list(adapt_delta=.95) # .8 is the Dedault
 
-out <- stan(file='cytof.stan', data=stan_dat, init=list(init), control=adapt,
+out <- stan(file='cytof2.stan', data=stan_dat, #init=list(init), control=adapt,
             iter=2000, chain=1, model_name="cytof")
 
 post <- extract(out)
@@ -89,8 +85,6 @@ Z_mean <- apply(post$Z, 2:3, mean)
 ord <- left_order(Z_mean)
 my.image(apply(post$mu, 2:3, mean)[,ord])
 my.image(Z_mean[,ord])
-plotPosts(post$psi[,1:4])
-plotPosts(post$tau2[,1:4])
 plotPosts(post$sig2)
 plotPosts(post$v[,ord])
 apply(post$W, 2:3, mean)[,ord]
@@ -99,4 +93,4 @@ dat$W
 
 
 
-#source("cytof_stan.R")
+#source("cytof2_stan.R")
