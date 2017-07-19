@@ -37,9 +37,15 @@ dat <- cytof_simdat(I=3, N=list(200, 300, 100), J=12, K=4,
 pdf("out/data.pdf")
 hist(dat$mus)
 
+par(mfrow=c(3,1))
 hist(apply(dat$y[[1]], 2, mean), col=rgb(1,0,0, .2), prob=TRUE, xlim=c(0, 3), border='white')
-hist(apply(dat$y[[2]], 2, mean), col=rgb(0,1,0, .4), prob=TRUE, xlim=c(0, 3), border='white', add=TRUE)
-hist(apply(dat$y[[3]], 2, mean), col=rgb(0,0,1, .2), prob=TRUE, xlim=c(0, 3), border='white', add=TRUE)
+hist(apply(dat$y[[2]], 2, mean), col=rgb(0,1,0, .4), prob=TRUE, xlim=c(0, 3), border='white')
+hist(apply(dat$y[[3]], 2, mean), col=rgb(0,0,1, .2), prob=TRUE, xlim=c(0, 3), border='white')
+par(mfrow=c(1,1))
+
+rbind(apply(dat$y[[1]], 2, mean),
+      apply(dat$y[[2]], 2, mean),
+      apply(dat$y[[3]], 2, mean))
 
 my.image(cor(dat$y[[1]]), xaxt='n',yaxt='n',xlab="",ylab="",
          main="y1 Correlation b/w Markers",addLegend=TRUE)
