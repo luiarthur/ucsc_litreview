@@ -22,8 +22,8 @@ set.seed(1)
 #                    W=matrix(c(.3, .4, .2, .1,
 #                               .1, .7, .1, .1,
 #                               .2, .3, .3, .2), 3, 4, byrow=TRUE))
-dat <- cytof_simdat(I=3, N=list(2000, 3000, 1000), J=12, K=4,
-                    a=.5, pi_a=1, pi_b=9,
+dat <- cytof_simdat(I=3, N=list(200, 300, 100), J=12, K=4,
+                    a=1, pi_a=1, pi_b=9,
                     tau2=rep(.1,12),
                     sig2=rep(1,3),
                     W=matrix(c(.3, .4, .2, .1,
@@ -61,15 +61,17 @@ K <- ncol(dat$mus)
 
 set.seed(2)
 source("../cytof_fixed_K.R", chdir=TRUE)
+# Current settings work when delta_0 is defined as: x == 0 ? 1 : 0
+# NOW TRYING delta_0 = x == 0 ? 1E6 : 0
 system.time(
 out <- cytof_fixed_K(y, K=dat$K,
                      #burn=20000, B=2000, pr=100, 
                      burn=10000, B=2000, pr=100, 
                      m_psi=log(2),#mean(dat$mus),
-                     cs_psi = .1,
-                     cs_tau = .1,
-                     cs_sig = .1,
-                     cs_mu  = .1,
+                     cs_psi = .01,
+                     cs_tau = .01,
+                     cs_sig = .01,
+                     cs_mu  = .01,
                      cs_c = .1, cs_d = .1,
                      cs_v = .1, cs_h = .1,
                      # Fix params:
@@ -86,11 +88,12 @@ out <- cytof_fixed_K(y, K=dat$K,
 )
 length(out)
 
+ord <- c(4,2,3,1)
 ### Z
 Z <- lapply(out, function(o) o$Z)
 Z_mean <- Reduce("+", Z) / length(Z)
 pdf("out/Z.pdf")
-my.image(Z_mean, addLegend=T, main="Posterior Mean Z")
+my.image(Z_mean[,ord], addLegend=T, main="Posterior Mean Z")
 my.image(dat$Z, addLegend=T, main="True Z")
 dev.off()
 
@@ -99,7 +102,7 @@ W <- lapply(out, function(o) o$W)
 W_mean <- Reduce("+", W) / length(W)
 sink("out/W.txt")
 cat("Posterior Mean W: \n")
-W_mean
+W_mean[,ord]
 cat("\nTrue W: \n")
 dat$W
 sink()
@@ -193,19 +196,27 @@ plot_mus_post(2,1)
 plot_mus_post(2,2)
 plot_mus_post(9,2)
 
-my.image(mus_mean, xlab='', ylab='', mx=1, mn=-1, addLegend=T, main='mu* posterior mean')
+my.image(mus_mean[,ord], xlab='', ylab='', mx=1, mn=-1, addLegend=T, main='mu* posterior mean')
 my.image(dat$mus,  xlab='', ylab='', mx=1, mn=-1, addLegend=T, main='mu* Truth')
-my.image(mus_mean-dat$mus, xlab='', ylab='', mx=1, mn=-1, addLegend=T, main='mu* posterior mean')
+my.image(mus_mean[,ord]-dat$mus, xlab='', ylab='', mx=1, mn=-1, addLegend=T, main='mu* posterior mean')
 
-hist(mus_mean)
-hist(dat$mus)
+hist(mus_mean[,ord], xlim=range(c(mus_mean, dat$mus)), prob=TRUE,
+     col=rgb(0,0,1,.3), border='white', main='Histogram of mu*')
+hist(dat$mus, xlim=range(c(mus_mean, dat$mus)), prob=TRUE, add=TRUE,
+     col=rgb(1,0,0,.3), border='white')
+legend('topright', col=c('blue','red'), legend=c('mu* (True)','mu* (Post)'), 
+       pch=20, cex=2)
+
 dev.off()
 
 dat$mus
-mus_mean
+mus_mean[,ord]
 
+### Pi
 post_pi <- array(unlist(lapply(out, function(o) o$pi)), dim=c(I,J,length(out)))
-apply(post_pi, 1:2, mean)
+
+my.image( apply(post_pi, 1:2, mean), addLegend=TRUE)
+my.image( dat$pi_var, addLegend=TRUE )
 
 # Compare Data to Posterior Predictive:
 one_post_pred <- function(param) {
