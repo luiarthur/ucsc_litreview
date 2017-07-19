@@ -27,6 +27,17 @@ I <- length(pat5)
 y <- lapply(as.list(1:I), function(i)
             as.matrix(log( pat5[[i]]/pat5_cutoff[[i]] + 1)))
 
+### Plot histogram of Data. Use this for psi_j means?
+par(mfrow=c(3,1))
+hist(apply(y[[1]], 2, mean), col=rgb(1,0,0, .2), prob=TRUE, xlim=c(0, 4), border='white')
+hist(apply(y[[2]], 2, mean), col=rgb(0,1,0, .4), prob=TRUE, xlim=c(0, 4), border='white')
+hist(apply(y[[3]], 2, mean), col=rgb(0,0,1, .2), prob=TRUE, xlim=c(0, 4), border='white')
+par(mfrow=c(1,1))
+
+rbind(apply(y[[1]], 2, mean),
+      apply(y[[2]], 2, mean),
+      apply(y[[3]], 2, mean))
+
 p <- .05
 N_i <- sapply(y, nrow)
 train_idx <- lapply(N_i, function(N) sample(1:N, round(N*p)))
