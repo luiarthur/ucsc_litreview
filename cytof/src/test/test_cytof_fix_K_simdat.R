@@ -215,7 +215,7 @@ mus_mean[,ord]
 ### Pi
 post_pi <- array(unlist(lapply(out, function(o) o$pi)), dim=c(I,J,length(out)))
 
-my.image( apply(post_pi, 1:2, mean), addLegend=TRUE)
+my.image( pi_mean <- apply(post_pi, 1:2, mean), addLegend=TRUE)
 my.image( dat$pi_var, addLegend=TRUE )
 
 # Compare Data to Posterior Predictive:
@@ -226,7 +226,11 @@ one_post_pred <- function(param) {
     for (n in 1:dat$N[[i]]) {
       lin <- param$lam[[i]][n] + 1
       for (j in 1:J) {
-        Y[[i]][n,j] <- ifelse(param$pi[i,j] > runif(1), 0, rtruncnorm(1, 0, Inf, param$mus[j,lin], sig_i))
+        if (param$Z[j,lin] == 1) {
+          Y[[i]][n,j] <- rtruncnorm(1, 0, Inf, param$mus[j,lin], sig_i)
+        } else {
+          Y[[i]][n,j] <- ifelse(param$pi[i,j] > runif(1), 0, rtruncnorm(1, 0, Inf, param$mus[j,lin], sig_i))
+        }
       }
     }
   }
@@ -251,7 +255,7 @@ my.image(cor(post_pred[[2]]), xaxt='n',yaxt='n',xlab="",ylab="",
          main="y2 Correlation b/w Markers",addLegend=TRUE)
 my.image(cor(post_pred[[3]]), xaxt='n',yaxt='n',xlab="",ylab="",
          main="y3 Correlation b/w Markers",addLegend=TRUE)
-mean(post_pred[[1]] == 0)
+mean(post_pred[[1]] == 0) # is 0 because we're doing post mean...
 
 #source("test_cytof_fix_K_simdat.R")
 
