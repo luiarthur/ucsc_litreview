@@ -81,14 +81,20 @@ out <- stan(file='cytof2.stan', data=stan_dat, #init=list(init), control=adapt,
             iter=2000, chain=1, model_name="cytof")
 
 post <- extract(out)
+apply(post$gam, 2, mean)
 Z_mean <- apply(post$Z, 2:3, mean)
 ord <- left_order(Z_mean)
+my.image(apply(post$mu, 2:3, mean))
 my.image(apply(post$mu, 2:3, mean)[,ord])
 my.image(Z_mean[,ord])
 plotPosts(post$sig2)
-plotPosts(post$v[,ord])
-apply(post$W, 2:3, mean)[,ord]
+
+apply(post$W, 2:3, mean)
 dat$W
+
+apply(post$Pi, 2:3, mean)
+dat$pi
+
 
 
 
