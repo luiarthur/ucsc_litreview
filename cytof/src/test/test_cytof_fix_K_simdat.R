@@ -4,6 +4,9 @@ source("../cytof_simdat.R")
 source("../../dat/myimage.R")
 
 last <- function(lst) lst[[length(lst)]]
+left_order <- function(Z) {
+  order(apply(Z, 2, function(z) paste0(as.character(z), collapse='')), decreasing=TRUE)
+}
 
 #  psi    tau    sig
 #    0  small  small  bad
@@ -88,10 +91,10 @@ out <- cytof_fixed_K(y, K=dat$K,
 )
 length(out)
 
-ord <- c(4,2,3,1)
 ### Z
 Z <- lapply(out, function(o) o$Z)
 Z_mean <- Reduce("+", Z) / length(Z)
+ord <- left_order(Z_mean)
 pdf("out/Z.pdf")
 my.image(Z_mean[,ord], addLegend=T, main="Posterior Mean Z")
 my.image(dat$Z, addLegend=T, main="True Z")
@@ -171,19 +174,20 @@ mus_mean <- apply(mus, 1:2, mean)
 #exp(dat$mus - mus_mean)
 #my.image( exp(dat$mus - mus_mean), addLegend=T)
 #my.image(dat$mus - mus_mean, addLegend=T)
-## QQ
-plot(c(dat$mus), c(mus_mean), col=c(dat$Z) + 3, pch=20, cex=2,
+
+## Post pred mean vs Truth
+plot(c(dat$mus), c(mus_mean[,ord]), col=c(dat$Z) + 3, pch=20, cex=2,
      xlab="mu*_true", ylab="mu* posterior mean", fg='grey',
      main="mu* posterior mean vs truth")
 abline(0,1, col='grey')
-mus_ci <- apply(mus, 1:2, quantile, c(.025,.975))
+mus_ci <- apply(mus, 1:2, quantile, c(.025,.975))[,,ord]
 
 ### Acceptance Rates
 apply(mus, 1:2, function(x) length(unique(x)) / length(out))
 
 plot_mus_post <- function(i,j, main=paste0("mu*[",i,",",j,"]"), ...) {
   MAIN <- main
-  plotPost(apply(mus, 3, function(m) m[i,j]), float=TRUE,
+  plotPost(apply(mus, 3, function(m) m[i,ord[j]]), float=TRUE,
            main=MAIN, ...)
   abline(v=dat$mus[i,j], col='grey')
 }
@@ -219,48 +223,60 @@ my.image( pi_mean <- apply(post_pi, 1:2, mean), addLegend=TRUE)
 my.image( dat$pi_var, addLegend=TRUE )
 
 # Compare Data to Posterior Predictive:
-one_post_pred <- function(param) {
-  Y <- dat$y
-  for (i in 1:I) {
-    sig_i <- sqrt(param$sig2[i])
-    for (n in 1:dat$N[[i]]) {
-      lin <- param$lam[[i]][n] + 1
+sim_post_pred <- function(post) {
+  B <- length(post)
+  Y <- rep(list(matrix(NA, B, J)), I)
+
+  for (n in 1:B) {
+    for (i in 1:I) {
+      sig_i <- sqrt(post[[n]]$sig2[i])
+      lin <- sample(1:K, 1, prob=post[[n]]$W[i,])
       for (j in 1:J) {
-        if (param$Z[j,lin] == 1) {
-          Y[[i]][n,j] <- rtruncnorm(1, 0, Inf, param$mus[j,lin], sig_i)
+        if (post[[n]]$Z[j,lin] == 1) {
+          Y[[i]][n,j] <- rtruncnorm(1, 0, Inf, post[[n]]$mus[j,lin], sig_i)
         } else {
-          Y[[i]][n,j] <- ifelse(param$pi[i,j] > runif(1), 0, rtruncnorm(1, 0, Inf, param$mus[j,lin], sig_i))
+          Y[[i]][n,j] <- ifelse(post[[n]]$pi[i,j] > runif(1), 0, rtruncnorm(1, 0, Inf, post[[n]]$mus[j,lin], sig_i))
         }
       }
     }
   }
+
   return(Y)
 }
 
-join <- function(pp) {
-  B <- length(pp)
-  out <- as.list(1:I)
-  for (i in 1:I) {
-    out[[i]] <- Reduce("+", lapply(pp, function(f) f[[i]])) / B
-  }
-  out
-}
+post_pred <- sim_post_pred(out)
 
-system.time(post_pred <- join(lapply(tail(out,1000), one_post_pred)))
-#post_pred <- one_post_pred(last(out))
-
+### Posterior Predictive Correlations
 my.image(cor(post_pred[[1]]), xaxt='n',yaxt='n',xlab="",ylab="",
          main="y1 Correlation b/w Markers",addLegend=TRUE)
+my.image(cor(dat$y[[1]]), xaxt='n',yaxt='n',xlab="",ylab="",
+         main="y1 Correlation b/w Markers",addLegend=TRUE)
+
 my.image(cor(post_pred[[2]]), xaxt='n',yaxt='n',xlab="",ylab="",
          main="y2 Correlation b/w Markers",addLegend=TRUE)
+my.image(cor(dat$y[[2]]), xaxt='n',yaxt='n',xlab="",ylab="",
+         main="y1 Correlation b/w Markers",addLegend=TRUE)
+
 my.image(cor(post_pred[[3]]), xaxt='n',yaxt='n',xlab="",ylab="",
          main="y3 Correlation b/w Markers",addLegend=TRUE)
-mean(post_pred[[1]] == 0) # is 0 because we're doing post mean...
+my.image(cor(dat$y[[3]]), xaxt='n',yaxt='n',xlab="",ylab="",
+         main="y1 Correlation b/w Markers",addLegend=TRUE)
+
+### Residual of Correlations
+my.image(cor(post_pred[[3]]) - cor(dat$y[[3]]), xaxt='n',yaxt='n',xlab="",ylab="",
+         main="y3 Correlation b/w Markers",addLegend=TRUE)
+
+### Posterior Predictive Proportion of 0's
+mean(post_pred[[1]] == 0); mean(dat$y[[1]] == 0); 
+mean(post_pred[[2]] == 0); mean(dat$y[[2]] == 0); 
+mean(post_pred[[3]] == 0); mean(dat$y[[3]] == 0); 
 
 #source("test_cytof_fix_K_simdat.R")
 
+### QQ Plot
 par(mfrow=c(3,1))
-plot(quantile(dat$y[[1]],seq(0,1,len=10)), quantile(post_pred[[1]],seq(0,1,len=10)), pch=20, col=rgb(0,0,1,.1)); abline(0,1,col='grey') 
-plot(quantile(dat$y[[2]],seq(0,1,len=10)), quantile(post_pred[[2]],seq(0,1,len=10)), pch=20, col=rgb(0,0,1,.1)); abline(0,1,col='grey') 
-plot(quantile(dat$y[[3]],seq(0,1,len=10)), quantile(post_pred[[3]],seq(0,1,len=10)), pch=20, col=rgb(0,0,1,.1)); abline(0,1,col='grey') 
+plot(quantile(dat$y[[1]],seq(0,1,len=100)), quantile(post_pred[[1]],seq(0,1,len=100)), pch=20, col='red'); abline(0,1,col='grey') 
+plot(quantile(dat$y[[2]],seq(0,1,len=100)), quantile(post_pred[[2]],seq(0,1,len=100)), pch=20, col='red'); abline(0,1,col='grey') 
+plot(quantile(dat$y[[3]],seq(0,1,len=100)), quantile(post_pred[[3]],seq(0,1,len=100)), pch=20, col='red'); abline(0,1,col='grey') 
 par(mfrow=c(1,1))
+
