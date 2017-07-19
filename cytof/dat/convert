@@ -9,4 +9,5 @@ do
   for old in *.xlsx; do mv $old `basename $old .xlsx`_cutoff.xlsx; done
   for old in *.cutoff; do mv $old `basename $old .cutoff`_cutoff.xlsx; done
   libreoffice --headless --convert-to csv *_cutoff.xlsx
+  #ssconvert Book1.xlsx newfile.csv #  for osx
 done

@@ -36,6 +36,11 @@ dat <- cytof_simdat(I=3, N=list(200, 300, 100), J=12, K=4,
 ### PLOT DATA
 pdf("out/data.pdf")
 hist(dat$mus)
+
+hist(apply(dat$y[[1]], 2, mean), col=rgb(1,0,0, .2), prob=TRUE, xlim=c(0, 3), border='white')
+hist(apply(dat$y[[2]], 2, mean), col=rgb(0,1,0, .4), prob=TRUE, xlim=c(0, 3), border='white', add=TRUE)
+hist(apply(dat$y[[3]], 2, mean), col=rgb(0,0,1, .2), prob=TRUE, xlim=c(0, 3), border='white', add=TRUE)
+
 my.image(cor(dat$y[[1]]), xaxt='n',yaxt='n',xlab="",ylab="",
          main="y1 Correlation b/w Markers",addLegend=TRUE)
 my.image(cor(dat$y[[2]]), xaxt='n',yaxt='n',xlab="",ylab="",
@@ -73,7 +78,7 @@ out <- cytof_fixed_K(y, K=dat$K,
                      m_psi=log(2),#mean(dat$mus),
                      cs_psi = .01,
                      cs_tau = .01,
-                     cs_sig = .01,
+                     cs_sig = .1,
                      cs_mu  = .01,
                      cs_c = .1, cs_d = .1,
                      cs_v = .1, cs_h = .1,
