@@ -64,9 +64,8 @@ K <- ncol(dat$mus)
 
 set.seed(2)
 source("../cytof_fixed_K.R", chdir=TRUE)
-# Current settings work when delta_0 is defined as: x == 0 ? 1 : 0
-# NOW TRYING delta_0 = x == 0 ? 1E6 : 0
 system.time(
+#out <- cytof_fixed_K(y, K=5,#dat$K,
 out <- cytof_fixed_K(y, K=dat$K,
                      #burn=20000, B=2000, pr=100, 
                      burn=10000, B=2000, pr=100, 
@@ -176,11 +175,15 @@ mus_mean <- apply(mus, 1:2, mean)
 #my.image(dat$mus - mus_mean, addLegend=T)
 
 ## Post pred mean vs Truth
+mus_ci_lo <- apply(mus, 1:2, quantile, .025)[,ord]
+mus_ci_up <- apply(mus, 1:2, quantile, .975)[,ord]
+mus_ci <- cbind(c(mus_ci_lo), c(mus_ci_up))
 plot(c(dat$mus), c(mus_mean[,ord]), col=c(dat$Z) + 3, pch=20, cex=2,
      xlab="mu*_true", ylab="mu* posterior mean", fg='grey',
+     ylim=range(mus_ci),
      main="mu* posterior mean vs truth")
 abline(0,1, col='grey')
-mus_ci <- apply(mus, 1:2, quantile, c(.025,.975))[,,ord]
+add.errbar(mus_ci, x=c(dat$mus), col=c(dat$Z) + 3, lty=2, lwd=.5)
 
 ### Acceptance Rates
 apply(mus, 1:2, function(x) length(unique(x)) / length(out))
@@ -208,7 +211,7 @@ hist(mus_mean[,ord], xlim=range(c(mus_mean, dat$mus)), prob=TRUE,
      col=rgb(0,0,1,.3), border='white', main='Histogram of mu*')
 hist(dat$mus, xlim=range(c(mus_mean, dat$mus)), prob=TRUE, add=TRUE,
      col=rgb(1,0,0,.3), border='white')
-legend('topright', col=c('blue','red'), legend=c('mu* (True)','mu* (Post)'), 
+legend('topright', col=c('blue','red'), legend=c('mu* (Post)','mu* (True)'), 
        pch=20, cex=2)
 
 dev.off()
@@ -221,6 +224,8 @@ post_pi <- array(unlist(lapply(out, function(o) o$pi)), dim=c(I,J,length(out)))
 
 my.image( pi_mean <- apply(post_pi, 1:2, mean), addLegend=TRUE)
 my.image( dat$pi_var, addLegend=TRUE )
+pi_mean
+dat$pi_var
 
 # Compare Data to Posterior Predictive:
 sim_post_pred <- function(post) {
