@@ -5,7 +5,7 @@ double update_lin(State &state, const Data &y, const Prior &prior,
 
   const int J = get_J(y);
   const int K = state.K;
-  double x;
+  //double x;
   int z_jk;
   double pi_ij;
 
@@ -39,7 +39,7 @@ void update_lam(State &state, const Data &y, const Prior &prior) {
 
 type_lam sample_lam_prior(const arma::mat &W, const Data &y) {
   const int I = get_I(y);
-  const int K = W.n_cols;
+  //const int K = W.n_cols;
   type_lam lam(I);
 
   for (int i=0; i<I; i++) {

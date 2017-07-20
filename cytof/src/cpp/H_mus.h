@@ -5,7 +5,7 @@ void update_Hjk_mus_jk(State &state, const Data &y, const Prior &prior,
                        int j, int k, double mj, double S2j) {
 
   const int I = get_I(y);
-  const int J = get_J(y);
+  //const int J = get_J(y);
   int N_i;
 
   auto log_fc = [&](double h_jk, double mus_jk, int z_jk) {

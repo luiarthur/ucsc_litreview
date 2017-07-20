@@ -6,7 +6,7 @@ double log_fc_logit_cj(double logit_c_j, State &state, const Data &y,
   const int I = get_I(y);
   double a, b;
   const double d = state.d;
-  const double log_d = log(d);
+  //const double log_d = log(d);
 
   // Note that this is simply a Normal
   const double lp = R::dnorm(logit_c_j, 0, sqrt(prior.s2_c), 1); // log

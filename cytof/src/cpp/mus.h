@@ -46,7 +46,7 @@ double ll_mus(double mus_jk, State &state, const Data &y, const Prior &prior,
               const int j, const int k) {
 
   const int I = get_I(y);
-  const double thresh = prior.mus_thresh;
+  //const double thresh = prior.mus_thresh;
   int N_i;
   double sig_i;
 
@@ -80,11 +80,11 @@ void update_mus(State &state, const Data &y, const Prior &prior) {
 
   const int J = get_J(y);
   const int K = state.K;
-  const double thresh = prior.mus_thresh;
-  double mus_jk;
-  int z_jk;
-  double cs;
-  double acc_prob;
+  //const double thresh = prior.mus_thresh;
+  //double mus_jk;
+  //int z_jk;
+  //double cs;
+  //double acc_prob;
 
   for (int j = 0; j < J; j++) {
     for (int k = 0; k < K; k++) {

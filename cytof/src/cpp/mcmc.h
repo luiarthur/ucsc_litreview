@@ -72,7 +72,7 @@ int wsample_index_log_prob(const double log_p[], const int n) {
 
 // [[Rcpp::export]]
 int wsample_index_vec(const arma::vec p) { // GOOD
-  const int n = p.size();
+  //const int n = p.size();
   const double p_sum = arma::sum(p);
   const double u = R::runif(0,p_sum);
 
