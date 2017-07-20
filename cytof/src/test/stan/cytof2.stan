@@ -54,7 +54,7 @@ model {
   for (i in 1:I) for (j in 1:J) Pi[i][j] ~ beta(1, 1);
   sig2 ~ inv_gamma(3, 2);
   for (i in 1:I) W[i] ~ dirichlet(a);
-  gam ~ beta(alpha,1);
+  gam ~ beta(alpha/K,1);
   alpha ~ gamma(.1, .1);
 
   // Likelihood
