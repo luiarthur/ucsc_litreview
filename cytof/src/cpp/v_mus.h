@@ -20,7 +20,10 @@ void update_vk_mus_kToK(State &state, const Data &y, const Prior &prior, int k) 
   arma::mat cand_mus_k_to_K(J, K-k);
   arma::Mat<int> cand_Z_k_to_K(J, K-k);
 
-  const double lp = log(cand_logit_vk - logit_vk) + (prior.alpha + 1) * log((1 + exp(-logit_vk)) / (1 + exp(-cand_logit_vk)));
+  //const double lp = log(cand_logit_vk - logit_vk) + (prior.alpha + 1) * log((1 + exp(-logit_vk)) / (1 + exp(-cand_logit_vk)));
+  // const double lp = log(logit_vk - cand_logit_vk) + (prior.alpha + 1) * log( (1 + exp(-logit_vk)) / (1 + exp(-cand_logit_vk)) );
+  const double lp = (logit_vk - cand_logit_vk) + (prior.alpha + 1) * ( log(1 + exp(-logit_vk)) - log(1 + exp(-cand_logit_vk)) );
+  //const double lp = (cand_logit_vk - logit_vk) + (prior.alpha + 1) * ( log(1 + exp(-logit_vk)) - log(1 + exp(-cand_logit_vk)) );
 
 
   // update Z, mu
@@ -46,7 +49,8 @@ void update_vk_mus_kToK(State &state, const Data &y, const Prior &prior, int k) 
                                       cand_Z_k_to_K(j,l-k),
                                       prior.mus_thresh);
       } else {
-        cand_mus_k_to_K(j,l-k) = state.Z(j,l);
+        //cand_mus_k_to_K(j,l-k) = state.Z(j,l);
+        cand_mus_k_to_K(j,l-k) = state.mus(j,l);
       }
     }
   }
