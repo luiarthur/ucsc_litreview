@@ -25,7 +25,9 @@ set.seed(1)
 #                    W=matrix(c(.3, .4, .2, .1,
 #                               .1, .7, .1, .1,
 #                               .2, .3, .3, .2), 3, 4, byrow=TRUE))
-dat <- cytof_simdat(I=3, N=list(200, 300, 100), J=12, K=4,
+#dat <- cytof_simdat(I=3, N=list(200, 300, 100), J=12, K=4,
+#dat <- cytof_simdat(I=3, N=list(50, 50, 50), J=12, K=4,
+dat <- cytof_simdat(I=3, N=list(2000, 3000, 1000), J=12, K=4,
                     a=1, pi_a=1, pi_b=9,
                     tau2=rep(.1,12),
                     sig2=rep(1,3),
@@ -84,31 +86,33 @@ source("../cytof_fixed_K.R", chdir=TRUE)
 system.time(
 #out <- cytof_fixed_K(y, K=5,#dat$K,
 out <- cytof_fixed_K(y, K=dat$K,
-                     #burn=20000, B=2000, pr=100, 
-                     burn=10000, B=2000, pr=100, 
+                     burn=100000, B=2000, pr=100, 
+                     #burn=10000, B=2000, pr=100, 
                      m_psi=log(2),#mean(dat$mus),
                      #cs_psi = .01, #ok
                      #cs_tau = .01, #ok
                      #cs_psi = 1,   bad 
                      #cs_tau = 1,   bad
-                     cs_psi = .1, #better
-                     cs_tau = .1, #better
+                     cs_psi = .01, #better
+                     cs_tau = .01, #better
                      cs_sig = .1,
                      cs_mu  = .1,
                      cs_c = .1, cs_d = .1,
                      cs_v = .1, cs_h = .1,
                      # Fix params:
-                     #true_psi=rep(log(2), J),
                      #true_psi=apply(yj_mean, 2, mean),
+                     #true_psi=rep(log(2), J),
                      #true_tau2=rep(4, J),
                      #true_psi=rowMeans(dat$mus),
                      #true_tau2=apply(dat$mus, 1, var),#dat$tau2,
+                     #
                      #true_Z=dat$Z,
                      #true_sig2=dat$sig2,
                      #true_pi=dat$pi,
                      #true_lam=dat$lam_index_0,
                      #true_W=dat$W,
                      #true_mu=dat$mus,
+                     #
                      #G=cov(dat$y[[2]]),
                      #window=300) # do adaptive by making window>0. Broken right now.
                      window=0) # do adaptive by making window>0
@@ -118,7 +122,7 @@ length(out)
 ### Z
 Z <- lapply(out, function(o) o$Z)
 Z_mean <- Reduce("+", Z) / length(Z)
-ord <- left_order(Z_mean)
+ord <- left_order(round(Z_mean))
 pdf("out/Z.pdf")
 my.image(Z_mean[,ord], addLegend=T, main="Posterior Mean Z")
 my.image(dat$Z, addLegend=T, main="True Z")
@@ -138,6 +142,17 @@ sink()
 v <- t(apply(t(sapply(out, function(o) o$v)), 1, cumprod))
 colMeans(v)
 
+### sig2
+sig2 <- t(sapply(out, function(o) o$sig2))
+plotPosts(sig2)
+plot(apply(sig2, 2, function(sj) length(unique(sj)) / length(out)),
+     ylim=0:1, main="Acceptance rate for sig2")
+abline(h=c(.25, .4), col='grey')
+sink("out/sig2.txt")
+cat("sig2: Posterior Mean, True\n")
+cbind( colMeans(sig2), dat$sig2 )
+sink()
+
 ### psi
 psi <- t(sapply(out, function(o) o$psi))
 my.pairs(psi[,1:5])
@@ -150,17 +165,6 @@ abline(h=c(.25, .4), col='grey')
 sink("out/psi.txt")
 cat("psi: Posterior Mean, True\n")
 cbind(colMeans(psi), rowMeans(dat$mus))
-sink()
-
-### sig2
-sig2 <- t(sapply(out, function(o) o$sig2))
-plotPosts(sig2)
-plot(apply(sig2, 2, function(sj) length(unique(sj)) / length(out)),
-     ylim=0:1, main="Acceptance rate for sig2")
-abline(h=c(.25, .4), col='grey')
-sink("out/sig2.txt")
-cat("sig2: Posterior Mean, True\n")
-cbind( colMeans(sig2), dat$sig2 )
 sink()
 
 ### tau2
