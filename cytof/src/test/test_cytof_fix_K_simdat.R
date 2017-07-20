@@ -25,7 +25,7 @@ set.seed(1)
 #                    W=matrix(c(.3, .4, .2, .1,
 #                               .1, .7, .1, .1,
 #                               .2, .3, .3, .2), 3, 4, byrow=TRUE))
-dat <- cytof_simdat(I=3, N=list(200, 300, 100), J=12, K=4,
+dat <- cytof_simdat(I=3, N=list(2000, 3000, 1000), J=12, K=4,
                     a=1, pi_a=1, pi_b=9,
                     tau2=rep(.1,12),
                     sig2=rep(1,3),
