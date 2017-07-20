@@ -38,23 +38,25 @@ pdf("out/data.pdf")
 hist(dat$mus)
 
 par(mfrow=c(3,1))
-hist(apply(dat$y[[1]], 2, mean), col=rgb(1,0,0, .2), prob=TRUE, xlim=c(0, 3), border='white')
+hist(apply(dat$y[[1]], 2, mean), col=rgb(1,0,0, .4), prob=TRUE, xlim=c(0, 3), border='white')
 hist(apply(dat$y[[2]], 2, mean), col=rgb(0,1,0, .4), prob=TRUE, xlim=c(0, 3), border='white')
-hist(apply(dat$y[[3]], 2, mean), col=rgb(0,0,1, .2), prob=TRUE, xlim=c(0, 3), border='white')
+hist(apply(dat$y[[3]], 2, mean), col=rgb(0,0,1, .4), prob=TRUE, xlim=c(0, 3), border='white')
 par(mfrow=c(1,1))
 
-rbind(apply(dat$y[[1]], 2, mean),
-      apply(dat$y[[2]], 2, mean),
-      apply(dat$y[[3]], 2, mean))
+yj_mean <- rbind(apply(dat$y[[1]], 2, mean),
+                 apply(dat$y[[2]], 2, mean),
+                 apply(dat$y[[3]], 2, mean))
 
-my.image(cor(dat$y[[1]]), xaxt='n',yaxt='n',xlab="",ylab="",
-         main="y1 Correlation b/w Markers",addLegend=TRUE)
-my.image(cor(dat$y[[2]]), xaxt='n',yaxt='n',xlab="",ylab="",
-         main="y2 Correlation b/w Markers",addLegend=TRUE)
-my.image(cor(dat$y[[3]]), xaxt='n',yaxt='n',xlab="",ylab="",
-         main="y3 Correlation b/w Markers",addLegend=TRUE)
+redToBlue <- colorRampPalette(c('red','grey90','blue'))(12)
+my.image(cor(dat$y[[1]]), xaxt='n',yaxt='n',xlab="",ylab="", col=redToBlue,
+         main="y1 Correlation b/w Markers",addLegend=TRUE, mn=-1,mx=1)
+my.image(cor(dat$y[[2]]), xaxt='n',yaxt='n',xlab="",ylab="", col=redToBlue,
+         main="y2 Correlation b/w Markers",addLegend=TRUE, mn=-1,mx=1)
+my.image(cor(dat$y[[3]]), xaxt='n',yaxt='n',xlab="",ylab="", col=redToBlue,
+         main="y3 Correlation b/w Markers",addLegend=TRUE, mn=-1,mx=1)
 my.image(dat$Z)
 dev.off()
+
 mean(dat$y[[1]] == 0)
 mean(dat$y[[2]] == 0)
 mean(dat$y[[3]] == 0)
@@ -73,6 +75,9 @@ K <- ncol(dat$mus)
 ### TODO: Changed delta_0 function. See if it works. Need to log?
 ### TODO: logSumExp?
 ### TODO: Compute loglike every 100 iterations?
+### TODO: Joint update mus (it's a big parameter)
+#         use this as covariance matrix after burn: cov(t(apply(mus, 3, c)))
+#         (2.4^2 / d) * (cov + eps*I_d), where d = 48 = J x K
 
 set.seed(2)
 source("../cytof_fixed_K.R", chdir=TRUE)
@@ -89,7 +94,8 @@ out <- cytof_fixed_K(y, K=dat$K,
                      cs_c = .1, cs_d = .1,
                      cs_v = .1, cs_h = .1,
                      # Fix params:
-                     true_psi=rep(log(2), J),
+                     #true_psi=rep(log(2), J),
+                     true_psi=apply(yj_mean, 2, mean),
                      true_tau2=rep(2, J),
                      #true_psi=rowMeans(dat$mus),
                      #true_tau2=apply(dat$mus, 1, var),#dat$tau2,
@@ -99,6 +105,7 @@ out <- cytof_fixed_K(y, K=dat$K,
                      #true_lam=dat$lam_index_0,
                      #true_W=dat$W,
                      #true_mu=dat$mus,
+                     #G=cov(dat$y[[2]]),
                      #window=300) # do adaptive by making window>0
                      window=0) # do adaptive by making window>0
 )
@@ -183,6 +190,10 @@ pdf("out/postmus.pdf")
 dat$mus
 mus_ls <- lapply(out, function(o) o$mus)
 mus <- array(unlist(mus_ls), dim=c(J, K, length(out)))
+
+### Correlation of mus
+cor(t(apply(mus, 3, c)))
+
 mus_mean <- apply(mus, 1:2, mean)
 #exp(dat$mus - mus_mean)
 #my.image( exp(dat$mus - mus_mean), addLegend=T)
@@ -266,24 +277,38 @@ sim_post_pred <- function(post) {
 post_pred <- sim_post_pred(out)
 
 ### Posterior Predictive Correlations
-my.image(cor(post_pred[[1]]), xaxt='n',yaxt='n',xlab="",ylab="",
-         main="y1 Correlation b/w Markers",addLegend=TRUE)
-my.image(cor(dat$y[[1]]), xaxt='n',yaxt='n',xlab="",ylab="",
-         main="y1 Correlation b/w Markers",addLegend=TRUE)
+my.image(cor(post_pred[[1]]), xaxt='n',yaxt='n',xlab="",ylab="",col=redToBlue,
+         main="y1 Correlation b/w Markers",addLegend=TRUE, mn=-1,mx=1)
+my.image(cor(dat$y[[1]]), xaxt='n',yaxt='n',xlab="",ylab="", col=redToBlue,
+         main="y1 Correlation b/w Markers",addLegend=TRUE, mn=-1,mx=1)
 
-my.image(cor(post_pred[[2]]), xaxt='n',yaxt='n',xlab="",ylab="",
-         main="y2 Correlation b/w Markers",addLegend=TRUE)
-my.image(cor(dat$y[[2]]), xaxt='n',yaxt='n',xlab="",ylab="",
-         main="y1 Correlation b/w Markers",addLegend=TRUE)
+my.image(cor(post_pred[[2]]), xaxt='n',yaxt='n',xlab="",ylab="", col=redToBlue,
+         main="y2 Correlation b/w Markers",addLegend=TRUE, mn=-1,mx=1)
+my.image(cor(dat$y[[2]]), xaxt='n',yaxt='n',xlab="",ylab="",col=redToBlue,
+         main="y1 Correlation b/w Markers",addLegend=TRUE,mn=-1,mx=1)
 
-my.image(cor(post_pred[[3]]), xaxt='n',yaxt='n',xlab="",ylab="",
-         main="y3 Correlation b/w Markers",addLegend=TRUE)
-my.image(cor(dat$y[[3]]), xaxt='n',yaxt='n',xlab="",ylab="",
-         main="y1 Correlation b/w Markers",addLegend=TRUE)
+my.image(cor(post_pred[[3]]), xaxt='n',yaxt='n',xlab="",ylab="", col=redToBlue,
+         main="y3 Correlation b/w Markers",addLegend=TRUE,mn=-1,mx=1)
+my.image(cor(dat$y[[3]]), xaxt='n',yaxt='n',xlab="",ylab="", col=redToBlue,
+         main="y1 Correlation b/w Markers",addLegend=TRUE,mn=-1,mx=1)
+
+### Hist of post pred
+
+par(mfrow=c(3,1))
+hist(post_pred[[1]], prob=TRUE, col=rgb(0,0,1,.3), border='white')
+hist(dat$y[[1]], prob=TRUE, add=TRUE, col=rgb(1,0,0,.3), border='white')
+
+hist(post_pred[[2]], prob=TRUE, col=rgb(0,0,1,.3), border='white')
+hist(dat$y[[2]], prob=TRUE, add=TRUE, col=rgb(1,0,0,.3), border='white')
+
+hist(post_pred[[3]], prob=TRUE, col=rgb(0,0,1,.3), border='white')
+hist(dat$y[[3]], prob=TRUE, add=TRUE, col=rgb(1,0,0,.3), border='white')
+par(mfrow=c(1,1))
+
 
 ### Residual of Correlations
 my.image(cor(post_pred[[3]]) - cor(dat$y[[3]]), xaxt='n',yaxt='n',xlab="",ylab="",
-         main="y3 Correlation b/w Markers",addLegend=TRUE)
+         main="y3 Correlation b/w Markers",addLegend=TRUE, mn=-1,mx=1, col=redToBlue)
 
 ### Posterior Predictive Proportion of 0's
 mean(post_pred[[1]] == 0); mean(dat$y[[1]] == 0); 
@@ -294,8 +319,8 @@ mean(post_pred[[3]] == 0); mean(dat$y[[3]] == 0);
 
 ### QQ Plot
 par(mfrow=c(3,1))
-plot(quantile(dat$y[[1]],seq(0,1,len=100)), quantile(post_pred[[1]],seq(0,1,len=100)), pch=20, col='red'); abline(0,1,col='grey') 
-plot(quantile(dat$y[[2]],seq(0,1,len=100)), quantile(post_pred[[2]],seq(0,1,len=100)), pch=20, col='red'); abline(0,1,col='grey') 
-plot(quantile(dat$y[[3]],seq(0,1,len=100)), quantile(post_pred[[3]],seq(0,1,len=100)), pch=20, col='red'); abline(0,1,col='grey') 
+plot(quantile(dat$y[[1]],seq(0,1,len=100)), quantile(post_pred[[1]],seq(0,1,len=100)), pch=20, col='red', ylab='post quantile 1'); abline(0,1,col='grey')
+plot(quantile(dat$y[[2]],seq(0,1,len=100)), quantile(post_pred[[2]],seq(0,1,len=100)), pch=20, col='red', ylab='post quantile 2'); abline(0,1,col='grey')
+plot(quantile(dat$y[[3]],seq(0,1,len=100)), quantile(post_pred[[3]],seq(0,1,len=100)), pch=20, col='red', ylab='post quantile 3'); abline(0,1,col='grey')
 par(mfrow=c(1,1))
 
