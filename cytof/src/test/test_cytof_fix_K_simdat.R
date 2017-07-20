@@ -25,7 +25,7 @@ set.seed(1)
 #                    W=matrix(c(.3, .4, .2, .1,
 #                               .1, .7, .1, .1,
 #                               .2, .3, .3, .2), 3, 4, byrow=TRUE))
-dat <- cytof_simdat(I=3, N=list(2000, 3000, 1000), J=12, K=4,
+dat <- cytof_simdat(I=3, N=list(200, 300, 100), J=12, K=4,
                     a=1, pi_a=1, pi_b=9,
                     tau2=rep(.1,12),
                     sig2=rep(1,3),
@@ -89,10 +89,10 @@ out <- cytof_fixed_K(y, K=dat$K,
                      m_psi=log(2),#mean(dat$mus),
                      #cs_psi = .01, #ok
                      #cs_tau = .01, #ok
-                     cs_psi = .1, #better
-                     cs_tau = .1, #better
                      #cs_psi = 1,   bad 
                      #cs_tau = 1,   bad
+                     cs_psi = .1, #better
+                     cs_tau = .1, #better
                      cs_sig = .1,
                      cs_mu  = .1,
                      cs_c = .1, cs_d = .1,
