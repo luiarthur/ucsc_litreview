@@ -34,6 +34,16 @@ hist(apply(y[[2]], 2, mean), col=rgb(0,1,0, .4), prob=TRUE, xlim=c(0, 4), border
 hist(apply(y[[3]], 2, mean), col=rgb(0,0,1, .2), prob=TRUE, xlim=c(0, 4), border='white')
 par(mfrow=c(1,1))
 
+### Correlations
+redToBlue <- colorRampPalette(c('red','grey90','blue'))(12)
+my.image(cor(y[[1]]), xaxt='n',yaxt='n',xlab="",ylab="", col=redToBlue,
+         main="y1 Correlation b/w Markers",addLegend=TRUE, mn=-1, mx=1)
+my.image(cor(y[[2]]), xaxt='n',yaxt='n',xlab="",ylab="", col=redToBlue,
+         main="y2 Correlation b/w Markers",addLegend=TRUE, mn=-1, mx=1)
+my.image(cor(y[[3]]), xaxt='n',yaxt='n',xlab="",ylab="", col=redToBlue,
+         main="y3 Correlation b/w Markers",addLegend=TRUE, mn=-1, mx=1)
+
+
 rbind(apply(y[[1]], 2, mean),
       apply(y[[2]], 2, mean),
       apply(y[[3]], 2, mean))
