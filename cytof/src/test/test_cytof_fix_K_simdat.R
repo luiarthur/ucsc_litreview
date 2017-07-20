@@ -87,16 +87,20 @@ out <- cytof_fixed_K(y, K=dat$K,
                      #burn=20000, B=2000, pr=100, 
                      burn=10000, B=2000, pr=100, 
                      m_psi=log(2),#mean(dat$mus),
-                     cs_psi = .01,
-                     cs_tau = .01,
+                     #cs_psi = .01, #ok
+                     #cs_tau = .01, #ok
+                     cs_psi = .1, #better
+                     cs_tau = .1, #better
+                     #cs_psi = 1,   bad 
+                     #cs_tau = 1,   bad
                      cs_sig = .1,
                      cs_mu  = .1,
                      cs_c = .1, cs_d = .1,
                      cs_v = .1, cs_h = .1,
                      # Fix params:
                      #true_psi=rep(log(2), J),
-                     true_psi=apply(yj_mean, 2, mean),
-                     true_tau2=rep(2, J),
+                     #true_psi=apply(yj_mean, 2, mean),
+                     #true_tau2=rep(4, J),
                      #true_psi=rowMeans(dat$mus),
                      #true_tau2=apply(dat$mus, 1, var),#dat$tau2,
                      #true_Z=dat$Z,
@@ -106,7 +110,7 @@ out <- cytof_fixed_K(y, K=dat$K,
                      #true_W=dat$W,
                      #true_mu=dat$mus,
                      #G=cov(dat$y[[2]]),
-                     #window=300) # do adaptive by making window>0
+                     #window=300) # do adaptive by making window>0. Broken right now.
                      window=0) # do adaptive by making window>0
 )
 length(out)
@@ -135,18 +139,18 @@ v <- t(apply(t(sapply(out, function(o) o$v)), 1, cumprod))
 colMeans(v)
 
 ### psi
-#psi <- t(sapply(out, function(o) o$psi))
-#my.pairs(psi[,1:5])
-##plotPosts(psi[,1:5])
-#
-#plot(apply(psi, 2, function(pj) length(unique(pj)) / length(out)),
-#     ylim=0:1, main="Acceptance rate for psi")
-#abline(h=c(.25, .4), col='grey')
-#
-#sink("out/psi.txt")
-#cat("psi: Posterior Mean, True\n")
-#cbind(colMeans(psi), rowMeans(dat$mus))
-#sink()
+psi <- t(sapply(out, function(o) o$psi))
+my.pairs(psi[,1:5])
+plotPosts(psi[,1:5])
+
+plot(apply(psi, 2, function(pj) length(unique(pj)) / length(out)),
+     ylim=0:1, main="Acceptance rate for psi")
+abline(h=c(.25, .4), col='grey')
+
+sink("out/psi.txt")
+cat("psi: Posterior Mean, True\n")
+cbind(colMeans(psi), rowMeans(dat$mus))
+sink()
 
 ### sig2
 sig2 <- t(sapply(out, function(o) o$sig2))
@@ -160,18 +164,18 @@ cbind( colMeans(sig2), dat$sig2 )
 sink()
 
 ### tau2
-#tau2 <- t(sapply(out, function(o) o$tau2))
-#plotPosts(tau2[,1:5])
-#my.pairs(tau2[,1:5])
-#plot(apply(tau2, 2, function(tj) length(unique(tj)) / length(out)),
-#     ylim=0:1, main="Acceptance rate for tau2")
-#abline(h=c(.15, .45), col='grey')
-#cbind(colMeans(tau2), dat$tau2, apply(dat$mus,1,var))
-#
-#sink("out/tau2.txt")
-#cat("tau2: Posterior Mean, True\n")
-#cbind(colMeans(tau2), dat$tau2)
-#sink()
+tau2 <- t(sapply(out, function(o) o$tau2))
+plotPosts(tau2[,1:5])
+my.pairs(tau2[,1:5])
+plot(apply(tau2, 2, function(tj) length(unique(tj)) / length(out)),
+     ylim=0:1, main="Acceptance rate for tau2")
+abline(h=c(.15, .45), col='grey')
+cbind(colMeans(tau2), dat$tau2, apply(dat$mus,1,var))
+
+sink("out/tau2.txt")
+cat("tau2: Posterior Mean, True\n")
+cbind(colMeans(tau2), dat$tau2)
+sink()
 
 ### lambda
 lam <- lapply(out, function(o) o$lam)
@@ -228,9 +232,9 @@ plot_mus_post(2,1)
 plot_mus_post(2,2)
 plot_mus_post(9,2)
 
-my.image(mus_mean[,ord], xlab='', ylab='', mx=1, mn=-1, addLegend=T, main='mu* posterior mean')
-my.image(dat$mus,  xlab='', ylab='', mx=1, mn=-1, addLegend=T, main='mu* Truth')
-my.image(mus_mean[,ord]-dat$mus, xlab='', ylab='', mx=1, mn=-1, addLegend=T, main='mu* posterior mean')
+my.image(mus_mean[,ord], xlab='', ylab='', mx=1, mn=-1, addLegend=T, main='mu* posterior mean', col=redToBlue)
+my.image(dat$mus,  xlab='', ylab='', mx=1, mn=-1, addLegend=T, main='mu* Truth', col=redToBlue)
+my.image(mus_mean[,ord]-dat$mus, xlab='', ylab='', mx=1, mn=-1, addLegend=T, main='mu* posterior mean', col=redToBlue)
 
 hist(mus_mean[,ord], xlim=range(c(mus_mean, dat$mus)), prob=TRUE,
      col=rgb(0,0,1,.3), border='white', main='Histogram of mu*')
