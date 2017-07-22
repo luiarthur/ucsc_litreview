@@ -86,7 +86,7 @@ source("../cytof_fixed_K.R", chdir=TRUE)
 system.time(
 #out <- cytof_fixed_K(y, K=5,#dat$K,
 out <- cytof_fixed_K(y, K=dat$K,
-                     burn=100000, B=2000, pr=100, 
+                     burn=10000, B=2000, pr=100, 
                      #burn=10000, B=2000, pr=100, 
                      m_psi=log(2),#mean(dat$mus),
                      #cs_psi = .01, #ok
@@ -100,9 +100,9 @@ out <- cytof_fixed_K(y, K=dat$K,
                      cs_c = .1, cs_d = .1,
                      cs_v = .1, cs_h = .1,
                      # Fix params:
-                     #true_psi=apply(yj_mean, 2, mean),
-                     #true_psi=rep(log(2), J),
-                     #true_tau2=rep(4, J),
+                     #true_psi=apply(yj_mean, 2, mean), # doesn't work when n large
+                     true_psi=rep(log(2), J),
+                     true_tau2=rep(2, J),
                      #true_psi=rowMeans(dat$mus),
                      #true_tau2=apply(dat$mus, 1, var),#dat$tau2,
                      #
