@@ -44,6 +44,13 @@ std::vector<List> cytof_fix_K_fit(
     int window, double target, double t,
     int B, int burn, int print_freq) {
 
+  // SET NUM THREADS FOR OMP
+  int nProcessors = omp_get_max_threads();
+  std::cout<<"nproc: "<< nProcessors<<std::endl;
+  //omp_set_num_threads(nProcessors / 2);
+  omp_set_num_threads(3);
+  std::cout<<"threads used: "<<omp_get_num_threads()<<std::endl;
+
   const int I = get_I(y);
   const int J = get_J(y);
   

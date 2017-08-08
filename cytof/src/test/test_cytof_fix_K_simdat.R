@@ -83,10 +83,11 @@ K <- ncol(dat$mus)
 
 set.seed(2)
 source("../cytof_fixed_K.R", chdir=TRUE)
-system.time(
+sim_time <- system.time(
 #out <- cytof_fixed_K(y, K=5,#dat$K,
 out <- cytof_fixed_K(y, K=dat$K,
                      burn=10000, B=2000, pr=100, 
+                     #burn=0, B=100, pr=100, 
                      #burn=10000, B=2000, pr=100, 
                      m_psi=log(2),#mean(dat$mus),
                      #cs_psi = .01, #ok
@@ -118,6 +119,7 @@ out <- cytof_fixed_K(y, K=dat$K,
                      window=0) # do adaptive by making window>0
 )
 length(out)
+print(sim_time) # per 100 iterations: 1 thread: 18s, 3 threads: 11s 
 
 ### Z
 Z <- lapply(out, function(o) o$Z)

@@ -7,7 +7,7 @@ void update_vk_mus_kToK(State &state, const Data &y, const Prior &prior, int k) 
   const int I = get_I(y);
   const int J = get_J(y);
   const int K = state.K;
-  int N_i;
+  //int N_i;
   int lin;
 
   const double logit_vk = logit(state.v(k), 0, 1);
@@ -57,23 +57,33 @@ void update_vk_mus_kToK(State &state, const Data &y, const Prior &prior, int k) 
 
   // compute acceptance probability
   double ll = 0;
-  double sig_i;
+  //double sig_i;
   double pi_ij;
   double y_inj;
+
+  double sig[I];
+  int N[I];
+
   for (int i=0; i<I; i++) {
-    sig_i = sqrt(state.sig2(i));
+    sig[i] = sqrt(state.sig2(i));
+    N[i] = get_Ni(y, i);
+  }
+
+#pragma omp parallel for
+  for (int i=0; i<I; i++) {
+    //sig_i = sqrt(state.sig2(i));
     for (int j=0; j<J; j++) {
       pi_ij = state.pi(i, j);
-      N_i = get_Ni(y, i);
-      for (int n=0; n<N_i; n++) {
+      //N_i = get_Ni(y, i);
+      for (int n=0; n<N[i]; n++) {
         lin = state.lam[i][n];
         y_inj = y[i](n,j);
 
         if (lin >= k && state.Z(j,lin) != cand_Z_k_to_K(j, lin-k)) {
           ll += marginal_lf(y_inj, cand_mus_k_to_K(j, lin-k),
-                            sig_i, cand_Z_k_to_K(j, lin-k), pi_ij) - 
+                            sig[i], cand_Z_k_to_K(j, lin-k), pi_ij) - 
                 marginal_lf(y_inj, state.mus(j, lin),
-                            sig_i, state.Z(j, lin), pi_ij);
+                            sig[i], state.Z(j, lin), pi_ij);
         }
       }
     }

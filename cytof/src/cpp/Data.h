@@ -1,3 +1,6 @@
+#include<omp.h>
+// [[Rcpp::plugins(openmp)]]
+
 using Data = std::vector<arma::mat>;
 
 int get_I(const Data &y) {

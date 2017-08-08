@@ -61,3 +61,13 @@ Found typo in manual:
 Created `get_I`, `get_J`, and `get_N_i` for consistent access of 
 data sizes.
 
+# 8 August, 2017
+
+Trying to make parallel with OMP
+
+Note that in parallelizing nested loops, there cannot be any intermediate variables
+between loops. Intermediates should ideally be computed in an external loop.
+
+See [here](http://pages.tacc.utexas.edu/~eijkhout/pcse/html/omp-loop.html)
+
+Calling this version `v.openmp`

@@ -6,15 +6,18 @@ void update_Hjk_mus_jk(State &state, const Data &y, const Prior &prior,
 
   const int I = get_I(y);
   //const int J = get_J(y);
-  int N_i;
+  //int N_i;
+
 
   auto log_fc = [&](double h_jk, double mus_jk, int z_jk) {
     const double lp = R::dnorm(h_jk, mj, sqrt(S2j), 1);
     double ll = 0;
 
+
+#pragma omp parallel for
     for (int i=0; i<I; i++) {
-      N_i = get_Ni(y, i);
-      for (int n=0; n<N_i; n++) {
+      //N_i = get_Ni(y, i);
+      for (int n=0; n<get_Ni(y,i); n++) {
         if (state.lam[i][n] == k) {
           ll += marginal_lf(y[i](n,j), mus_jk, sqrt(state.sig2(i)),
                             z_jk, state.pi(i,j));

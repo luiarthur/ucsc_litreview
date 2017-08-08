@@ -28,10 +28,11 @@ double update_lin(State &state, const Data &y, const Prior &prior,
 void update_lam(State &state, const Data &y, const Prior &prior) {
 
   const int I = get_I(y);
-  int N_i;
+  //int N_i;
   for (int i=0; i<I; i++) {
-    N_i = get_Ni(y,i);
-    for (int n=0; n<N_i; n++) {
+    //N_i = get_Ni(y,i);
+#pragma omp parallel for
+    for (int n=0; n<get_Ni(y,i); n++) {
       state.lam[i][n] = update_lin(state, y, prior, i, n);
     }
   }

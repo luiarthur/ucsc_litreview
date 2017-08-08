@@ -47,23 +47,37 @@ double ll_mus(double mus_jk, State &state, const Data &y, const Prior &prior,
 
   const int I = get_I(y);
   //const double thresh = prior.mus_thresh;
-  int N_i;
-  double sig_i;
+  //int N_i;
+  //double sig_i;
 
   double ll = 0;
+
+#pragma omp parallel for
   for (int i=0; i<I; i++) {
-    N_i = get_Ni(y,i);
-    sig_i = sqrt(state.sig2[i]);
-    for (int n=0; n<N_i; n++) {
+    for (int n=0; n<get_Ni(y,i); n++) {
       //if (state.e[i](n,j) == 0 && state.lam[i][n] == k) {
       //  ll += log_dtnorm(y[i](n,j), mus_jk, sig_i, 0, false); //lt=false
       //}
       if (state.lam[i][n] == k) {
-        ll += marginal_lf(y[i](n,j), mus_jk, sig_i, state.Z(j,k), state.pi(i,j));
+        ll += marginal_lf(y[i](n,j), mus_jk, sqrt(state.sig2[i]), state.Z(j,k), state.pi(i,j));
       }
     }
-
   }
+
+  // sequential:
+  //for (int i=0; i<I; i++) {
+  //  N_i = get_Ni(y,i);
+  //  sig_i = sqrt(state.sig2[i]);
+  //  for (int n=0; n<N_i; n++) {
+  //    //if (state.e[i](n,j) == 0 && state.lam[i][n] == k) {
+  //    //  ll += log_dtnorm(y[i](n,j), mus_jk, sig_i, 0, false); //lt=false
+  //    //}
+  //    if (state.lam[i][n] == k) {
+  //      ll += marginal_lf(y[i](n,j), mus_jk, sig_i, state.Z(j,k), state.pi(i,j));
+  //    }
+  //  }
+
+  //}
 
   return ll;
 }
