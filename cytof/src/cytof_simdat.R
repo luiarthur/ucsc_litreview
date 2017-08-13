@@ -2,7 +2,8 @@ library(truncnorm)
 ### y_i: N_i x J
 
 cytof_simdat <- function(I, N, J, K, W, thresh=log(2),
-                         pi_a=.5, pi_b=1,
+                         pi_a=rep(.5,J), pi_b=1,
+                         #psi=rnorm(J,.5,1),
                          a=1,
                          tau2=1/rgamma(J,3,.2),
                          sig2=1/rgamma(I,3,2)
@@ -47,6 +48,6 @@ cytof_simdat <- function(I, N, J, K, W, thresh=log(2),
 
 
   list(Z=Z, lam=lam, mus=mus, tau2=tau2, W=W, pi_var=pi_var,
-       I=I, N=N, J=J, K=K, thresh=thresh, y=y, sig2=sig2,
+       I=I, N=N, J=J, K=K, thresh=thresh, y=y, sig2=sig2, a, #psi=psi,
        lam_index_0=lapply(lam, function(l) l-1))
 }

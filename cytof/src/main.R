@@ -29,20 +29,28 @@ y <- lapply(as.list(1:I), function(i)
 
 ### Plot histogram of Data. Use this for psi_j means?
 par(mfrow=c(3,1))
-hist(apply(y[[1]], 2, mean), col=rgb(1,0,0, .2), prob=TRUE, xlim=c(0, 4), border='white')
-hist(apply(y[[2]], 2, mean), col=rgb(0,1,0, .4), prob=TRUE, xlim=c(0, 4), border='white')
-hist(apply(y[[3]], 2, mean), col=rgb(0,0,1, .2), prob=TRUE, xlim=c(0, 4), border='white')
+hist(colMeans(y[[1]]), col=rgb(1,0,0, .2), prob=TRUE, xlim=c(0, 4), border='white')
+hist(colMeans(y[[2]]), col=rgb(0,1,0, .4), prob=TRUE, xlim=c(0, 4), border='white')
+hist(colMeans(y[[3]]), col=rgb(0,0,1, .2), prob=TRUE, xlim=c(0, 4), border='white')
 par(mfrow=c(1,1))
+
+hist(y[[1]][,1])
+
+ord <- sapply(y, function(x) order(colMeans(x), decreasing=TRUE))
+
+my.image(y[[1]][,ord[,1]], addLegend=T, mn=0, mx=6)
+my.image(y[[2]][,ord[,2]], addLegend=T, mn=0, mx=6)
+my.image(y[[3]][,ord[,3]], addLegend=T, mn=0, mx=6)
+
 
 ### Correlations
 redToBlue <- colorRampPalette(c('red','grey90','blue'))(12)
-my.image(cor(y[[1]]), xaxt='n',yaxt='n',xlab="",ylab="", col=redToBlue,
+my.image(cor(y[[1]][,ord[,1]]), xaxt='n',yaxt='n',xlab="",ylab="", col=redToBlue,
          main="y1 Correlation b/w Markers",addLegend=TRUE, mn=-1, mx=1)
-my.image(cor(y[[2]]), xaxt='n',yaxt='n',xlab="",ylab="", col=redToBlue,
+my.image(cor(y[[2]][,ord[,2]]), xaxt='n',yaxt='n',xlab="",ylab="", col=redToBlue,
          main="y2 Correlation b/w Markers",addLegend=TRUE, mn=-1, mx=1)
-my.image(cor(y[[3]]), xaxt='n',yaxt='n',xlab="",ylab="", col=redToBlue,
+my.image(cor(y[[3]][,ord[,3]]), xaxt='n',yaxt='n',xlab="",ylab="", col=redToBlue,
          main="y3 Correlation b/w Markers",addLegend=TRUE, mn=-1, mx=1)
-
 
 rbind(apply(y[[1]], 2, mean),
       apply(y[[2]], 2, mean),

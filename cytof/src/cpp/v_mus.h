@@ -69,7 +69,7 @@ void update_vk_mus_kToK(State &state, const Data &y, const Prior &prior, int k) 
     N[i] = get_Ni(y, i);
   }
 
-#pragma omp parallel for
+//#pragma omp parallel for
   for (int i=0; i<I; i++) {
     //sig_i = sqrt(state.sig2(i));
     for (int j=0; j<J; j++) {

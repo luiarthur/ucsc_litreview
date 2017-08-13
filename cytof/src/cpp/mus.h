@@ -52,7 +52,7 @@ double ll_mus(double mus_jk, State &state, const Data &y, const Prior &prior,
 
   double ll = 0;
 
-#pragma omp parallel for
+//#pragma omp parallel for
   for (int i=0; i<I; i++) {
     for (int n=0; n<get_Ni(y,i); n++) {
       //if (state.e[i](n,j) == 0 && state.lam[i][n] == k) {

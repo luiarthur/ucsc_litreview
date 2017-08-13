@@ -18,7 +18,7 @@ left_order <- function(Z) {
 #    2     .1     .1  bad
 #    5     .1      1  bad
 
-set.seed(1)
+set.seed(1) # data gen seed
 #dat <- cytof_simdat(I=3, N=list(200, 300, 100), J=12, K=4,
 #                    tau2=rep(.1,12),
 #                    sig2=rep(1,3),
@@ -27,17 +27,26 @@ set.seed(1)
 #                               .2, .3, .3, .2), 3, 4, byrow=TRUE))
 #dat <- cytof_simdat(I=3, N=list(200, 300, 100), J=12, K=4,
 #dat <- cytof_simdat(I=3, N=list(50, 50, 50), J=12, K=4,
-dat <- cytof_simdat(I=3, N=list(2000, 3000, 1000), J=12, K=4,
-                    a=1, pi_a=1, pi_b=9,
+#dat <- cytof_simdat(I=3, N=list(2000, 3000, 1000), J=12, K=4,
+dat <- cytof_simdat(I=3, N=list(200, 300, 100), J=12, K=4,
+                    #a=-1, pi_a=1, pi_b=9,
+                    #pi_a=1, pi_b=9,
+                    pi_a=1, pi_b=9,
                     tau2=rep(.1,12),
                     sig2=rep(1,3),
                     W=matrix(c(.3, .4, .2, .1,
+                               #.05, .85, .05, .05,
                                .1, .7, .1, .1,
                                .2, .3, .3, .2), 3, 4, byrow=TRUE))
 
 ### PLOT DATA
 pdf("out/data.pdf")
 hist(dat$mus)
+
+hist(dat$y[[1]][,1])
+hist(dat$y[[2]][,2])
+hist(dat$y[[1]][,3])
+hist(dat$y[[1]][,7])
 
 par(mfrow=c(3,1))
 hist(apply(dat$y[[1]], 2, mean), col=rgb(1,0,0, .4), prob=TRUE, xlim=c(0, 3), border='white')
@@ -58,6 +67,11 @@ my.image(cor(dat$y[[3]]), xaxt='n',yaxt='n',xlab="",ylab="", col=redToBlue,
          main="y3 Correlation b/w Markers",addLegend=TRUE, mn=-1,mx=1)
 my.image(dat$Z)
 dev.off()
+
+my.image(dat$y[[1]], addLegend=T, mn=0, mx=6, xlab="markers", ylab="samples", main="y1")
+my.image(dat$y[[2]], addLegend=T, mn=0, mx=6, xlab="markers", ylab="samples", main="y2")
+my.image(dat$y[[3]], addLegend=T, mn=0, mx=6, xlab="markers", ylab="samples", main="y3")
+
 
 mean(dat$y[[1]] == 0)
 mean(dat$y[[2]] == 0)
@@ -81,7 +95,7 @@ K <- ncol(dat$mus)
 #         use this as covariance matrix after burn: cov(t(apply(mus, 3, c)))
 #         (2.4^2 / d) * (cov + eps*I_d), where d = 48 = J x K
 
-set.seed(2)
+set.seed(1) # posterior sim seed. good: 1,2. ok: 10, 100,. Bad:
 source("../cytof_fixed_K.R", chdir=TRUE)
 sim_time <- system.time(
 #out <- cytof_fixed_K(y, K=5,#dat$K,
@@ -102,8 +116,8 @@ out <- cytof_fixed_K(y, K=dat$K,
                      cs_v = .1, cs_h = .1,
                      # Fix params:
                      #true_psi=apply(yj_mean, 2, mean), # doesn't work when n large
-                     true_psi=rep(log(2), J),
-                     true_tau2=rep(2, J),
+                     #true_psi=rep(log(2), J),
+                     #true_tau2=rep(2, J),
                      #true_psi=rowMeans(dat$mus),
                      #true_tau2=apply(dat$mus, 1, var),#dat$tau2,
                      #

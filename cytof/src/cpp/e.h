@@ -22,7 +22,7 @@ void update_e(State &state, const Data &y, const Prior &prior) {
   const int J = get_J(y);
   int N_i;
 
-#pragma omp parallel for
+//#pragma omp parallel for
   for (int i=0; i<I; i++) {
     //N_i = get_Ni(y,i);
     for (int j=0; j<J; j++) {
