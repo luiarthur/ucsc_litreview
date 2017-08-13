@@ -49,9 +49,9 @@ hist(dat$y[[1]][,3])
 hist(dat$y[[1]][,7])
 
 par(mfrow=c(3,1))
-hist(apply(dat$y[[1]], 2, mean), col=rgb(1,0,0, .4), prob=TRUE, xlim=c(0, 3), border='white')
-hist(apply(dat$y[[2]], 2, mean), col=rgb(0,1,0, .4), prob=TRUE, xlim=c(0, 3), border='white')
-hist(apply(dat$y[[3]], 2, mean), col=rgb(0,0,1, .4), prob=TRUE, xlim=c(0, 3), border='white')
+hist(colMeans(dat$y[[1]]), col=rgb(1,0,0, .4), prob=TRUE, xlim=c(0, 3), border='white')
+hist(colMeans(dat$y[[2]]), col=rgb(0,1,0, .4), prob=TRUE, xlim=c(0, 3), border='white')
+hist(colMeans(dat$y[[3]]), col=rgb(0,0,1, .4), prob=TRUE, xlim=c(0, 3), border='white')
 par(mfrow=c(1,1))
 
 yj_mean <- rbind(apply(dat$y[[1]], 2, mean),
@@ -65,14 +65,15 @@ my.image(cor(dat$y[[2]]), xaxt='n',yaxt='n',xlab="",ylab="", col=redToBlue,
          main="y2 Correlation b/w Markers",addLegend=TRUE, mn=-1,mx=1)
 my.image(cor(dat$y[[3]]), xaxt='n',yaxt='n',xlab="",ylab="", col=redToBlue,
          main="y3 Correlation b/w Markers",addLegend=TRUE, mn=-1,mx=1)
-my.image(dat$Z)
-dev.off()
+my.image(dat$Z, ylab="markers", xlab="latent features", main="Z Truth")
 
+### Plot Data Directly
 my.image(dat$y[[1]], addLegend=T, mn=0, mx=6, xlab="markers", ylab="samples", main="y1")
 my.image(dat$y[[2]], addLegend=T, mn=0, mx=6, xlab="markers", ylab="samples", main="y2")
 my.image(dat$y[[3]], addLegend=T, mn=0, mx=6, xlab="markers", ylab="samples", main="y3")
+dev.off()
 
-
+### Percentage of zeros (sparsity)
 mean(dat$y[[1]] == 0)
 mean(dat$y[[2]] == 0)
 mean(dat$y[[3]] == 0)
@@ -100,7 +101,7 @@ source("../cytof_fixed_K.R", chdir=TRUE)
 sim_time <- system.time(
 #out <- cytof_fixed_K(y, K=5,#dat$K,
 out <- cytof_fixed_K(y, K=dat$K,
-                     burn=10000, B=2000, pr=100, 
+                     burn=20000, B=2000, pr=100, 
                      #burn=0, B=100, pr=100, 
                      #burn=10000, B=2000, pr=100, 
                      m_psi=log(2),#mean(dat$mus),
@@ -160,10 +161,10 @@ colMeans(v)
 
 ### sig2
 sig2 <- t(sapply(out, function(o) o$sig2))
-plotPosts(sig2)
-plot(apply(sig2, 2, function(sj) length(unique(sj)) / length(out)),
-     ylim=0:1, main="Acceptance rate for sig2")
-abline(h=c(.25, .4), col='grey')
+#plotPosts(sig2)
+#plot(apply(sig2, 2, function(sj) length(unique(sj)) / length(out)),
+#     ylim=0:1, main="Acceptance rate for sig2")
+#abline(h=c(.25, .4), col='grey')
 sink("out/sig2.txt")
 cat("sig2: Posterior Mean, True\n")
 cbind( colMeans(sig2), dat$sig2 )
@@ -171,12 +172,12 @@ sink()
 
 ### psi
 psi <- t(sapply(out, function(o) o$psi))
-my.pairs(psi[,1:5])
-plotPosts(psi[,1:5])
-
-plot(apply(psi, 2, function(pj) length(unique(pj)) / length(out)),
-     ylim=0:1, main="Acceptance rate for psi")
-abline(h=c(.25, .4), col='grey')
+#my.pairs(psi[,1:5])
+#plotPosts(psi[,1:5])
+#
+#plot(apply(psi, 2, function(pj) length(unique(pj)) / length(out)),
+#     ylim=0:1, main="Acceptance rate for psi")
+#abline(h=c(.25, .4), col='grey')
 
 sink("out/psi.txt")
 cat("psi: Posterior Mean, True\n")
@@ -185,11 +186,11 @@ sink()
 
 ### tau2
 tau2 <- t(sapply(out, function(o) o$tau2))
-plotPosts(tau2[,1:5])
-my.pairs(tau2[,1:5])
-plot(apply(tau2, 2, function(tj) length(unique(tj)) / length(out)),
-     ylim=0:1, main="Acceptance rate for tau2")
-abline(h=c(.15, .45), col='grey')
+#plotPosts(tau2[,1:5])
+#my.pairs(tau2[,1:5])
+#plot(apply(tau2, 2, function(tj) length(unique(tj)) / length(out)),
+#     ylim=0:1, main="Acceptance rate for tau2")
+#abline(h=c(.15, .45), col='grey')
 cbind(colMeans(tau2), dat$tau2, apply(dat$mus,1,var))
 
 sink("out/tau2.txt")
@@ -254,7 +255,7 @@ plot_mus_post(9,2)
 
 my.image(mus_mean[,ord], xlab='', ylab='', mx=1, mn=-1, addLegend=T, main='mu* posterior mean', col=redToBlue)
 my.image(dat$mus,  xlab='', ylab='', mx=1, mn=-1, addLegend=T, main='mu* Truth', col=redToBlue)
-my.image(mus_mean[,ord]-dat$mus, xlab='', ylab='', mx=1, mn=-1, addLegend=T, main='mu* posterior mean', col=redToBlue)
+my.image(mus_mean[,ord]-dat$mus, xlab='', ylab='', mx=1, mn=-1, addLegend=T, main='mu* posterior mean resids', col=redToBlue)
 
 hist(mus_mean[,ord], xlim=range(c(mus_mean, dat$mus)), prob=TRUE,
      col=rgb(0,0,1,.3), border='white', main='Histogram of mu*')
