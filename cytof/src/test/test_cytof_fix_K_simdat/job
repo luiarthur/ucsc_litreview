@@ -1,19 +1,23 @@
-#PBS -S /bin/bash
-#PBS -u alui2
-#PBS -N cytof
-#PBS -l nodes=4:ppn=8
-#PBS -l walltime=2:00:00
+#!/bin/bash
+
+#PBS -N cytof 
+#PBS -S /bin/bash 
+#PBS -l nodes=4
+#PBS -l walltime=2:00:00 
+#PBS -q newest 
 #PBS -V
-#PBS -q newest
+#PBS -o output.log
+#PBS -e error.log
 
 # change dir to current submission dir
 cd $PBS_O_WORKDIR
 
 #Rscript test_cytof_fix_K_simdat.R
-#
+
 date
 for i in `seq 4`
 do
+  echo $i
   sleep 10 &
 done
 wait
