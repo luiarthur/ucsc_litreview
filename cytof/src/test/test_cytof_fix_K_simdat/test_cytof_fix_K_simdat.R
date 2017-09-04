@@ -1,6 +1,15 @@
 args <- commandArgs(trailingOnly=TRUE)
+SIM_NUM <- NA
 
-#OUTDIR <- 
+if (length(args) != 1) {
+  cat("Usage: Rscript test_cytof_fix_K_simdat.R <sim number [1,2,3]>\n")
+  q()
+} else {
+  SIM_NUM <- as.numeric(args[1])
+}
+
+OUTDIR <- paste0("out/sim",SIM_NUM,"/")
+system(paste0("mkdir -p ", OUTDIR))
 
 library(rcommon)
 source("../../cytof_fixed_K.R", chdir=TRUE)
@@ -45,11 +54,13 @@ dat3 <- cytof_simdat(I=3, N=list(200, 300, 100), J=16, K=4,
                                 .2, .3, .3, .2), 3, 4, byrow=TRUE))
 
 ### END DATA GEN ### 
-dat <- dat2
+dat <- if(SIM_NUM==3) dat3 else if(SIM_NUM==2) dat2 else dat1
+print(SIM_NUM)
+print(dat)
 
 
 ### PLOT DATA
-pdf("out/data.pdf")
+pdf(paste0(OUTDIR, "data.pdf"))
 hist(dat$mus)
 
 hist(dat$y[[1]][,1])
@@ -110,8 +121,8 @@ source("../../cytof_fixed_K.R", chdir=TRUE)
 sim_time <- system.time(
 #out <- cytof_fixed_K(y, K=5,#dat$K,
 out <- cytof_fixed_K(y, K=dat$K,
-                     burn=20000, B=2000, pr=100, 
-                     #burn=0, B=100, pr=100, 
+                     #burn=20000, B=2000, pr=100, 
+                     burn=0, B=100, pr=100, 
                      #burn=10000, B=2000, pr=100, 
                      m_psi=log(2),#mean(dat$mus),
                      #cs_psi = .01, #ok
@@ -149,7 +160,7 @@ print(sim_time) # per 100 iterations: 1 thread: 18s, 3 threads: 11s
 Z <- lapply(out, function(o) o$Z)
 Z_mean <- Reduce("+", Z) / length(Z)
 ord <- left_order(round(Z_mean))
-pdf("out/Z.pdf")
+pdf(paste0(OUTDIR, "Z.pdf"))
 my.image(Z_mean[,ord], addLegend=T, main="Posterior Mean Z")
 my.image(dat$Z, addLegend=T, main="True Z")
 dev.off()
@@ -157,7 +168,7 @@ dev.off()
 ### W
 W <- lapply(out, function(o) o$W)
 W_mean <- Reduce("+", W) / length(W)
-sink("out/W.txt")
+sink(paste0(OUTDIR, "W.txt"))
 cat("Posterior Mean W: \n")
 print(W_mean[,ord])
 cat("\nTrue W: \n")
@@ -174,7 +185,7 @@ sig2 <- t(sapply(out, function(o) o$sig2))
 #plot(apply(sig2, 2, function(sj) length(unique(sj)) / length(out)),
 #     ylim=0:1, main="Acceptance rate for sig2")
 #abline(h=c(.25, .4), col='grey')
-sink("out/sig2.txt")
+sink(paste0(OUTDIR, "sig2.txt"))
 cat("sig2: Posterior Mean, True\n")
 print(cbind( colMeans(sig2), dat$sig2 ))
 sink()
@@ -188,7 +199,7 @@ psi <- t(sapply(out, function(o) o$psi))
 #     ylim=0:1, main="Acceptance rate for psi")
 #abline(h=c(.25, .4), col='grey')
 
-sink("out/psi.txt")
+sink(paste0(OUTDIR, "psi.txt"))
 cat("psi: Posterior Mean, True\n")
 print(cbind(colMeans(psi), rowMeans(dat$mus)))
 sink()
@@ -202,7 +213,7 @@ tau2 <- t(sapply(out, function(o) o$tau2))
 #abline(h=c(.15, .45), col='grey')
 cbind(colMeans(tau2), dat$tau2, apply(dat$mus,1,var))
 
-sink("out/tau2.txt")
+sink(paste0(OUTDIR, "tau2.txt"))
 cat("tau2: Posterior Mean, True\n")
 print(cbind(colMeans(tau2), dat$tau2))
 sink()
@@ -220,7 +231,7 @@ dat$lam_index_0[[1]]
 
 
 ### mus
-pdf("out/postmus.pdf")
+pdf(paste0(OUTDIR, "postmus.pdf"))
 dat$mus
 mus_ls <- lapply(out, function(o) o$mus)
 mus <- array(unlist(mus_ls), dim=c(J, K, length(out)))

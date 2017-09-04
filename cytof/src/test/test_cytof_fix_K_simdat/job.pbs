@@ -1,24 +1,35 @@
-#!/bin/bash
-#PBS -k o
-#PBS -j oe
-#PBS -N cytof 
-#PBS -l nodes=4,walltime=2:00:00 
+##!/bin/bash
+##PBS -k o
+##PBS -j oe
+##PBS -N cytof 
+##PBS -l nodes=4,walltime=2:00:00 
+#
+## change dir to current submission dir
+##cd $PBS_O_WORKDIR
+#
+##Rscript test_cytof_fix_K_simdat.R
+#
+#date
+#for i in `seq 4`
+#do
+#  echo $i
+#  #sleep 10 &
+#  Rscript tmp.R $i
+#done
+#wait
+#date
+#
+## to submit: qsub job
+#
+## details: https://kb.iu.edu/d/avmy
 
-# change dir to current submission dir
-#cd $PBS_O_WORKDIR
-
-#Rscript test_cytof_fix_K_simdat.R
-
+### SIMULATION ON LOGIN NODE OF SERVER
 date
-for i in `seq 4`
+for i in `seq 3`
 do
   echo $i
-  #sleep 10 &
-  Rscript tmp.R $i
+  Rscript test_cytof_fix_K_simdat.R $i &
 done
 wait
 date
 
-# to submit: qsub job
-
-# details: https://kb.iu.edu/d/avmy
