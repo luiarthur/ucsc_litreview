@@ -5,8 +5,10 @@
 1. Since data is generated at random, we don’t expect that we always recover
    the truth.  So if we recover the truth on average, it is great.
 
-2. Can we scale up?  K=4 seems fine.  We may increase the number of markers
-   (larger J), # of samples (larger I) and  # of cells (larger $N_i$).
+2. Can we scale up?  K=4 seems fine.  We may 
+    - [ ] increase # of cells (larger $N_i$).
+    - [ ] increase # of markers (larger J)
+    - [ ] increase # of samples (larger I)
 
 3. See what the posterior is like when K is misspecified like K=1, 2, 3, 5,
    6....  We may compute log-likelihood for each K and see how it changes over
