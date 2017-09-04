@@ -1,0 +1,22 @@
+#PBS -S /bin/bash
+#PBS –u alui2
+#PBS –N cytof
+#PBS -l nodes=4:ppn=8
+#PBS -l walltime=02:00:00
+#PBS –V
+#PBS –q newest
+
+# change dir to current submission dir
+cd $PBS_O_WORKDIR
+
+#Rscript test_cytof_fix_K_simdat.R
+
+date
+for i in `seq 4`
+do
+  time sleep 10 &
+done
+wait
+date
+
+# to submit: qsub job

@@ -1,36 +1,20 @@
+args <- commandArgs(trailingOnly=TRUE)
+
+#OUTDIR <- 
+
 library(rcommon)
-source("../cytof_fixed_K.R", chdir=TRUE)
-source("../cytof_simdat.R")
-source("../../dat/myimage.R")
+source("../../cytof_fixed_K.R", chdir=TRUE)
+source("../../cytof_simdat.R")
+source("../../../dat/myimage.R")
 
 last <- function(lst) lst[[length(lst)]]
 left_order <- function(Z) {
   order(apply(Z, 2, function(z) paste0(as.character(z), collapse='')), decreasing=TRUE)
 }
 
-#  psi    tau    sig
-#    0  small  small  bad
-#    0    big  small  bad
-#    0  small    big  recovers W, but not Z
-#    0    big    big  bad
-#    5     .1    big  Recovers Z and W, but not anything else
-#    2     .1     .1  bad
-#    2     .1     .1  bad
-#    5     .1      1  bad
-
 set.seed(1) # data gen seed
-#dat <- cytof_simdat(I=3, N=list(200, 300, 100), J=12, K=4,
-#                    tau2=rep(.1,12),
-#                    sig2=rep(1,3),
-#                    W=matrix(c(.3, .4, .2, .1,
-#                               .1, .7, .1, .1,
-#                               .2, .3, .3, .2), 3, 4, byrow=TRUE))
-#dat <- cytof_simdat(I=3, N=list(200, 300, 100), J=12, K=4,
-#dat <- cytof_simdat(I=3, N=list(50, 50, 50), J=12, K=4,
-#dat <- cytof_simdat(I=3, N=list(2000, 3000, 1000), J=12, K=4,
 dat <- cytof_simdat(I=3, N=list(200, 300, 100), J=12, K=4,
                     #a=-1, pi_a=1, pi_b=9,
-                    #pi_a=1, pi_b=9,
                     pi_a=1, pi_b=9,
                     tau2=rep(.1,12),
                     sig2=rep(1,3),
@@ -97,7 +81,7 @@ K <- ncol(dat$mus)
 #         (2.4^2 / d) * (cov + eps*I_d), where d = 48 = J x K
 
 set.seed(1) # posterior sim seed. good: 1,2. ok: 10, 100,. Bad:
-source("../cytof_fixed_K.R", chdir=TRUE)
+source("../../cytof_fixed_K.R", chdir=TRUE)
 sim_time <- system.time(
 #out <- cytof_fixed_K(y, K=5,#dat$K,
 out <- cytof_fixed_K(y, K=dat$K,
