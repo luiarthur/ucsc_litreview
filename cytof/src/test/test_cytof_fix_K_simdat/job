@@ -1,16 +1,11 @@
 #!/bin/bash
-
+#PBS -k o
+#PBS -j oe
 #PBS -N cytof 
-#PBS -S /bin/bash 
-#PBS -l nodes=4
-#PBS -l walltime=2:00:00 
-#PBS -q newest 
-#PBS -V
-#PBS -o output.log
-#PBS -e error.log
+#PBS -l nodes=4,walltime=2:00:00 
 
 # change dir to current submission dir
-cd $PBS_O_WORKDIR
+#cd $PBS_O_WORKDIR
 
 #Rscript test_cytof_fix_K_simdat.R
 
@@ -18,9 +13,12 @@ date
 for i in `seq 4`
 do
   echo $i
-  sleep 10 &
+  #sleep 10 &
+  Rscript tmp.R $i
 done
 wait
 date
 
 # to submit: qsub job
+
+# details: https://kb.iu.edu/d/avmy
