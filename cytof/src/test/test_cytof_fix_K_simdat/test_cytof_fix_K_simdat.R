@@ -159,9 +159,9 @@ W <- lapply(out, function(o) o$W)
 W_mean <- Reduce("+", W) / length(W)
 sink("out/W.txt")
 cat("Posterior Mean W: \n")
-W_mean[,ord]
+print(W_mean[,ord])
 cat("\nTrue W: \n")
-dat$W
+print(dat$W)
 sink()
 
 ### v 
@@ -176,7 +176,7 @@ sig2 <- t(sapply(out, function(o) o$sig2))
 #abline(h=c(.25, .4), col='grey')
 sink("out/sig2.txt")
 cat("sig2: Posterior Mean, True\n")
-cbind( colMeans(sig2), dat$sig2 )
+print(cbind( colMeans(sig2), dat$sig2 ))
 sink()
 
 ### psi
@@ -190,7 +190,7 @@ psi <- t(sapply(out, function(o) o$psi))
 
 sink("out/psi.txt")
 cat("psi: Posterior Mean, True\n")
-cbind(colMeans(psi), rowMeans(dat$mus))
+print(cbind(colMeans(psi), rowMeans(dat$mus)))
 sink()
 
 ### tau2
@@ -204,7 +204,7 @@ cbind(colMeans(tau2), dat$tau2, apply(dat$mus,1,var))
 
 sink("out/tau2.txt")
 cat("tau2: Posterior Mean, True\n")
-cbind(colMeans(tau2), dat$tau2)
+print(cbind(colMeans(tau2), dat$tau2))
 sink()
 
 ### lambda
