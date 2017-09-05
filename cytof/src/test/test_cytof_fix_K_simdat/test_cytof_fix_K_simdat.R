@@ -369,3 +369,4 @@ plot(quantile(dat$y[[2]],seq(0,1,len=100)), quantile(post_pred[[2]],seq(0,1,len=
 plot(quantile(dat$y[[3]],seq(0,1,len=100)), quantile(post_pred[[3]],seq(0,1,len=100)), pch=20, col='red', ylab='post quantile 3'); abline(0,1,col='grey')
 par(mfrow=c(1,1))
 
+save.image(paste0(OUTDIR, "results.RData"))
