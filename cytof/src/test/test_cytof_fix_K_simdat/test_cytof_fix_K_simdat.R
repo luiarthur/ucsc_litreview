@@ -55,8 +55,8 @@ dat3 <- cytof_simdat(I=3, N=list(200, 300, 100), J=16, K=4,
 
 ### END DATA GEN ### 
 dat <- if(SIM_NUM==3) dat3 else if(SIM_NUM==2) dat2 else dat1
-print(SIM_NUM)
-print(dat)
+#print(SIM_NUM)
+#print(dat)
 
 
 ### PLOT DATA
@@ -121,8 +121,8 @@ source("../../cytof_fixed_K.R", chdir=TRUE)
 sim_time <- system.time(
 #out <- cytof_fixed_K(y, K=5,#dat$K,
 out <- cytof_fixed_K(y, K=dat$K,
-                     #burn=20000, B=2000, pr=100, 
-                     burn=0, B=100, pr=100, 
+                     burn=100000, B=2000, pr=100, 
+                     #burn=0, B=100, pr=100, 
                      #burn=10000, B=2000, pr=100, 
                      m_psi=log(2),#mean(dat$mus),
                      #cs_psi = .01, #ok
