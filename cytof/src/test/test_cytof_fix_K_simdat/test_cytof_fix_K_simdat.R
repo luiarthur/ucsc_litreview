@@ -44,14 +44,16 @@ dat2 <- cytof_simdat(I=3, N=list(2000, 3000, 1000), J=12, K=4,
                                 .2, .3, .3, .2), 3, 4, byrow=TRUE))
 
 # Increase J from 12 to 16
-dat3 <- cytof_simdat(I=3, N=list(200, 300, 100), J=16, K=4,
+# J <- 16 (works)
+I <- 3; J <- 32; K <- 4
+dat3 <- cytof_simdat(I=I, N=list(200, 300, 100), J=J, K=4,
                      #a=-1, pi_a=1, pi_b=9,
                      pi_a=1, pi_b=9,
-                     tau2=rep(.1,16),
-                     sig2=rep(1,3),
+                     tau2=rep(.1,J),
+                     sig2=rep(1,I),
                      W=matrix(c(.3, .4, .2, .1,
                                 .1, .7, .1, .1,
-                                .2, .3, .3, .2), 3, 4, byrow=TRUE))
+                                .2, .3, .3, .2), I, K, byrow=TRUE))
 
 ### END DATA GEN ### 
 dat <- if(SIM_NUM==3) {
