@@ -54,7 +54,15 @@ dat3 <- cytof_simdat(I=3, N=list(200, 300, 100), J=16, K=4,
                                 .2, .3, .3, .2), 3, 4, byrow=TRUE))
 
 ### END DATA GEN ### 
-dat <- if(SIM_NUM==3) dat3 else if(SIM_NUM==2) dat2 else dat1
+dat <- if(SIM_NUM==3) {
+  dat3 
+} else if(SIM_NUM==2) {
+  dat2
+} else if(SIM_NUM==1) {
+  dat1
+} else {
+  stop("SIM_NUM not in range!")
+}
 #print(SIM_NUM)
 #print(dat)
 
