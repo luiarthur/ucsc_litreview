@@ -128,42 +128,55 @@ K <- ncol(dat$mus)
 
 set.seed(1) # posterior sim seed. good: 1,2. ok: 10, 100,. Bad:
 source("../../cytof_fixed_K.R", chdir=TRUE)
+#sim_time <- system.time(
+##out <- cytof_fixed_K(y, K=5,#dat$K,
+#out <- cytof_fixed_K(y, K=dat$K,
+#                     burn=1000000, B=2000, pr=100, 
+#                     #burn=0, B=100, pr=100, 
+#                     #burn=10000, B=2000, pr=100, 
+#                     m_psi=log(2),#mean(dat$mus),
+#                     #cs_psi = .01, #ok
+#                     #cs_tau = .01, #ok
+#                     #cs_psi = 1,   bad 
+#                     #cs_tau = 1,   bad
+#                     cs_psi = .01, #better
+#                     cs_tau = .01, #better
+#                     cs_sig = .1,
+#                     cs_mu  = .1,
+#                     cs_c = .1, cs_d = .1,
+#                     cs_v = .1, cs_h = .1,
+#                     # Fix params:
+#                     #true_psi=apply(yj_mean, 2, mean), # doesn't work when n large
+#                     #true_psi=rep(log(2), J),
+#                     #true_tau2=rep(2, J),
+#                     #true_psi=rowMeans(dat$mus),
+#                     #true_tau2=apply(dat$mus, 1, var),#dat$tau2,
+#                     #
+#                     #true_Z=dat$Z,
+#                     #true_sig2=dat$sig2,
+#                     #true_pi=dat$pi,
+#                     #true_lam=dat$lam_index_0,
+#                     #true_W=dat$W,
+#                     #true_mu=dat$mus,
+#                     #
+#                     #G=cov(dat$y[[2]]),
+#                     #window=300) # do adaptive by making window>0. Broken right now.
+#                     window=0) # do adaptive by making window>0
+#)
 sim_time <- system.time(
-#out <- cytof_fixed_K(y, K=5,#dat$K,
 out <- cytof_fixed_K(y, K=dat$K,
-                     burn=1000000, B=2000, pr=100, 
-                     #burn=0, B=100, pr=100, 
-                     #burn=10000, B=2000, pr=100, 
-                     m_psi=log(2),#mean(dat$mus),
-                     #cs_psi = .01, #ok
-                     #cs_tau = .01, #ok
-                     #cs_psi = 1,   bad 
-                     #cs_tau = 1,   bad
-                     cs_psi = .01, #better
-                     cs_tau = .01, #better
-                     cs_sig = .1,
-                     cs_mu  = .1,
-                     cs_c = .1, cs_d = .1,
-                     cs_v = .1, cs_h = .1,
-                     # Fix params:
-                     #true_psi=apply(yj_mean, 2, mean), # doesn't work when n large
-                     #true_psi=rep(log(2), J),
-                     #true_tau2=rep(2, J),
-                     #true_psi=rowMeans(dat$mus),
-                     #true_tau2=apply(dat$mus, 1, var),#dat$tau2,
-                     #
-                     #true_Z=dat$Z,
-                     #true_sig2=dat$sig2,
-                     #true_pi=dat$pi,
-                     #true_lam=dat$lam_index_0,
-                     #true_W=dat$W,
-                     #true_mu=dat$mus,
-                     #
-                     #G=cov(dat$y[[2]]),
-                     #window=300) # do adaptive by making window>0. Broken right now.
+                     burn=100000, B=2000, pr=100, 
+                     m_psi=log(2),
+                     cs_psi = .01,
+                     cs_tau = .01,
+                     cs_sig = .01,
+                     cs_mu  = .01,
+                     cs_c = .01, cs_d = .01,
+                     cs_v = .01, cs_h = .01,
                      window=0) # do adaptive by making window>0
 )
 length(out)
+
 print(sim_time) # per 100 iterations: 1 thread: 18s, 3 threads: 11s 
 
 ### Z
