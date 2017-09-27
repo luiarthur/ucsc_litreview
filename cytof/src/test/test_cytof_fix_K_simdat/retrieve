@@ -1,5 +1,5 @@
 #!/bin/bash
 
 sftp alui2@firedance.soe.ucsc.edu <<EOF 
-  get ~/repo/ucsc_litreview/cytof/src/test/test_cytof_fix_K_simdat/out/* out/
+  get -r repo/ucsc_litreview/cytof/src/test/test_cytof_fix_K_simdat/out
 EOF
