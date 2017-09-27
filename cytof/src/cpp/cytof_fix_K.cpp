@@ -42,7 +42,7 @@ std::vector<List> cytof_fix_K_fit(
     Nullable<arma::Mat<int>> true_Z, Nullable<type_lam> true_lam,
     Nullable<arma::mat> true_W, Nullable<arma::mat> true_pi,
     int window, double target, double t,
-    int B, int burn, int print_freq) {
+    int B, int burn, int thin, int print_freq) {
 
   // SET NUM THREADS FOR OMP
   int nProcessors = omp_get_max_threads();

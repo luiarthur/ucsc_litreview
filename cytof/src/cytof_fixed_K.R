@@ -20,7 +20,7 @@ cytof_fixed_K <- function(y,
                   true_W=NULL, true_pi=NULL,
                   ###
                   window=100, target=.25, tt=max(1.1, window/50),
-                  B=2000, burn=5000, print_freq=10) {
+                  B=2000, burn=5000, thin=1, print_freq=10) {
 
   J <- ncol(y[[1]])
   I <- length(y)
@@ -46,7 +46,7 @@ cytof_fixed_K <- function(y,
                   true_W, true_pi,
                   ###
                   window, target, tt,
-                  B, burn, print_freq)
+                  B, burn, thin, print_freq)
 
 }
 
