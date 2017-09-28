@@ -167,7 +167,8 @@ sim_time <- system.time(
 out <- cytof_fixed_K(y, K=dat$K,
                      burn=500000, B=2000, pr=100, 
                      m_psi=log(2),
-                     cs_psi = .01,
+                     #cs_psi = .01,
+                     cs_psi = 1,
                      cs_tau = .01,
                      cs_sig = .01,
                      cs_mu  = .01,
@@ -296,9 +297,11 @@ plot_mus_post(2,1)
 plot_mus_post(2,2)
 plot_mus_post(9,2)
 
-my.image(mus_mean[,ord], xlab='', ylab='', mx=1, mn=-1, addLegend=T, main='mu* posterior mean', col=redToBlue)
-my.image(dat$mus,  xlab='', ylab='', mx=1, mn=-1, addLegend=T, main='mu* Truth', col=redToBlue)
-my.image(mus_mean[,ord]-dat$mus, xlab='', ylab='', mx=1, mn=-1, addLegend=T, main='mu* posterior mean resids', col=redToBlue)
+mx = round(log(2) + 2,2)
+mn = round(log(2) - 2,2)
+my.image(mus_mean[,ord], xlab='', ylab='', mx=mx, mn=mn, addLegend=T, main='mu* posterior mean', col=redToBlue)
+my.image(dat$mus,  xlab='', ylab='', mx=mx, mn=mn, addLegend=T, main='mu* Truth', col=redToBlue)
+my.image(mus_mean[,ord]-dat$mus, xlab='', ylab='', mx=mx, mn=mn, addLegend=T, main='mu* posterior mean resids', col=redToBlue)
 
 hist(mus_mean[,ord], xlim=range(c(mus_mean, dat$mus)), prob=TRUE,
      col=rgb(0,0,1,.3), border='white', main='Histogram of mu*')
