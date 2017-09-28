@@ -45,7 +45,7 @@ dat2 <- cytof_simdat(I=3, N=list(2000, 3000, 1000), J=12, K=4,
 
 # Increase J from 12 to 16
 # J <- 16 (works)
-I <- 3; J <- 32; K <- 4
+I <- 3; J <- 32; K <- 4 #(works)
 dat3 <- cytof_simdat(I=I, N=list(200, 300, 100), J=J, K=4,
                      #a=-1, pi_a=1, pi_b=9,
                      pi_a=1, pi_b=9,
