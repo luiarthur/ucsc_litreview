@@ -167,13 +167,14 @@ sim_time <- system.time(
 out <- cytof_fixed_K(y, K=dat$K,
                      burn=500000, B=2000, pr=100, 
                      m_psi=log(2),
-                     #cs_psi = .01,
-                     cs_psi = 1,
+                     cs_psi = .01,
+                     #cs_psi = 1,
                      cs_tau = .01,
                      cs_sig = .01,
                      cs_mu  = .01,
                      cs_c = .01, cs_d = .01,
-                     cs_v = .01, cs_h = .01,
+                     #cs_v = .01, cs_h = .01,
+                     cs_v = 1, cs_h = 1,
                      window=0) # do adaptive by making window>0
 )
 length(out)
