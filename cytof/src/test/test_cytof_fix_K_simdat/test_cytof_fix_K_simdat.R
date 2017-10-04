@@ -10,6 +10,7 @@ if (length(args) != 1) {
 
 OUTDIR <- paste0("out/sim",SIM_NUM,"/")
 system(paste0("mkdir -p ", OUTDIR))
+system(paste0("cp test_cytof_fix_K_simdat.R ", OUTDIR, "src.R"))
 
 library(rcommon)
 source("../../cytof_fixed_K.R", chdir=TRUE)
@@ -21,32 +22,55 @@ left_order <- function(Z) {
   order(apply(Z, 2, function(z) paste0(as.character(z), collapse='')), decreasing=TRUE)
 }
 
+rowSort <- function(arr) {
+  arr[do.call(order, lapply(1:NCOL(arr), function(i) arr[, i])), ]
+}
+
+genZ <- function(J,K,prob) {
+  Z <- sample(0:1, J*K, replace=TRUE, prob=prob)
+  Z <- matrix(Z, J, K, byrow=TRUE)
+  Z <- rowSort(Z)
+  Z <- Z[, left_order(Z)]
+
+  if (all(rowSums(Z) > 0)) Z else genZ(J,K,prob)
+}
+
 set.seed(1) # data gen seed
 ### DATA GEN ### 
 # Baseline data (works)
-dat1 <- cytof_simdat(I=3, N=list(200, 300, 100), J=12, K=4,
+
+J1 <- 12
+K1 <- 4
+I1 <- 3
+Z1 <- genZ(J1,K1,c(.6,.4))
+
+dat1 <- cytof_simdat(I=I1, N=list(2000, 3000, 1000), J=J1, K=K1,
                      #a=-1, pi_a=1, pi_b=9,
                      pi_a=1, pi_b=9,
-                     tau2=rep(.1,12),
-                     sig2=rep(1,3),
+                     tau2=rep(.1,J1),
+                     sig2=rep(1,I1),
                      W=matrix(c(.3, .4, .2, .1,
                                 .1, .7, .1, .1,
-                                .2, .3, .3, .2), 3, 4, byrow=TRUE))
+                                .2, .3, .3, .2), I1, K1, byrow=TRUE))
 
 # Increase N_i
-dat2 <- cytof_simdat(I=3, N=list(2000, 3000, 1000), J=12, K=4,
+dat2 <- cytof_simdat(I=I1, N=list(20000, 30000, 10000), J=J1, K=K1,
                      #a=-1, pi_a=1, pi_b=9,
                      pi_a=1, pi_b=9,
-                     tau2=rep(.1,12),
-                     sig2=rep(1,3),
+                     tau2=rep(.1,J1),
+                     sig2=rep(1,I1),
                      W=matrix(c(.3, .4, .2, .1,
                                 .1, .7, .1, .1,
-                                .2, .3, .3, .2), 3, 4, byrow=TRUE))
+                                .2, .3, .3, .2), I1, K1, byrow=TRUE))
 
 # Increase J from 12 to 16
 # J <- 16 (works)
-I <- 3; J <- 32; K <- 4 #(works)
-dat3 <- cytof_simdat(I=I, N=list(200, 300, 100), J=J, K=4,
+I3 <- 3
+J3 <- 32
+K3 <- 4 #(works)
+Z3 <- genZ(J3,K3,c(.6,.4))
+
+dat3 <- cytof_simdat(I=I, N=list(20000, 30000, 10000), J=J, K=4,
                      #a=-1, pi_a=1, pi_b=9,
                      pi_a=1, pi_b=9,
                      tau2=rep(.1,J),

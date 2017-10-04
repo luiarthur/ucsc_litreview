@@ -6,8 +6,8 @@ cytof_simdat <- function(I, N, J, K, W, thresh=log(2),
                          #psi=rnorm(J,.5,1),
                          a=1,
                          tau2=1/rgamma(J,3,.2),
-                         sig2=1/rgamma(I,3,2)
-                         ) {
+                         sig2=1/rgamma(I,3,2),
+                         Z=diag(K) %x% rep(1, J/K)) {
   stopifnot(length(N) == I)
   stopifnot(nrow(W) == I && ncol(W) == K)
   stopifnot(all(rowSums(W) == 1))
@@ -15,7 +15,7 @@ cytof_simdat <- function(I, N, J, K, W, thresh=log(2),
   stopifnot(length(tau2) == J)
   stopifnot(J %% K == 0)
 
-  Z <- diag(K) %x% rep(1, J/K)
+  #Z <- diag(K) %x% rep(1, J/K)
 
   lam <- lapply(1:I, function(i)
                 sample(1:K, N[[i]], prob=W[i,], replace=TRUE))
