@@ -302,7 +302,7 @@ mx = round(log(2) + 2,2)
 mn = round(log(2) - 2,2)
 my.image(mus_mean[,ord], xlab='', ylab='', mx=mx, mn=mn, addLegend=T, main='mu* posterior mean', col=redToBlue)
 my.image(dat$mus,  xlab='', ylab='', mx=mx, mn=mn, addLegend=T, main='mu* Truth', col=redToBlue)
-my.image(mus_mean[,ord]-dat$mus, xlab='', ylab='', mx=mx, mn=mn, addLegend=T, main='mu* posterior mean resids', col=redToBlue)
+my.image(mus_mean[,ord]-dat$mus, xlab='', ylab='', mx=2, mn=-2, addLegend=T, main='mu* posterior mean resids', col=redToBlue)
 
 hist(mus_mean[,ord], xlim=range(c(mus_mean, dat$mus)), prob=TRUE,
      col=rgb(0,0,1,.3), border='white', main='Histogram of mu*')
