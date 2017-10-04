@@ -47,6 +47,8 @@ template = readFile("template.md")
 template = template.replace("<path-to-data>", "../../../out/" + sim + "/data.pdf")
 template = template.replace("<path-to-mus>", "../../../out/" + sim + "/postmus.pdf")
 template = template.replace("<path-to-Z>", "../../../out/" + sim + "/Z.pdf")
+template = template.replace("<path-to-W>", "../../../out/" + sim + "/W.txt")
+template = template.replace("<path-to-pi>", "../../../out/" + sim + "/pi.txt")
 template = template.replace("# Data", intro)
 
 ### Edit Compile Script
@@ -58,6 +60,9 @@ writeFile(sim_dir + "/compile", compileScript)
 ### Read original sim.md file
 orig_content = readFile(sim_dir + "/" + sim + ".md")
 orig_content = orig_content.replace("Title", "Simulation " + SIMULATION_NUMBER)
+orig_content = orig_content.replace("#{{{1\n", """#{{{1
+    - \usepackage{verbatim}
+""")
 
 ### Write new content
 new_content = orig_content + template

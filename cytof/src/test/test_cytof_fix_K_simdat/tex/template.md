@@ -33,3 +33,9 @@
 \includegraphics[page=1]{<path-to-Z>}
 \includegraphics[page=2]{<path-to-Z>}
 
+## Posterior For $W$
+\verbatiminput{<path-to-W>}
+
+## Posterior For $\pi$
+\verbatiminput{<path-to-pi>}
+

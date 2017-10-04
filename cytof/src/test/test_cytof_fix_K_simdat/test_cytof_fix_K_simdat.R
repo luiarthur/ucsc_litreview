@@ -321,8 +321,13 @@ post_pi <- array(unlist(lapply(out, function(o) o$pi)), dim=c(I,J,length(out)))
 
 my.image( pi_mean <- apply(post_pi, 1:2, mean), addLegend=TRUE)
 my.image( dat$pi_var, addLegend=TRUE )
-pi_mean
-dat$pi_var
+
+sink(paste0(OUTDIR, "pi.txt"))
+cat("Posterior Mean pi: \n")
+print(pi_mean)
+cat("\nTrue pi: \n")
+print(dat$pi_var)
+sink()
 
 # Compare Data to Posterior Predictive:
 sim_post_pred <- function(post) {
