@@ -70,14 +70,14 @@ J3 <- 32
 K3 <- 4 #(works)
 Z3 <- genZ(J3,K3,c(.6,.4))
 
-dat3 <- cytof_simdat(I=I, N=list(20000, 30000, 10000), J=J, K=4,
+dat3 <- cytof_simdat(I=I3, N=list(20000, 30000, 10000), J=J3, K=K3,
                      #a=-1, pi_a=1, pi_b=9,
                      pi_a=1, pi_b=9,
-                     tau2=rep(.1,J),
-                     sig2=rep(1,I),
+                     tau2=rep(.1,J3),
+                     sig2=rep(1,I3),
                      W=matrix(c(.3, .4, .2, .1,
                                 .1, .7, .1, .1,
-                                .2, .3, .3, .2), I, K, byrow=TRUE))
+                                .2, .3, .3, .2), I3, K3, byrow=TRUE))
 
 ### END DATA GEN ### 
 dat <- if(SIM_NUM==3) {
