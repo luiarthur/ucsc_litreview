@@ -189,7 +189,7 @@ source("../../cytof_fixed_K.R", chdir=TRUE)
 #)
 sim_time <- system.time(
 out <- cytof_fixed_K(y, K=dat$K,
-                     burn=500000, B=2000, pr=100, 
+                     burn=10000, B=2000, pr=100, 
                      m_psi=log(2),
                      cs_psi = .01,
                      #cs_psi = 1,
