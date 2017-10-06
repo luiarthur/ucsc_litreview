@@ -8,7 +8,10 @@ if (length(args) != 1) {
   SIM_NUM <- as.numeric(args[1])
 }
 
-OUTDIR <- paste0("out/sim",SIM_NUM,"/")
+#ROOT_DIR <- "out/sim"
+ROOT_DIR <- "out/sim_bigBurn"
+
+OUTDIR <- paste0(ROOT_DIR, SIM_NUM,"/")
 system(paste0("mkdir -p ", OUTDIR))
 system(paste0("cp test_cytof_fix_K_simdat.R ", OUTDIR, "src.R"))
 
@@ -193,7 +196,7 @@ source("../../cytof_fixed_K.R", chdir=TRUE)
 sim_time <- system.time(
 out <- cytof_fixed_K(y, K=dat$K,
                      #burn=10000, B=2000, pr=100, 
-                     burn=10000, B=2000, pr=100, 
+                     burn=100000, B=2000, pr=100, 
                      m_psi=log(2),
                      #cs_psi = .01,
                      #cs_tau = .01,
