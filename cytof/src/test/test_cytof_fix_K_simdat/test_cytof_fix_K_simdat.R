@@ -9,7 +9,8 @@ if (length(args) != 1) {
 }
 
 #ROOT_DIR <- "out/sim"
-ROOT_DIR <- "out/sim_bigBurn"
+#ROOT_DIR <- "out/sim_bigBurn"
+ROOT_DIR <- "out/sim_fixedPsi"
 
 OUTDIR <- paste0(ROOT_DIR, SIM_NUM,"/")
 system(paste0("mkdir -p ", OUTDIR))
@@ -196,19 +197,13 @@ source("../../cytof_fixed_K.R", chdir=TRUE)
 sim_time <- system.time(
 out <- cytof_fixed_K(y, K=dat$K,
                      #burn=10000, B=2000, pr=100, 
-                     burn=100000, B=2000, pr=100, 
+                     burn=10000, B=2000, pr=100, 
                      m_psi=log(2),
-                     #cs_psi = .01,
-                     #cs_tau = .01,
-                     #cs_sig = .01,
-                     #cs_mu  = .01,
-                     #cs_c = .01, cs_d = .01,
-                     #cs_v = 1, cs_h = 1,
-                     cs_psi = 1,
-                     cs_tau = 1,
-                     cs_sig = 1,
-                     cs_mu  = 1,
-                     cs_c = 1, cs_d = 1,
+                     true_psi=rep(log(2),J),
+                     cs_tau = .01,
+                     cs_sig = .01,
+                     cs_mu  = .01,
+                     cs_c = .01, cs_d = .01,
                      cs_v = 1, cs_h = 1,
                      window=0) # do adaptive by making window>0
 )
