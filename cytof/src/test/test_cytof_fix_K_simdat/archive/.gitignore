@@ -1,0 +1,9 @@
+# Ignore these:
+*
+
+# But not these:
+!.gitignore
+!*.R
+Z.pdf
+postmus.pdf
+
