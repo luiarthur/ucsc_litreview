@@ -1,16 +1,31 @@
 args <- commandArgs(trailingOnly=TRUE)
 SIM_NUM <- NA
+SIM_K <- 0
 
-if (length(args) != 1) {
-  cat("Usage: Rscript test_cytof_fix_K_simdat.R <sim number [1,2,3]>\n")
-  q()
-} else {
-  SIM_NUM <- as.numeric(args[1])
+largs <- length(args)
+
+fquit <- function(e) {
+    cat("Wrong Input")
+    q()
 }
+
+if (largs < 1 || largs > 2) {
+  cat("Usage: Rscript test_cytof_fix_K_simdat.R <sim number [1,2,3]> [SIM_K=0] \n")
+  q()
+} else if (largs == 1) {
+  SIM_NUM <- as.numeric(args[1])
+} else if (largs == 2) {
+  tryCatch({
+    SIM_NUM <- as.numeric(args[1])
+    SIM_K <- as.numeric(args[2])
+  }, error=fquit, warning=fquit)
+}
+
 
 #ROOT_DIR <- "out/sim"
 #ROOT_DIR <- "out/sim_bigBurn"
-ROOT_DIR <- "out/sim_fixedPsi"
+#ROOT_DIR <- "out/sim_fixedPsi"
+ROOT_DIR <- paste0("out/sim_fixedPsiWrongK", SIMK)
 
 OUTDIR <- paste0(ROOT_DIR, SIM_NUM,"/")
 system(paste0("mkdir -p ", OUTDIR))
@@ -86,6 +101,23 @@ dat3 <- cytof_simdat(I=I3, N=list(20000, 30000, 10000), J=J3, K=K3,
                                 .1, .7, .1, .1,
                                 .2, .3, .3, .2), I3, K3, byrow=TRUE))
 
+I4 <- 3
+J4 <- 40
+K4 <- 4 #(works)
+Z4 <- genZ(J4,K4,c(.6,.4))
+
+dat4 <- cytof_simdat(I=I4, N=list(20000, 30000, 10000), J=J4, K=K4,
+                     #a=-1, pi_a=1, pi_b=9,
+                     pi_a=1, pi_b=9,
+                     tau2=rep(.1,J4),
+                     sig2=rep(1,I4),
+                     Z=Z4,
+                     W=matrix(c(.3, .4, .2, .1,
+                                .1, .7, .1, .1,
+                                .2, .3, .3, .2), I4, K4, byrow=TRUE))
+
+
+
 ### END DATA GEN ### 
 dat <- if(SIM_NUM==3) {
   dat3 
@@ -93,6 +125,8 @@ dat <- if(SIM_NUM==3) {
   dat2
 } else if(SIM_NUM==1) {
   dat1
+} else if(SIM_NUM==4) {
+  dat4
 } else {
   stop("SIM_NUM not in range!")
 }
@@ -195,7 +229,7 @@ source("../../cytof_fixed_K.R", chdir=TRUE)
 #                     window=0) # do adaptive by making window>0
 #)
 sim_time <- system.time(
-out <- cytof_fixed_K(y, K=dat$K,
+out <- cytof_fixed_K(y, K=dat$K+1,
                      #burn=10000, B=2000, pr=100, 
                      burn=10000, B=2000, pr=100, 
                      m_psi=log(2),
