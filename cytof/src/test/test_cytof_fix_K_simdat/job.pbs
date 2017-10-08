@@ -1,4 +1,5 @@
-##!/bin/bash
+#!/bin/bash
+
 ##PBS -k o
 ##PBS -j oe
 ##PBS -N cytof 
@@ -24,11 +25,16 @@
 ## details: https://kb.iu.edu/d/avmy
 
 ### SIMULATION ON LOGIN NODE OF SERVER
+K="-1 0 1"
+
 date
-for i in `seq 4`
+for k in $K
 do
-  echo $i
-  Rscript test_cytof_fix_K_simdat.R $i &
+  for i in `seq 4`
+  do
+    echo $i
+    Rscript test_cytof_fix_K_simdat.R $i $k &
+  done
 done
 wait
 date
