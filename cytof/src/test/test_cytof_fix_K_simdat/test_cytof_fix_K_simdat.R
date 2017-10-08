@@ -25,7 +25,7 @@ if (largs < 1 || largs > 2) {
 #ROOT_DIR <- "out/sim"
 #ROOT_DIR <- "out/sim_bigBurn"
 #ROOT_DIR <- "out/sim_fixedPsi"
-ROOT_DIR <- paste0("out/sim_fixedPsiWrongK", SIM_K)
+ROOT_DIR <- paste0("out/fixedPsiWrong_K", SIM_K, "_sim")
 
 OUTDIR <- paste0(ROOT_DIR, SIM_NUM,"/")
 system(paste0("mkdir -p ", OUTDIR))
