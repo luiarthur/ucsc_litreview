@@ -243,6 +243,12 @@ out <- cytof_fixed_K(y, K=dat$K+1,
 )
 length(out)
 
+### Print Timings
+sink(paste0(OUTDIR, "timing.txt"))
+print(sim_time)
+sink()
+
+
 print(sim_time) # per 100 iterations: 1 thread: 18s, 3 threads: 11s 
 
 ### Z
