@@ -15,6 +15,7 @@ else:
 ### make workspace
 sim_dir = "report/sim" + SIMULATION_NUMBER
 sim = "sim" + SIMULATION_NUMBER
+OUTDIR = "../../../out/"
 os.system("mkdir -p " + sim_dir)
 os.system("rm -rf " + sim_dir + "/*")
 os.system("mdgen " + sim)
@@ -44,11 +45,12 @@ intro = ""
 #"""
 
 template = readFile("template.md")
-template = template.replace("<path-to-data>", "../../../out/" + sim + "/data.pdf")
-template = template.replace("<path-to-mus>", "../../../out/" + sim + "/postmus.pdf")
-template = template.replace("<path-to-Z>", "../../../out/" + sim + "/Z.pdf")
-template = template.replace("<path-to-W>", "../../../out/" + sim + "/W.txt")
-template = template.replace("<path-to-pi>", "../../../out/" + sim + "/pi.txt")
+#template = template.replace("<path-to-data>", OUTDIR + sim + "/data.pdf")
+template = template.replace("<path-to-mus>",  OUTDIR + sim + "/postmus.pdf")
+template = template.replace("<path-to-Z>",    OUTDIR + sim + "/Z.pdf")
+template = template.replace("<path-to-W>",    OUTDIR + sim + "/W.txt")
+template = template.replace("<path-to-pi>",   OUTDIR + sim + "/pi.txt")
+template = template.replace("<path-to-src>",   OUTDIR + sim + "/src.R")
 template = template.replace("# Data", intro)
 
 ### Edit Compile Script
