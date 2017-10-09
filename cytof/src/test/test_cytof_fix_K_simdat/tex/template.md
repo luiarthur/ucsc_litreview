@@ -1,4 +1,5 @@
 # Data
+[comment]: <> (%
 \includegraphics[page=1]{<path-to-data>}
 \includegraphics[page=2]{<path-to-data>}
 \includegraphics[page=3]{<path-to-data>}
@@ -12,6 +13,7 @@
 \includegraphics[page=11]{<path-to-data>}
 \includegraphics[page=12]{<path-to-data>}
 \includegraphics[page=13]{<path-to-data>}
+%)
 
 # Posterior
 
