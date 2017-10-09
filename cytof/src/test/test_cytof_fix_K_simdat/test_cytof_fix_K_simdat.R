@@ -161,8 +161,10 @@ my.image(cor(dat$y[[2]]), xaxt='n',yaxt='n',xlab="",ylab="", col=redToBlue,
 my.image(cor(dat$y[[3]]), xaxt='n',yaxt='n',xlab="",ylab="", col=redToBlue,
          main="y3 Correlation b/w Markers",addLegend=TRUE, mn=-1,mx=1)
 my.image(dat$Z, ylab="markers", xlab="latent features", main="Z Truth")
+dev.off()
 
 ### Plot Data Directly
+png(paste0(OUTDIR, "dataY%03d.png"))
 my.image(dat$y[[1]], addLegend=T, mn=0, mx=6, xlab="markers", ylab="samples", main="y1")
 my.image(dat$y[[2]], addLegend=T, mn=0, mx=6, xlab="markers", ylab="samples", main="y2")
 my.image(dat$y[[3]], addLegend=T, mn=0, mx=6, xlab="markers", ylab="samples", main="y3")
