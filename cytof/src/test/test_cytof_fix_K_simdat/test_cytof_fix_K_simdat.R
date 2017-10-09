@@ -229,7 +229,7 @@ source("../../cytof_fixed_K.R", chdir=TRUE)
 #                     window=0) # do adaptive by making window>0
 #)
 sim_time <- system.time(
-out <- cytof_fixed_K(y, K=dat$K+1,
+out <- cytof_fixed_K(y, K=dat$K+SIM_K,
                      #burn=10000, B=2000, pr=100, 
                      burn=10000, B=2000, pr=100, 
                      m_psi=log(2),
