@@ -9,7 +9,7 @@ if len(sys.argv) != 2:
     sys.exit(1)
 else:
     SIMULATION_NUMBER = sys.argv[1]
-    print "Generating report for sim" + SIMULATION_NUMBER
+    print "Generating report for " + SIMULATION_NUMBER
 
 
 ### make workspace
@@ -51,6 +51,8 @@ template = template.replace("<path-to-mus>",  OUTDIR + sim + "/postmus.pdf")
 template = template.replace("<path-to-Z>",    OUTDIR + sim + "/Z.pdf")
 template = template.replace("<path-to-W>",    OUTDIR + sim + "/W.txt")
 template = template.replace("<path-to-pi>",   OUTDIR + sim + "/pi.txt")
+template = template.replace("<path-to-sig2>",   OUTDIR + sim + "/sig2.txt")
+template = template.replace("<path-to-tau2>",   OUTDIR + sim + "/tau2.txt")
 template = template.replace("<path-to-src>",   OUTDIR + sim + "/src.R")
 template = template.replace("# Data", intro)
 
