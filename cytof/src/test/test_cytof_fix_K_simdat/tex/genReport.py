@@ -13,8 +13,9 @@ else:
 
 
 ### make workspace
-sim_dir = "report/sim" + SIMULATION_NUMBER
-sim = "sim" + SIMULATION_NUMBER
+#sim = "sim" + SIMULATION_NUMBER
+sim = SIMULATION_NUMBER
+sim_dir = "report/" + sim
 OUTDIR = "../../../out/"
 os.system("mkdir -p " + sim_dir)
 os.system("rm -rf " + sim_dir + "/*")

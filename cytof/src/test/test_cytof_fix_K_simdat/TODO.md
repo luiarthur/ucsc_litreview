@@ -12,6 +12,7 @@
     - i.e. each rowsum(Z) is not necessarily 1.
 - [ ] Mis-specify K => what happens? 
     - Try true K=4, but fix K = {1,2,3, 5,6,7}
+- [ ] Plotting for mus?
 
 ### Eventually 
 - [ ] Model K
