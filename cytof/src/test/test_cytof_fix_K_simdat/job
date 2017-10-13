@@ -1,18 +1,18 @@
 #!/bin/bash
 
 ### SIMULATION ON LOGIN / INTERACTIVE NODE OF SERVER
-#K="-1 0 1"
-#
-#date
-#for k in $K
-#do
-#  for i in `seq 4`
-#  do
-#    echo $i
-#    Rscript test_cytof_fix_K_simdat.R $i $k &
-#  done
-#done
-#wait
-#date
+K="-1 0 1"
 
-Rscript test_cytof_fix_K_simdat.R 3 -1 &
+date
+for k in $K
+do
+  for i in `seq 4`
+  do
+    echo $i
+    Rscript test_cytof_fix_K_simdat.R $i $k &
+  done
+done
+wait
+date
+
+#Rscript test_cytof_fix_K_simdat.R 3 -1
