@@ -219,56 +219,56 @@ double rtnorm(double m, double s, double lo, double hi) {
   return as<double>(wrap(R_rtruncnorm(1, lo, hi, m, s)));
 }
 
-Function R_dtruncnorm = Environment("package:truncnorm")["dtruncnorm"];
-double wrapped_dtruncnorm(double x, double a, double b, double m, double s) {
-  return as<double>(wrap(R_dtruncnorm(x, a, b, m, s)));
-}
+//Function R_dtruncnorm = Environment("package:truncnorm")["dtruncnorm"];
+//double wrapped_dtruncnorm(double x, double a, double b, double m, double s) {
+//  return as<double>(wrap(R_dtruncnorm(x, a, b, m, s)));
+//}
 // log density of truncated normal
 double log_dtnorm(double x, double m, double s, double thresh, bool lt) {
-  double a, b;
-  if (lt) {
-    a = -INFINITY;
-    b = thresh;
-  } else {
-    a = thresh;
-    b = INFINITY;
-  }
-  double exp_out = wrapped_dtruncnorm(x, a, b, m, s);
+  //double a, b;
+  //if (lt) {
+  //  a = -INFINITY;
+  //  b = thresh;
+  //} else {
+  //  a = thresh;
+  //  b = INFINITY;
+  //}
+  //double exp_out = wrapped_dtruncnorm(x, a, b, m, s);
+  //double out;
+  //if (exp_out == 0) {
+  //  out = -INFINITY;
+  //} else {
+  //  out = log(exp_out);
+  //}
+  //return out;
+  //
+  double ldnorm = R::dnorm(x, m, s, 1); // log
+  double Phi = R::pnorm(thresh, m, s, 1, 0); // less than, no log
   double out;
-  if (exp_out == 0) {
-    out = -INFINITY;
+
+  if (lt && (x < thresh)) {
+    out = ldnorm - log(Phi);
+  } else if ( (!lt) && (x >= thresh) ) {
+    out = ldnorm - log(1 - Phi);
   } else {
-    out = log(exp_out);
+    out = -INFINITY;
   }
 
   return out;
-  //double ldnorm = R::dnorm(x, m, s, 1); // log
-  //double Phi = R::pnorm(thresh, m, s, 1, 0); // less than, no log
-  //double out;
-
-  //if (lt && (x < thresh)) {
-  //  out = ldnorm - log(Phi);
-  //} else if ( (!lt) && (x >= thresh) ) {
-  //  out = ldnorm - log(1 - Phi);
-  //} else {
-  //  out = -INFINITY;
-  //}
-
-  //return out;
 }
 
 double dtnorm(double x, double m, double s, double thresh, bool lt) {
-  //return exp(log_dtnorm(x, m, s, thresh, lt));
-  double a, b;
-  if (lt) {
-    a = -INFINITY;
-    b = thresh;
-  } else {
-    a = thresh;
-    b = INFINITY;
-  }
+  return exp(log_dtnorm(x, m, s, thresh, lt));
+  //double a, b;
+  //if (lt) {
+  //  a = -INFINITY;
+  //  b = thresh;
+  //} else {
+  //  a = thresh;
+  //  b = INFINITY;
+  //}
 
-  return wrapped_dtruncnorm(x, a, b, m, s);
+  //return wrapped_dtruncnorm(x, a, b, m, s);
 }
 
 
