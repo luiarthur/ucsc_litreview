@@ -240,7 +240,7 @@ out <- cytof_fixed_K(y, K=dat$K+SIM_K,
                      cs_sig = .01,
                      cs_mu  = .01,
                      cs_c = .01, cs_d = .01,
-                     cs_v = 1, cs_h = 1, cs_h = 0.1,
+                     cs_v = 1, cs_h = 1, cs_hj = 0.1,
                      window=0) # do adaptive by making window>0
 )
 length(out)
