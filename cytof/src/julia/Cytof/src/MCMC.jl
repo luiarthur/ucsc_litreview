@@ -1,4 +1,25 @@
 module MCMC
+
+# compare with the other gibbs
+function gibbs_byref{T}(init::T, update, B::Int, burn::Int; printFreq::Int=0)
+  const out = [deepcopy(init) for i in 1:B]
+  current = out[1]
+
+  for i in 2:(B+burn)
+    update(current) # update by reference
+
+    if i > burn + 1
+      out[i-burn] = deepcopy(current)
+    end
+
+    if printFreq > 0 && i % printFreq == 0
+      print("\rProgress: ",i,"/",B+burn)
+    end
+  end
+
+  return out
+end
+
 # compare with the other gibbs
 function gibbs{T}(init::T, update, B::Int, burn::Int; printFreq::Int=0)
   const out = Vector{T}(B)
