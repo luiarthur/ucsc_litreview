@@ -92,7 +92,8 @@ void update_Hj_mus_j(State &state, const Data &y, const Prior &prior, int j) {
   // draw proposed hj
   arma::Row<double> cand_hj(K);
   for (int k=0; k<K; k++) {
-    cand_hj[k] = R::rnorm(h_j[k], prior.cs_h/10);
+    //cand_hj[k] = R::rnorm(h_j[k], prior.cs_h/10);
+    cand_hj[k] = R::rnorm(h_j[k], prior.cs_hj);
   }
 
   // compute proposed zj

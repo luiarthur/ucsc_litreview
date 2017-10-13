@@ -35,7 +35,7 @@ std::vector<List> cytof_fix_K_fit(
     double m_d, double s2_d, double cs_d,
     double a_sig, double b_sig, arma::vec cs_sig2,
     double alpha, double cs_v,
-    arma::mat G, double cs_h, 
+    arma::mat G, double cs_h,  double cs_hj,
     double a_w, int K,
     Nullable<arma::mat> true_mus, Nullable<arma::vec> true_psi,
     Nullable<arma::vec> true_tau2, Nullable<arma::vec> true_sig2,
@@ -112,7 +112,7 @@ std::vector<List> cytof_fix_K_fit(
     m_d, s2_d, cs_d,
     a_sig, b_sig, cs_sig2,
     alpha, cs_v, 
-    G, R, S2, cs_h,
+    G, R, S2, cs_h, cs_hj,
     a_w,
     0, 0, 0
   };
