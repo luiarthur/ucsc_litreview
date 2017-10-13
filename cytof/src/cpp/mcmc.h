@@ -233,7 +233,15 @@ double log_dtnorm(double x, double m, double s, double thresh, bool lt) {
     a = thresh;
     b = INFINITY;
   }
-  return log(wrapped_dtruncnorm(x, a, b, m, s));
+  double exp_out = wrapped_dtruncnorm(x, a, b, m, s);
+  double out;
+  if (exp_out == 0) {
+    out = -INFINITY;
+  } else {
+    out = log(exp_out);
+  }
+
+  return out;
   //double ldnorm = R::dnorm(x, m, s, 1); // log
   //double Phi = R::pnorm(thresh, m, s, 1, 0); // less than, no log
   //double out;
