@@ -1,5 +1,11 @@
 # Next To Try:
 
+## 13 Oct, 2017
+Note: I just change 
+
+- `mcmc.h: dtnorm, log_dtnorm, wrapped_dtruncnotm`
+- `H_mus.h`
+
 ## 3 Oct, 2017
 
 ### Now 

@@ -1,7 +1,8 @@
 require(truncnorm)
 library(Rcpp)
 Sys.setenv("PKG_CXXFLAGS"="-std=c++11")
-system.time(sourceCpp("cpp/cytof_fix_K.cpp"))
+compile_time <- system.time(sourceCpp("cpp/cytof_fix_K.cpp"))
+print(paste("Compilation time: ", compile_time[3]))
 
 cytof_fixed_K <- function(y,
                   mus_thresh=log(2), cs_mu=1,
