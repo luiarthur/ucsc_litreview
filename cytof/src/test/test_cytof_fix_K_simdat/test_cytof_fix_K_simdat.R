@@ -233,7 +233,7 @@ source("../../cytof_fixed_K.R", chdir=TRUE)
 sim_time <- system.time(
 out <- cytof_fixed_K(y, K=dat$K+SIM_K,
                      #burn=10000, B=2000, pr=100, 
-                     burn=10000, B=2000, pr=100, 
+                     burn=100, B=200, pr=100, 
                      m_psi=log(2),
                      true_psi=rep(log(2),J),
                      cs_tau = .01,
@@ -243,15 +243,13 @@ out <- cytof_fixed_K(y, K=dat$K+SIM_K,
                      cs_v = 1, cs_h = 1, cs_hj = 0.1,
                      window=0) # do adaptive by making window>0
 )
-length(out)
+save.image(paste0(OUTDIR, "results.RData"))
 
 ### Print Timings
 sink(paste0(OUTDIR, "timing.txt"))
-print(sim_time)
+  print(sim_time)
 sink()
 
-
-print(sim_time) # per 100 iterations: 1 thread: 18s, 3 threads: 11s 
 
 ### Z
 Z <- lapply(out, function(o) o$Z)
@@ -266,10 +264,10 @@ dev.off()
 W <- lapply(out, function(o) o$W)
 W_mean <- Reduce("+", W) / length(W)
 sink(paste0(OUTDIR, "W.txt"))
-cat("Posterior Mean W: \n")
-print(W_mean[,ord])
-cat("\nTrue W: \n")
-print(dat$W)
+  cat("Posterior Mean W: \n")
+  print(W_mean[,ord])
+  cat("\nTrue W: \n")
+  print(dat$W)
 sink()
 
 ### v 
@@ -283,8 +281,8 @@ sig2 <- t(sapply(out, function(o) o$sig2))
 #     ylim=0:1, main="Acceptance rate for sig2")
 #abline(h=c(.25, .4), col='grey')
 sink(paste0(OUTDIR, "sig2.txt"))
-cat("sig2: Posterior Mean, True\n")
-print(cbind( colMeans(sig2), dat$sig2 ))
+  cat("sig2: Posterior Mean, True\n")
+  print(cbind( colMeans(sig2), dat$sig2 ))
 sink()
 
 ### psi
@@ -297,8 +295,8 @@ psi <- t(sapply(out, function(o) o$psi))
 #abline(h=c(.25, .4), col='grey')
 
 sink(paste0(OUTDIR, "psi.txt"))
-cat("psi: Posterior Mean, True\n")
-print(cbind(colMeans(psi), rowMeans(dat$mus)))
+  cat("psi: Posterior Mean, True\n")
+  print(cbind(colMeans(psi), rowMeans(dat$mus)))
 sink()
 
 ### tau2
@@ -311,8 +309,8 @@ tau2 <- t(sapply(out, function(o) o$tau2))
 cbind(colMeans(tau2), dat$tau2, apply(dat$mus,1,var))
 
 sink(paste0(OUTDIR, "tau2.txt"))
-cat("tau2: Posterior Mean, True\n")
-print(cbind(colMeans(tau2), dat$tau2))
+  cat("tau2: Posterior Mean, True\n")
+  print(cbind(colMeans(tau2), dat$tau2))
 sink()
 
 ### lambda
@@ -399,10 +397,10 @@ my.image( pi_mean <- apply(post_pi, 1:2, mean), addLegend=TRUE)
 my.image( dat$pi_var, addLegend=TRUE )
 
 sink(paste0(OUTDIR, "pi.txt"))
-cat("Posterior Mean pi: \n")
-print(pi_mean)
-cat("\nTrue pi: \n")
-print(dat$pi_var)
+  cat("Posterior Mean pi: \n")
+  print(pi_mean)
+  cat("\nTrue pi: \n")
+  print(dat$pi_var)
 sink()
 
 # Compare Data to Posterior Predictive:
