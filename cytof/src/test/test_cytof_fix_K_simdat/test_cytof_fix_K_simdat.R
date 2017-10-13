@@ -347,7 +347,7 @@ mus_ci_up <- apply(mus, 1:2, quantile, .975)[,ord]
 mus_ci <- cbind(c(mus_ci_lo), c(mus_ci_up))
 
 ### Plot only if same dimensions
-if (NCOL(dat$K) == NCOL(mus_mean)) {
+if (NCOL(dat$K) == NCOL(Z_mean)) {
   plot(c(dat$mus), c(mus_mean[,ord]), col=c(dat$Z) + 3, pch=20, cex=2,
        xlab="mu*_true", ylab="mu* posterior mean", fg='grey',
        ylim=range(mus_ci),
