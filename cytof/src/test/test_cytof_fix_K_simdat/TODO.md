@@ -6,6 +6,19 @@ Note: I just change
 - `mcmc.h: dtnorm, log_dtnorm, wrapped_dtruncnotm`
 - `H_mus.h`
 
+In the posterior Z, k=1 and 3 seems alternating.  Did you assume no label switching and take simple averages over iterations?  Did you check if there is any label switching?  It may be not due to convergence.  Can you run the algorithm of finding a posterior point estimate of Z?  
+
+For that particular simulation, I wasn't able to save the simulation data because of errors in plotting (after the MCMC). It is rerunning. 
+
+++ Can you send me the results with sim3 & K=5?  You sent md file, not pdf file.  
+I have attached the results with sim3 & K=5.
+
+++ Currently, it seems the model would identify true K well if we let K random.  How you do think?  For current sim3 and sim4, we may try the model with random K.
+I agree. I am working on this right now.
+
+++ Smaller M-H step size is needed for smaller N.  I suggested joint updatings for possible improvement of mixing.  Tried?  Worked?
+This is  running. (I hope correctly...)
+
 ## 3 Oct, 2017
 
 ### Now 
