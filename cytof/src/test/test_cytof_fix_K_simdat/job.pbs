@@ -1,41 +1,18 @@
 #!/bin/bash
 
-##PBS -k o
-##PBS -j oe
-##PBS -N cytof 
-##PBS -l nodes=4,walltime=2:00:00 
-#
-## change dir to current submission dir
-##cd $PBS_O_WORKDIR
-#
-##Rscript test_cytof_fix_K_simdat.R
+### SIMULATION ON LOGIN / INTERACTIVE NODE OF SERVER
+#K="-1 0 1"
 #
 #date
-#for i in `seq 4`
+#for k in $K
 #do
-#  echo $i
-#  #sleep 10 &
-#  Rscript tmp.R $i
+#  for i in `seq 4`
+#  do
+#    echo $i
+#    Rscript test_cytof_fix_K_simdat.R $i $k &
+#  done
 #done
 #wait
 #date
-#
-## to submit: qsub job
-#
-## details: https://kb.iu.edu/d/avmy
 
-### SIMULATION ON LOGIN NODE OF SERVER
-K="-1 0 1"
-
-date
-for k in $K
-do
-  for i in `seq 4`
-  do
-    echo $i
-    Rscript test_cytof_fix_K_simdat.R $i $k &
-  done
-done
-wait
-date
-
+Rscript test_cytof_fix_K_simdat.R 3 -1 &
