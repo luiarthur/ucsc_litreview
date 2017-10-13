@@ -345,12 +345,16 @@ mus_mean <- apply(mus, 1:2, mean)
 mus_ci_lo <- apply(mus, 1:2, quantile, .025)[,ord]
 mus_ci_up <- apply(mus, 1:2, quantile, .975)[,ord]
 mus_ci <- cbind(c(mus_ci_lo), c(mus_ci_up))
-plot(c(dat$mus), c(mus_mean[,ord]), col=c(dat$Z) + 3, pch=20, cex=2,
-     xlab="mu*_true", ylab="mu* posterior mean", fg='grey',
-     ylim=range(mus_ci),
-     main="mu* posterior mean vs truth")
-abline(0,1, col='grey')
-add.errbar(mus_ci, x=c(dat$mus), col=c(dat$Z) + 3, lty=2, lwd=.5)
+
+### Plot only if same dimensions
+if (NCOL(dat$K) == NCOL(mus_mean)) {
+  plot(c(dat$mus), c(mus_mean[,ord]), col=c(dat$Z) + 3, pch=20, cex=2,
+       xlab="mu*_true", ylab="mu* posterior mean", fg='grey',
+       ylim=range(mus_ci),
+       main="mu* posterior mean vs truth")
+  abline(0,1, col='grey')
+  add.errbar(mus_ci, x=c(dat$mus), col=c(dat$Z) + 3, lty=2, lwd=.5)
+}
 
 ### Acceptance Rates
 apply(mus, 1:2, function(x) length(unique(x)) / length(out))
