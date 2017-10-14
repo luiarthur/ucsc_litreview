@@ -28,6 +28,9 @@
 ## Posterior For $\pi$
 \verbatiminput{<path-to-pi>}
 
+## Execution Time
+\verbatiminput{<path-to-timing>}
+
 ## Souce Code
 \verbatiminput{<path-to-src>}
 

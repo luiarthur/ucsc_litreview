@@ -83,6 +83,7 @@ template = template.replace("<path-to-W>",    OUTDIR + sim + "/W.txt")
 template = template.replace("<path-to-pi>",   OUTDIR + sim + "/pi.txt")
 template = template.replace("<path-to-sig2>",   OUTDIR + sim + "/sig2.txt")
 template = template.replace("<path-to-tau2>",   OUTDIR + sim + "/tau2.txt")
+template = template.replace("<path-to-timing>",   OUTDIR + sim + "/timing.txt")
 template = template.replace("<path-to-src>",   OUTDIR + sim + "/src.R")
 template = intro + "\n" + template
 
