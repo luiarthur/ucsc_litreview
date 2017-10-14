@@ -1,0 +1,31 @@
+#!/bin/bash
+
+SIM_NAME="fixedPsiWrong"
+K="-1 0 1"
+
+for k in $K
+do
+  for i in `seq 4`
+  do
+    #echo "./genReport.py ${SIM_NAME}_K${k}_sim${i}"
+    ./genReport.py ${SIM_NAME}_K${k}_sim${i}
+  done
+done
+
+echo "Compile PDFs? (y/n)"
+read COMPILE_PDFS 
+echo
+
+if [ "$COMPILE_PDFS" = "y" ]
+then
+  cd report
+  ds=`ls`
+
+  for d in $ds
+  do
+    cd $ds 
+    ./compile ${ds}.md &
+    cd ../
+  done
+  wait
+fi
