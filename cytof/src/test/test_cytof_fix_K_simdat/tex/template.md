@@ -14,6 +14,7 @@
 <mus-pdf>
 
 ## Posterior For $Z$
+\newpage
 <Z-pdf>
 
 ## Posterior For $W$
