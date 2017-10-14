@@ -330,7 +330,7 @@ lam3 <- sapply(lam, function(l) l[[3]] + 1)
 pdf(paste0(OUTDIR, "postmus.pdf"))
 #dat$mus
 mus_ls <- lapply(out, function(o) o$mus)
-mus <- array(unlist(mus_ls), dim=c(J, K, length(out)))
+mus <- array(unlist(mus_ls), dim=c(J, NCOL(Z_mean), length(out)))
 
 ### Correlation of mus
 #cor(t(apply(mus, 3, c)))
@@ -341,12 +341,17 @@ mus_mean <- apply(mus, 1:2, mean)
 #my.image(dat$mus - mus_mean, addLegend=T)
 
 ## Post pred mean vs Truth
+#print(dim(mus_mean))
+#print(dim(Z_mean))
+#print(length(ord))
+#cat("\n")
+
 mus_ci_lo <- apply(mus, 1:2, quantile, .025)[,ord]
 mus_ci_up <- apply(mus, 1:2, quantile, .975)[,ord]
 mus_ci <- cbind(c(mus_ci_lo), c(mus_ci_up))
 
 ### Plot only if same dimensions
-cat("K: ", dat$K, "; ", "NCOL(Z_mean): ", NCOL(Z_mean), "\n")
+#cat("K: ", dat$K, "; ", "NCOL(Z_mean): ", NCOL(Z_mean), "\n")
 if (dat$K == NCOL(Z_mean)) {
   plot(c(dat$mus), c(mus_mean[,ord]), col=c(dat$Z) + 3, pch=20, cex=2,
        xlab="mu*_true", ylab="mu* posterior mean", fg='grey',
@@ -409,6 +414,7 @@ sink()
 sim_post_pred <- function(post) {
   B <- length(post)
   Y <- rep(list(matrix(NA, B, J)), I)
+  K <- NCOL(Z_mean)
 
   for (n in 1:B) {
     for (i in 1:I) {
