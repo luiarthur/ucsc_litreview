@@ -231,6 +231,16 @@ source("../../cytof_fixed_K.R", chdir=TRUE)
 #                     #window=300) # do adaptive by making window>0. Broken right now.
 #                     window=0) # do adaptive by making window>0
 #)
+
+### Print simulation info
+sink(paste0(OUTDIR, "info.txt"))
+  cat("I: ", dat$I, "\n")
+  cat("J: ", dat$J, "\n")
+  cat("K: ", dat$K, "\n")
+  cat("N: ", paste0("(",paste(unlist(dat$N),collapse=', '),")"), "\n")
+  cat("K in simulation: ", dat$K+SIM_K, "\n")
+sink()
+
 sim_time <- system.time(
 out <- cytof_fixed_K(y, K=dat$K+SIM_K,
                      burn=10000, B=2000, pr=100, 
