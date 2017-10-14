@@ -233,8 +233,8 @@ source("../../cytof_fixed_K.R", chdir=TRUE)
 #)
 sim_time <- system.time(
 out <- cytof_fixed_K(y, K=dat$K+SIM_K,
-                     #burn=10000, B=2000, pr=100, 
-                     burn=100, B=100, pr=100, 
+                     burn=10000, B=2000, pr=100, 
+                     #burn=100, B=100, pr=100, 
                      m_psi=log(2),
                      true_psi=rep(log(2),J),
                      cs_tau = .01,
@@ -383,7 +383,10 @@ mx = round(log(2) + 2,2)
 mn = round(log(2) - 2,2)
 my.image(mus_mean[,ord], xlab='', ylab='', mx=mx, mn=mn, addLegend=T, main='mu* posterior mean', col=redToBlue)
 my.image(dat$mus,  xlab='', ylab='', mx=mx, mn=mn, addLegend=T, main='mu* Truth', col=redToBlue)
-my.image(mus_mean[,ord]-dat$mus, xlab='', ylab='', mx=2, mn=-2, addLegend=T, main='mu* posterior mean resids', col=redToBlue)
+
+if (NCOL(mus_mean) == NCOL(dat$mus)) {
+  my.image(mus_mean[,ord]-dat$mus, xlab='', ylab='', mx=2, mn=-2, addLegend=T, main='mu* posterior mean resids', col=redToBlue)
+}
 
 hist(mus_mean[,ord], xlim=range(c(mus_mean, dat$mus)), prob=TRUE,
      col=rgb(0,0,1,.3), border='white', main='Histogram of mu*')
