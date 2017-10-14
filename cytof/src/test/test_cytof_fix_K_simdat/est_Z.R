@@ -63,14 +63,14 @@ est_Z <- function(Z_list) {
   D
 }
 
-rand <- function(n,k) {
-  matrix(sample(0:1, n*k, replace=TRUE), n, k)
-}
-#Zl <- list(rand(2,2), rand(2,2), rand(2,2))
-Zl <- lapply(as.list(1:10), function(i) rand(3,2))
-D <- est_Z(Zl)
-print(D)
-
-which.min(rowSums(D))
+#rand <- function(n,k) {
+#  matrix(sample(0:1, n*k, replace=TRUE), n, k)
+#}
+##Zl <- list(rand(2,2), rand(2,2), rand(2,2))
+#Zl <- lapply(as.list(1:10), function(i) rand(3,2))
+#D <- est_Z(Zl)
+#print(D)
+#
+#which.min(rowSums(D))
 
 

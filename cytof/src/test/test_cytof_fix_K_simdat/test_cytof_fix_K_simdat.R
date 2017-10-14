@@ -35,6 +35,7 @@ library(rcommon)
 source("../../cytof_fixed_K.R", chdir=TRUE)
 source("../../cytof_simdat.R")
 source("../../../dat/myimage.R")
+source("est_Z.R")
 
 last <- function(lst) lst[[length(lst)]]
 left_order <- function(Z) {
@@ -171,9 +172,9 @@ my.image(dat$y[[3]], addLegend=T, mn=0, mx=6, xlab="markers", ylab="samples", ma
 dev.off()
 
 ### Percentage of zeros (sparsity)
-mean(dat$y[[1]] == 0)
-mean(dat$y[[2]] == 0)
-mean(dat$y[[3]] == 0)
+#mean(dat$y[[1]] == 0)
+#mean(dat$y[[2]] == 0)
+#mean(dat$y[[3]] == 0)
 
 ### Compute
 y <- dat$y
@@ -233,7 +234,7 @@ source("../../cytof_fixed_K.R", chdir=TRUE)
 sim_time <- system.time(
 out <- cytof_fixed_K(y, K=dat$K+SIM_K,
                      #burn=10000, B=2000, pr=100, 
-                     burn=100, B=200, pr=100, 
+                     burn=100, B=100, pr=100, 
                      m_psi=log(2),
                      true_psi=rep(log(2),J),
                      cs_tau = .01,
@@ -272,7 +273,7 @@ sink()
 
 ### v 
 v <- t(apply(t(sapply(out, function(o) o$v)), 1, cumprod))
-colMeans(v)
+#colMeans(v)
 
 ### sig2
 sig2 <- t(sapply(out, function(o) o$sig2))
@@ -306,7 +307,7 @@ tau2 <- t(sapply(out, function(o) o$tau2))
 #plot(apply(tau2, 2, function(tj) length(unique(tj)) / length(out)),
 #     ylim=0:1, main="Acceptance rate for tau2")
 #abline(h=c(.15, .45), col='grey')
-cbind(colMeans(tau2), dat$tau2, apply(dat$mus,1,var))
+#cbind(colMeans(tau2), dat$tau2, apply(dat$mus,1,var))
 
 sink(paste0(OUTDIR, "tau2.txt"))
   cat("tau2: Posterior Mean, True\n")
@@ -315,24 +316,24 @@ sink()
 
 ### lambda
 lam <- lapply(out, function(o) o$lam)
-unique(sapply(lam, function(l) sapply(l,length)), MAR=2)
+#unique(sapply(lam, function(l) sapply(l,length)), MAR=2)
 
 lam1 <- sapply(lam, function(l) l[[1]] + 1)
 lam2 <- sapply(lam, function(l) l[[2]] + 1)
 lam3 <- sapply(lam, function(l) l[[3]] + 1)
 
-rowMeans(lam1) 
-dat$lam_index_0[[1]]
+#rowMeans(lam1) 
+#dat$lam_index_0[[1]]
 
 
 ### mus
 pdf(paste0(OUTDIR, "postmus.pdf"))
-dat$mus
+#dat$mus
 mus_ls <- lapply(out, function(o) o$mus)
 mus <- array(unlist(mus_ls), dim=c(J, K, length(out)))
 
 ### Correlation of mus
-cor(t(apply(mus, 3, c)))
+#cor(t(apply(mus, 3, c)))
 
 mus_mean <- apply(mus, 1:2, mean)
 #exp(dat$mus - mus_mean)
@@ -345,6 +346,7 @@ mus_ci_up <- apply(mus, 1:2, quantile, .975)[,ord]
 mus_ci <- cbind(c(mus_ci_lo), c(mus_ci_up))
 
 ### Plot only if same dimensions
+cat("K: ", dat$K, "; ", "NCOL(Z_mean): ", NCOL(Z_mean), "\n")
 if (dat$K == NCOL(Z_mean)) {
   plot(c(dat$mus), c(mus_mean[,ord]), col=c(dat$Z) + 3, pch=20, cex=2,
        xlab="mu*_true", ylab="mu* posterior mean", fg='grey',
@@ -355,7 +357,7 @@ if (dat$K == NCOL(Z_mean)) {
 }
 
 ### Acceptance Rates
-apply(mus, 1:2, function(x) length(unique(x)) / length(out))
+#apply(mus, 1:2, function(x) length(unique(x)) / length(out))
 
 plot_mus_post <- function(i,j, main=paste0("mu*[",i,",",j,"]"), ...) {
   MAIN <- main
@@ -387,8 +389,8 @@ legend('topright', col=c('blue','red'), legend=c('mu* (Post)','mu* (True)'),
 
 dev.off()
 
-dat$mus
-mus_mean[,ord]
+#dat$mus
+#mus_mean[,ord]
 
 ### Pi
 post_pi <- array(unlist(lapply(out, function(o) o$pi)), dim=c(I,J,length(out)))
@@ -462,9 +464,9 @@ my.image(cor(post_pred[[3]]) - cor(dat$y[[3]]), xaxt='n',yaxt='n',xlab="",ylab="
          main="y3 Correlation b/w Markers",addLegend=TRUE, mn=-1,mx=1, col=redToBlue)
 
 ### Posterior Predictive Proportion of 0's
-mean(post_pred[[1]] == 0); mean(dat$y[[1]] == 0); 
-mean(post_pred[[2]] == 0); mean(dat$y[[2]] == 0); 
-mean(post_pred[[3]] == 0); mean(dat$y[[3]] == 0); 
+#mean(post_pred[[1]] == 0); mean(dat$y[[1]] == 0); 
+#mean(post_pred[[2]] == 0); mean(dat$y[[2]] == 0); 
+#mean(post_pred[[3]] == 0); mean(dat$y[[3]] == 0); 
 
 #source("test_cytof_fix_K_simdat.R")
 
