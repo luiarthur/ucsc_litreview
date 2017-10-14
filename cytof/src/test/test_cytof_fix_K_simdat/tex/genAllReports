@@ -16,6 +16,13 @@ echo "Compile PDFs? (y/n)"
 read COMPILE_PDFS 
 echo
 
+compile_stuff () {
+  d=$1
+  cd $d
+  ./compile ${d}.md
+  cd ../
+}
+
 if [ "$COMPILE_PDFS" = "y" ]
 then
   cd report
@@ -23,9 +30,7 @@ then
 
   for d in $ds
   do
-    cd $ds 
-    ./compile ${ds}.md &
-    cd ../
+    compile_stuff $d #&
   done
   wait
 fi
