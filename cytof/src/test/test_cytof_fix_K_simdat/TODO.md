@@ -4,8 +4,9 @@
 
 - [X] plot data
     - [X] distribution of `y_{inj}` for `z_{j,\lam_{in}}=0,1` separately for each (i,j) pair.
-- [ ] smaller `\sigma^2_i`
-- [ ] change simulation data `mu*_{jk}`
+- [X] smaller `\sigma^2_i`
+- [X] change simulation data `mu*_{jk}`
+- [ ] use proposal with smaller step-size for mu*
 
 ## 13 Oct, 2017
 Note: I just change 
