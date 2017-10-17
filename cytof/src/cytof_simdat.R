@@ -7,6 +7,8 @@ cytof_simdat <- function(I, N, J, K, W, thresh=log(2),
                          a=1,
                          tau2=1/rgamma(J,3,.2),
                          sig2=1/rgamma(I,3,2),
+                         mus_lo=-Inf,
+                         mus_hi=+Inf,
                          Z=diag(K) %x% rep(1, J/K)) {
   stopifnot(length(N) == I)
   stopifnot(nrow(W) == I && ncol(W) == K)
@@ -24,10 +26,10 @@ cytof_simdat <- function(I, N, J, K, W, thresh=log(2),
     for (k in 1:K) {
       if (Z[j,k] == 0) {
         #mus[j,k] <- rtruncnorm(1, -Inf, thresh, psi[j], sqrt(tau2[j]))
-        mus[j,k] <- rtruncnorm(1, -Inf, thresh, log(2)-a, sqrt(tau2[j]))
+        mus[j,k] <- rtruncnorm(1, mus_lo, thresh, log(2)-a, sqrt(tau2[j]))
       } else { # Z[j,k] == 1
         #mus[j,k] <- rtruncnorm(1, thresh,  Inf, psi[j], sqrt(tau2[j]))
-        mus[j,k] <- rtruncnorm(1, thresh, Inf, log(2)+a, sqrt(tau2[j]))
+        mus[j,k] <- rtruncnorm(1, thresh, mus_hi, log(2)+a, sqrt(tau2[j]))
       }
     }
   }

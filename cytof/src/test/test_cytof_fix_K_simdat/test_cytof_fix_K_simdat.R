@@ -25,7 +25,7 @@ if (largs < 1 || largs > 2) {
 #ROOT_DIR <- "out/sim"
 #ROOT_DIR <- "out/sim_bigBurn"
 #ROOT_DIR <- "out/sim_fixedPsi"
-ROOT_DIR <- paste0("out/fixedPsiWrong_K", SIM_K, "_sim")
+ROOT_DIR <- paste0("out/fixedPsi_WrongK", SIM_K, "_sim")
 
 OUTDIR <- paste0(ROOT_DIR, SIM_NUM,"/")
 system(paste0("mkdir -p ", OUTDIR))
@@ -66,9 +66,10 @@ Z1 <- genZ(J1,K1,c(.6,.4))
 
 dat1 <- cytof_simdat(I=I1, N=list(2000, 3000, 1000), J=J1, K=K1,
                      #a=-1, pi_a=1, pi_b=9,
+                     mus_lo=0,
                      pi_a=1, pi_b=9,
                      tau2=rep(.1,J1),
-                     sig2=rep(1,I1),
+                     sig2=rep(.1,I1),
                      Z=Z1,
                      W=matrix(c(.3, .4, .2, .1,
                                 .1, .7, .1, .1,
@@ -77,9 +78,10 @@ dat1 <- cytof_simdat(I=I1, N=list(2000, 3000, 1000), J=J1, K=K1,
 # Increase N_i
 dat2 <- cytof_simdat(I=I1, N=list(20000, 30000, 10000), J=J1, K=K1,
                      #a=-1, pi_a=1, pi_b=9,
+                     mus_lo=0,
                      pi_a=1, pi_b=9,
                      tau2=rep(.1,J1),
-                     sig2=rep(1,I1),
+                     sig2=rep(.1,I1),
                      Z=Z1,
                      W=matrix(c(.3, .4, .2, .1,
                                 .1, .7, .1, .1,
@@ -94,9 +96,10 @@ Z3 <- genZ(J3,K3,c(.6,.4))
 
 dat3 <- cytof_simdat(I=I3, N=list(20000, 30000, 10000), J=J3, K=K3,
                      #a=-1, pi_a=1, pi_b=9,
+                     mus_lo=0,
                      pi_a=1, pi_b=9,
                      tau2=rep(.1,J3),
-                     sig2=rep(1,I3),
+                     sig2=rep(.1,I3),
                      Z=Z3,
                      W=matrix(c(.3, .4, .2, .1,
                                 .1, .7, .1, .1,
@@ -109,9 +112,10 @@ Z4 <- genZ(J4,K4,c(.6,.4))
 
 dat4 <- cytof_simdat(I=I4, N=list(20000, 30000, 10000), J=J4, K=K4,
                      #a=-1, pi_a=1, pi_b=9,
+                     mus_lo=0,
                      pi_a=1, pi_b=9,
                      tau2=rep(.1,J4),
-                     sig2=rep(1,I4),
+                     sig2=rep(.1,I4),
                      Z=Z4,
                      W=matrix(c(.3, .4, .2, .1,
                                 .1, .7, .1, .1,
