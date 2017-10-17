@@ -160,14 +160,20 @@ for (i in 1:dat$I) {
   z <- dat$Z
   for (j in 1:dat$J) {
     # y such that z = 0
-    y0 <- yi[which(z[j,k]==0), j]
+    n0 <- which(z[j,k]==0)
+    y0 <- yi[n0, j]
     # y such that z = 1
+    n1 <- which(z[j,k]==1)
     y1 <- yi[which(z[j,k]==1), j]
     hist(yi[,j], prob=FALSE, xlab=paste0("Y (i=",i,",j=",j,")"),
          main=paste0("Histogram of Y (i=",i,",j=",j,")"), border='white',
          col=rgba(3, .2))
-    hist(y0, prob=FALSE, border='white', col=rgba(1, .4), add=TRUE)
-    hist(y1, prob=FALSE, border='white', col=rgba(2, .5), add=TRUE)
+    if (length(n0) > 0) {
+      hist(y0, prob=FALSE, border='white', col=rgba(1, .4), add=TRUE)
+    } else print("n0 == 0")
+    if (length(n1) > 0) {
+      hist(y1, prob=FALSE, border='white', col=rgba(2, .5), add=TRUE)
+    } else print("n1 == 0")
     legend('topright', text.col=c('blue', 'red','chartreuse3'), 
            legend=c('all', 'z=0','z=1'), bty='n', text.font=2, cex=2)
   }
