@@ -134,20 +134,49 @@ dat <- if(SIM_NUM==3) {
 #print(SIM_NUM)
 #print(dat)
 
+rgba <- function(x, alpha=1) {
+  if (x==1) {
+    rgb(1,0,0,alpha)
+  } else if (x==2) {
+    rgb(0,1,0,alpha)
+  } else {
+    rgb(0,0,1,alpha)
+  }
+}
 
 ### PLOT DATA
 pdf(paste0(OUTDIR, "data.pdf"))
 hist(dat$mus)
 
-hist(dat$y[[1]][,1])
-hist(dat$y[[2]][,2])
-hist(dat$y[[1]][,3])
-hist(dat$y[[1]][,7])
+### Plot Y
+par(mfrow=c(3,2))
+for (i in 1:dat$I) {
+  yi <- dat$y[[i]]
+  k <- dat$lam[[i]]
+  z <- dat$Z
+  for (j in 1:dat$J) {
+    # y such that z = 0
+    y0 <- yi[which(z[j,k]==0), j]
+    # y such that z = 1
+    y1 <- yi[which(z[j,k]==1), j]
+    hist(yi[,j], prob=FALSE, xlab=paste0("Y (i=",i,",j=",j,")"),
+         main=paste0("Histogram of Y (i=",i,",j=",j,")"), border='white',
+         col=rgba(3, .2))
+    hist(y0, prob=FALSE, border='white', col=rgba(1, .4), add=TRUE)
+    hist(y1, prob=FALSE, border='white', col=rgba(2, .5), add=TRUE)
+    legend('topright', text.col=c('blue', 'red','chartreuse3'), 
+           legend=c('all', 'z=0','z=1'), bty='n', text.font=2, cex=2)
+  }
+}
+par(mfrow=c(1,1))
+
+
 
 par(mfrow=c(3,1))
-hist(colMeans(dat$y[[1]]), col=rgb(1,0,0, .4), prob=TRUE, xlim=c(0, 3), border='white')
-hist(colMeans(dat$y[[2]]), col=rgb(0,1,0, .4), prob=TRUE, xlim=c(0, 3), border='white')
-hist(colMeans(dat$y[[3]]), col=rgb(0,0,1, .4), prob=TRUE, xlim=c(0, 3), border='white')
+for (i in 1:3) {
+  hist(colMeans(dat$y[[i]]), col=rgba(i, .4), prob=TRUE, xlim=c(0, 3), 
+       border='white')
+}
 par(mfrow=c(1,1))
 
 yj_mean <- rbind(apply(dat$y[[1]], 2, mean),

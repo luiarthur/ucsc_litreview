@@ -2,8 +2,8 @@
 
 ## 16 Oct, 2017
 
-- [ ] plot data
-    - [ ] distribution of `y_{inj}` for `z_{j,\lam_{in}}=0,1` separately for each (i,j) pair.
+- [X] plot data
+    - [X] distribution of `y_{inj}` for `z_{j,\lam_{in}}=0,1` separately for each (i,j) pair.
 - [ ] smaller `\sigma^2_i`
 - [ ] change simulation data `mu*_{jk}`
 
