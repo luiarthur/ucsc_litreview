@@ -36,6 +36,24 @@ double marginal_lf(double y, double mu, double sig, int z, double pi) {
 }
 
 
+double compute_loglike(const Data &y, const State &state) {
+  const int I = get_I(y);
+  const int J = get_J(y);
+  int Ni;
+  double ll = 0;
+  int lin;
+
+  for (int i=0; i<I; i++) {
+    Ni = get_Ni(y, i);
+    for (int j=0; j<J; j++) {
+      for (int n=0; n<Ni; n++) {
+        lin = state.lam[i][n];
+        ll += marginal_lf(y[i](n,j), state.mus(j,lin))
+      }
+    }
+  }
+
+}
 
 
 /*
