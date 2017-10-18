@@ -9,7 +9,7 @@ do
   for i in `seq 4`
   do
     echo $i
-    nice Rscript test_cytof_fix_K_simdat.R $i $k &
+    Rscript test_cytof_fix_K_simdat.R $i $k &
   done
 done
 wait
