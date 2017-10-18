@@ -21,7 +21,8 @@ cytof_fixed_K <- function(y,
                   true_W=NULL, true_pi=NULL,
                   ###
                   window=100, target=.25, tt=max(1.1, window/50),
-                  B=2000, burn=5000, thin=1, print_freq=10) {
+                  B=2000, burn=5000, thin=1, 
+                  compute_loglike_every=100, print_freq=10) {
 
   J <- ncol(y[[1]])
   I <- length(y)
@@ -29,6 +30,10 @@ cytof_fixed_K <- function(y,
   if (length(cs_psi) == 1) cs_psi <- rep(cs_psi, J)
   if (length(cs_tau2) == 1) cs_tau2 <- rep(cs_tau2, J)
   if (length(cs_sig2) == 1) cs_sig2 <- rep(cs_sig2, I)
+
+  ### Require that computation of loglike be between 0 and B
+  stopifnot(compute_loglike_every >=0 && compute_loglike_every <=B)
+
   cytof_fix_K_fit(y,
                   mus_thresh, cs_mu,
                   m_psi, s2_psi, cs_psi,
@@ -47,7 +52,7 @@ cytof_fixed_K <- function(y,
                   true_W, true_pi,
                   ###
                   window, target, tt,
-                  B, burn, thin, print_freq)
+                  B, burn, thin, compute_loglike_every, print_freq)
 
 }
 

@@ -4,6 +4,7 @@
 #include "Data.h"
 #include "State.h"
 #include "Prior.h"
+#include "loglike.h"
 #include "Fixed.h" // struct of fixed variables
 
 #include "mus.h"   // 5.1
@@ -42,7 +43,7 @@ std::vector<List> cytof_fix_K_fit(
     Nullable<arma::Mat<int>> true_Z, Nullable<type_lam> true_lam,
     Nullable<arma::mat> true_W, Nullable<arma::mat> true_pi,
     int window, double target, double t,
-    int B, int burn, int thin, int print_freq) {
+    int B, int burn, int thin, int compute_loglike_every, int print_freq) {
 
   // SET NUM THREADS FOR OMP
   int nProcessors = omp_get_max_threads();
@@ -189,9 +190,12 @@ std::vector<List> cytof_fix_K_fit(
   arma::mat sum2_mus(J,K); sum2_mus.fill(0);
   // TODO. need also for: c, d, v, h
 
+  double ll;
   auto ass = [&](const State &state, int ii) {
-
     if (ii - burn >= 0) {
+      if ( (ii-burn+1) % compute_loglike_every || ii == burn ) {
+        ll = loglike(y, state);
+      }
       out[ii - burn] = List::create(
           Named("mus") = state.mus,
           Named("psi") = state.psi,
@@ -205,7 +209,8 @@ std::vector<List> cytof_fix_K_fit(
           Named("lam") = state.lam,
           Named("W") = state.W,
           //Named("e") = state.e,
-          Named("Z") = state.Z);
+          Named("Z") = state.Z,
+          Named("ll") = ll);
     } else { // ii < burn
       // TODO: adaptive MCMC
       if ( window > 0 && ii > 0) {
