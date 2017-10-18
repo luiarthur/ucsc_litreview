@@ -1,15 +1,22 @@
 #!/bin/bash
 
-SIM_NAME="fixedPsiWrong"
-K="-1 0 1"
+#SIM_NAME="fixedPsiWrong"
+#K="-1 0 1"
+#
+#for k in $K
+#do
+#  for i in `seq 4`
+#  do
+#    #echo "./genReport.py ${SIM_NAME}_K${k}_sim${i}"
+#    ./genReport.py ${SIM_NAME}_K${k}_sim${i}
+#  done
+#done
 
-for k in $K
+# Generate report for all dirs in out
+OUTDIR='../out'
+for f in `ls $OUTDIR`
 do
-  for i in `seq 4`
-  do
-    #echo "./genReport.py ${SIM_NAME}_K${k}_sim${i}"
-    ./genReport.py ${SIM_NAME}_K${k}_sim${i}
-  done
+  ./genReport.py $f
 done
 
 echo "Compile PDFs? (y/n)"
