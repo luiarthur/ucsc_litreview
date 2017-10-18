@@ -7,6 +7,7 @@
 - [X] smaller `\sigma^2_i`
 - [X] change simulation data `mu*_{jk}`
 - [ ] use proposal with smaller step-size for mu*
+- [ ] compute loglike
 
 ## 13 Oct, 2017
 Note: I just change 
