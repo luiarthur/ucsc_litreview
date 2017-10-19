@@ -303,6 +303,7 @@ out <- cytof_fixed_K(y, K=dat$K+SIM_K,
                      cs_mu  = .01,
                      cs_c = .01, cs_d = .01,
                      cs_v = 1, cs_h = 1, cs_hj = 0.1,
+                     compute_loglike_every=100,
                      window=0) # do adaptive by making window>0
 )
 save.image(paste0(OUTDIR, "results.RData"))
@@ -312,6 +313,13 @@ sink(paste0(OUTDIR, "timing.txt"))
   print(sim_time)
 sink()
 
+
+### loglike
+ll <- sapply(out, function(o) o$ll)
+pdf(paste0(OUTDIR, "ll.pdf"))
+  plot(ll, main='log-likelihood', 
+       xlab='mcmc iteration', ylab='log-likelihood', type='l')
+dev.off()
 
 ### Z
 Z <- lapply(out, function(o) o$Z)
