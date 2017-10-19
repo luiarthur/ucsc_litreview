@@ -193,7 +193,7 @@ std::vector<List> cytof_fix_K_fit(
   double ll;
   auto ass = [&](const State &state, int ii) {
     if (ii - burn >= 0) {
-      if ( (ii-burn+1) % compute_loglike_every || ii == burn ) {
+      if ( (ii-burn+1) % compute_loglike_every == 0 || ii == burn ) {
         ll = loglike(y, state);
       }
       out[ii - burn] = List::create(
