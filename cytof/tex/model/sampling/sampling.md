@@ -295,6 +295,12 @@ Some common parameter transformations are therefore presented here:
 
 # Ammendments
 
+## Update $\h_j$ Simultaneously
+<include file="params/h2.md">
+
+## Update $\v$  Simultaneously
+<include file="params/v2.md">
+
 ## Full Conditional for $\h$ (II)
 <include file="params/h2.md">
 
