@@ -43,7 +43,6 @@ header-includes:
     #
     - \allowdisplaybreaks
     - \def\M{\mathcal{M}}
-#}}}1
     # FOR THIS PROJECT:
     - \usepackage{xifthen}
     - \newcommand{\y}{\bm{y}}
@@ -160,6 +159,7 @@ header-includes:
         }
       }
     - \input{mh.tex}
+#}}}1
 ---
 
 
@@ -1192,6 +1192,11 @@ This time, the only modification needed is that the entire data $\y$ is used.
     - takes longer and has poorer performance for lower-dimension $Z$
     - faster and has better performance for higher-dimension $Z$
 
+
+# Ammendments
+
+<include file="params/h.md">
+<include file="params/v.md">
 
 [comment]: <> (%
   All these are commented

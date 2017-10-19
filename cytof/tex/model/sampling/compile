@@ -6,12 +6,17 @@
 # -o        =>  output file name
 # --number-sections => numbers section headings
 
-pandoc sampling.md -s --natbib -o sampling.tex --number-sections
+# includes all <include file="file/to/include.txt">
+# see github.com/luiarthur/myBin/md-include.py
+md-include.py sampling.md
+
+pandoc .sampling-tmp.md -s --natbib -o sampling.tex --number-sections
+rm -f .sampling-tmp.md
 
 pdflatex sampling.tex
 bibtex sampling.aux
 pdflatex sampling.tex
 pdflatex sampling.tex
 rm -f *.{log,aux,nav,out,snm,toc,blg,bbl}
-#rm -f sampling.tex
+rm -f sampling.tex
 
