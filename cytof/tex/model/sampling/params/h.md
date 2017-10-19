@@ -1,4 +1,3 @@
-## Full Conditional for $h$ (II)
 The prior for $\h_k$ is $\h_k \sim \N_J(0, \Gamma)$.
 Using Normal theory, we can find the conditional distribution 
 $h_{j,k} \mid \h_{-j,k}$, which is 
