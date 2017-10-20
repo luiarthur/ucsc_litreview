@@ -76,6 +76,7 @@ template = subPngWithHead(template, "<data-png>", OUTDIR + sim, "dataY")
 # <data-png>
 template = replaceWithPdfPath(template, "<mus-pdf>", OUTDIR + sim + "/postmus.pdf")
 template = replaceWithPdfPath(template, "<Z-pdf>", OUTDIR + sim + "/Z.pdf")
+template = replaceWithPdfPath(template, "<ll-pdf>", OUTDIR + sim + "/ll.pdf")
 
 ### Insert text files
 template = template.replace("<path-to-datainfo>",    OUTDIR + sim + "/info.txt")

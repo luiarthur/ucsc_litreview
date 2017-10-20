@@ -10,6 +10,9 @@
 
 # Posterior
 
+## Posterior log-likelihood
+<ll-pdf>
+
 ## Posterior For $\mu*$
 <mus-pdf>
 
