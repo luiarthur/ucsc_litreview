@@ -1,8 +1,31 @@
 // Updating v. See Section 5.6 of manual
 
+double compute_bk(const State &state, int k) {
+  // k is the index of the array
+
+  double b_k = 1;
+
+  for (int l=0; l<=k; l++) {
+    b_k *= state.v(l);
+  }
+
+  return b_k;
+}
+
+std::vector<double> compute_b(const State &state) {
+  const int K = state.K;
+  std::vector<double> b(K);
+
+  b[0] = state.v[0];
+  for (int l=1; l < K; l++) {
+    b[l] = b[l-1] * state.v[l];
+  }
+
+  return b;
+}
 
 // TODO: Check this
-void update_vk_mus_kToK(State &state, const Data &y, const Prior &prior, int k) {
+void update_vk_mus_kToK_old(State &state, const Data &y, const Prior &prior, int k) {
 
   const int I = get_I(y);
   const int J = get_J(y);
@@ -98,6 +121,136 @@ void update_vk_mus_kToK(State &state, const Data &y, const Prior &prior, int k) 
   }
 
 }   
+
+double compute_lpq_logit_vk_mus_kToK(const State &state, const Data & y, 
+                                     const Prior &prior, 
+                                     double cand_logit_vk, 
+                                     const arma::mat cand_mus_k_to_K, 
+                                     const arma::Mat<int> cand_Z_k_to_K, 
+                                     int k){
+
+  const int J = get_J(y);
+  const int K = state.K;
+
+  const double logit_vk = logit(state.v(k), 0, 1);
+
+  const double lp_logit_vk = 
+    (logit_vk - cand_logit_vk) + 
+    (prior.alpha + 1) * ( log(1 + exp(-logit_vk)) - log(1 + exp(-cand_logit_vk)) );
+
+  const double th = prior.mus_thresh;
+  double s;
+  double lpq_mus = 0;
+  bool lt;
+
+  for (int j=0; j<J; j++) {
+    for (int l=k; l<K; l++) {
+      if (cand_Z_k_to_K(j,l-k) != state.Z(j,l)) {
+        lpq_mus += lp_mus(cand_mus_k_to_K(j,l-k), state, y, prior, j, l);
+        lpq_mus -= lp_mus(state.mus(j,l), state, y, prior, j, l);
+
+        s = prior.cs_mu(j,l);
+
+        lt = state.Z(j,l) == 0;
+        lpq_mus += log_dtnorm(state.mus(j,l), state.psi(j), s, th, lt);
+
+        lt = cand_Z_k_to_K(j, l-k) == 0;
+        lpq_mus -= log_dtnorm(cand_mus_k_to_K(j,l-k), state.psi(j), s, th, lt);
+      }
+    }
+  }
+
+  return lp_logit_vk + lpq_mus;
+}
+
+void update_vk_mus_kToK(State &state, const Data &y, const Prior &prior, int k) {
+
+  const int I = get_I(y);
+  const int J = get_J(y);
+  const int K = state.K;
+  int lin;
+
+  const double logit_vk = logit(state.v(k), 0, 1);
+
+  // cand
+  const double cand_logit_vk = R::rnorm(logit_vk, prior.cs_v);
+  const double cand_vk = inv_logit(cand_logit_vk, 0, 1);
+  arma::mat cand_mus_k_to_K(J, K-k);
+  arma::Mat<int> cand_Z_k_to_K(J, K-k);
+
+
+  // update Z, mu, bk
+  double bk = compute_bk(state, k);
+
+  for (int l=k; l<K; l++) {
+    if (l == k) {
+      bk *= cand_vk;
+    } else {
+      bk *= state.v(l);
+    }
+
+    for (int j=0; j<J; j++) {
+      cand_Z_k_to_K(j,l-k) = compute_z(state.H(j,l-k),
+                                       prior.G(j,j),
+                                       bk);
+
+      if (cand_Z_k_to_K(j,l-k) != state.Z(j,l)) {
+        cand_mus_k_to_K(j,l-k) = rmus(state.psi(j), prior.cs_mu(j,l), 
+                                      cand_Z_k_to_K(j,l-k),
+                                      prior.mus_thresh);
+      } else {
+        cand_mus_k_to_K(j,l-k) = state.mus(j,l);
+      }
+    }
+  }
+
+  // compute log likelihood
+  double ll = 0;
+  double pi_ij;
+  double y_inj;
+
+  double sig[I];
+  int N[I];
+
+  for (int i=0; i<I; i++) {
+    sig[i] = sqrt(state.sig2(i));
+    N[i] = get_Ni(y, i);
+  }
+
+//#pragma omp parallel for
+  for (int i=0; i<I; i++) {
+    for (int j=0; j<J; j++) {
+      pi_ij = state.pi(i, j);
+
+      for (int n=0; n<N[i]; n++) {
+        lin = state.lam[i][n];
+        y_inj = y[i](n,j);
+
+        if (lin >= k && state.Z(j,lin) != cand_Z_k_to_K(j, lin-k)) {
+          ll += marginal_lf(y_inj, cand_mus_k_to_K(j, lin-k),
+                            sig[i], cand_Z_k_to_K(j, lin-k), pi_ij) - 
+                marginal_lf(y_inj, state.mus(j, lin),
+                            sig[i], state.Z(j, lin), pi_ij);
+        }
+      }
+    }
+  }
+
+  // compute lpq_vk_mus_kToK
+  const double lpq = compute_lpq_logit_vk_mus_kToK(state, y, prior, 
+                                                   cand_logit_vk, 
+                                                   cand_mus_k_to_K, 
+                                                   cand_Z_k_to_K, k);
+
+  // compute acceptance ratio
+  if (ll + lpq > log(R::runif(0,1))) {
+    // update z, mu, v
+    state.Z.cols(k,K-1) = cand_Z_k_to_K;
+    state.mus.cols(k,K-1) = cand_mus_k_to_K;
+    state.v(k) = cand_vk;
+  }
+
+}
 
 void update_v_mus(State &state, const Data &y, const Prior &prior) {
   const int K = state.K;

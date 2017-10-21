@@ -1,28 +1,5 @@
 // Updating H. See Section 5.7 of manula
 
-double compute_bk(const State &state, int k) {
-  // k is the index of the array
-
-  double b_k = 1;
-
-  for (int l=0; l<=k; l++) {
-    b_k *= state.v(l);
-  }
-
-  return b_k;
-}
-
-std::vector<double> compute_b(const State &state) {
-  const int K = state.K;
-  std::vector<double> b(K);
-
-  b[0] = state.v[0];
-  for (int l=1; l < K; l++) {
-    b[l] = b[l-1] * state.v[l];
-  }
-
-  return b;
-}
 
 double log_acc_ratio_Hjk_mus_jk(const State &state, const Data & y, 
                                 const Prior &prior, int j, int k,
@@ -37,6 +14,11 @@ double log_acc_ratio_Hjk_mus_jk(const State &state, const Data & y,
   const double mus_jk = state.mus(j, k);
   const int z_jk = state.Z(j, k);
 
+  const double s = prior.cs_mu(j,k);
+  const double th = prior.mus_thresh;
+  const bool curr_lt_th = state.Z(j,k) == 0;
+  const bool cand_lt_th = cand_z_jk == 0;
+
   // difference of log prior 
   log_r = pow(cand_h_jk - mj, 2) - pow(h_jk - mj, 2) / (-2*S2j);
 
@@ -49,6 +31,9 @@ double log_acc_ratio_Hjk_mus_jk(const State &state, const Data & y,
                                cand_z_jk, state.pi(i,j));
           log_r -= marginal_lf(y[i](n,j), mus_jk, sqrt(state.sig2(i)),
                                z_jk, state.pi(i,j));
+
+          log_r += log_dtnorm(state.mus(j,k), state.psi(j), s, th, curr_lt_th);
+          log_r -= log_dtnorm(cand_mus_jk, state.psi(j), s, th, cand_lt_th);
         }
       }
     }
@@ -67,7 +52,12 @@ void update_Hjk_mus_jk(State &state, const Data &y, const Prior &prior,
 
   double cand_mus_jk = state.mus(j, k);
   if (cand_z_jk != state.Z(j,k)) {
-    cand_mus_jk = rmus(state.psi(j), sqrt(state.tau2(j)), 
+    // OLD PROPOSAL
+    //cand_mus_jk = rmus(state.psi(j), sqrt(state.tau2(j)), 
+    //                   cand_z_jk, prior.mus_thresh);
+    
+    // NEW PROPOSAL
+    cand_mus_jk = rmus(state.psi(j), prior.cs_mu(j,k), 
                        cand_z_jk, prior.mus_thresh);
   }
 
@@ -105,7 +95,12 @@ void update_Hj_mus_j(State &state, const Data &y, const Prior &prior, int j) {
   arma::Row<double> cand_mus_j = state.mus.row(j);
   for (int k=0; k<K; k++) {
     if (cand_zj[k] != state.Z(j,k)) {
-      cand_mus_j[k] = rmus(state.psi(j), sqrt(state.tau2(j)),
+      // OLD PROPOSAL
+      //cand_mus_j[k] = rmus(state.psi(j), sqrt(state.tau2(j)),
+      //                     cand_zj[k], prior.mus_thresh);
+
+      // NEW PROPOSAL
+      cand_mus_j[k] = rmus(state.psi(j), prior.cs_mu(j,k),
                            cand_zj[k], prior.mus_thresh);
     }
   }

@@ -21,7 +21,7 @@ double rmus(double psi, double tau, int z, double thresh) {
   return draw;
 }
 
-double lp_mus(double mus_jk, State &state, const Data &y, const Prior &prior,
+double lp_mus(double mus_jk, const State &state, const Data &y, const Prior &prior,
               const int j, const int k) {
   const double tau_j = sqrt(state.tau2(j));
   const double psi_j = state.psi(j);
