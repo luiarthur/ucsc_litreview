@@ -26,12 +26,11 @@ double log_acc_ratio_Hjk_mus_jk(const State &state, const Data & y,
   for (int i=0; i<I; i++) {
     for (int n=0; n<get_Ni(y,i); n++) {
       if (state.lam[i][n] == k) {
+        log_r += marginal_lf(y[i](n,j), cand_mus_jk, sqrt(state.sig2(i)),
+                             cand_z_jk, state.pi(i,j));
+        log_r -= marginal_lf(y[i](n,j), mus_jk, sqrt(state.sig2(i)),
+                             z_jk, state.pi(i,j));
         if (cand_z_jk != z_jk) {
-          log_r += marginal_lf(y[i](n,j), cand_mus_jk, sqrt(state.sig2(i)),
-                               cand_z_jk, state.pi(i,j));
-          log_r -= marginal_lf(y[i](n,j), mus_jk, sqrt(state.sig2(i)),
-                               z_jk, state.pi(i,j));
-
           log_r += log_dtnorm(state.mus(j,k), state.psi(j), s, th, curr_lt_th);
           log_r -= log_dtnorm(cand_mus_jk, state.psi(j), s, th, cand_lt_th);
         }
