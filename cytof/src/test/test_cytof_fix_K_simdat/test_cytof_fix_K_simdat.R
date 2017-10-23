@@ -323,7 +323,7 @@ sink()
 sim_time <- system.time(
 out <- cytof_fixed_K(y, K=dat$K+SIM_K_OFFSET,
                      #burn=10000, B=2000, pr=100, 
-                     burn=200, B=1000, pr=100, 
+                     burn=1000, B=1000, pr=100, 
                      m_psi=log(2),
                      true_psi=rep(log(2),J),
                      true_Z=extend_Z(dat$Z, dat$K+SIM_K_OFFSET),

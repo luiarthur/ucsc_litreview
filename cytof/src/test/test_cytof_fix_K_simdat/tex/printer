@@ -1,7 +1,9 @@
 #!/bin/bash
 
 OUTDIR="../out"
-SHORT=`ls $OUTDIR | grep "a0.5*"`
+#SHORT=`ls $OUTDIR | grep "a0.5*"`
+#SHORT=`ls $OUTDIR | grep "a0.5_newProposal_fixedZ.*"`
+SHORT=`ls $OUTDIR | grep $1`
 #echo $SHORT
 
 for d in $SHORT
