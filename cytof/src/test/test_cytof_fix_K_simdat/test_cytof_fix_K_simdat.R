@@ -1,6 +1,6 @@
 args <- commandArgs(trailingOnly=TRUE)
 SIM_NUM <- NA
-SIM_K <- 0
+SIM_K_OFFSET <- 0
 SIM_a = 0.5
 
 largs <- length(args)
@@ -11,14 +11,14 @@ fquit <- function(e) {
 }
 
 if (largs < 1 || largs > 2) {
-  cat("Usage: Rscript test_cytof_fix_K_simdat.R <sim number [1,2,3]> [SIM_K=0] \n")
+  cat("Usage: Rscript test_cytof_fix_K_simdat.R <sim number [1,2,3]> [SIM_K_OFFSET=0] \n")
   q()
 } else if (largs == 1) {
   SIM_NUM <- as.numeric(args[1])
 } else if (largs == 2) {
   tryCatch({
     SIM_NUM <- as.numeric(args[1])
-    SIM_K <- as.numeric(args[2])
+    SIM_K_OFFSET <- as.numeric(args[2])
   }, error=fquit, warning=fquit)
 }
 
@@ -26,8 +26,8 @@ if (largs < 1 || largs > 2) {
 #ROOT_DIR <- "out/sim"
 #ROOT_DIR <- "out/sim_bigBurn"
 #ROOT_DIR <- "out/sim_fixedPsi"
-#ROOT_DIR <- paste0("out/fixedPsi_WrongK", SIM_K, "_sim")
-ROOT_DIR <- paste0("out/a0.5_newProposal_fixedPsi_WrongK", SIM_K, "_sim")
+#ROOT_DIR <- paste0("out/fixedPsi_WrongK", SIM_K_OFFSET, "_sim")
+ROOT_DIR <- paste0("out/a0.5_newProposal_fixedZ_fixedPsi_WrongK", SIM_K_OFFSET, "_sim")
 
 OUTDIR <- paste0(ROOT_DIR, SIM_NUM,"/")
 system(paste0("mkdir -p ", OUTDIR))
@@ -317,15 +317,16 @@ sink(paste0(OUTDIR, "info.txt"))
   cat("J: ", dat$J, "\n")
   cat("K: ", dat$K, "\n")
   cat("N: ", paste0("(",paste(unlist(dat$N),collapse=', '),")"), "\n")
-  cat("K in simulation: ", dat$K+SIM_K, "\n")
+  cat("K in simulation: ", dat$K+SIM_K_OFFSET, "\n")
 sink()
 
 sim_time <- system.time(
-out <- cytof_fixed_K(y, K=dat$K+SIM_K,
-                     burn=10000, B=2000, pr=100, 
-                     #burn=100, B=100, pr=100, 
+out <- cytof_fixed_K(y, K=dat$K+SIM_K_OFFSET,
+                     #burn=10000, B=2000, pr=100, 
+                     burn=200, B=1000, pr=100, 
                      m_psi=log(2),
                      true_psi=rep(log(2),J),
+                     true_Z=extend_Z(dat$Z, dat$K+SIM_K_OFFSET),
                      cs_tau = .01,
                      cs_sig = .01,
                      cs_mu  = .01,

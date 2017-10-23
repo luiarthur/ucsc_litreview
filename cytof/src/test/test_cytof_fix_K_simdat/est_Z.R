@@ -1,6 +1,12 @@
+### Function to extend matrix (with columns of 0's) to make dimensions equal
+extend_Z <- function(Z, max_cols) {
+  if (NCOL(Z) < max_cols) {
+    extend_Z(cbind(Z, 0), max_cols)
+  } else Z
+}
+
 ### Provides a point estimate for a list of binary matrices
 ### with same number of rows and different number of columns
-
 est_Z <- function(Z_list) {
   ### This function requires: gtools::permutations
   require(gtools)
@@ -8,15 +14,8 @@ est_Z <- function(Z_list) {
   ### Get maximum number of columns in matrices in Z_list
   max_cols_Z <- max(sapply(Z_list, NCOL))
 
-  ### Function to extend matrix (with columns of 0's) to make dimensions equal
-  extend_Z <- function(Z) {
-    if (NCOL(Z) < max_cols_Z) {
-      extend_Z(cbind(Z, 0))
-    } else Z
-  }
-
   ### Create new list of Z matrices (with equal dims)
-  new_Z_list <- lapply(Z_list, extend_Z)
+  new_Z_list <- lapply(Z_list, extend_Z, max_cols_Z)
 
   ### Assert that all matrices have equal dims
   stopifnot(all( sapply(new_Z_list, NCOL) == max_cols_Z ))
