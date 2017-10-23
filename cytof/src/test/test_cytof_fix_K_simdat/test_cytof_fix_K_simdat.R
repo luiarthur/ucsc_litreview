@@ -66,34 +66,54 @@ K1 <- 4
 I1 <- 3
 Z1 <- genZ(J1,K1,c(.6,.4))
 
-dat1 <- cytof_simdat(I=I1, N=list(2000, 3000, 1000), J=J1, K=K1,
-                     #a=-1, pi_a=1, pi_b=9,
-                     #mus_lo=0,
-                     a=SIM_a,
-                     mus_lo=0,
-                     mus_hi=Inf,
-                     pi_a=1, pi_b=9,
-                     tau2=rep(.1,J1),
-                     sig2=rep(.1,I1),
-                     Z=Z1,
-                     W=matrix(c(.3, .4, .2, .1,
-                                .1, .7, .1, .1,
-                                .2, .3, .3, .2), I1, K1, byrow=TRUE))
+dat0 <- function() {
+  cytof_simdat(I=I1, N=list(200, 300, 100), J=J1, K=K1,
+               #a=-1, pi_a=1, pi_b=9,
+               #mus_lo=0,
+               a=SIM_a,
+               mus_lo=0,
+               mus_hi=Inf,
+               pi_a=1, pi_b=9,
+               tau2=rep(.1,J1),
+               sig2=rep(.1,I1),
+               Z=Z1,
+               W=matrix(c(.3, .4, .2, .1,
+                          .1, .7, .1, .1,
+                          .2, .3, .3, .2), I1, K1, byrow=TRUE))
+}
+
+dat1 <- function() {
+  cytof_simdat(I=I1, N=list(2000, 3000, 1000), J=J1, K=K1,
+               #a=-1, pi_a=1, pi_b=9,
+               #mus_lo=0,
+               a=SIM_a,
+               mus_lo=0,
+               mus_hi=Inf,
+               pi_a=1, pi_b=9,
+               tau2=rep(.1,J1),
+               sig2=rep(.1,I1),
+               Z=Z1,
+               W=matrix(c(.3, .4, .2, .1,
+                          .1, .7, .1, .1,
+                          .2, .3, .3, .2), I1, K1, byrow=TRUE))
+}
 
 # Increase N_i
-dat2 <- cytof_simdat(I=I1, N=list(20000, 30000, 10000), J=J1, K=K1,
-                     #a=-1, pi_a=1, pi_b=9,
-                     #mus_lo=0,
-                     a=SIM_a,
-                     mus_lo=0,
-                     mus_hi=Inf,
-                     pi_a=1, pi_b=9,
-                     tau2=rep(.1,J1),
-                     sig2=rep(.1,I1),
-                     Z=Z1,
-                     W=matrix(c(.3, .4, .2, .1,
-                                .1, .7, .1, .1,
-                                .2, .3, .3, .2), I1, K1, byrow=TRUE))
+dat2 <- function() {
+  cytof_simdat(I=I1, N=list(20000, 30000, 10000), J=J1, K=K1,
+               #a=-1, pi_a=1, pi_b=9,
+               #mus_lo=0,
+               a=SIM_a,
+               mus_lo=0,
+               mus_hi=Inf,
+               pi_a=1, pi_b=9,
+               tau2=rep(.1,J1),
+               sig2=rep(.1,I1),
+               Z=Z1,
+               W=matrix(c(.3, .4, .2, .1,
+                          .1, .7, .1, .1,
+                          .2, .3, .3, .2), I1, K1, byrow=TRUE))
+}
 
 # Increase J from 12 to 16
 # J <- 16 (works)
@@ -102,50 +122,56 @@ J3 <- 32
 K3 <- 4 #(works)
 Z3 <- genZ(J3,K3,c(.6,.4))
 
-dat3 <- cytof_simdat(I=I3, N=list(20000, 30000, 10000), J=J3, K=K3,
-                     #a=-1, pi_a=1, pi_b=9,
-                     #mus_lo=0,
-                     a=SIM_a,
-                     mus_lo=0,
-                     mus_hi=Inf,
-                     pi_a=1, pi_b=9,
-                     tau2=rep(.1,J3),
-                     sig2=rep(.1,I3),
-                     Z=Z3,
-                     W=matrix(c(.3, .4, .2, .1,
-                                .1, .7, .1, .1,
-                                .2, .3, .3, .2), I3, K3, byrow=TRUE))
+dat3 <- function() {
+  cytof_simdat(I=I3, N=list(20000, 30000, 10000), J=J3, K=K3,
+               #a=-1, pi_a=1, pi_b=9,
+               #mus_lo=0,
+               a=SIM_a,
+               mus_lo=0,
+               mus_hi=Inf,
+               pi_a=1, pi_b=9,
+               tau2=rep(.1,J3),
+               sig2=rep(.1,I3),
+               Z=Z3,
+               W=matrix(c(.3, .4, .2, .1,
+                          .1, .7, .1, .1,
+                          .2, .3, .3, .2), I3, K3, byrow=TRUE))
+}
 
 I4 <- 3
 J4 <- 40
 K4 <- 4 #(works)
 Z4 <- genZ(J4,K4,c(.6,.4))
 
-dat4 <- cytof_simdat(I=I4, N=list(20000, 30000, 10000), J=J4, K=K4,
-                     #a=-1, pi_a=1, pi_b=9,
-                     #mus_lo=0,
-                     a=SIM_a,
-                     mus_lo=0,
-                     mus_hi=Inf,
-                     pi_a=1, pi_b=9,
-                     tau2=rep(.1,J4),
-                     sig2=rep(.1,I4),
-                     Z=Z4,
-                     W=matrix(c(.3, .4, .2, .1,
-                                .1, .7, .1, .1,
-                                .2, .3, .3, .2), I4, K4, byrow=TRUE))
+dat4 <- function() {
+  cytof_simdat(I=I4, N=list(20000, 30000, 10000), J=J4, K=K4,
+               #a=-1, pi_a=1, pi_b=9,
+               #mus_lo=0,
+               a=SIM_a,
+               mus_lo=0,
+               mus_hi=Inf,
+               pi_a=1, pi_b=9,
+               tau2=rep(.1,J4),
+               sig2=rep(.1,I4),
+               Z=Z4,
+               W=matrix(c(.3, .4, .2, .1,
+                          .1, .7, .1, .1,
+                          .2, .3, .3, .2), I4, K4, byrow=TRUE))
 
+}
 
 
 ### END DATA GEN ### 
 dat <- if(SIM_NUM==3) {
-  dat3 
+  dat3()
 } else if(SIM_NUM==2) {
-  dat2
+  dat2()
 } else if(SIM_NUM==1) {
-  dat1
+  dat1()
 } else if(SIM_NUM==4) {
-  dat4
+  dat4()
+} else if(SIM_NUM==0) {
+  dat0()
 } else {
   stop("SIM_NUM not in range!")
 }
