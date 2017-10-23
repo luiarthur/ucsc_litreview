@@ -354,12 +354,13 @@ dev.off()
 ### Z
 Z <- lapply(out, function(o) o$Z)
 Z_mean <- Reduce("+", Z) / length(Z)
-Z_est <- est_Z(Z)
 ord <- left_order(round(Z_mean))
 pdf(paste0(OUTDIR, "Z.pdf"))
 my.image(Z_mean[,ord], addLegend=T, main="Posterior Mean Z")
 my.image(dat$Z, addLegend=T, main="True Z")
-my.image(Z_est, addLegend=T, main="Point Est. for Z")
+## Takes too long... Implement in C?
+#Z_est <- est_Z(Z)
+#my.image(Z_est, addLegend=T, main="Point Est. for Z")
 dev.off()
 
 ### W
