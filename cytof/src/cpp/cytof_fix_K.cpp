@@ -124,9 +124,14 @@ std::vector<List> cytof_fix_K_fit(
   // start init
   init.K = K;
   init.mus = arma::mat(J,K);
-  //init.mus.fill(m_psi);
+
   init.psi = arma::vec(J);
-  init.psi.fill(m_psi);
+  if (fixed_psi) {
+    init.psi = as<arma::vec>(true_psi);
+  } else {
+    init.psi.fill(m_psi);
+  }
+
   init.tau2 = arma::vec(J);
   init.tau2.fill(b_tau / (a_tau - 1));
   init.pi = arma::mat(I,J);
@@ -143,11 +148,14 @@ std::vector<List> cytof_fix_K_fit(
   init.W = arma::mat(I,K);
   init.W.fill(1.0 / K);
   init.Z = arma::Mat<int>(J,K);
+  if (fixed_Z)     init.Z = as<arma::Mat<int>>(true_Z);
   double b_k = 1;
   for (int j=0; j<J; j++) {
     for (int k=0; k<K; k++) {
       b_k *= init.v[k];
-      init.Z(j,k) = compute_z(0, G(j,j), b_k);
+      if (!fixed_Z) {
+        init.Z(j,k) = compute_z(0, G(j,j), b_k);
+      }
       // TODO: Better way to initialize mus?
       if (init.Z(j,k) == 1) {
         init.mus(j,k) = mus_thresh + .1;
@@ -159,10 +167,10 @@ std::vector<List> cytof_fix_K_fit(
   adjust_lam_e_dim(init, y);
   // reset init if parameters are fixed
   if (fixed_mus)   init.mus = as<arma::mat>(true_mus);
-  if (fixed_psi)   init.psi = as<arma::vec>(true_psi);
+  //if (fixed_psi)   init.psi = as<arma::vec>(true_psi);
   if (fixed_tau2)  init.tau2 = as<arma::vec>(true_tau2);
   if (fixed_sig2)  init.sig2 = as<arma::vec>(true_sig2);
-  if (fixed_Z)     init.Z = as<arma::Mat<int>>(true_Z);
+  //if (fixed_Z)     init.Z = as<arma::Mat<int>>(true_Z);
   if (fixed_lam)   init.lam = as<type_lam>(true_lam);
   if (fixed_W)     init.W = as<arma::mat>(true_W);
   if (fixed_pi)    init.pi = as<arma::mat>(true_pi);
