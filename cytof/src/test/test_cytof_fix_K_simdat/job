@@ -3,20 +3,11 @@
 ### SIMULATION ON LOGIN / INTERACTIVE NODE OF SERVER
 K="-1 0 1"
 
-### TEST SIM
-for k in $K
-do
-  i=0
-  echo "i:$i, k:$k"
-  Rscript test_cytof_fix_K_simdat.R $i $k &
-done
-wait
-
-### BIG SIMS
+### SIMS
 date
 for k in $K
 do
-  for i in `seq 1 4`
+  for i in `seq 0 4` # simulation 0 is a small test simulation
   do
     echo "i:$i, k:$k"
     Rscript test_cytof_fix_K_simdat.R $i $k &
