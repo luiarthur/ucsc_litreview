@@ -1,0 +1,13 @@
+#!/bin/bash
+
+OUTDIR="../out"
+SHORT=`ls $OUTDIR | grep "a0.5*"`
+#echo $SHORT
+
+for d in $SHORT
+do
+  if [ -e "${OUTDIR}/${d}/Z.pdf" ]
+  then 
+    echo $d
+  fi
+done
