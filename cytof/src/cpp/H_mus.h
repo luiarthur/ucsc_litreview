@@ -27,17 +27,18 @@ double log_acc_ratio_Hjk_mus_jk(const State &state, const Data & y,
 
     log_r += lp_mus(mus_jk, psi_j, s, state.Z(j,k), prior);
     log_r -= lp_mus(cand_mus_jk, psi_j, s, cand_z_jk, prior);
-  }
 
 
 //#pragma omp parallel for
-  for (int i=0; i<I; i++) {
-    for (int n=0; n<get_Ni(y,i); n++) {
-      if (state.lam[i][n] == k) {
-        log_r += marginal_lf(y[i](n,j), cand_mus_jk, sqrt(state.sig2(i)),
-                             cand_z_jk, state.pi(i,j));
-        log_r -= marginal_lf(y[i](n,j), mus_jk, sqrt(state.sig2(i)),
-                             z_jk, state.pi(i,j));
+    // Computation of likelihoood only if z_jk changes
+    for (int i=0; i<I; i++) {
+      for (int n=0; n<get_Ni(y,i); n++) {
+        if (state.lam[i][n] == k) {
+          log_r += marginal_lf(y[i](n,j), cand_mus_jk, sqrt(state.sig2(i)),
+                               cand_z_jk, state.pi(i,j));
+          log_r -= marginal_lf(y[i](n,j), mus_jk, sqrt(state.sig2(i)),
+                               z_jk, state.pi(i,j));
+        }
       }
     }
   }
