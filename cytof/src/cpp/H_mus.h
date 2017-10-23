@@ -15,12 +15,20 @@ double log_acc_ratio_Hjk_mus_jk(const State &state, const Data & y,
   const int z_jk = state.Z(j, k);
 
   const double s = prior.cs_mu(j,k);
-  const double th = prior.mus_thresh;
-  const bool curr_lt_th = state.Z(j,k) == 0;
-  const bool cand_lt_th = cand_z_jk == 0;
+  const double psi_j = state.psi(j);
+  const double tau_j = sqrt(state.tau2(j));
 
   // difference of log prior 
   log_r = pow(cand_h_jk - mj, 2) - pow(h_jk - mj, 2) / (-2*S2j);
+
+  if (cand_z_jk != z_jk) {
+    log_r += lp_mus(cand_mus_jk, psi_j, tau_j, cand_z_jk, prior);
+    log_r -= lp_mus(mus_jk, psi_j, tau_j, state.Z(j,k), prior);
+
+    log_r += lp_mus(mus_jk, psi_j, s, state.Z(j,k), prior);
+    log_r -= lp_mus(cand_mus_jk, psi_j, s, cand_z_jk, prior);
+  }
+
 
 //#pragma omp parallel for
   for (int i=0; i<I; i++) {
@@ -30,10 +38,6 @@ double log_acc_ratio_Hjk_mus_jk(const State &state, const Data & y,
                              cand_z_jk, state.pi(i,j));
         log_r -= marginal_lf(y[i](n,j), mus_jk, sqrt(state.sig2(i)),
                              z_jk, state.pi(i,j));
-        if (cand_z_jk != z_jk) {
-          log_r += log_dtnorm(state.mus(j,k), state.psi(j), s, th, curr_lt_th);
-          log_r -= log_dtnorm(cand_mus_jk, state.psi(j), s, th, cand_lt_th);
-        }
       }
     }
   }

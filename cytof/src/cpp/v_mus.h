@@ -141,22 +141,29 @@ double compute_lpq_logit_vk_mus_kToK(const State &state, const Data & y,
   const double th = prior.mus_thresh;
   double s;
   double lpq_mus = 0;
-  bool lt;
 
   for (int j=0; j<J; j++) {
     for (int l=k; l<K; l++) {
+
       if (cand_Z_k_to_K(j,l-k) != state.Z(j,l)) {
-        lpq_mus += lp_mus(cand_mus_k_to_K(j,l-k), state, y, prior, j, l);
-        lpq_mus -= lp_mus(state.mus(j,l), state, y, prior, j, l);
+        // diff mus log prior (cand - curr)
+        lpq_mus += lp_mus(cand_mus_k_to_K(j,l-k), 
+                          state.psi(j), sqrt(state.tau2(j)), 
+                          cand_Z_k_to_K(j,l-k), prior);
+        lpq_mus -= lp_mus(state.mus(j,l),
+                          state.psi(j), sqrt(state.tau2(j)),
+                          state.Z(j,l), prior);
 
+        // diff mus log proposal (curr - cand)
         s = prior.cs_mu(j,l);
-
-        lt = state.Z(j,l) == 0;
-        lpq_mus += log_dtnorm(state.mus(j,l), state.psi(j), s, th, lt);
-
-        lt = cand_Z_k_to_K(j, l-k) == 0;
-        lpq_mus -= log_dtnorm(cand_mus_k_to_K(j,l-k), state.psi(j), s, th, lt);
+        lpq_mus += lp_mus(state.mus(j,l),
+                          state.psi(j), s,
+                          state.Z(j,l), prior);
+        lpq_mus -= lp_mus(cand_mus_k_to_K(j,l-k), 
+                          state.psi(j), s,
+                          cand_Z_k_to_K(j,l-k), prior);
       }
+
     }
   }
 

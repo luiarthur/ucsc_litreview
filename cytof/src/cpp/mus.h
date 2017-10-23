@@ -21,11 +21,8 @@ double rmus(double psi, double tau, int z, double thresh) {
   return draw;
 }
 
-double lp_mus(double mus_jk, const State &state, const Data &y, const Prior &prior,
-              const int j, const int k) {
-  const double tau_j = sqrt(state.tau2(j));
-  const double psi_j = state.psi(j);
-  const double z_jk = state.Z(j,k);
+double lp_mus(double mus_jk, double psi_j, double tau_j, int z_jk, 
+              const Prior &prior) {
 
   double lp;
   const double thresh = prior.mus_thresh;
@@ -84,7 +81,10 @@ double ll_mus(double mus_jk, State &state, const Data &y, const Prior &prior,
 
 double log_fc_mus(double mus_jk, State &state, const Data &y, 
                   const Prior &prior, const int j, const int k) {
-  const double lp = lp_mus(mus_jk, state, y, prior, j, k);
+  const double lp = lp_mus(mus_jk,
+                           state.psi(j), 
+                           sqrt(state.tau2(j)),
+                           state.Z(j,k), prior);
   const double ll = (lp > -INFINITY) ? ll_mus(mus_jk, state, y, prior, j ,k) : 0;
   return ll + lp;
 };
