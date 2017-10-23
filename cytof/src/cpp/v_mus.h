@@ -138,7 +138,6 @@ double compute_lpq_logit_vk_mus_kToK(const State &state, const Data & y,
     (logit_vk - cand_logit_vk) + 
     (prior.alpha + 1) * ( log(1 + exp(-logit_vk)) - log(1 + exp(-cand_logit_vk)) );
 
-  const double th = prior.mus_thresh;
   double s;
   double lpq_mus = 0;
 
