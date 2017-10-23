@@ -26,7 +26,7 @@ if (largs < 1 || largs > 2) {
 #ROOT_DIR <- "out/sim_bigBurn"
 #ROOT_DIR <- "out/sim_fixedPsi"
 #ROOT_DIR <- paste0("out/fixedPsi_WrongK", SIM_K, "_sim")
-ROOT_DIR <- paste0("out/newProposal_fixedPsi_WrongK", SIM_K, "_sim")
+ROOT_DIR <- paste0("out/a1_newProposal_fixedPsi_WrongK", SIM_K, "_sim")
 
 OUTDIR <- paste0(ROOT_DIR, SIM_NUM,"/")
 system(paste0("mkdir -p ", OUTDIR))
@@ -68,7 +68,7 @@ Z1 <- genZ(J1,K1,c(.6,.4))
 dat1 <- cytof_simdat(I=I1, N=list(2000, 3000, 1000), J=J1, K=K1,
                      #a=-1, pi_a=1, pi_b=9,
                      #mus_lo=0,
-                     a=.5,
+                     a=1,
                      mus_lo=0,
                      mus_hi=Inf,
                      pi_a=1, pi_b=9,
@@ -83,7 +83,7 @@ dat1 <- cytof_simdat(I=I1, N=list(2000, 3000, 1000), J=J1, K=K1,
 dat2 <- cytof_simdat(I=I1, N=list(20000, 30000, 10000), J=J1, K=K1,
                      #a=-1, pi_a=1, pi_b=9,
                      #mus_lo=0,
-                     a=.5,
+                     a=1,
                      mus_lo=0,
                      mus_hi=Inf,
                      pi_a=1, pi_b=9,
@@ -104,7 +104,7 @@ Z3 <- genZ(J3,K3,c(.6,.4))
 dat3 <- cytof_simdat(I=I3, N=list(20000, 30000, 10000), J=J3, K=K3,
                      #a=-1, pi_a=1, pi_b=9,
                      #mus_lo=0,
-                     a=.5,
+                     a=1,
                      mus_lo=0,
                      mus_hi=Inf,
                      pi_a=1, pi_b=9,
@@ -123,7 +123,7 @@ Z4 <- genZ(J4,K4,c(.6,.4))
 dat4 <- cytof_simdat(I=I4, N=list(20000, 30000, 10000), J=J4, K=K4,
                      #a=-1, pi_a=1, pi_b=9,
                      #mus_lo=0,
-                     a=.5,
+                     a=1,
                      mus_lo=0,
                      mus_hi=Inf,
                      pi_a=1, pi_b=9,
@@ -304,7 +304,7 @@ out <- cytof_fixed_K(y, K=dat$K+SIM_K,
                      cs_mu  = .01,
                      cs_c = .01, cs_d = .01,
                      #cs_v = 1, cs_h = 1, cs_hj = 0.1,
-                     cs_v = .01, cs_h = .01, cs_hj = .001,
+                     cs_v = .1, cs_h = .1, cs_hj = .01,
                      compute_loglike_every=100,
                      window=0) # do adaptive by making window>0
 )
