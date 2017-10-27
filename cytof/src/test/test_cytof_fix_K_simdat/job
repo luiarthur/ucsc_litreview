@@ -1,13 +1,15 @@
 #!/bin/bash
 
 ### SIMULATION ON LOGIN / INTERACTIVE NODE OF SERVER
-K="-1 0 1"
+#K="-1 0 1"
+K="0 1 2"
+SIMS=`seq 0 4`
 
 ### SIMS
 date
 for k in $K
 do
-  for i in `seq 0 4` # simulation 0 is a small test simulation
+  for i in $SIMS # simulation 0 is a small test simulation
   do
     echo "i:$i, k:$k"
     Rscript test_cytof_fix_K_simdat.R $i $k &

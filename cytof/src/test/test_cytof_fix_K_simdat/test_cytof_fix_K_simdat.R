@@ -1,7 +1,9 @@
 args <- commandArgs(trailingOnly=TRUE)
 SIM_NUM <- NA
 SIM_K_OFFSET <- 0
-SIM_a = 0.5
+#SIM_a = 0.5 # doable
+SIM_a = 1
+SIM_sig2 = .2
 
 largs <- length(args)
 
@@ -75,7 +77,7 @@ dat0 <- function() {
                mus_hi=Inf,
                pi_a=1, pi_b=9,
                tau2=rep(.1,J1),
-               sig2=rep(.1,I1),
+               sig2=rep(SIM_sig2,I1),
                Z=Z1,
                W=matrix(c(.3, .4, .2, .1,
                           .1, .7, .1, .1,
@@ -91,7 +93,7 @@ dat1 <- function() {
                mus_hi=Inf,
                pi_a=1, pi_b=9,
                tau2=rep(.1,J1),
-               sig2=rep(.1,I1),
+               sig2=rep(SIM_sig2,I1),
                Z=Z1,
                W=matrix(c(.3, .4, .2, .1,
                           .1, .7, .1, .1,
@@ -108,7 +110,7 @@ dat2 <- function() {
                mus_hi=Inf,
                pi_a=1, pi_b=9,
                tau2=rep(.1,J1),
-               sig2=rep(.1,I1),
+               sig2=rep(SIM_sig2,I1),
                Z=Z1,
                W=matrix(c(.3, .4, .2, .1,
                           .1, .7, .1, .1,
@@ -131,7 +133,7 @@ dat3 <- function() {
                mus_hi=Inf,
                pi_a=1, pi_b=9,
                tau2=rep(.1,J3),
-               sig2=rep(.1,I3),
+               sig2=rep(SIM_sig2,I3),
                Z=Z3,
                W=matrix(c(.3, .4, .2, .1,
                           .1, .7, .1, .1,
@@ -152,7 +154,7 @@ dat4 <- function() {
                mus_hi=Inf,
                pi_a=1, pi_b=9,
                tau2=rep(.1,J4),
-               sig2=rep(.1,I4),
+               sig2=rep(SIM_sig2,I4),
                Z=Z4,
                W=matrix(c(.3, .4, .2, .1,
                           .1, .7, .1, .1,
@@ -322,11 +324,11 @@ sink()
 
 sim_time <- system.time(
 out <- cytof_fixed_K(y, K=dat$K+SIM_K_OFFSET,
-                     #burn=10000, B=2000, pr=100, 
-                     burn=1000, B=1000, pr=100, 
+                     burn=20000, B=2000, pr=100, 
+                     #burn=1000, B=1000, pr=100, 
                      m_psi=log(2),
                      true_psi=rep(log(2),J),
-                     true_Z=extend_Z(dat$Z, dat$K+SIM_K_OFFSET),
+                     #true_Z=extend_Z(dat$Z, dat$K+SIM_K_OFFSET),
                      cs_tau = .01,
                      cs_sig = .01,
                      cs_mu  = .01,
