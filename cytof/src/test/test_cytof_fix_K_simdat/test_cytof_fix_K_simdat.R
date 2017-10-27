@@ -377,7 +377,24 @@ sink()
 
 ### v 
 v <- t(apply(t(sapply(out, function(o) o$v)), 1, cumprod))
-#colMeans(v)
+sink(paste0(OUTDIR, "v.txt"))
+cat("v: posterior column means:\n")
+print(colMeans(v))
+cat("v: posterior column means (left-ordered):\n")
+print(colMeans(v)[ord])
+sink()
+
+### H
+#H_ls <- lapply(out, function(o) o$H)
+#H_post <- array(unlist(H_ls), dim=c(J, NCOL(Z_mean), length(out)))
+#H_mean <- apply(H_post, 1:2, mean)
+#H_ci_lo <- apply(H_post, 1:2, quantile, .025)
+#H_ci_up <- apply(H_post, 1:2, quantile, .975)
+#H_ci <- cbind(c(H_ci_lo), c(H_ci_up))
+#pdf(paste0(OUTDIR, "v.pdf"))
+#my.image(H_mean, xlab='', ylab='', mx=max(H_ci), mn=min(H_ci), addLegend=T, main='H posterior mean', col=redToBlue)
+#dev.off()
+
 
 ### sig2
 sig2 <- t(sapply(out, function(o) o$sig2))
