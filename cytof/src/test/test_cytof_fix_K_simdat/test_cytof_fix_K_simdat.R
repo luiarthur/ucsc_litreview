@@ -30,7 +30,7 @@ if (largs < 1 || largs > 2) {
 #ROOT_DIR <- "out/sim_fixedPsi"
 #ROOT_DIR <- paste0("out/fixedPsi_WrongK", SIM_K_OFFSET, "_sim")
 #ROOT_DIR <- paste0("out/a0.5_newProposal_fixedZ_fixedPsi_WrongK", SIM_K_OFFSET, "_sim")
-ROOT_DIR <- paste0("out/a1_newProposal_bigcs_fixedPsi_WrongK", SIM_K_OFFSET, "_sim")
+ROOT_DIR <- paste0("out/a1_newProposal_fixedPsi_WrongK", SIM_K_OFFSET, "_sim")
 
 OUTDIR <- paste0(ROOT_DIR, SIM_NUM,"/")
 system(paste0("mkdir -p ", OUTDIR))
@@ -334,8 +334,8 @@ out <- cytof_fixed_K(y, K=dat$K+SIM_K_OFFSET,
                      cs_sig = .01,
                      cs_mu  = .01,
                      cs_c = .01, cs_d = .01,
-                     cs_v = 1, cs_h = 1, cs_hj = 0.1,
-                     #cs_v = .1, cs_h = .1, cs_hj = .01,
+                     #cs_v = 1, cs_h = 1, cs_hj = 0.1, # this is always bad
+                     cs_v = .1, cs_h = .1, cs_hj = .01,
                      compute_loglike_every=100,
                      window=0) # do adaptive by making window>0
 )
