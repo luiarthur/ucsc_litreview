@@ -163,6 +163,24 @@ dat4 <- function() {
 
 }
 
+K5 <- 6
+dat4 <- function() {
+  cytof_simdat(I=I4, N=list(20000, 30000, 10000), J=J4, K=K5,
+               #a=-1, pi_a=1, pi_b=9,
+               #mus_lo=0,
+               a=SIM_a,
+               mus_lo=0,
+               mus_hi=Inf,
+               pi_a=1, pi_b=9,
+               tau2=rep(.1,J4),
+               sig2=rep(SIM_sig2,I4),
+               Z=Z4,
+               W=matrix(c(.3, .4, .2, .1,
+                          .1, .7, .1, .1,
+                          .2, .3, .3, .2), I4, K5, byrow=TRUE))
+
+}
+
 
 ### END DATA GEN ### 
 dat <- if(SIM_NUM==3) {
