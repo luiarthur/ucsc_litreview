@@ -1,9 +1,8 @@
 #!/bin/bash
 
 ### SIMULATION ON LOGIN / INTERACTIVE NODE OF SERVER
-#K="-1 0 1"
-K="0 1 2"
-SIMS=`seq 0 4`
+K="-1 0 1"
+SIMS=`seq 1 5`
 
 ### SIMS
 date
