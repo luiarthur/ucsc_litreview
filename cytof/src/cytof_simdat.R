@@ -15,7 +15,7 @@ cytof_simdat <- function(I, N, J, K, W, thresh=log(2),
   stopifnot(all(rowSums(W) == 1))
   #stopifnot(length(psi) == J)
   stopifnot(length(tau2) == J)
-  stopifnot(J %% K == 0)
+  #stopifnot(J %% K == 0)
 
   #Z <- diag(K) %x% rep(1, J/K)
 

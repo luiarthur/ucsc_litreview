@@ -176,9 +176,9 @@ dat5 <- function() {
                tau2=rep(.1,J4),
                sig2=rep(SIM_sig2,I4),
                Z=Z5,
-               W=matrix(c(.3, .4, .2, .1,
-                          .1, .7, .1, .1,
-                          .2, .3, .3, .2), I4, K5, byrow=TRUE))
+               W=matrix(c(.3, .3, .1, .1, .1, .1,
+                          .1, .4, .1, .1, .2, .1,
+                          .2, .1, .3, .2, .1, .1), I4, K5, byrow=TRUE))
 
 }
 
