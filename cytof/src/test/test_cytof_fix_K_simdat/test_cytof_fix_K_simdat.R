@@ -164,7 +164,7 @@ dat4 <- function() {
 }
 
 K5 <- 6
-dat4 <- function() {
+dat5 <- function() {
   cytof_simdat(I=I4, N=list(20000, 30000, 10000), J=J4, K=K5,
                #a=-1, pi_a=1, pi_b=9,
                #mus_lo=0,
@@ -191,6 +191,8 @@ dat <- if(SIM_NUM==3) {
   dat1()
 } else if(SIM_NUM==4) {
   dat4()
+} else if(SIM_NUM==5) {
+  dat5()
 } else if(SIM_NUM==0) {
   dat0()
 } else {
