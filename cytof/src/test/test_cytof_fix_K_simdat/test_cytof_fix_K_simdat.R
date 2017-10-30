@@ -164,6 +164,7 @@ dat4 <- function() {
 }
 
 K5 <- 6
+Z5 <- genZ(J4,K5,c(.6,.4))
 dat5 <- function() {
   cytof_simdat(I=I4, N=list(20000, 30000, 10000), J=J4, K=K5,
                #a=-1, pi_a=1, pi_b=9,
@@ -174,7 +175,7 @@ dat5 <- function() {
                pi_a=1, pi_b=9,
                tau2=rep(.1,J4),
                sig2=rep(SIM_sig2,I4),
-               Z=Z4,
+               Z=Z5,
                W=matrix(c(.3, .4, .2, .1,
                           .1, .7, .1, .1,
                           .2, .3, .3, .2), I4, K5, byrow=TRUE))
