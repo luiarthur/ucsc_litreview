@@ -1,3 +1,6 @@
+#include<omp.h>
+// [[Rcpp::plugins(openmp)]]
+
 #include "mcmc.h"
 #include "mytime.h"
 
