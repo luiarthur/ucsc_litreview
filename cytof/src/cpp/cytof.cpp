@@ -136,6 +136,7 @@ std::vector<List> cytof_fit(
   };
 
   // TODO: FROM HERE ON
+  // initialize parameters
 
   std::vector<int> N_TE(I);
   for (int i=0; i<I; i++) {
