@@ -50,7 +50,6 @@ std::vector<List> cytof_fit(
     Nullable<arma::vec> true_tau2, Nullable<arma::vec> true_sig2,
     Nullable<arma::Mat<int>> true_Z, Nullable<type_lam> true_lam,
     Nullable<arma::mat> true_W, Nullable<arma::mat> true_pi,
-    int true_K,
     int burn_small,
     int ncores,
     int B, int burn, int compute_loglike_every, int print_freq) {
@@ -64,14 +63,45 @@ std::vector<List> cytof_fit(
     std::cout<<"threads used: "<<omp_get_num_threads()<<std::endl;
   }
 
+  // join the testing and training data
   std::vector<arma::mat> y(y_TE.size());
   for (int i=0; i<y.size(); i++) {
     y[i] = arma::join_cols(y_TE[i], y_TR[i]);
   }
 
-  // TODO: FROM HERE ON
   const int I = get_I(y);
   const int J = get_J(y);
+
+  // Messages:
+  const bool fixed_mus = true_mus.isNotNull();
+  if (fixed_mus) Rcout << "mu is fixed" << std::endl;
+  const bool fixed_psi = true_psi.isNotNull();
+  if (fixed_psi) Rcout << "psi is fixed" << std::endl;
+  const bool fixed_tau2 = true_tau2.isNotNull();
+  if (fixed_tau2) Rcout << "tau2 is fixed" << std::endl;
+  const bool fixed_sig2 = true_sig2.isNotNull();
+  if (fixed_sig2) Rcout << "sig2 is fixed" << std::endl;
+  const bool fixed_Z = true_Z.isNotNull();
+  if (fixed_Z) Rcout << "Z is fixed" << std::endl;
+  const bool fixed_lam = true_lam.isNotNull();
+  if (fixed_lam) Rcout << "lam is fixed" << std::endl;
+  const bool fixed_W = true_W.isNotNull();
+  if (fixed_W) Rcout << "W is fixed" << std::endl;
+  const bool fixed_pi = true_pi.isNotNull();
+  if (fixed_pi) Rcout << "pi is fixed" << std::endl;
+
+  // create fixed params object
+  const auto fixed_params = Fixed {
+    fixed_mus,
+    fixed_psi,
+    fixed_tau2,
+    fixed_sig2,
+    fixed_Z,
+    fixed_lam,
+    fixed_W,
+    fixed_pi
+  };
+
 
   // precompute matrix inverses for update_H
   arma::vec S2(J);
@@ -105,6 +135,7 @@ std::vector<List> cytof_fit(
     K_min, K_max, a_K
   };
 
+  // TODO: FROM HERE ON
 
   std::vector<int> N_TE(I);
   for (int i=0; i<I; i++) {

@@ -58,7 +58,7 @@ std::vector<List> cytof_fix_K_fit(
   const int I = get_I(y);
   const int J = get_J(y);
   
-  /// Messages:
+  // Messages:
   const bool fixed_mus = true_mus.isNotNull();
   if (fixed_mus) Rcout << "mu is fixed" << std::endl;
   const bool fixed_psi = true_psi.isNotNull();
