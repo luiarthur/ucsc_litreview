@@ -5,8 +5,8 @@ options(mc.cores = parallel::detectCores()) # auto-detect and use number of core
 
 
 library(rcommon)
-source("../../cytof_simdat.R")
-source("../../../dat/myimage.R")
+source("../../../cytof_simdat.R")
+source("../../../../dat/myimage.R")
 
 last <- function(lst) lst[[length(lst)]]
 
