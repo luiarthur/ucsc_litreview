@@ -2,7 +2,7 @@
 
 ### SIMULATION ON LOGIN / INTERACTIVE NODE OF SERVER
 K="-1 0 1"
-SIMS=`seq 1 5`
+SIMS=`seq 0 5`
 
 ### SIMS
 date
