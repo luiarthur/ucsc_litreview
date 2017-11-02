@@ -2,7 +2,7 @@ args <- commandArgs(trailingOnly=TRUE)
 SIM_NUM <- NA
 SIM_K_OFFSET <- 0
 #SIM_a = 0.5 # doable
-SIM_a = 1
+SIM_a = .2
 SIM_sig2 = .2
 
 largs <- length(args)
