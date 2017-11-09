@@ -146,26 +146,68 @@ dev.off()
 
 
 ### NEW: image of Data
-x <- as.matrix(pat5_d54)
-co <- pat5_d54_cutoff
-dim(x)
-z <- log(t(t(x) / co))
+orderRows <- function(X) {
+  X[do.call(order, lapply(1:NCOL(X), function(i) X[, i])), ]
+}
+uniqueRows <- function(X) {
+  U <- unique(X, MARGIN=1)
+  orderRows(U)
+}
 
-#plot(apply(z,2,function(zc) min(zc[zc > 0])), xlab='', xaxt='n', fg='grey', 
-plot(apply(z,2,function(zc) min(zc[zc > -Inf])), xlab='', xaxt='n', fg='grey', 
-     pch=20, cex=2)
-label_markers(pat5_d54)
-abline(v=1:ncol(z), col='grey85', lty=2)
+plot_dat <- function(dat, cutoff, name="") {
+  X <- as.matrix(dat)
+  Y <- log(t(t(X) / cutoff))
 
-hist(apply(z,2,function(zc) min(zc[zc > -Inf])))
+  #plot(apply(z,2,function(zc) min(zc[zc > 0])), xlab='', xaxt='n', fg='grey', 
+  if (name > "") pdf(paste0("img/",name,"_Y.pdf"))
+    ### Histogram of Y
+    hist(Y, border='white', col='steelblue', main=paste("Histogram of Y:", name))
+    #min(Y[Y > -Inf])
 
-my.image(z, mn=.03, mx=3, col=redToBlue, f=label_markers,xlab="", xaxt='n',
-         addLegend=T)
+    ### Plot of Column Means of Y
+    plot(colMeans(X), type='h', xlab='', xaxt='n', 
+         main=paste('Column Means of Raw Data', name))
+    axis(1,at=1:ncol(X), label=colnames(dat), las=2, cex.axis=.6, fg='grey')
 
-plot(colMeans(x), type='h', xlab='', xaxt='n')
-axis(1,at=1:ncol(z), label=colnames(pat5_d54), las=2, cex.axis=.6, fg='grey')
+    ### Plot Column Mins of Y
+    plot(ycols <- apply(Y,2,function(yc) min(yc[yc > -Inf])), xlab='', xaxt='n',
+         fg='grey', pch=20, cex=2,, ylab='',
+         main=paste("min(log(Y[>0] / cutoff)) of each marker:", name))
+    label_markers(dat)
+    abline(v=1:ncol(Y), col='grey85', lty=2)
 
-hist(z, border='white', col='steelblue')
-min(z[z > -Inf])
+    ### Histogram of Y Col mins
+    hist(ycols, col='steelblue', border='white',
+         main=paste("Histogram of min(log(Y[>0] / cutoff)) of each marker:", name))
+  if (name > "") dev.off()
 
 
+  mn <- round(quantile(ycols, .025), 1)
+  mx <- round(quantile(ycols, .975), 1)
+  med <- round(median(ycols), 1)
+  if (name > "") png(paste0("img/",name,"_Y.png"))
+    my.image(Y, mn=mn, mx=mx, col=redToBlue, f=label_markers, xlab="", xaxt='n',
+             addLegend=T, main=paste("Y:", name))
+  if (name > "") dev.off()
+
+  ### Binarized 
+  if (name > "") png(paste0("img/",name,"_Y_gt_median.png"))
+    Z <- as.matrix(Y > med) * 1
+    my.image(Z, yaxt='n', xaxt='n', ylab='', xlab='',
+             main=paste("Y[> median]:", name))
+    axis(1,at=1:ncol(Z), label=colnames(dat), las=2, cex.axis=.6, fg='grey')
+  if (name > "") dev.off()
+
+  #my.image(uniqueRows(Z), yaxt='n', ylab='')
+  if (name > "") png(paste0("img/",name,"_Y_sortedByRows.png"))
+    my.image(orderRows(Z), yaxt='n', ylab='', xaxt='n', xlab='',
+             main=paste("Y sorted by rows:", name))
+    axis(1,at=1:ncol(Z), label=colnames(dat), las=2, cex.axis=.6, fg='grey')
+  if (name > "") dev.off()
+}
+
+plot_dat(pat5_d54, pat5_d54_cutoff, "pat5_d54")
+plot_dat(pat5_d70, pat5_d70_cutoff, "pat5_d70")
+plot_dat(pat5_d93, pat5_d93_cutoff, "pat5_d93")
+
+plot_dat(pbs[[1]], pb_cutoff[[1]], "pb1")
