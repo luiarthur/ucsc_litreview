@@ -80,7 +80,7 @@ plot_dat <- function(dat, cutoff, name="") {
   if (name > "") pdf(paste0(IMG_DIR,name,"_Y.pdf"))
     ### Histogram of Y
     hist(Y, border='white', col='steelblue',
-         main=paste("Histogram of Y[>0]:", name))
+         main=paste("Histogram of Y[>-Inf]:", name))
     #min(Y[Y > -Inf])
 
     ### Plot of Column Means of Y
@@ -91,7 +91,7 @@ plot_dat <- function(dat, cutoff, name="") {
     ### Plot Column Mins of Y
     plot(ycols <- apply(Y,2,function(yc) min(yc[yc > -Inf])), xlab='', xaxt='n',
          fg='grey', pch=20, cex=2,, ylab='',
-         main=paste("min(log(Y[>0] / cutoff)) of each marker:", name))
+         main=paste("min(Y[>-Inf])) of each marker:", name))
     label_markers(dat)
     abline(v=1:ncol(Y), col='grey85', lty=2)
 
@@ -101,7 +101,7 @@ plot_dat <- function(dat, cutoff, name="") {
 
 
     #mn <- round(quantile(ycols, .025), 1)
-    mn <- round(min(Y[Y>-Inf]), 1)
+    mn <- round(min(Y[Y>-Inf]-0.1), 1)
     mx <- round(quantile(Y, .975), 1)
     med <- round(median(Y), 1)
 
@@ -138,8 +138,10 @@ plot_dat(pat5_d54, pat5_d54_cutoff, "pat5_d54")
 plot_dat(pat5_d70, pat5_d70_cutoff, "pat5_d70")
 plot_dat(pat5_d93, pat5_d93_cutoff, "pat5_d93")
 
-plot_dat(pbs[[1]], pb_cutoff[[1]], "pb1")
-plot_dat(cbs[[1]], cb_cutoff[[1]], "cb1")
-plot_dat(cbs[[2]], cb_cutoff[[2]], "cb2")
+for (i in 1:length(pbs))
+  plot_dat(pbs[[i]], pb_cutoff[[i]], paste0("pb",i))
+
+for (i in 1:length(cbs))
+  plot_dat(cbs[[i]], cb_cutoff[[i]], paste0("cb",i))
 
 
