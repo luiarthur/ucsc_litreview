@@ -65,13 +65,20 @@ stopifnot(all(names(pbs)==names(pb_cutoff)))
 
 ### NEW: image of Data
 orderRows <- function(X) {
-  X[do.call(order, lapply(1:NCOL(X), function(i) X[, i])), ]
+  ### Order by binary column
+  #X[do.call(order, lapply(1:NCOL(X), function(i) X[, i])), ]
+
+  ### Cluster rows by distance
+  hc <- hclust(dist(X), method="single")
+  X[hc$order,]
 }
+
 uniqueRows <- function(X) {
   U <- unique(X, MARGIN=1)
   orderRows(U)
 }
 
+xlim <- c(-10,10)
 plot_dat <- function(dat, cutoff, name="") {
   X <- as.matrix(dat)
   Y <- log(t(t(X) / cutoff))
@@ -101,24 +108,32 @@ plot_dat <- function(dat, cutoff, name="") {
 
 
     #mn <- round(quantile(ycols, .025), 1)
-    mn <- round(min(Y[Y>-Inf]-0.1), 1)
-    mx <- round(quantile(Y, .975), 1)
-    med <- round(median(Y), 1)
+    mn <- -2 #round(min(Y[Y>-Inf]-0.1), 1)
+    mx <-  2 #round(quantile(Y, .975), 1)
+    #med <- round(median(Y), 1)
 
     ### Data Y Image
     my.image(Y, mn=mn, mx=mx, col=blueToRed, f=label_markers, xlab="", xaxt='n',
              addLegend=T, main=paste("Y:", name), useRaster=TRUE)
 
+    #### Data Y Image Ordered
+    #Y_tmp <- ifelse(Y==-Inf, -5, Y)
+    #my.image(orderRows(Y_tmp[sample(1:nrow(Y), size=nrow(Y)*.05),]),
+    #         mn=mn, mx=mx, col=blueToRed, f=label_markers, xlab="", xaxt='n',
+    #         addLegend=T, main=paste("Y:", name), useRaster=TRUE)
+
+
     ### Binarized 
-    Z <- as.matrix(Y > med) * 1
+    Z <- as.matrix(Y > 0) * 1
     my.image(Z, yaxt='n', xaxt='n', ylab='', xlab='',
-             main=paste("Y[> median]:", name), useRaster=TRUE)
+             main=paste("Y[> 0]:", name), useRaster=TRUE)
     axis(1,at=1:ncol(Z), label=colnames(dat), las=2, cex.axis=.6, fg='grey')
 
     #my.image(uniqueRows(Z), yaxt='n', ylab='')
     ### Rows of estimated Z Ordered
-    my.image(orderRows(Z), yaxt='n', ylab='', xaxt='n', xlab='',
-             main=paste("Y sorted by rows:", name), useRaster=TRUE)
+    my.image(orderRows(Z[sample(1:nrow(Z), size=nrow(Z)*.05),]),
+             yaxt='n', ylab='', xaxt='n', xlab='',
+             main=paste("Y[>0] clustered by rows:", name), useRaster=TRUE)
     axis(1,at=1:ncol(Z), label=colnames(dat), las=2, cex.axis=.6, fg='grey')
 
     ### Histogram of Y_j for each j
@@ -126,7 +141,8 @@ plot_dat <- function(dat, cutoff, name="") {
     par(mfrow=c(4,2))
     for (j in 1:J) {
       hist(Y[,j], main=paste0("Histogram of Y[,",j,"]: ", name), prob=T, 
-           xlim=c(min(Y[Y>-Inf]), max(Y)),
+           #xlim=c(min(Y[Y>-Inf]), max(Y)),
+           xlim=xlim,
            col='steelblue', border='white', xlab=paste0('Y[,',j,']'))
     }
     par(mfrow=c(1,1))
@@ -144,4 +160,19 @@ for (i in 1:length(pbs))
 for (i in 1:length(cbs))
   plot_dat(cbs[[i]], cb_cutoff[[i]], paste0("cb",i))
 
+
+
+### Points Mean
+#source("readExpression.R")
+pdf(paste0(IMG_DIR, 'Y_compare.pdf'))
+quant <- c(.1, .9)
+#quant <- c(.025, .975)
+main <- paste0("Mean and (", quant[1]*100, "%, ",quant[2]*100,"%) Quantiles for Y[>-Inf]")
+
+pat5 <- list(pat5_d54,pat5_d70,pat5_d93)
+pat5_cutoff <- list(pat5_d54_cutoff,pat5_d70_cutoff,pat5_d93_cutoff)
+plot.histModel2(pat5, pat5_cutoff, quant=quant, xlim=xlim, main=paste("Patient5:", main))
+plot.histModel2(pbs,pb_cutoff,quant=quant, xlim=xlim,col=rgb(1,0,0,.1),main=paste("PB:", main))
+plot.histModel2(cbs,cb_cutoff,quant=quant, xlim=xlim,main=paste("CB:", main))
+dev.off()
 

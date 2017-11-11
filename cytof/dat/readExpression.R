@@ -78,8 +78,7 @@ plot.expression.mean.sd <- function(y,cutoff,eps=1E-3,returnStats=FALSE,
     )
   }) 
 
-  plot(trans.mean[,1],1:nrow(trans.mean),xlim=range(ci),type='n',
-       fg='grey', ylab="",xlab="",yaxt='n',bty='n', ...)
+  plot(trans.mean[,1],1:nrow(trans.mean),xlim=range(ci),type='n', fg='grey', ylab="",xlab="",yaxt='n',bty='n', ...)
   abline(h=1:nrow(trans.mean),col='grey85',lty=2)
   axis(2,at=1:nrow(trans.mean),label=rownames(trans.mean),las=1,cex.axis=.6,
        fg='grey')
@@ -93,4 +92,98 @@ plot.expression.mean.sd <- function(y,cutoff,eps=1E-3,returnStats=FALSE,
     return( list(mean=trans.mean, sd=trans.sd, ci=ci) )
   }
 }
+
+
+### cutoff is a list of corresponding cutoff vectors
+plot.boxplotModel2 <- function(dat, cutoff, col=rgb(1,0,0,.3),...) {
+  stopifnot( length(dat) == length(cutoff) )
+  I <- length(dat)
+
+  ### Transform Raw Data to Y
+  transform_data <- function(d, co) {
+    Y <- t(log(t(as.matrix(d)) / co))
+    ifelse(Y == -Inf, NA, Y)
+  }
+
+  ### Transpose of Y
+  Y_list <- lapply(as.list(1:I), function(i) {
+    transform_data(dat[[i]], cutoff[[i]])
+  })
+
+  COLOR = col
+  markers <- colnames(Y_list[[1]])
+  J <- length(markers)
+
+  cur_fg <- par("fg")
+  par("fg"="grey")
+
+  xlab <- paste0("I=", I)
+  for (i in 1:I) {
+    if (i == 1) {
+      boxplot(Y_list[[i]], horizontal=TRUE, outline=FALSE, col=COLOR, add=FALSE,
+              xaxt='n', yaxt='n', border='grey30', xlab=xlab, ...)
+    } else {
+      boxplot(Y_list[[i]], horizontal=TRUE, outline=FALSE, col=COLOR, add=TRUE,
+              xaxt='n', yaxt='n', border='grey30')
+    }
+  }
+  axis(2,at=1:J,label=markers,las=1,cex.axis=.6, fg='grey')
+  axis(1, fg='grey')
+  abline(v=log(1), col='grey')
+
+  par("fg"=cur_fg)
+}
+
+
+### cutoff is a list of corresponding cutoff vectors
+plot.histModel2 <- function(dat, cutoff, returnStats=FALSE, col=rgb(1,0,0,.3), 
+                            quant=c(.025,.975), ...) {
+                            
+  stopifnot( length(dat) == length(cutoff) )
+
+  transform_data <- function(dat, co) {
+    as.matrix(t(log(t(dat) / co)))
+  }
+
+  COL <- col
+  I <- length(dat)
+  trans.mean <- sapply(1:I, function(i) {
+    Y <- transform_data(dat[[i]], cutoff[[i]])
+    Y <- ifelse(Y == -Inf, NA, Y)
+    colMeans(Y , na.rm=TRUE)
+  })
+  ci <- lapply(as.list(1:I), function(i) {
+    Y <- transform_data(dat[[i]], cutoff[[i]])
+    Y <- ifelse(Y == -Inf, NA, Y)
+    t(apply(Y, 2, quantile, probs=quant, na.rm=TRUE))
+  })
+
+  args <- list(...)
+  xlim_provided <- "xlim" %in% names(args)
+  xlab <- paste0("I=", I)
+
+  if (xlim_provided) {
+   plot(trans.mean[,1],1:nrow(trans.mean),type='n',
+        fg='grey', ylab="",xlab=xlab,yaxt='n',bty='n', ...)
+  } else {
+    plot(trans.mean[,1],1:nrow(trans.mean),type='n',xlim=range(ci),
+         fg='grey', ylab="",xlab=xlab,yaxt='n',bty='n', ...)
+  }
+  abline(h=1:nrow(trans.mean),col='grey85',lty=2)
+  axis(2,at=1:nrow(trans.mean),label=rownames(trans.mean),las=1,cex.axis=.6,
+       fg='grey')
+
+  sapply(1:I, function(i) {
+    add.errbar(ci[[i]],transpose=TRUE,col=COL, lwd=10, lend=1)
+  })
+  abline(v=0, col='grey')
+  sapply(1:I, function(i) {
+    points(trans.mean[,i],1:nrow(trans.mean),pch=20,cex=.5,col='grey30')
+  })
+
+  if (returnStats) {
+    return( list(mean=trans.mean, sd=trans.sd, ci=ci) )
+  }
+}
+
 
