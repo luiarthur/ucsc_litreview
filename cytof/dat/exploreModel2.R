@@ -88,7 +88,7 @@ plot_dat <- function(dat, cutoff, name="") {
     ### Histogram of Y
     hist(Y, border='white', col='steelblue',
          main=paste("Histogram of Y[>-Inf]:", name))
-    #min(Y[Y > -Inf])
+    print(min(Y[Y > -Inf]))
 
     ### Plot of Column Means of Y
     plot(colMeans(X), type='h', xlab='', xaxt='n', 
@@ -129,21 +129,23 @@ plot_dat <- function(dat, cutoff, name="") {
              main=paste("Y[> 0]:", name), useRaster=TRUE)
     axis(1,at=1:ncol(Z), label=colnames(dat), las=2, cex.axis=.6, fg='grey')
 
-    #my.image(uniqueRows(Z), yaxt='n', ylab='')
-    ### Rows of estimated Z Ordered
-    my.image(orderRows(Z[sample(1:nrow(Z), size=nrow(Z)*.05),]),
-             yaxt='n', ylab='', xaxt='n', xlab='',
-             main=paste("Y[>0] clustered by rows:", name), useRaster=TRUE)
-    axis(1,at=1:ncol(Z), label=colnames(dat), las=2, cex.axis=.6, fg='grey')
+    ##my.image(uniqueRows(Z), yaxt='n', ylab='')
+    #### Rows of estimated Z Ordered
+    #my.image(orderRows(Z[sample(1:nrow(Z), size=nrow(Z)*.05),]),
+    #         yaxt='n', ylab='', xaxt='n', xlab='',
+    #         main=paste("Y[>0] clustered by rows:", name), useRaster=TRUE)
+    #axis(1,at=1:ncol(Z), label=colnames(dat), las=2, cex.axis=.6, fg='grey')
 
     ### Histogram of Y_j for each j
     J <- ncol(Y)
     par(mfrow=c(4,2))
+    markers <- colnames(dat)
+
     for (j in 1:J) {
       hist(Y[,j], main=paste0("Histogram of Y[,",j,"]: ", name), prob=T, 
            #xlim=c(min(Y[Y>-Inf]), max(Y)),
            xlim=xlim,
-           col='steelblue', border='white', xlab=paste0('Y[,',j,']'))
+           col='steelblue', border='white', xlab=markers[j])
     }
     par(mfrow=c(1,1))
 
