@@ -165,7 +165,7 @@ for (i in 1:length(cbs))
 
 
 ### Points Mean
-#source("readExpression.R")
+source("readExpression.R")
 pdf(paste0(IMG_DIR, 'Y_compare.pdf'))
 quant <- c(.1, .9)
 #quant <- c(.025, .975)
@@ -173,8 +173,9 @@ main <- paste0("Mean and (", quant[1]*100, "%, ",quant[2]*100,"%) Quantiles for 
 
 pat5 <- list(pat5_d54,pat5_d70,pat5_d93)
 pat5_cutoff <- list(pat5_d54_cutoff,pat5_d70_cutoff,pat5_d93_cutoff)
+
 plot.histModel2(pat5, pat5_cutoff, quant=quant, xlim=xlim, main=paste("Patient5:", main))
-plot.histModel2(pbs,pb_cutoff,quant=quant, xlim=xlim,col=rgb(1,0,0,.1),main=paste("PB:", main))
+plot.histModel2(pbs,pb_cutoff,quant=quant, xlim=xlim,main=paste("PB:", main))
 plot.histModel2(cbs,cb_cutoff,quant=quant, xlim=xlim,main=paste("CB:", main))
 dev.off()
 
