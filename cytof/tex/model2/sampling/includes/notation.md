@@ -18,7 +18,7 @@ Furthermore, define a transformation of the data
 $$
 y_{inj} = \begin{cases}
   \log\p{\frac{\tilde{y}_{inj}}{c_{ij}}}, & \text{if }  m_{inj} = 0\\
-  \text{random}, & \text{if } m_{inj} = 1. \\
+  \text{To be imputed}, & \text{if } m_{inj} = 1. \\
   \end{cases}
 $$
 Note that under this transformation:

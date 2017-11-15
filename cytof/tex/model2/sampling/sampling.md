@@ -55,7 +55,11 @@ header-includes:
     - \def\logit{\text{logit}}
     - \def\Bern{\text{Bernoulli}}
     - \def\N{\text{Normal}}
+    - \def\G{\text{Gamma}}
     - \def\lin{\lambda_{in}}
+    - \def\btheta{\bm{\theta}}
+    - \def\y{\bm{y}}
+    - \newcommand\m{\bm{m}}
 #}}}1
 ---
 
@@ -66,6 +70,9 @@ header-includes:
 \newpage
 # Model
 <include file="includes/model.md">
+
+# Priors
+<include file="includes/priors.md">
 
 # Sampling via MCMC
 <include file="includes/mh.md">
