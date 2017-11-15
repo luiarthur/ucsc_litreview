@@ -65,6 +65,8 @@ header-includes:
     - \newcommand\m{\bm{m}}
     - \def\mus{\mu^*}
     - \input{includes/mhSpiel.tex}
+    - \newcommand{\Ind}[1]{\mathbbm{1}\bc{#1}}
+    - \def\rest{\text{rest}}
 #}}}1
 ---
 
@@ -85,5 +87,5 @@ header-includes:
 # Full Conditionals
 
 ## Full Conditional for $\bm\mu^*$
-<include file="params/mus.md">
+<include file="includes/mus.md">
 

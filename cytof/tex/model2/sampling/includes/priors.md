@@ -35,3 +35,8 @@ p(\lin=k \mid \bm W_i) &= W_{ik} \\
 \bm W_{i} &\sim \Dir(d, ..., d) \\
 \end{align*}
 
+Note that $X ~ \N_-(m,s^2)$ denotes that $X$ is distributed Normally with
+mean $m$ and variance $s^2$, truncated to take on only *negative* values.
+Similarly, $X ~ \N_+(m,s^2)$ denotes that $X$ is distributed Normally with
+mean $m$ and variance $s^2$, truncated to take on only *positive* values.
+
