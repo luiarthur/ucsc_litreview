@@ -56,10 +56,15 @@ header-includes:
     - \def\Bern{\text{Bernoulli}}
     - \def\N{\text{Normal}}
     - \def\G{\text{Gamma}}
+    - \def\IG{\text{Inverse-Gamma}}
+    - \def\Dir{\text{Dirichlet}}
+    - \def\Be{\text{Beta}}
     - \def\lin{\lambda_{in}}
     - \def\btheta{\bm{\theta}}
     - \def\y{\bm{y}}
     - \newcommand\m{\bm{m}}
+    - \def\mus{\mu^*}
+    - \input{includes/mhSpiel.tex}
 #}}}1
 ---
 
@@ -77,4 +82,8 @@ header-includes:
 # Sampling via MCMC
 <include file="includes/mh.md">
 
+# Full Conditionals
+
+## Full Conditional for $\bm\mu^*$
+<include file="params/mus.md">
 
