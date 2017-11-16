@@ -111,7 +111,8 @@ header-includes:
 ## Full Conditional for Missing $\bm \y$
 <include file="includes/y_missing.md">
 
-## Other Considerations
-
-- fixing the following parameters
-    - $\psi_0, \psi_1, \tau^2_0, \tau^2_1, \bar\beta_{j0}$
+$$
+%## Other Considerations
+%- fixing the following parameters
+%    - $\psi_0, \psi_1, \tau^2_0, \tau^2_1, \bar\beta_{j0}$
+$$
