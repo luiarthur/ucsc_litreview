@@ -3,7 +3,7 @@ The parameters $\bm\theta \mid K$ are now explicitly written.
 $$
 \begin{split}
 \bm\theta = \bc{
-h_k, v_k, \mus_{j0}, \mus_{j1}, \psi_0, \psi_1, 
+h_k, v_k, \mus_{ij0}, \mus_{ij1}, \psi_0, \psi_1, 
 \tau^2_0, \tau^2_1, W_{ik}, \lin, 
 \sigma^2_{ij}, \gamma_{ij0}, \gamma_{ij1}, \beta_{ij0}, \beta_{j0}, \beta_{j1},
 y_{inj}\colon m_{inj}=1
@@ -15,13 +15,12 @@ $$
 \log(\beta_{j1}) &\sim \N(0, s^2_{\beta_1}) \\
 \beta_{ij0} \mid \bar\beta_{j0} &\sim \N(\bar\beta_{j0}, s^2_{\beta_0}) \\
 \bar\beta_{j0} &\sim \N(0, s^2_{\beta}) \\
-%
-\gamma_{ij1} &:= 0 \\
-\gamma_{ij0} &\sim \IG(a_\gamma.b_\gamma) \\
-\sigma^2_{ij} &\sim \IG(a_\sigma, b_\sigma) \\
 \\
-\mus_{j0} \mid \psi_0, \tau^2_0 &\sim \N_-(\psi_0, \tau^2_0) \\
-\mus_{j1} \mid \psi_1, \tau^2_1 &\sim \N_+(\psi_1, \tau^2_1) \\
+\gamma_{ij1}^* &:= 0 \\
+\gamma_{ij0}^* &\sim \IG(a_\gamma.b_\gamma) \\
+\sigma^2_{ij} &\sim \IG(a_\sigma, b_\sigma) \\
+\mus_{ij0} \mid \psi_0, \tau^2_0 &\sim \N_-(\psi_0, \tau^2_0) \\
+\mus_{ij1} \mid \psi_1, \tau^2_1 &\sim \N_+(\psi_1, \tau^2_1) \\
 \psi_{0} &\sim \N_-(\bar\psi_0, s^2_{\psi_0}) \\
 \psi_{1} &\sim \N_+(\bar\psi_1, s^2_{\psi_1}) \\
 \tau^2_{0} &\sim \IG(a_{\tau_0}, b_{\tau_0}) \\

@@ -25,6 +25,23 @@ $$
 Exponentiating the updated value for $#2$ returns the updated value for $#1$.
 }
 
+\newcommand{\mhLogNegSpiel}[2]{
+Since the full conditional distribution for $#1$ cannot be directly sampled
+from, it may be sampled from by a Metropolis step with a Normal proposal
+distribution.  The transformation $#2 = \log(-#1)$ must fist be applied to the
+parameter.  Let the full conditional of the transformed parameter be $p(#2 \mid
+\y, \rest) = p_{#1}(\exp(#2) \mid \y, \rest) \exp(#2)$.  Then, the proposed
+state of the transformed parameter ($#2$) is accepted with probability
+$$
+\min\bc{1, 
+  \frac{p(\tilde #2  \mid \y, \rest)}
+       {p(#2 \mid \y, \rest)}
+}.
+$$
+Exponentiating and negating the sign of the updated value for $#2$ returns the
+updated value for $#1$.
+}
+
 
 \newcommand{\mhLogitSpiel}[2]{
 Since the full conditional distribution for $#1$ cannot be directly sampled

@@ -4,8 +4,8 @@
   \\
   y_{inj} \mid \mu_{inj}, \gamma_{inj}, \sigma^2_{ij}, \bm Z, \lin
   &\sim \N(\mu_{inj}, (\gamma_{inj}+1) \sigma^2_{ij}) \\
-  \mu_{inj} &:= \mu^*_{jZ_{j\lin}} \\
-  \gamma_{inj} &:= \gamma_{ijZ_{j\lin}} \\
+  \mu_{inj} &:= \mu^*_{ijZ_{j\lin}} \\
+  \gamma_{inj} &:= \gamma_{ijZ_{j\lin}}^* \\
 \end{align*}
 
 Let $\btheta$ represent all parameters (discussed in the next section).
