@@ -49,7 +49,7 @@ $$
   \sigma^2_{ij} \psi_1 + 
   \tau^2_1 \sum_{n\in S_1} y_{inj}
 }
-\therefore \mus_{ij1} \mid \y, \rest \ind \N_-\p{
+\therefore \mus_{ij1} \mid \y, \rest \ind \N_+\p{
   \frac{\musOnePostMeanNum}{\musOnePostvarDenom},
   \frac{\tau^2_1 \sigma^2_{ij}}{\musOnePostvarDenom}
 }

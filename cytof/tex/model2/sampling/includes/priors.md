@@ -28,7 +28,7 @@ $$
 \\
 v_k &\sim \Be(\alpha, 1) \\
 b_k &:= \prod_{l=1}^k v_k \\
-h_k &\sim \N(\bm{0}, \bm G) \\
+\h_k &\sim \N(\bm{0}, \bm G) \\
 \\
 p(\lin=k \mid \bm W_i) &= W_{ik} \\
 \bm W_{i} &\sim \Dir(d, ..., d) \\

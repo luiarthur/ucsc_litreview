@@ -68,6 +68,7 @@ header-includes:
     - \newcommand{\Ind}[1]{\mathbbm{1}\bc{#1}}
     - \def\rest{\text{rest}}
     - \def\bang{\boldsymbol{\cdot}}
+    - \def\h{\bm{h}}
 #}}}1
 ---
 
