@@ -108,6 +108,9 @@ header-includes:
 ## Full Conditional for $\bm \lambda$
 <include file="includes/lam.md">
 
+## Full Conditional for Missing $\bm \y$
+<include file="includes/y_missing.md">
+
 ## Other Considerations
 
 - fixing the following parameters

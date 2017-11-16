@@ -12,7 +12,7 @@ y_{inj}\colon m_{inj}=1
 $$
 
 \begin{align*}
-\log(\beta_{j1}) &\sim \N(0, s^2_{\beta_1}) \\
+\beta_{j1} &\sim \G(a_\beta, b_\beta) \\
 \beta_{ij0} \mid \bar\beta_{j0} &\sim \N(\bar\beta_{j0}, s^2_{\beta_0}) \\
 \bar\beta_{j0} &\sim \N(0, s^2_{\beta}) \\
 \\
