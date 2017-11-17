@@ -29,6 +29,8 @@ $$
 v_k &\sim \Be(\alpha, 1) \\
 b_k &:= \prod_{l=1}^k v_k \\
 \h_k &\sim \N(\bm{0}, \bm G) \\
+Z_{jk} \mid h_{jk}, v_{1,...,k} &:=
+\Ind{\Phi(h_{jk} \mid 0, \Gamma_{jj}) < \prod_{l=1}^k v_l} \\
 \\
 p(\lin=k \mid \bm W_i) &= W_{ik} \\
 \bm W_{i} &\sim \Dir(d, ..., d) \\

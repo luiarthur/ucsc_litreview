@@ -112,6 +112,9 @@ header-includes:
 ## Full Conditional for Missing $\bm \y$
 <include file="includes/y_missing.md">
 
+## Full Conditional for $\bm H$
+<include file="includes/h.md">
+
 $$
 %## Other Considerations
 %- fixing the following parameters
