@@ -27,7 +27,7 @@ $$
 \tau^2_{1} &\sim \IG(a_{\tau_1}, b_{\tau_1}) \\
 \\
 v_k &\sim \Be(\alpha, 1) \\
-b_k &:= \prod_{l=1}^k v_k \\
+%b_k &:= \prod_{l=1}^k v_k \\
 \h_k &\sim \N(\bm{0}, \bm G) \\
 Z_{jk} \mid h_{jk}, v_{1,...,k} &:=
 \Ind{\Phi(h_{jk} \mid 0, \Gamma_{jj}) < \prod_{l=1}^k v_l} \\

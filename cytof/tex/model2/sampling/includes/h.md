@@ -24,8 +24,16 @@ Note that if $\bm G = \I_J$, then $m_j=0$ and $S_j^2 = 1$.
 Let $S = \bc{(i,n)\colon \lin=k}$.
 
 \begin{align*}
-p(h_{jk} \mid \y, \rest)  &\propto p(h_{jk})
+p(h_{jk} \mid \y, \rest)  &\propto p(h_{jk}) \prod_{(i,n) \in S} p(y_{inj} \mid h_{jk}, \rest) \\
+%
+&\propto
+\exp\bc{\frac{-(h_{jk} - m_j)^2}{2S_j^2}}
+\prod_{(i,n)\in S} \bc{\exp\bc{\frac{-(y_{inj}-\mu_{inj})^2}{2(1+\gamma_{inj})\sigma^2_{ij}}} (1+\gamma_{inj})^{-1/2}}
 \end{align*}
 
 Note that $\forall (i,n) \in S$, $\mu_{inj} = \mus_{ijZ_{jk}}$ and 
-$\gamma_{inj} = \gamma^*_{ijZ_{jk}}$.
+$\gamma_{inj} = \gamma^*_{ijZ_{jk}}$. Note also that both $\mus_{ijZ_{jk}}$ and 
+$\gamma^*_{ijZ_{jk}}$ are functions of $h_{jk}$, and should be computed
+accordingly. 
+
+\mhSpiel{h_{jk}}

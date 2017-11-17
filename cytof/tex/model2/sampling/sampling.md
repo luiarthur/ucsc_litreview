@@ -115,6 +115,12 @@ header-includes:
 ## Full Conditional for $\bm H$
 <include file="includes/h.md">
 
+## Full Conditional for $\bm v$
+<include file="includes/v.md">
+
+## Full Conditional for $\bm \beta$
+<include file="includes/beta.md">
+
 $$
 %## Other Considerations
 %- fixing the following parameters
