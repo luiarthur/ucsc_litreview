@@ -69,6 +69,8 @@ header-includes:
     - \def\rest{\text{rest}}
     - \def\bang{\boldsymbol{\cdot}}
     - \def\h{\bm{h}}
+    - \def\Z{\bm{Z}}
+    - \def\Unif{\text{Unif}}
 #}}}1
 ---
 
@@ -120,6 +122,9 @@ header-includes:
 
 ## Full Conditional for $\bm \beta$
 <include file="includes/beta.md">
+
+## Full Conditional for $K$
+<include file="includes/K.md">
 
 $$
 %## Other Considerations
