@@ -12,7 +12,7 @@ y_{inj}\colon m_{inj}=1
 $$
 
 \begin{align*}
-\beta_{1j} &\sim \G(a_\beta, b_\beta) \\
+\beta_{1j} &\sim \G(a_\beta, b_\beta) ~~~~ \text{(with mean $a_\beta/b_\beta$)} \\
 \beta_{0ij} \mid \bar\beta_{0j} &\sim \N(\bar\beta_{0j}, s^2_{\beta_0}) \\
 \bar\beta_{0j} &\sim \N(0, s^2_{\beta}) \\
 \\
