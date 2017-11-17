@@ -1,10 +1,11 @@
 library(rcommon)
 source("cytof.R")
-source("../dat/readExpression.R")
-source("../dat/myimage.R")
+DATA_DIR <- "../../dat/"
+source(paste0(DATA_DIR,"readExpression.R"))
+source(paste0(DATA_DIR,"myimage.R"))
 
 ### PATH to DATA ###
-PATH <- "../dat/cytof_data_lili/cytof_data_lili/"
+PATH <- paste0(DATA_DIR, "cytof_data_lili/cytof_data_lili/")
 
 ### PATIENT 5 DATA ###
 pat5_d54 <- read.expression.file(paste0(PATH,"patients/005_D54_CLEAN.csv"))
