@@ -5,16 +5,16 @@ $$
 \bm\theta = \bc{
 h_k, v_k, \mus_{ij0}, \mus_{ij1}, \psi_0, \psi_1, 
 \tau^2_0, \tau^2_1, W_{ik}, \lin, 
-\sigma^2_{ij}, \gamma_{ij0}, \gamma_{ij1}, \beta_{ij0}, \beta_{j0}, \beta_{j1},
+\sigma^2_{ij}, \gamma_{ij0}, \gamma_{ij1}, \beta_{0ij}, \beta_{0j}, \beta_{1j},
 y_{inj}\colon m_{inj}=1
 }_{i=1,n=1,j=1,k=1}^{i=I,n=N_i,j=J,k=K}
 \end{split}
 $$
 
 \begin{align*}
-\beta_{j1} &\sim \G(a_\beta, b_\beta) \\
-\beta_{ij0} \mid \bar\beta_{j0} &\sim \N(\bar\beta_{j0}, s^2_{\beta_0}) \\
-\bar\beta_{j0} &\sim \N(0, s^2_{\beta}) \\
+\beta_{1j} &\sim \G(a_\beta, b_\beta) \\
+\beta_{0ij} \mid \bar\beta_{0j} &\sim \N(\bar\beta_{0j}, s^2_{\beta_0}) \\
+\bar\beta_{0j} &\sim \N(0, s^2_{\beta}) \\
 \\
 \gamma_{ij1}^* &:= 0 \\
 \gamma_{ij0}^* &\sim \IG(a_\gamma.b_\gamma) \\
