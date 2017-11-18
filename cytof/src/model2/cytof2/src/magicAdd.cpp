@@ -18,3 +18,11 @@ double coolLogit(double p, double a, double b) {
   return logit(p, a, b);
 }
 
+//' CoolRTrunc
+//' @export
+// [[Rcpp::export]]
+double coolRTrunc(double m, double s, double lo, double hi) {
+  //Rcout << "Input: " << m << std::endl;
+  return rtnorm(m,s,lo,hi);
+}
+

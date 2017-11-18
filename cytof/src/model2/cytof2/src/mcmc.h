@@ -1,3 +1,5 @@
+// [[Rcpp::depends(RcppArmadillo)]]
+
 #include<RcppArmadillo.h> // linear algebra
 #include<functional>      // std::function
 #include<assert.h>
@@ -10,7 +12,6 @@ using namespace Rcpp;
 // Enable C++11 via this plugin (Rcpp 0.10.3 or later)
 // [[Rcpp::plugins(cpp11)]]
 
-// [[Rcpp::depends(RcppArmadillo)]]
 
 // Generic Gibbs Sampler
 template <typename S>
@@ -197,23 +198,50 @@ arma::rowvec rdir(const arma::rowvec &a) {
   return x / sum_x;
 }
 
-Function R_rtruncnorm = Environment("package:truncnorm")["rtruncnorm"];
-double rtnorm(double m, double s, double lo, double hi) {
-  return as<double>(wrap(R_rtruncnorm(1, lo, hi, m, s)));
-}
-
-Function R_dtruncnorm = Environment("package:truncnorm")["dtruncnorm"];
-double dtnorm(double x, double m, double s, double lo, double hi) {
-  return as<double>(wrap(R_dtruncnorm(x, lo, hi, m, s)));
-}
-
-double dtnorm_log(double x, double m, double s, double lo, double hi) {
-  return log(dtnorm(x, m, s, lo, hi));
-}
-
 int runif_discrete(int a, int b) {
   return floor(R::runif(a, b + 1 - 1E-10));
 }
+
+double Phi(double z) {
+  return R::pnorm(z, 0, 1, 1, 0); // mean=0, sd=1, left tail, no log
+}
+
+double rtnorm(double m, double s, double lo, double hi) {
+  //FIXME: Problems loading these functions in Rcpp packages.
+  //       Just Curious, not urgent.
+  //Function R_rtruncnorm = Environment("package:truncnorm")["rtruncnorm"];
+  //return as<double>(wrap(R_rtruncnorm(1, lo, hi, m, s)));
+
+  const double a = (lo - m) / s;
+  const double b = (hi - m) / s;
+  const double u = R::runif(0, 1);
+  const double p = Phi(a) + u * (Phi(b) - Phi(a));
+  return R::qnorm(p, 0, 1, 1, 0) * s + m;
+}
+
+double dtnorm_log(double x, double m, double s, double lo, double hi) {
+  double out;
+
+  if (x > hi || x < lo) {
+    out = -INFINITY;
+  } else {
+    double a = (lo-m)/s;
+    double b = (hi-m)/s;
+    out = R::dnorm(x, m, s, 1) - log(Phi(b) - Phi(a));
+  }
+
+  return out;
+}
+
+
+//' My dtruncnorm
+//' @export
+// [[Rcpp::export]]
+double dtnorm(double x, double m, double s, double lo, double hi) {
+  return exp(dtnorm_log(x, m, s, lo, hi));
+}
+
+
 
 /* For timing
   clock_t start;

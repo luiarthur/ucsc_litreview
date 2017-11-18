@@ -7,5 +7,10 @@ R -e "roxygen2::roxygenise('cytof2');Rcpp::compileAttributes('cytof2');"
 
 ##### Install Package Locally ###
 #R CMD REMOVE cytof2
-R CMD build cytof2
+rm -f cytof2_*
+R CMD build cytof2 
 R CMD INSTALL cytof2*.tar.gz
+
+### TEST ###
+#R -e "library(truncnorm); cytof2::magicAdd(20); cytof2::coolLogit(.6,0,1); system.time(for (i in 1:10000) cytof2::coolRTrunc(-5,10,2,3))"
+#R -e "library(cytof2); system.time(x<-cytof2::dtnorm(10, 3, 5, 0, Inf)); x"

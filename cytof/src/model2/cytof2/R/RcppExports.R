@@ -13,3 +13,15 @@ coolLogit <- function(p, a, b) {
     .Call('_cytof2_coolLogit', PACKAGE = 'cytof2', p, a, b)
 }
 
+#' CoolRTrunc
+#' @export
+coolRTrunc <- function(m, s, lo, hi) {
+    .Call('_cytof2_coolRTrunc', PACKAGE = 'cytof2', m, s, lo, hi)
+}
+
+#' My dtruncnorm
+#' @export
+dtnorm <- function(x, m, s, lo, hi) {
+    .Call('_cytof2_dtnorm', PACKAGE = 'cytof2', x, m, s, lo, hi)
+}
+

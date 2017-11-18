@@ -9,7 +9,6 @@ Description: Fits a bayesian model to CYTOF data.
 License: GPL (>= 2)
 Imports:
   Rcpp (>= 0.12.00),
-  truncnorm (>= 1.0-7),
   foreach,
   doMC
 LinkingTo: Rcpp, RcppArmadillo
