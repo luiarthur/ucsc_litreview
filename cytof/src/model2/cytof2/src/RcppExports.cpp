@@ -6,65 +6,18 @@
 
 using namespace Rcpp;
 
-// magicAdd
-double magicAdd(double a);
-RcppExport SEXP _cytof2_magicAdd(SEXP aSEXP) {
+// unit_tests
+void unit_tests();
+RcppExport SEXP _cytof2_unit_tests() {
 BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double >::type a(aSEXP);
-    rcpp_result_gen = Rcpp::wrap(magicAdd(a));
-    return rcpp_result_gen;
-END_RCPP
-}
-// coolLogit
-double coolLogit(double p, double a, double b);
-RcppExport SEXP _cytof2_coolLogit(SEXP pSEXP, SEXP aSEXP, SEXP bSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double >::type p(pSEXP);
-    Rcpp::traits::input_parameter< double >::type a(aSEXP);
-    Rcpp::traits::input_parameter< double >::type b(bSEXP);
-    rcpp_result_gen = Rcpp::wrap(coolLogit(p, a, b));
-    return rcpp_result_gen;
-END_RCPP
-}
-// rtnorm
-double rtnorm(double m, double s, double lo, double hi);
-RcppExport SEXP _cytof2_rtnorm(SEXP mSEXP, SEXP sSEXP, SEXP loSEXP, SEXP hiSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double >::type m(mSEXP);
-    Rcpp::traits::input_parameter< double >::type s(sSEXP);
-    Rcpp::traits::input_parameter< double >::type lo(loSEXP);
-    Rcpp::traits::input_parameter< double >::type hi(hiSEXP);
-    rcpp_result_gen = Rcpp::wrap(rtnorm(m, s, lo, hi));
-    return rcpp_result_gen;
-END_RCPP
-}
-// dtnorm
-double dtnorm(double x, double m, double s, double lo, double hi);
-RcppExport SEXP _cytof2_dtnorm(SEXP xSEXP, SEXP mSEXP, SEXP sSEXP, SEXP loSEXP, SEXP hiSEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double >::type x(xSEXP);
-    Rcpp::traits::input_parameter< double >::type m(mSEXP);
-    Rcpp::traits::input_parameter< double >::type s(sSEXP);
-    Rcpp::traits::input_parameter< double >::type lo(loSEXP);
-    Rcpp::traits::input_parameter< double >::type hi(hiSEXP);
-    rcpp_result_gen = Rcpp::wrap(dtnorm(x, m, s, lo, hi));
-    return rcpp_result_gen;
+    unit_tests();
+    return R_NilValue;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_cytof2_magicAdd", (DL_FUNC) &_cytof2_magicAdd, 1},
-    {"_cytof2_coolLogit", (DL_FUNC) &_cytof2_coolLogit, 3},
-    {"_cytof2_rtnorm", (DL_FUNC) &_cytof2_rtnorm, 4},
-    {"_cytof2_dtnorm", (DL_FUNC) &_cytof2_dtnorm, 5},
+    {"_cytof2_unit_tests", (DL_FUNC) &_cytof2_unit_tests, 0},
     {NULL, NULL, 0}
 };
 

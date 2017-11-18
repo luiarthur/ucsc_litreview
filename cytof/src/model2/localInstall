@@ -1,8 +1,7 @@
 #!/bin/bash
 
 ### Generate the docs ###
-#R -e "roxygen2::roxygenise('cytof2')"
-#R -e "Rcpp::compileAttributes('cytof2')"
+rm -f cytof2/NAMESPACE
 R -e "roxygen2::roxygenise('cytof2');Rcpp::compileAttributes('cytof2');"
 
 ##### Install Package Locally ###
@@ -11,3 +10,5 @@ rm -f cytof2_*
 R CMD build cytof2 
 R CMD INSTALL cytof2*.tar.gz
 
+### Run Cpp Unit Tests ###
+R -e "library(cytof2); system.time(cytof2::unit_tests())"

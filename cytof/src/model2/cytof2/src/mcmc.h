@@ -1,14 +1,8 @@
-// [[Rcpp::depends(RcppArmadillo)]]
 #include<RcppArmadillo.h> // linear algebra
-
+#include<RcppTN.h>        // truncated normal header files
 #include<functional>      // std::function
-#include<assert.h>
-#include<ctime>
-#include<math.h>
 #include<algorithm>       // std::max(a,b) returns the larger of a and b
 
-// [[Rcpp::depends(RcppTN)]]
-#include <RcppTN.h>
 
 using namespace Rcpp;
 
@@ -209,16 +203,10 @@ double Phi(double z) {
   return R::pnorm(z, 0, 1, 1, 0); // mean=0, sd=1, left tail, no log
 }
 
-//' My rtruncnorm
-//' @export
-// [[Rcpp::export]]
 double rtnorm(double m, double s, double lo, double hi) {
   return RcppTN::rtn1(m, s, lo, hi);
 }
 
-//' My dtruncnorm
-//' @export
-// [[Rcpp::export]]
 double dtnorm(double x, double m, double s, double lo, double hi) {
   return RcppTN::dtn1(x, m, s, lo, hi);
 }
@@ -227,10 +215,3 @@ double dtnorm_log(double x, double m, double s, double lo, double hi) {
   return log(RcppTN::dtn1(x, m, s, lo, hi));
 }
 
-
-/* For timing
-  clock_t start;
-  start = clock();
-  // stuff to time
-  Rcout << double(clock()- start) / CLOCKS_PER_SEC << std::endl;
-*/
