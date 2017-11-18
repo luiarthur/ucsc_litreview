@@ -31,9 +31,9 @@ p(h_{jk} \mid \y, \rest)  &\propto p(h_{jk}) \prod_{(i,n) \in S} p(y_{inj} \mid 
 \prod_{(i,n)\in S} \bc{\exp\bc{\frac{-(y_{inj}-\mu_{inj})^2}{2(1+\gamma_{inj})\sigma^2_{ij}}} (1+\gamma_{inj})^{-1/2}}
 \end{align*}
 
-Note that $\forall (i,n) \in S$, $\mu_{inj} = \mus_{ijZ_{jk}}$ and 
-$\gamma_{inj} = \gamma^*_{ijZ_{jk}}$. Note also that both $\mus_{ijZ_{jk}}$ and 
-$\gamma^*_{ijZ_{jk}}$ are functions of $h_{jk}$, and should be computed
+Note that $\forall (i,n) \in S$, $\mu_{inj} = \mus_{Z_{jk}ij}$ and 
+$\gamma_{inj} = \gamma^*_{Z_{jk}ij}$. Note also that both $\mus_{Z_{jk}ij}$ and 
+$\gamma^*_{Z_{jk}ij}$ are functions of $h_{jk}$, and should be computed
 accordingly. 
 
 \mhSpiel{h_{jk}}

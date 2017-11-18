@@ -12,7 +12,7 @@ p(v_k \mid \y, \rest) &\propto p(v_k) \prod_{j=1}^J\prod_{(i,n)\in S} p(\y \mid 
 &\propto (v_k)^{\alpha-1} \prod_{j=1}^J \prod_{(i,n)\in S}  \bc{\exp\bc{\frac{-(y_{inj}-\mu_{inj})^2}{2(1+\gamma_{inj})\sigma^2_{ij}}} (1+\gamma_{inj})^{-1/2}}
 \end{align*}
 
-Note also that $\mus_{ijZ_{jl}}$ and $\gamma^*_{ijZ_{jl}}$ for $l \ge k$ are
+Note also that $\mus_{Z_{jl}ij}$ and $\gamma^*_{Z_{jl}ij}$ for $l \ge k$ are
 functions of $v_k$, and should be computed accordingly. 
 
 \mhLogitSpiel{v_k}{\xi}

@@ -3,9 +3,9 @@ The parameters $\bm\theta \mid K$ are now explicitly written.
 $$
 \begin{split}
 \bm\theta = \bc{
-h_k, v_k, \mus_{ij0}, \mus_{ij1}, \psi_0, \psi_1, 
+h_k, v_k, \mus_{0ij}, \mus_{1ij}, \psi_0, \psi_1, 
 \tau^2_0, \tau^2_1, W_{ik}, \lin, 
-\sigma^2_{ij}, \gamma_{ij0}, \gamma_{ij1}, \beta_{0ij}, \beta_{0j}, \beta_{1j},
+\sigma^2_{ij}, \gamma_{0ij}, \gamma_{1ij}, \beta_{0ij}, \beta_{0j}, \beta_{1j},
 y_{inj}\colon m_{inj}=1
 }_{i=1,n=1,j=1,k=1}^{i=I,n=N_i,j=J,k=K}
 \end{split}
@@ -16,11 +16,11 @@ $$
 \beta_{0ij} \mid \bar\beta_{0j} &\sim \N(\bar\beta_{0j}, s^2_{\beta_0}) \\
 \bar\beta_{0j} &\sim \N(0, s^2_{\beta}) \\
 \\
-\gamma_{ij1}^* &:= 0 \\
-\gamma_{ij0}^* &\sim \IG(a_\gamma.b_\gamma) \\
+\gamma_{1ij}^* &:= 0 \\
+\gamma_{0ij}^* &\sim \IG(a_\gamma.b_\gamma) \\
 \sigma^2_{ij} &\sim \IG(a_\sigma, b_\sigma) \\
-\mus_{ij0} \mid \psi_0, \tau^2_0 &\sim \N_-(\psi_0, \tau^2_0) \\
-\mus_{ij1} \mid \psi_1, \tau^2_1 &\sim \N_+(\psi_1, \tau^2_1) \\
+\mus_{0ij} \mid \psi_0, \tau^2_0 &\sim \N_-(\psi_0, \tau^2_0) \\
+\mus_{1ij} \mid \psi_1, \tau^2_1 &\sim \N_+(\psi_1, \tau^2_1) \\
 \psi_{0} &\sim \N_-(\bar\psi_0, s^2_{\psi_0}) \\
 \psi_{1} &\sim \N_+(\bar\psi_1, s^2_{\psi_1}) \\
 \tau^2_{0} &\sim \IG(a_{\tau_0}, b_{\tau_0}) \\
