@@ -30,9 +30,9 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// coolRTrunc
-double coolRTrunc(double m, double s, double lo, double hi);
-RcppExport SEXP _cytof2_coolRTrunc(SEXP mSEXP, SEXP sSEXP, SEXP loSEXP, SEXP hiSEXP) {
+// rtnorm
+double rtnorm(double m, double s, double lo, double hi);
+RcppExport SEXP _cytof2_rtnorm(SEXP mSEXP, SEXP sSEXP, SEXP loSEXP, SEXP hiSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -40,7 +40,7 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< double >::type s(sSEXP);
     Rcpp::traits::input_parameter< double >::type lo(loSEXP);
     Rcpp::traits::input_parameter< double >::type hi(hiSEXP);
-    rcpp_result_gen = Rcpp::wrap(coolRTrunc(m, s, lo, hi));
+    rcpp_result_gen = Rcpp::wrap(rtnorm(m, s, lo, hi));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -63,7 +63,7 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_cytof2_magicAdd", (DL_FUNC) &_cytof2_magicAdd, 1},
     {"_cytof2_coolLogit", (DL_FUNC) &_cytof2_coolLogit, 3},
-    {"_cytof2_coolRTrunc", (DL_FUNC) &_cytof2_coolRTrunc, 4},
+    {"_cytof2_rtnorm", (DL_FUNC) &_cytof2_rtnorm, 4},
     {"_cytof2_dtnorm", (DL_FUNC) &_cytof2_dtnorm, 5},
     {NULL, NULL, 0}
 };

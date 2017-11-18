@@ -7,9 +7,10 @@ Author: Arthur Lui
 Maintainer: Arthur Lui <luiarthur@ucsc.edu>
 Description: Fits a bayesian model to CYTOF data.
 License: GPL (>= 2)
+Depends: RcppTN
 Imports:
   Rcpp (>= 0.12.00),
   foreach,
   doMC
-LinkingTo: Rcpp, RcppArmadillo
+LinkingTo: Rcpp, RcppArmadillo, RcppTN
 RoxygenNote: 6.0.1
