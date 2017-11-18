@@ -1,12 +1,11 @@
 #!/bin/bash
 
 ### Generate the docs ###
-cd cytof2
-R -e "Rcpp::compileAttributes(); roxygen2::roxygenise();"
-cd ..
+#R -e "roxygen2::roxygenise('cytof2')"
+#R -e "Rcpp::compileAttributes('cytof2')"
+R -e "roxygen2::roxygenise('cytof2');Rcpp::compileAttributes('cytof2');"
 
-### Install Package Locally ###
+##### Install Package Locally ###
 #R CMD REMOVE cytof2
 R CMD build cytof2
 R CMD INSTALL cytof2*.tar.gz
-

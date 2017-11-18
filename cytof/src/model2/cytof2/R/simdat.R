@@ -1,0 +1,3 @@
+simdat <- function() {
+  #' @export
+}

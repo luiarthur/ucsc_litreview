@@ -2,9 +2,14 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 #' SomethingCool
-#' @param a A double
 #' @export
 magicAdd <- function(a) {
-    .Call(`_cytof2_magicAdd`, a)
+    .Call('_cytof2_magicAdd', PACKAGE = 'cytof2', a)
+}
+
+#' CoolLogit
+#' @export
+coolLogit <- function(p, a, b) {
+    .Call('_cytof2_coolLogit', PACKAGE = 'cytof2', p, a, b)
 }
 
