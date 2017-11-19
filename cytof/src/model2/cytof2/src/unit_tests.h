@@ -38,6 +38,13 @@ void unit_tests() {
 
   const double dtnorm_res2 = dtnorm(-1, 0, 1, 0, INFINITY);
   test_equal<double>("dtnorm(-1,0,1,0,Inf)", dtnorm_res2, 0, counters);
+
+  const double N=100000;
+  arma::vec x(N);
+  const double rig_a = 3;
+  const double rig_b = 4;
+  for (int i=0; i<N; i++) x[i] = rinvgamma(rig_a, rig_b);
+  test_approx<double>("Mean of InverseGamma(3,4)", arma::mean(x), rig_b / (rig_a-1), 1E-2, counters);
   // End of Tests ////
 
   print_pass_fail_counts(counters);

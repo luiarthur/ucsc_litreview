@@ -1,3 +1,6 @@
+// Reference for distributions in R
+//http://dirk.eddelbuettel.com/code/rcpp/html/Rmath_8h_source.html#l00051
+
 #include <RcppArmadillo.h> // linear algebra
 #include <RcppTN.h>        // truncated normal header files
 #include <functional>      // std::function
@@ -170,9 +173,15 @@ double lp_log_invgamma_with_const(double log_x, double a, double bNumer) {
 }
 
 double lp_logit_unif(double logit_u) {
-  return logit_u - 2 * log(1+ exp(logit_u));
+  const int lg = 1; // log the density
+  return R::dlogis(logit_u, 0, 1, lg);
 }
 
+double lp_logit_beta(double logit_u, double a, double b) {
+  const double u = inv_logit(logit_u, 0, 1);
+  const int lg = 1; // log the density
+  return R::dbeta(u, a, b, lg) + R::dlogis(logit_u, 0, 1, lg);
+}
 
 double delta_0(double x) {
   return R::dnorm(x, 0, 1E-10, 0);
@@ -215,3 +224,7 @@ double dtnorm_log(double x, double m, double s, double lo, double hi) {
   return log(RcppTN::dtn1(x, m, s, lo, hi));
 }
 
+double rinvgamma(double a, double b) {
+  // random draw from inverse-gamma with mean b / (a-1)
+  return 1 / R::rgamma(a, 1/b);
+}

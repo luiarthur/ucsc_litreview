@@ -6,6 +6,22 @@
 
 using namespace Rcpp;
 
+// cytof_fix_K_fit
+std::vector<List> cytof_fix_K_fit(const std::vector<arma::mat>& y, int B, int burn, int thin, int compute_loglike_every, int print_freq);
+RcppExport SEXP _cytof2_cytof_fix_K_fit(SEXP ySEXP, SEXP BSEXP, SEXP burnSEXP, SEXP thinSEXP, SEXP compute_loglike_everySEXP, SEXP print_freqSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::vector<arma::mat>& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< int >::type B(BSEXP);
+    Rcpp::traits::input_parameter< int >::type burn(burnSEXP);
+    Rcpp::traits::input_parameter< int >::type thin(thinSEXP);
+    Rcpp::traits::input_parameter< int >::type compute_loglike_every(compute_loglike_everySEXP);
+    Rcpp::traits::input_parameter< int >::type print_freq(print_freqSEXP);
+    rcpp_result_gen = Rcpp::wrap(cytof_fix_K_fit(y, B, burn, thin, compute_loglike_every, print_freq));
+    return rcpp_result_gen;
+END_RCPP
+}
 // unit_tests
 void unit_tests();
 RcppExport SEXP _cytof2_unit_tests() {
@@ -17,6 +33,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_cytof2_cytof_fix_K_fit", (DL_FUNC) &_cytof2_cytof_fix_K_fit, 6},
     {"_cytof2_unit_tests", (DL_FUNC) &_cytof2_unit_tests, 0},
     {NULL, NULL, 0}
 };

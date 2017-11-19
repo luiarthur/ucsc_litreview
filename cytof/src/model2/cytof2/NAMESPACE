@@ -2,6 +2,7 @@
 
 S3method(plot,histModel2)
 export(color.bar)
+export(cytof_fix_K_fit)
 export(my.image)
 export(read.cutoff.file)
 export(read.cutoff.in.dir)
