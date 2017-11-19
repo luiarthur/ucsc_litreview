@@ -1,4 +1,3 @@
-#include "mcmc.h"
 #include <string>
 
 void print_pass_fail_counts(const int counters[2]) {

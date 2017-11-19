@@ -1,7 +1,7 @@
-#include<RcppArmadillo.h> // linear algebra
-#include<RcppTN.h>        // truncated normal header files
-#include<functional>      // std::function
-#include<algorithm>       // std::max(a,b) returns the larger of a and b
+#include <RcppArmadillo.h> // linear algebra
+#include <RcppTN.h>        // truncated normal header files
+#include <functional>      // std::function
+#include <algorithm>       // std::max(a,b) returns the larger of a and b
 
 
 using namespace Rcpp;
