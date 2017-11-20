@@ -5,21 +5,23 @@
 #include "Data.h"
 #include "State.h"
 #include "Prior.h"
+#include "Fixed.h"
 #include "loglike.h"
 
-#include "beta.h" // TODO
-#include "gams0.h" // TODO
+#include "beta.h"
+#include "gams0.h"
 #include "mus.h"
 #include "sig2.h"
-#include "tau2.h" // TODO
-#include "psi.h" // TODO
+#include "tau2.h"
+#include "psi.h"
 
 #include "v.h"
 #include "H.h"
-#include "lam.h" // TODO
+#include "Z.h"
+#include "lam.h" // TODO: After theta, do part II
 #include "W.h"
 
-#include "missing_y.h" // TODO
+#include "missing_y.h"
 #include "theta.h" // TODO
 
 #include "K.h" // TODO

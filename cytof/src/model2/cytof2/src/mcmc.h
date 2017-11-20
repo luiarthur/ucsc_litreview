@@ -224,6 +224,13 @@ double dtnorm_log(double x, double m, double s, double lo, double hi) {
   return log(RcppTN::dtn1(x, m, s, lo, hi));
 }
 
+double lp_log_abs_tn_posneg(double log_abs_x, double m, double s, int zz) {
+  const int sign = (zz == 0) ? -1 : 1;
+  const double lo = (zz == 0) ? -INFINITY : 0;
+  const double hi = (zz == 0) ? 0 : INFINITY;
+  return dtnorm_log(sign*exp(log_abs_x), m, s, lo, hi) + log_abs_x;
+}
+
 double rinvgamma(double a, double b) {
   // random draw from inverse-gamma with mean b / (a-1)
   return 1 / R::rgamma(a, 1/b);

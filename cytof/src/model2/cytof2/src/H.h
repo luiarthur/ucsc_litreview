@@ -7,7 +7,7 @@ void update_Hjk(State &state, const Data &y, const Prior &prior, int j, int k, d
     const auto N = get_N(y);
 
     const double G_jj = prior.G[j,j];
-    const arma::vec b = arma::cumprod(state.v);
+    const auto b = compute_b(state);
     int z_jlin;
 
     for (int i=0; i<I; i++) {

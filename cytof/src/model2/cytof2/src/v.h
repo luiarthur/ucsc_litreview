@@ -10,16 +10,8 @@ double compute_bk(const State &state, int k) {
   return b_k;
 }
 
-std::vector<double> compute_b(const State &state) {
-  const int K = state.K;
-  std::vector<double> b(K);
-
-  b[0] = state.v[0];
-  for (int l=1; l < K; l++) {
-    b[l] = b[l-1] * state.v[l];
-  }
-
-  return b;
+arma::vec compute_b(const State &state) {
+  return arma::cumprod(state.v);
 }
 
 

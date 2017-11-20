@@ -11,6 +11,8 @@ struct State {
   arma::vec tau2;      // 2
   arma::vec psi;       // 2
 
+  // Note that v | alpha ~ Beta(alpha, 1). If alpha is random, then
+  // in the evalutation of the prior, the normalizing constant is needed!
   arma::vec v;         // K
   arma::mat H;         // J x K
   type_lam lam;        // I x N_i
