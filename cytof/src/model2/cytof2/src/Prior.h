@@ -35,3 +35,58 @@ struct Prior {
   int K_max;  // 15?
   int a_K; // constraint: 2 * a_K <= K_max - K_min + 1
 };
+
+void gen_prior_obj(List prior, int J) {
+  Prior out = Prior {
+    prior.constainsElementNamed("a_beta") ? prior["a_beta"] : 1,
+    prior.constainsElementNamed("b_beta") ? prior["b_beta"] : 1,
+    prior.constainsElementNamed("cs_beta1j") ? prior["cs_beta1j"] : 1,
+
+    prior.constainsElementNamed("s2_beta0") ? prior["s2_beta0"] : 10,
+    prior.constainsElementNamed("cs_beta0") ? prior["cs_beta0"] : 1,
+    prior.constainsElementNamed("s2_betaBar") ? prior["cs_betaBar"] : 10,
+
+    prior.constainsElementNamed("a_gam") ? prior["a_gam"] : .1,
+    prior.constainsElementNamed("b_gam") ? prior["b_gam"] : .1,
+    prior.constainsElementNamed("cs_gam") ? prior["cs_gam"] : 1,
+
+    prior.constainsElementNamed("a_sig") ? prior["a_sig"] : 2,
+    prior.constainsElementNamed("b_sig") ? prior["b_sig"] : 1,
+
+    prior.constainsElementNamed("psi0Bar") ? prior["psi0Bar"] : -1,
+    prior.constainsElementNamed("s2_psi0") ? prior["s2_psi0"] : 10,
+    prior.constainsElementNamed("cs_psi0") ? prior["cs_psi0"] : 1,
+
+    prior.constainsElementNamed("psi1Bar") ? prior["psi1Bar"] : 1,
+    prior.constainsElementNamed("s2_psi1") ? prior["s2_psi1"] : 10,
+    prior.constainsElementNamed("cs_psi1") ? prior["cs_psi1"] : 1,
+
+    prior.constainsElementNamed("a_tau0") ? prior["a_tau0"] : 2,
+    prior.constainsElementNamed("b_tau0") ? prior["b_tau0"] : 1,
+    prior.constainsElementNamed("cs_tau0") ? prior["cs_tau0"] : 1,
+
+    prior.constainsElementNamed("a_tau1") ? prior["a_tau1"] : 2,
+    prior.constainsElementNamed("b_tau1") ? prior["b_tau1"] : 1,
+    prior.constainsElementNamed("cs_tau1") ? prior["cs_tau1"] : 1,
+
+    prior.constainsElementNamed("alpha") ? prior["alpha"] : 1,
+    prior.constainsElementNamed("cs_v") ? prior["cs_v"] : 1,
+
+    prior.constainsElementNamed("G") ? prior["G"] : eye(J),
+    prior.constainsElementNamed("cs_h") ? prior["cs_h"] : 1,
+    arma::mat(J, J-1), //R
+    arma::vec(J), // S2
+
+    prior.constainsElementNamed("d_w") ? prior["d_w"] : 1,
+
+    prior.constainsElementNamed("cs_y") ? prior["cs_y"] : 1,
+
+    prior.constainsElementNamed("K_min") ? prior["K_min"] : 1,
+    prior.constainsElementNamed("K_max") ? prior["K_max"] : 15,
+    prior.constainsElementNamed("a_K") ? prior["a_K"] : 2,
+  }; 
+
+  precompute_H_stats(out);
+
+  return out;
+}

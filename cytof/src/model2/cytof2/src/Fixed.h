@@ -12,5 +12,18 @@ struct Fixed {
   bool W;
 
   bool missing_y;
-  bool K;
  };
+
+Fixed gen_fixed_obj(List truth) {
+  return Fixed {
+    truth.containsElementNamed("beta_all"),
+    truth.containsElementNamed("mus"),
+    truth.containsElementNamed("sig2"),
+    truth.containsElementNamed("tau2"),
+    truth.containsElementNamed("psi"),
+    truth.containsElementNamed("Z"),
+    truth.containsElementNamed("lam"),
+    truth.containsElementNamed("W"),
+    truth.containsElementNamed("missing_y")
+  };
+}

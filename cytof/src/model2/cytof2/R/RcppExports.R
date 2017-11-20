@@ -2,8 +2,8 @@
 # Generator token: 10BE3573-1514-4C36-9D1C-5A225CD40393
 
 #' @export
-cytof_fix_K_fit <- function(y, B, burn, thin, compute_loglike_every, print_freq) {
-    .Call('_cytof2_cytof_fix_K_fit', PACKAGE = 'cytof2', y, B, burn, thin, compute_loglike_every, print_freq)
+cytof_fix_K_fit <- function(y, K, prior_input, truth_input, init_input, B, burn, thin, compute_loglike_every, print_freq) {
+    .Call('_cytof2_cytof_fix_K_fit', PACKAGE = 'cytof2', y, K, prior_input, truth_input, init_input, B, burn, thin, compute_loglike_every, print_freq)
 }
 
 #' My Unit Tests
