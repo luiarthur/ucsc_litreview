@@ -14,5 +14,8 @@ void update_theta(State &state, const Data &y, const Prior &prior, const Fixed &
 
   if (!fixed_param.lam) update_lam(state, y, prior);
   if (!fixed_param.W) update_W(state, y, prior);
-  if (!fixed_param.missing_y) update_missing_y(state, y, prior);
+
+  if (!fixed_param.missing_y) {
+    update_missing_y(state, y, prior);
+  }
 }
