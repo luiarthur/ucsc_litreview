@@ -16,6 +16,7 @@ void update_theta(State &state, const Data &y, const Prior &prior, const Fixed &
   if (!fixed_param.W) update_W(state, y, prior);
 
   if (!fixed_param.missing_y) {
+    Rcout << "updating missing_y" << std::endl;
     update_missing_y(state, y, prior);
   }
 }

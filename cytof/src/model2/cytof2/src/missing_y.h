@@ -28,9 +28,8 @@ void update_missing_y(State &state, const Data &y, const Prior &prior) {
 
   for (int i=0; i<I; i++) {
     for (int j=0; j<J; j++) {
-      for (int n=0; i<N[i]; n++) {
+      for (int n=0; n<N[i]; n++) {
         if (missing(y, i, n, j)) {
-          Rcout << i << "," << n << "," << j << std::endl;
           update_missing_yinj(state, y, prior, i, n, j);
         }
       }

@@ -23,6 +23,7 @@ out <- cytof_fix_K_fit(dat$y,
 out[[2]]$beta_0
 out[[2]]$beta_1
 out[[2]]$betaBar_0
+out[[2]]$missing_y[[3]]
 out[[2]]$missing_y[[3]][13]
 dat$y[[3]][13]
 
