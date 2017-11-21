@@ -17,7 +17,7 @@ void update_beta1j(State &state, const Data &y, const Prior &prior, int j) {
   };
 
   const double log_b1j= log(state.beta_1[j]);
-  state.beta_1[j] = metropolis::uni(log_b1j, log_fc, prior.cs_beta1j);
+  state.beta_1[j] = exp(metropolis::uni(log_b1j, log_fc, prior.cs_beta1j));
 }
 
 void update_beta0ij(State &state, const Data &y, const Prior &prior, int i, int j) {
@@ -52,7 +52,7 @@ void update_betaBar0j(State &state, const Data &y, const Prior &prior, int j) {
   const double new_mean = prior.s2_beta0 * sum_b0ij / var_denom;
   const double new_var = prior.s2_betaBar * prior.s2_beta0 / var_denom;
 
-  R::rnorm(new_mean, sqrt(new_var));
+  state.betaBar_0[j] = R::rnorm(new_mean, sqrt(new_var));
 }
 
 void update_beta(State &state, const Data &y, const Prior &prior) {

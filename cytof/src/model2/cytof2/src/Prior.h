@@ -57,56 +57,57 @@ void precompute_H_stats(Prior &prior) {
 }
 
 template<typename T>
-T getOrInit(const List &prior, const char* param, T init) {
-  return prior.containsElementNamed(param) ? as<T>(prior[param]) : init;
+T getOrInit(const List &ls, const char* param, T init) {
+  return ls.containsElementNamed(param) ? as<T>(ls[param]) : init;
 }
 
-Prior gen_prior_obj(Nullable<List> prior_input, int J) {
+
+Prior gen_prior_obj(const Nullable<List> &prior_input, int J) {
   const List prior = prior_input.isNull() ? List::create() : as<List>(prior_input);
   arma::mat default_G = arma::eye<arma::mat>(J,J);
 
   Prior out;
 
-  out.a_beta = getOrInit(prior,"a_beta", 1);
-  out.b_beta = getOrInit(prior,"b_beta", 1);
-  out.cs_beta1j = getOrInit(prior,"b_beta1j", 1);
-  out.s2_beta0 = getOrInit(prior,"s2_beta0", 10);
-  out.cs_beta0 = getOrInit(prior,"cs_beta0", 1);
-  out.s2_betaBar = getOrInit(prior,"s2_betaBar", 10);
+  out.a_beta = getOrInit(prior,"a_beta", 1.0);
+  out.b_beta = getOrInit(prior,"b_beta", 1.0);
+  out.cs_beta1j = getOrInit(prior,"b_beta1j", 1.0);
+  out.s2_beta0 = getOrInit(prior,"s2_beta0", 10.0);
+  out.cs_beta0 = getOrInit(prior,"cs_beta0", 1.0);
+  out.s2_betaBar = getOrInit(prior,"s2_betaBar", 10.0);
 
   out.a_gam = getOrInit(prior,"a_gam", .1);
   out.b_gam = getOrInit(prior,"b_gam", .1);
-  out.cs_gam = getOrInit(prior,"cs_gam", 1);
-  out.a_sig = getOrInit(prior,"a_sig", 2);
-  out.b_sig = getOrInit(prior,"b_sig", 2);
+  out.cs_gam = getOrInit(prior,"cs_gam", 1.0);
+  out.a_sig = getOrInit(prior,"a_sig", 2.0);
+  out.b_sig = getOrInit(prior,"b_sig", 2.0);
 
-  out.psi0Bar = getOrInit(prior,"psi0Bar", -1);
-  out.s2_psi0 = getOrInit(prior,"s2_psi0", 10);
-  out.cs_psi0 = getOrInit(prior,"cs_psi0", 1);
+  out.psi0Bar = getOrInit(prior,"psi0Bar", -1.0);
+  out.s2_psi0 = getOrInit(prior,"s2_psi0", 10.0);
+  out.cs_psi0 = getOrInit(prior,"cs_psi0", 1.0);
 
-  out.psi1Bar = getOrInit(prior,"psi1Bar", 1);
-  out.s2_psi1 = getOrInit(prior,"s2_psi1", 10);
-  out.cs_psi1 = getOrInit(prior,"cs_psi1", 1);
+  out.psi1Bar = getOrInit(prior,"psi1Bar", 1.0);
+  out.s2_psi1 = getOrInit(prior,"s2_psi1", 10.0);
+  out.cs_psi1 = getOrInit(prior,"cs_psi1", 1.0);
 
-  out.a_tau0 = getOrInit(prior,"a_tau0", 2);
-  out.b_tau0 = getOrInit(prior,"b_tau0", 1);
-  out.cs_tau0 = getOrInit(prior,"cs_tau0", 1);
+  out.a_tau0 = getOrInit(prior,"a_tau0", 2.0);
+  out.b_tau0 = getOrInit(prior,"b_tau0", 1.0);
+  out.cs_tau0 = getOrInit(prior,"cs_tau0", 1.0);
 
-  out.a_tau1 = getOrInit(prior,"a_tau1", 2);
-  out.b_tau1 = getOrInit(prior,"b_tau1", 1);
-  out.cs_tau1 = getOrInit(prior,"cs_tau1", 1);
+  out.a_tau1 = getOrInit(prior,"a_tau1", 2.0);
+  out.b_tau1 = getOrInit(prior,"b_tau1", 1.0);
+  out.cs_tau1 = getOrInit(prior,"cs_tau1", 1.0);
 
-  out.alpha = getOrInit(prior,"alpha", 1);
-  out.cs_v = getOrInit(prior,"cs_v", 1);
+  out.alpha = getOrInit(prior,"alpha", 1.0);
+  out.cs_v = getOrInit(prior,"cs_v", 1.0);
 
   out.G = getOrInit(prior,"G", default_G);
-  out.cs_h = getOrInit(prior,"cs_h", 1);
+  out.cs_h = getOrInit(prior,"cs_h", 1.0);
   out.R = arma::mat(J, J-1);
   out.S2 = arma::vec(J);
 
-  out.d_w = getOrInit(prior,"d_w", 1);
+  out.d_w = getOrInit(prior,"d_w", 1.0);
 
-  out.cs_y = getOrInit(prior,"cs_y", 1);
+  out.cs_y = getOrInit(prior,"cs_y", 1.0);
 
   out.K_min = getOrInit(prior,"K_min", 1);
   out.K_max = getOrInit(prior,"K_max", 15);

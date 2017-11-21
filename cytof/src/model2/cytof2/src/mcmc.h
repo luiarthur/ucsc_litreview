@@ -233,5 +233,5 @@ double lp_log_abs_tn_posneg(double log_abs_x, double m, double s, int zz) {
 
 double rinvgamma(double a, double b) {
   // random draw from inverse-gamma with mean b / (a-1)
-  return 1 / R::rgamma(a, 1/b);
+  return 1 / R::rgamma(a, 1/b); // R::Gamma(shape,scale) instead of rate.
 }

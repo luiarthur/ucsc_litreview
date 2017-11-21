@@ -60,11 +60,11 @@ plot.histModel2 <- function(dat, cutoff=NULL, returnStats=FALSE,
                             col0=rgb(0,0,1,1/length(dat)), 
                             col1=rgb(1,0,0,1/length(dat)), 
                             quant=c(.025,.975),
-                            preTransformed=FALSE,
                             ...) {
                             
   #' @export
-  if (!is.na(cutoff)) stopifnot( length(dat) == length(cutoff) )
+  preTransformed <- is.null(cutoff)
+  if (!preTransformed) stopifnot( length(dat) == length(cutoff) )
   I <- length(dat)
   xlab <- paste0("I=", I)
   COL0 <- col0
@@ -117,15 +117,13 @@ plot.histModel2 <- function(dat, cutoff=NULL, returnStats=FALSE,
     add.errbar(Y1.ci[[i]], transpose=TRUE, col=COL1,lwd=10,lend=1)
   })
   abline(v=0, col='grey')
+  
 
   ### Plot Means ###
   sapply(1:I, function(i) {
     # Higher val => more data => Darker Color [0,.5]
     val0 = sapply(Y0.N[,i] / 1000, function(x) min(x,1))
     val1 = sapply(Y1.N[,i] / 1000, function(x) min(x,1))
-    print(i)
-    print(val0)
-    print(val1)
     points(Y0.mean[,i], 1:J, pch=20, cex=.5, col=grey(1-val0))
     points(Y1.mean[,i], 1:J, pch=20, cex=.5, col=grey(1-val1))
   })

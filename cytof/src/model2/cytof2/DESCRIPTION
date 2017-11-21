@@ -8,8 +8,10 @@ Maintainer: Arthur Lui <luiarthur@ucsc.edu>
 Description: Fits a bayesian model to CYTOF data.
 License: GPL (>= 2)
 Depends: RcppTN
+Remotes: luiarthur/rcommon.git
 Imports:
   Rcpp (>= 0.12.00),
+  rcommon,
   foreach,
   doMC
 LinkingTo: Rcpp, RcppArmadillo, RcppTN
