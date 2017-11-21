@@ -14,7 +14,8 @@ struct Fixed {
   bool missing_y;
  };
 
-Fixed gen_fixed_obj(List truth) {
+Fixed gen_fixed_obj(Nullable<List> truth_input) {
+  const List truth = truth_input.isNull() ? List::create() : as<List>(truth_input);
   return Fixed {
     truth.containsElementNamed("beta_all"),
     truth.containsElementNamed("mus"),

@@ -41,22 +41,4 @@ void update_H(State &state, const Data &y, const Prior &prior) {
   }
 }
 
-void precompute_H_stats(Prior &prior) {
-  // precompute matrix inverses for update_H
 
-  const int J = prior.G.n_cols;
-
-  for (int j=0; j<J; j++) {
-    const auto j_idx = arma::regspace<arma::vec>(0, J-1);
-    const arma::uvec minus_j = arma::find(j_idx != j);
-    const arma::mat G_minus_j_inv = prior.G(minus_j, minus_j).i();
-    const double G_jj = prior.G(j,j);
-    arma::uvec at_j; at_j << j;
-    const arma::rowvec G_j_minus_j = prior.G(at_j, minus_j);
-
-    prior.R.row(j) = G_j_minus_j * G_minus_j_inv;
-    const arma::vec S2j = G_jj - prior.R.row(j) * G_j_minus_j.t();
-
-    prior.S2(j) = S2j(0);
-  }
-}

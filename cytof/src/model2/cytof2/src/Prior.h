@@ -36,55 +36,81 @@ struct Prior {
   int a_K; // constraint: 2 * a_K <= K_max - K_min + 1
 };
 
-void gen_prior_obj(List prior, int J) {
-  Prior out = Prior {
-    prior.constainsElementNamed("a_beta") ? prior["a_beta"] : 1,
-    prior.constainsElementNamed("b_beta") ? prior["b_beta"] : 1,
-    prior.constainsElementNamed("cs_beta1j") ? prior["cs_beta1j"] : 1,
+void precompute_H_stats(Prior &prior) {
+  // precompute matrix inverses for update_H
 
-    prior.constainsElementNamed("s2_beta0") ? prior["s2_beta0"] : 10,
-    prior.constainsElementNamed("cs_beta0") ? prior["cs_beta0"] : 1,
-    prior.constainsElementNamed("s2_betaBar") ? prior["cs_betaBar"] : 10,
+  const int J = prior.G.n_cols;
 
-    prior.constainsElementNamed("a_gam") ? prior["a_gam"] : .1,
-    prior.constainsElementNamed("b_gam") ? prior["b_gam"] : .1,
-    prior.constainsElementNamed("cs_gam") ? prior["cs_gam"] : 1,
+  for (int j=0; j<J; j++) {
+    const auto j_idx = arma::regspace<arma::vec>(0, J-1);
+    const arma::uvec minus_j = arma::find(j_idx != j);
+    const arma::mat G_minus_j_inv = prior.G(minus_j, minus_j).i();
+    const double G_jj = prior.G(j,j);
+    arma::uvec at_j; at_j << j;
+    const arma::rowvec G_j_minus_j = prior.G(at_j, minus_j);
 
-    prior.constainsElementNamed("a_sig") ? prior["a_sig"] : 2,
-    prior.constainsElementNamed("b_sig") ? prior["b_sig"] : 1,
+    prior.R.row(j) = G_j_minus_j * G_minus_j_inv;
+    const arma::vec S2j = G_jj - prior.R.row(j) * G_j_minus_j.t();
 
-    prior.constainsElementNamed("psi0Bar") ? prior["psi0Bar"] : -1,
-    prior.constainsElementNamed("s2_psi0") ? prior["s2_psi0"] : 10,
-    prior.constainsElementNamed("cs_psi0") ? prior["cs_psi0"] : 1,
+    prior.S2(j) = S2j(0);
+  }
+}
 
-    prior.constainsElementNamed("psi1Bar") ? prior["psi1Bar"] : 1,
-    prior.constainsElementNamed("s2_psi1") ? prior["s2_psi1"] : 10,
-    prior.constainsElementNamed("cs_psi1") ? prior["cs_psi1"] : 1,
+template<typename T>
+T getOrInit(const List &prior, const char* param, T init) {
+  return prior.containsElementNamed(param) ? as<T>(prior[param]) : init;
+}
 
-    prior.constainsElementNamed("a_tau0") ? prior["a_tau0"] : 2,
-    prior.constainsElementNamed("b_tau0") ? prior["b_tau0"] : 1,
-    prior.constainsElementNamed("cs_tau0") ? prior["cs_tau0"] : 1,
+Prior gen_prior_obj(Nullable<List> prior_input, int J) {
+  const List prior = prior_input.isNull() ? List::create() : as<List>(prior_input);
+  arma::mat default_G = arma::eye<arma::mat>(J,J);
 
-    prior.constainsElementNamed("a_tau1") ? prior["a_tau1"] : 2,
-    prior.constainsElementNamed("b_tau1") ? prior["b_tau1"] : 1,
-    prior.constainsElementNamed("cs_tau1") ? prior["cs_tau1"] : 1,
+  Prior out;
 
-    prior.constainsElementNamed("alpha") ? prior["alpha"] : 1,
-    prior.constainsElementNamed("cs_v") ? prior["cs_v"] : 1,
+  out.a_beta = getOrInit(prior,"a_beta", 1);
+  out.b_beta = getOrInit(prior,"b_beta", 1);
+  out.cs_beta1j = getOrInit(prior,"b_beta1j", 1);
+  out.s2_beta0 = getOrInit(prior,"s2_beta0", 10);
+  out.cs_beta0 = getOrInit(prior,"cs_beta0", 1);
+  out.s2_betaBar = getOrInit(prior,"s2_betaBar", 10);
 
-    prior.constainsElementNamed("G") ? prior["G"] : eye(J),
-    prior.constainsElementNamed("cs_h") ? prior["cs_h"] : 1,
-    arma::mat(J, J-1), //R
-    arma::vec(J), // S2
+  out.a_gam = getOrInit(prior,"a_gam", .1);
+  out.b_gam = getOrInit(prior,"b_gam", .1);
+  out.cs_gam = getOrInit(prior,"cs_gam", 1);
+  out.a_sig = getOrInit(prior,"a_sig", 2);
+  out.b_sig = getOrInit(prior,"b_sig", 2);
 
-    prior.constainsElementNamed("d_w") ? prior["d_w"] : 1,
+  out.psi0Bar = getOrInit(prior,"psi0Bar", -1);
+  out.s2_psi0 = getOrInit(prior,"s2_psi0", 10);
+  out.cs_psi0 = getOrInit(prior,"cs_psi0", 1);
 
-    prior.constainsElementNamed("cs_y") ? prior["cs_y"] : 1,
+  out.psi1Bar = getOrInit(prior,"psi1Bar", 1);
+  out.s2_psi1 = getOrInit(prior,"s2_psi1", 10);
+  out.cs_psi1 = getOrInit(prior,"cs_psi1", 1);
 
-    prior.constainsElementNamed("K_min") ? prior["K_min"] : 1,
-    prior.constainsElementNamed("K_max") ? prior["K_max"] : 15,
-    prior.constainsElementNamed("a_K") ? prior["a_K"] : 2,
-  }; 
+  out.a_tau0 = getOrInit(prior,"a_tau0", 2);
+  out.b_tau0 = getOrInit(prior,"b_tau0", 1);
+  out.cs_tau0 = getOrInit(prior,"cs_tau0", 1);
+
+  out.a_tau1 = getOrInit(prior,"a_tau1", 2);
+  out.b_tau1 = getOrInit(prior,"b_tau1", 1);
+  out.cs_tau1 = getOrInit(prior,"cs_tau1", 1);
+
+  out.alpha = getOrInit(prior,"alpha", 1);
+  out.cs_v = getOrInit(prior,"cs_v", 1);
+
+  out.G = getOrInit(prior,"G", default_G);
+  out.cs_h = getOrInit(prior,"cs_h", 1);
+  out.R = arma::mat(J, J-1);
+  out.S2 = arma::vec(J);
+
+  out.d_w = getOrInit(prior,"d_w", 1);
+
+  out.cs_y = getOrInit(prior,"cs_y", 1);
+
+  out.K_min = getOrInit(prior,"K_min", 1);
+  out.K_max = getOrInit(prior,"K_max", 15);
+  out.a_K = getOrInit(prior,"a_K", 2);
 
   precompute_H_stats(out);
 
