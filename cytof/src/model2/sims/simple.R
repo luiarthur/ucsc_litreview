@@ -17,15 +17,15 @@ out <- cytof_fix_K_fit(dat$y,
                        init=NULL,
                        prior=NULL,
                        truth=list(K=4), 
-                       thin=0, B=2, burn=0,
+                       thin=0, B=200, burn=0,
                        compute_loglike=1, print_freq=100)
 
 out[[2]]$beta_0
 out[[2]]$beta_1
 out[[2]]$betaBar_0
 out[[2]]$missing_y[[3]]
-out[[2]]$missing_y[[3]][13]
-dat$y[[3]][13]
+out[[2]]$missing_y[[3]][12]
+dat$y[[3]][12]
 
 
 out[[1]]
