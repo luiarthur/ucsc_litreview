@@ -15,6 +15,13 @@ W <- matrix(c(.3, .4, .2, .1,
 dat <- simdat(I=3, N=c(200,300,100), J=J, K=K, Z=genZ(J, K, c(.4,.6)), W=W,
               thresh=-4)
 
+mus0_est <- matrix(0, I, J)
+mus1_est <- matrix(0, I, J)
+for (i in 1:I) for (j in 1:J) mus0_est[i,j] <- mean(dat$y[[i]][dat$y[[i]][,j]<0,j], na.rm=T)
+for (i in 1:I) for (j in 1:J) mus1_est[i,j] <- mean(dat$y[[i]][dat$y[[i]][,j]>0,j], na.rm=T)
+
+plot(c(c(dat$mus_0),c(dat$mus_1)), c(c(mus0_est),c(mus1_est))); abline(0,1)
+
 # TODO: Add to package
 extendZ <- function(Z,K) {
   if (NCOL(Z) > K) {
@@ -30,9 +37,12 @@ plot.histModel2(dat$y, xlim=c(-5,5))
 my.image(dat$Z)
 my.image(dat$y[[1]], mn=-5, mx=5, col=blueToRed(), addLegend=TRUE)
 
+
 #system.time(out <- cytof_fix_K_fit(dat$y, truth=list(K=10), B=200, burn=400, init=list(Z=extendZ(dat$Z, 10))))
 #system.time(out <- cytof_fix_K_fit(dat$y, truth=list(K=10), B=2, burn=0))
-system.time(out <- cytof_fix_K_fit(dat$y, truth=list(K=10), B=200, burn=400))
+
+#system.time(out <- cytof_fix_K_fit(dat$y, truth=list(K=10), B=200, burn=400))
+system.time(out <- cytof_fix_K_fit(dat$y, truth=list(K=10), B=200, burn=0))
 
 ll <- sapply(out, function(o) o$ll)
 plot(ll <- sapply(out, function(o) o$ll), type='l')
@@ -207,7 +217,7 @@ plotPosts(tau2, cnames=paste0('Truth=', c(dat$tau2_0, dat$tau2_1)))
 
 # psi: FIXME: Has not moved!
 psi <- t(sapply(out, function(o) o$psi))
-#plotPosts(psi, cnames=paste0('Truth=', c(dat$psi_0, dat$psi_1)))
+plotPosts(psi, cnames=paste0('Truth=', c(dat$psi_0, dat$psi_1)))
 
 # lam: TODO: HOW???
 
