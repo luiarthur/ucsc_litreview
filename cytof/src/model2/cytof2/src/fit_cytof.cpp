@@ -41,6 +41,8 @@ std::vector<List> cytof_fix_K_fit(
   const int I = get_I(y);
   const int J = get_J(y);
 
+  Rcout << "I:" << I << ", J:" << J << std::endl;
+
   const auto fixed_params = gen_fixed_obj(truth_input);
   const auto prior = gen_prior_obj(prior_input, J);
   const auto init = gen_init_obj(init_input, truth_input, prior, y);

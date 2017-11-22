@@ -9,7 +9,7 @@ void update_sig2_ij(State &state, const Data& y, const Prior &prior, int i, int 
 
   const double new_b = prior.b_sig + x / 2;
 
-  state.gams_0[i,j] = rinvgamma(new_a, new_b);
+  state.gams_0(i,j) = rinvgamma(new_a, new_b);
 }
 
 void update_sig2(State &state, const Data& y, const Prior &prior) {

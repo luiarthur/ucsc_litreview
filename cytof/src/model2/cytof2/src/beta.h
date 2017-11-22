@@ -9,7 +9,7 @@ void update_beta1j(State &state, const Data &y, const Prior &prior, int j) {
 
     for (int i=0; i<I; i++) {
       for (int n=0; n<N[i]; n++) {
-        ll += ll_p_given_beta(state, y, state.beta_0[i,j], b1j, i, n ,j);
+        ll += ll_p_given_beta(state, y, state.beta_0(i,j), b1j, i, n ,j);
       }
     }
 
@@ -36,8 +36,9 @@ void update_beta0ij(State &state, const Data &y, const Prior &prior, int i, int 
     return lp + ll;
   };
 
-  const double b0ij = state.beta_0[i,j];
-  state.beta_0[i,j] = metropolis::uni(b0ij, log_fc, prior.cs_beta0);
+  const double b0ij = state.beta_0(i,j);
+  state.beta_0(i,j) = metropolis::uni(b0ij, log_fc, prior.cs_beta0);
+  //Rcout << "Updated beta0" << i << j << ": " << state.beta_0(i,j) << std::endl;
 }
 
 void update_betaBar0j(State &state, const Data &y, const Prior &prior, int j) {
@@ -45,7 +46,7 @@ void update_betaBar0j(State &state, const Data &y, const Prior &prior, int j) {
 
   double sum_b0ij = 0;
   for (int i=0; i<I; i++) {
-    sum_b0ij += state.beta_0[i,j];
+    sum_b0ij += state.beta_0(i,j);
   }
 
   const double var_denom = prior.s2_betaBar * I + prior.s2_beta0;

@@ -11,15 +11,15 @@ void update_gams0ij(State &state, const Data &y, const Prior &prior, int i, int 
       if (z(state, i, n, j) == 0) {
         ll += R::dnorm(y_final(state, y, i, n, j), 
                        mu(state, i, n, j), 
-                       sqrt((1 + gams_0ij) * state.sig2[i,j]), lg);
+                       sqrt((1 + gams_0ij) * state.sig2(i,j)), lg);
       }
     }
 
     return ll + lp;
   };
 
-  const double log_gams0ij = log(state.gams_0[i,j]);
-  state.gams_0[i,j] = exp(metropolis::uni(log_gams0ij, log_fc, prior.cs_gam));
+  const double log_gams0ij = log(state.gams_0(i,j));
+  state.gams_0(i,j) = exp(metropolis::uni(log_gams0ij, log_fc, prior.cs_gam));
 }
 
 void update_gams0(State &state, const Data &y, const Prior &prior) {

@@ -10,9 +10,9 @@ double update_lin(State &state, const Data &y, const Prior &prior,
   const auto b = compute_b(state);
 
   for (int k=0; k<K; k++) {
-    log_p[k] = log(state.W[i, k]);
+    log_p[k] = log(state.W(i, k));
     for (int j=0; j<J; j++) {
-      Z_jk = compute_zjk(state.H[j,k], prior.G[j,j], b[k]);
+      Z_jk = compute_zjk(state.H(j,k), prior.G(j,j), b[k]);
       log_p[k] += ll_fz(state, y, i, n, j, Z_jk);
     }
   }

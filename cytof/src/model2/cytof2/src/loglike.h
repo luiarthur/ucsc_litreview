@@ -1,10 +1,10 @@
 double y_final(const State &state, const Data &y, int i, int n, int j) {
-  return missing(y,i,n,j) ? state.missing_y[i][n,j] : y[i][n,j];
+  return missing(y,i,n,j) ? state.missing_y[i](n,j) : y[i](n,j);
 }
 
 double p(const State &state, const Data &y, int i, int n, int j) {
   double y_inj = y_final(state, y, i, n, j);
-  const double xinj = state.beta_0[i,j] - state.beta_1[j] * y_inj;
+  const double xinj = state.beta_0(i,j) - state.beta_1[j] * y_inj;
   return inv_logit(xinj, 0, 1);
 }
 
@@ -25,14 +25,14 @@ double ll_p_given_beta(const State &state, const Data &y,
 double ll_f(const State &state, const Data &y, int i, int n, int j) {
   const int lg = 1; // log the density
   return R::dnorm(y_final(state, y, i, n, j), mu(state, i, n, j), 
-                  sqrt((1 + gam(state, i, n, j)) * state.sig2[i,j]), lg);
+                  sqrt((1 + gam(state, i, n, j)) * state.sig2(i,j)), lg);
 }
 
 double ll_fz(const State &state, const Data &y, int i, int n, int j, int zz) {
   const double gam_inj = (zz == 0) ? gam(state, i, n, j) : 0;
   const int lg = 1; // log the density
   return R::dnorm(y_final(state, y, i, n, j), state.mus(i, j, zz),
-                  sqrt((1 + gam_inj) * state.sig2[i,j]), lg);
+                  sqrt((1 + gam_inj) * state.sig2(i,j)), lg);
 }
 
 double loglike(const State &state, const Data &y) {

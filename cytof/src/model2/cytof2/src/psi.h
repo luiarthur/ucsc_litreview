@@ -18,7 +18,7 @@ void update_psi_z(State &state, const Data &y, const Prior &prior, int zz) {
 
     for (int i=0; i<I; i++) {
       for (int j=0; j<J; j++) {
-        ll += dtnorm_log(state.mus[i,j], psi_z, tau_z, lo, hi);
+        ll += dtnorm_log(state.mus(i,j,zz), psi_z, tau_z, lo, hi);
       }
     }
 

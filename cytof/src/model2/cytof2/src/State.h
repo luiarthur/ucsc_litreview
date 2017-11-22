@@ -25,7 +25,7 @@ struct State {
 };
 
 int z(const State &state, int i, int n, int j) {
-  return state.Z[j, state.lam[i][n]];
+  return state.Z(j, state.lam[i][n]);
 }
 
 int compute_zjk(double h_jk, double G_jj, double b_k) {
@@ -35,12 +35,12 @@ int compute_zjk(double h_jk, double G_jj, double b_k) {
 }
 
 double gam(const State &state, int i, int n, int j) {
-  return z(state, i, n, j) == 1 ? 0 : state.gams_0[i, j];
+  return z(state, i, n, j) == 1 ? 0 : state.gams_0(i, j);
 }
 
 double mu(const State &state, int i, int n, int j) {
   int z_inj = z(state, i, n, j);
-  return state.mus[i, j, z_inj];
+  return state.mus(i, j, z_inj);
 }
 
 // Check to see if the truth is specified, if so use it.
@@ -123,24 +123,26 @@ State gen_init_obj(const Nullable<List> &init_input,
   arma::Mat<int> init_Z = arma::zeros<arma::Mat<int>>(J,K);
   for (int j=0; j<J; j++) {
     for (int k=0; k<K; k++) {
-      init_Z[j,k] = compute_zjk(state.H[j,k], prior.G[j,j], b[k]);
+      init_Z(j,k) = compute_zjk(state.H(j,k), prior.G(j,j), b[k]);
     }
   }
   state.Z = getInitOrFix(init, truth, "Z", init_Z);
 
-  auto init_missing_y = std::vector<arma::mat>(I);
+  Data init_missing_y = std::vector<arma::mat>(I);
   for (int i=0; i<I; i++) {
     init_missing_y[i] = arma::zeros<arma::mat>(N[i], J);
     for (int j=0; j<J; j++) {
       for (int n=0; n<N[i]; n++) {
         if (missing(y, i, n, j)) {
-          init_missing_y[i][n, j] = -10;
+          init_missing_y[i](n, j) = -10;
         } else {
-          init_missing_y[i][n, j] = y[i][n, j];
+          init_missing_y[i](n, j) = y[i](n, j);
         }
       }
     }
   }
+
+  //Rcout << "missing dims (I,J,N1): " <<  get_I(init_missing_y) << "," << get_J(init_missing_y) << "," << get_Ni(init_missing_y,0) << std::endl;
 
   state.missing_y = getInitOrFix(init, truth, "missing_y", init_missing_y);
 

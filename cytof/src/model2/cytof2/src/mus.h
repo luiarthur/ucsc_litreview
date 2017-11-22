@@ -19,11 +19,11 @@ void update_mus_ij(State &state, const Data &y, int zz, int i, int j) {
 
   compute_mus_S(state, y, S_sum, S_size, zz, i, j);
 
-  const double g = (zz == 0) ? state.gams_0[i,j] : 0;
+  const double g = (zz == 0) ? state.gams_0(i,j) : 0;
 
-  const double var_denom = (g+1) * state.sig2[i,j] + state.tau2[zz] * S_size;
-  const double var_num = (g+1) * state.sig2[i,j] * state.tau2[zz];
-  const double mean_num = (zz+1) * state.sig2[i,j] * state.psi[zz] +
+  const double var_denom = (g+1) * state.sig2(i,j) + state.tau2[zz] * S_size;
+  const double var_num = (g+1) * state.sig2(i,j) * state.tau2[zz];
+  const double mean_num = (zz+1) * state.sig2(i,j) * state.psi[zz] +
                           state.tau2[zz] * S_sum;
 
   const double new_mean = mean_num / var_denom;

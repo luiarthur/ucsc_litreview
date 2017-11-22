@@ -6,7 +6,7 @@ void update_Hjk(State &state, const Data &y, const Prior &prior, int j, int k, d
     const int I = get_I(y);
     const auto N = get_N(y);
 
-    const double G_jj = prior.G[j,j];
+    const double G_jj = prior.G(j,j);
     const auto b = compute_b(state);
     int z_jlin;
 
@@ -22,8 +22,8 @@ void update_Hjk(State &state, const Data &y, const Prior &prior, int j, int k, d
     return lp + ll;
   };
 
-  const double h_jk = state.H[j,k];
-  state.H[j,k] = metropolis::uni(h_jk, log_fc, prior.cs_h);
+  const double h_jk = state.H(j,k);
+  state.H(j,k) = metropolis::uni(h_jk, log_fc, prior.cs_h);
 }
 
 void update_H(State &state, const Data &y, const Prior &prior) {

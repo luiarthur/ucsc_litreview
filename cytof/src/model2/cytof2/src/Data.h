@@ -1,3 +1,4 @@
+#include <math.h> // isnan
 /*
  * Data y:
  *   
@@ -7,7 +8,15 @@
 using Data = std::vector<arma::mat>;
 
 bool missing(const Data &y, int i, int n, int j) {
-  return NumericVector::is_na(y[i][n, j]);
+  return std::isnan(y[i](n, j));
+}
+
+//' Just a test
+//' @export
+// [[Rcpp::export]]
+bool missing_R(const std::vector<arma::mat> &y, int i, int n, int j) {
+  Rcout << "Value: " << y[i-1](n-1, j-1) << std::endl;
+  return missing(y, i-1, n-1, j-1);
 }
 
 int get_I(const Data &y) {

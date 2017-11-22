@@ -6,6 +6,20 @@
 
 using namespace Rcpp;
 
+// missing_R
+bool missing_R(const std::vector<arma::mat>& y, int i, int n, int j);
+RcppExport SEXP _cytof2_missing_R(SEXP ySEXP, SEXP iSEXP, SEXP nSEXP, SEXP jSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::vector<arma::mat>& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< int >::type i(iSEXP);
+    Rcpp::traits::input_parameter< int >::type n(nSEXP);
+    Rcpp::traits::input_parameter< int >::type j(jSEXP);
+    rcpp_result_gen = Rcpp::wrap(missing_R(y, i, n, j));
+    return rcpp_result_gen;
+END_RCPP
+}
 // cytof_fix_K_fit
 std::vector<List> cytof_fix_K_fit(const std::vector<arma::mat>& y, Nullable<List> prior_input, Nullable<List> truth_input, Nullable<List> init_input, int B, int burn, int thin, int compute_loglike_every, int print_freq);
 RcppExport SEXP _cytof2_cytof_fix_K_fit(SEXP ySEXP, SEXP prior_inputSEXP, SEXP truth_inputSEXP, SEXP init_inputSEXP, SEXP BSEXP, SEXP burnSEXP, SEXP thinSEXP, SEXP compute_loglike_everySEXP, SEXP print_freqSEXP) {
@@ -36,6 +50,7 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_cytof2_missing_R", (DL_FUNC) &_cytof2_missing_R, 4},
     {"_cytof2_cytof_fix_K_fit", (DL_FUNC) &_cytof2_cytof_fix_K_fit, 9},
     {"_cytof2_unit_tests", (DL_FUNC) &_cytof2_unit_tests, 0},
     {NULL, NULL, 0}
