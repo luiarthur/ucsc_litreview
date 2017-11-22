@@ -21,6 +21,10 @@ y <- list(transform_data(pat5_d54, pat5_d54_cutoff),
           transform_data(pat5_d93, pat5_d93_cutoff))
 J <- NCOL(y[[1]])
 
+sapply(y, function(yi)
+  apply(yi, 2, function(col) sum(col==-Inf))
+)
+
 set.seed(1)
 
 redToBlue <- colorRampPalette(c('red','grey90','blue'))(12)

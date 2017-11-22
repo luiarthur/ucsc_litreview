@@ -22,16 +22,6 @@ for (i in 1:I) for (j in 1:J) mus1_est[i,j] <- mean(dat$y[[i]][dat$y[[i]][,j]>0,
 
 plot(c(c(dat$mus_0),c(dat$mus_1)), c(c(mus0_est),c(mus1_est))); abline(0,1)
 
-# TODO: Add to package
-extendZ <- function(Z,K) {
-  if (NCOL(Z) > K) {
-    Z[,1:K]
-  } else if (NCOL(Z) < K) {
-    extendZ(cbind(Z,0), K)
-  } else {
-    Z
-  }
-}
 
 plot.histModel2(dat$y, xlim=c(-5,5))
 my.image(dat$Z)
@@ -41,8 +31,8 @@ my.image(dat$y[[1]], mn=-5, mx=5, col=blueToRed(), addLegend=TRUE)
 #system.time(out <- cytof_fix_K_fit(dat$y, truth=list(K=10), B=200, burn=400, init=list(Z=extendZ(dat$Z, 10))))
 #system.time(out <- cytof_fix_K_fit(dat$y, truth=list(K=10), B=2, burn=0))
 
-#system.time(out <- cytof_fix_K_fit(dat$y, truth=list(K=10), B=200, burn=400))
-system.time(out <- cytof_fix_K_fit(dat$y, truth=list(K=10), B=200, burn=0))
+system.time(out <- cytof_fix_K_fit(dat$y, truth=list(K=10), B=200, burn=400))
+#system.time(out <- cytof_fix_K_fit(dat$y, truth=list(K=10), B=200, burn=0))
 
 ll <- sapply(out, function(o) o$ll)
 plot(ll <- sapply(out, function(o) o$ll), type='l')
@@ -98,33 +88,11 @@ plot(beta_1_mean, xlab="Markers", ylim=range(beta_1_ci),
 add.errbar(beta_1_ci, lty=2, col='steelblue')
 
 # Prob of missing
-p <- function(o, i, j, y) {
-  b0ij <- matrix(o$beta_0, ncol=J)[i,j]
-  b1j <- o$beta_1[j]
-  1 / (1 + exp(-b0ij + b1j * y))
-}
-
-plot_beta <- function(mcmc, i, j, q=c(.025,.975), y_grid=seq(-12,12,len=50), 
-                      plot_line=TRUE, plot_area=TRUE, addToExistingPlot=FALSE, 
-                      col.line='blue',col.area=rgb(0,0,1,.1), ...) {
-
-  p_curve_ij = sapply(mcmc, p, i, j, y_grid)
-  p_curve_ij_mean = rowMeans(p_curve_ij)
-  p_curve_ij_ci = apply(p_curve_ij, 1, quantile, q)
-  if(plot_line && addToExistingPlot) {
-    lines(y_grid, p_curve_ij_mean, ylim=0:1, type='l', col=col.line, ...)
-  } else if (plot_line && !addToExistingPlot) {
-    plot(y_grid, p_curve_ij_mean, ylim=0:1, type='l', col=col.line, ...)
-  } 
-  if (plot_area) color.btwn(y_grid, ylo=p_curve_ij_ci[1,], yhi=p_curve_ij_ci[2,], 
-                            from=min(y_grid), to=max(y_grid), col=col.area)
-}
-
 ys <- seq(-12,12,l=100)
 plot(ys, ys, ylim=0:1, type='n')
 for (i in 1:I) for (j in 1:J) {
   r=135/255; g=206/255; b=250/255
-  plot_beta(out, i, j, plot_line=FALSE, col.area=rgb(r,g,b,.05), y=ys)
+  plot_beta(out, i, j, plot_line=FALSE, col.area=rgb(r,g,b,.5), y=ys)
 }
 for (i in 1:I) for (j in 1:J) {
   plot_beta(out, i, j, addT=TRUE, plot_area=FALSE, y=ys, col.line=j)
@@ -140,17 +108,11 @@ for (i in 1:I) {
 mus0 = sapply(out, function(o) c(o$mus[,,1]))
 mus0_mean = rowMeans(mus0)
 mus0_ci = t(apply(mus0, 1, quantile, c(.025,.975)))
-plot(c(dat$mus_0), mus0_mean, col='blue', pch=20)
-abline(0,1)
-add.errbar(mus0_ci, x=dat$mus_0, col=rgb(0,0,1,.2))
 
 # mus1
 mus1 = sapply(out, function(o) c(o$mus[,,2]))
 mus1_mean = rowMeans(mus1)
 mus1_ci = t(apply(mus1, 1, quantile, c(.025,.975)))
-plot(c(dat$mus_1), mus1_mean, col='blue', pch=20)
-abline(0,1)
-add.errbar(mus1_ci, x=dat$mus_1, col=rgb(0,0,1,.2))
 
 #mus
 plot(c(c(dat$mus_0),c(dat$mus_1)), c(c(mus0_mean), c(mus1_mean)), pch=20, col='blue')
@@ -232,5 +194,10 @@ i=3
 for (i in 1:I) {
   my.image(dat$y[[i]], mn=-5, mx=5, col=blueToRed(), addLegend=TRUE)
   my.image(missing_y_mean[[i]], mn=-5, mx=5, col=blueToRed(), addLegend=TRUE)
+}
+
+i=3
+for (i in 1:I) {
+  my.image(missing_y_mean[[i]] - dat$y_no_missing[[i]], mn=-3, mx=3, col=blueToRed(), addLegend=TRUE)
 }
 

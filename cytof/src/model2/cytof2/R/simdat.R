@@ -1,3 +1,16 @@
+extendZ <- function(Z,K) {
+  #' Extend (or shrink) the columns of Z to have exactly K columns
+  #' @export
+
+  if (NCOL(Z) > K) {
+    Z[,1:K]
+  } else if (NCOL(Z) < K) {
+    extendZ(cbind(Z,0), K)
+  } else {
+    Z
+  }
+}
+
 matApply <- function(mat_ls, f) {
   #' Apply a function to a list of matrices
   #' @export
@@ -63,6 +76,7 @@ simdat <- function(I, N, J, K, W, Z=genZ(J,K),
   gam <- function(i, n, j) ifelse(Z[j, lam[[i]][n]] == 0, gams_0[i,j], 0)
   
   y <- as.list(1:I)
+  y_no_missing <- y
   for (i in 1:I) {
     Ni <- N[[i]]
     y[[i]] <- matrix(NA, Ni, J)
@@ -70,12 +84,14 @@ simdat <- function(I, N, J, K, W, Z=genZ(J,K),
       lin <- lam[[i]][n]
       y[[i]][n, j] <- rnorm(1, mu(i,n,j), sqrt((1+gam(i,n,j))*sig2[i,j]))
     }
+
+    y_no_missing[[i]] <- y[[i]]
     y[[i]] <- ifelse(y[[i]] < thresh, NA, y[[i]])
   }
 
   list(Z=Z, lam=lam, mus_0=mus_0, mus_1=mus_1, y=y, I=I, N=N, J=J, K=K,
        gams_0=gams_0, psi_0=psi_0, psi_1=psi_1, sig2=sig2, tau2_0=tau2_0,
-       tau2_1=tau2_1, W=W, thresh=thresh)
+       tau2_1=tau2_1, W=W, thresh=thresh, y_no_missing=y_no_missing)
 }
 
 ### TEST ###
