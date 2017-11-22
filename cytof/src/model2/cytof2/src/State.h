@@ -95,11 +95,15 @@ State gen_init_obj(const Nullable<List> &init_input,
   const arma::mat init_sig2 = arma::ones<arma::mat>(I,J);
   state.sig2 = getInitOrFix(init, truth, "sig2", init_sig2);
 
-  const arma::vec init_tau2 = {1, 1};
+  arma::vec init_tau2(2);
+  init_tau2(0) = 1;
+  init_tau2(1) = 1;
   state.tau2 = getInitOrFix(init, truth, "tau2", init_tau2);
 
-  const arma::vec init_psi = {-1, 1};
-  state.psi = getInitOrFix(init, truth, "psi2", init_psi);
+  arma::vec init_psi(2);
+  init_psi(0) = -1;
+  init_psi(1) = 1;
+  state.psi = getInitOrFix(init, truth, "psi", init_psi);
 
   const arma::vec init_v = arma::ones<arma::vec>(K) / K;
   state.v = getInitOrFix(init, truth, "v", init_v);

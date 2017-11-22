@@ -10,7 +10,7 @@ void update_gams0ij(State &state, const Data &y, const Prior &prior, int i, int 
     for (int n=0; n<Ni; n++) {
       if (z(state, i, n, j) == 0) {
         ll += R::dnorm(y_final(state, y, i, n, j), 
-                       mu(state, i, n, j), 
+                       state.mus(i,j,0),
                        sqrt((1 + gams_0ij) * state.sig2(i,j)), lg);
       }
     }

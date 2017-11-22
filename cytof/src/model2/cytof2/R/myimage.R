@@ -1,3 +1,14 @@
+redToBlue <- function(n=12) {
+  #' @export
+  colorRampPalette(c('red','grey90','blue'))(n)
+}
+
+blueToRed <- function(n=12) {
+  #' @export
+  rev(redToBlue(n))
+}
+
+
 color.bar <- function(lut, min, max=-min, nticks=11, 
                       ticks=seq(min, max, len=nticks), title='') {
   #' @export
@@ -17,8 +28,13 @@ color.bar <- function(lut, min, max=-min, nticks=11,
 my.image <- function(Z,col=grey(seq(1,0,len=12)),fg='grey', 
                      f=function(dat) stopifnot(TRUE),
                      truncate=TRUE,
+                     rm0Cols=FALSE,
                      addLegend=FALSE,nticks=11,mn=0,mx=1,...) {
   #' @export
+
+  if (rm0Cols) {
+    Z <- Z[, which(colSums(Z) > 0)]
+  }
 
   N <- nrow(Z)
   K <- ncol(Z)

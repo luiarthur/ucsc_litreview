@@ -45,6 +45,10 @@ void unit_tests() {
   const double rig_b = 4;
   for (int i=0; i<N; i++) x[i] = rinvgamma(rig_a, rig_b);
   test_approx<double>("Mean of InverseGamma(3,4)", arma::mean(x), rig_b / (rig_a-1), 1E-2, counters);
+
+  test_equal<double>("logit", logit(.1), logit(.1,0,1), counters);
+  test_equal<double>("inv-logit", inv_logit(2), inv_logit(2,0,1), counters);
+
   // End of Tests ////
 
   print_pass_fail_counts(counters);

@@ -1,6 +1,6 @@
 double ll_p_given_yinj(const State &state, double yinj, int i, int n, int j) {
   const double xinj = state.beta_0(i,j) - state.beta_1[j] * yinj;
-  return log(inv_logit(xinj, 0, 1)); // It should be missing!
+  return log(inv_logit(xinj)); // It should be missing!
 }
 
 double ll_f_given_yinj(const State &state, double yinj, int i, int n, int j) {

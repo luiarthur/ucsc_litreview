@@ -1,6 +1,6 @@
 void update_sig2_ij(State &state, const Data& y, const Prior &prior, int i, int j) {
   const int Ni = get_Ni(y, i);
-  const double new_a = prior.a_sig + Ni;
+  const double new_a = prior.a_sig + Ni/2;
 
   double x = 0;
   for (int n=0; n<Ni; n++) {
@@ -9,7 +9,7 @@ void update_sig2_ij(State &state, const Data& y, const Prior &prior, int i, int 
 
   const double new_b = prior.b_sig + x / 2;
 
-  state.gams_0(i,j) = rinvgamma(new_a, new_b);
+  state.sig2(i,j) = rinvgamma(new_a, new_b);
 }
 
 void update_sig2(State &state, const Data& y, const Prior &prior) {

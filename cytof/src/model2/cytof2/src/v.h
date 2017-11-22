@@ -32,7 +32,7 @@ void update_vk(State &state, const Data &y, const Prior &prior, int k) {
 
     arma::vec v_tmp(state.K);
     for (int l=0; l<state.K; l++) {
-      v_tmp[l] = (l == k) ? inv_logit(logit_vk, 0, 1) : state.v[l];
+      v_tmp[l] = (l == k) ? inv_logit(logit_vk) : state.v[l];
     }
     const arma::vec b = arma::cumprod(v_tmp);
 
@@ -53,13 +53,20 @@ void update_vk(State &state, const Data &y, const Prior &prior, int k) {
     return lp + ll;
   };
 
-  const double logit_vk = logit(state.v(k), 0, 1);
-  state.v[k] = inv_logit(metropolis::uni(logit_vk, log_fc, prior.cs_v), 0, 1);
+  const double logit_vk = logit(state.v(k));
+  state.v[k] = inv_logit(metropolis::uni(logit_vk, log_fc, prior.cs_v));
 }
 
 void update_v(State &state, const Data &y, const Prior &prior) {
   const int K = state.K;
+  const int J = get_J(y);
+  double bk;
+  
   for (int k=0; k<K; k++) {
     update_vk(state, y, prior, k);
+    bk = compute_bk(state, k);
+    for (int j=0; j<J; j++) {
+      state.Z(j,k) = compute_zjk(state.H(j,k), prior.G(j,j), bk);
+    }
   }
 }

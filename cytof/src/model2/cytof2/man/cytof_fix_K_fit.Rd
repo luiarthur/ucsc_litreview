@@ -4,27 +4,28 @@
 \alias{cytof_fix_K_fit}
 \title{Cytof Model for fixed K}
 \usage{
-cytof_fix_K_fit(y, prior_input, truth_input, init_input, B, burn, thin,
-  compute_loglike_every, print_freq)
+cytof_fix_K_fit(y, B, burn, thin = 0L, compute_loglike_every = 1L,
+  print_freq = 10L, prior_input = NULL, truth_input = NULL,
+  init_input = NULL)
 }
 \arguments{
 \item{y}{A list of matrices, y[[i]] having dimensions N[i] x J, where N[i] is the number of cells in sample i, J is the number of markers, and i=1,..,I is the sample size with I being the total number of samples.}
-
-\item{prior_input}{A list of priors. Set to NULL to use default priors. (More details to come.)}
-
-\item{truth_input}{A list containing the values of certain parameters to hold fixed. Primarily used for (1) simultaion studies, and (2) fixing K. Set to NULL to disable.}
-
-\item{init_input}{A list containing the initial values of the parameters. When set to NULL, default initial values are used.}
 
 \item{B}{The number of MCMC samples to collect.}
 
 \item{burn}{The burn-in for MCMC.}
 
-\item{thin}{Frequency for thinning. (Not Implemented.)}
+\item{thin}{Frequency for thinning (default=0, no thinning). (Not Implemented.)}
 
-\item{compute_loglike_every}{How often to compute loglikelihood. It's not that expensive relative to the rest of the update steps. Setting to 1 is fine.}
+\item{compute_loglike_every}{How often to compute log-likelihood. Relative to the rest of the mcmc updates, computing the likelihood is not that expensive. So it's default is 1 (compute log likelihood every iteration).}
 
-\item{print_freq}{How often to print progress. Setting to 1 is recommended when N is in the order of thousands.}
+\item{print_freq}{How often to print progress. Setting to 1 is recommended when N is in the order of thousands. (default=10)}
+
+\item{prior_input}{A list of priors. Set to NULL (default) to use default priors. (More details to come.)}
+
+\item{truth_input}{A list containing the values of certain parameters to hold fixed. Primarily used for (1) simultaion studies, and (2) fixing K. Set to NULL (default) to disable.}
+
+\item{init_input}{A list containing the initial values of the parameters. When set to NULL (default), default initial values are used.}
 }
 \description{
 Cytof Model for fixed K

@@ -31,23 +31,23 @@
 //' Cytof Model for fixed K
 //'
 //' @param y A list of matrices, y[[i]] having dimensions N[i] x J, where N[i] is the number of cells in sample i, J is the number of markers, and i=1,..,I is the sample size with I being the total number of samples.
-//' @param prior_input A list of priors. Set to NULL to use default priors. (More details to come.)
-//' @param truth_input A list containing the values of certain parameters to hold fixed. Primarily used for (1) simultaion studies, and (2) fixing K. Set to NULL to disable. 
-//' @param init_input A list containing the initial values of the parameters. When set to NULL, default initial values are used.
 //' @param B The number of MCMC samples to collect.
 //' @param burn The burn-in for MCMC.
-//' @param thin Frequency for thinning. (Not Implemented.)
-//' @param compute_loglike_every How often to compute loglikelihood. It's not that expensive relative to the rest of the update steps. Setting to 1 is fine.
-//' @param print_freq How often to print progress. Setting to 1 is recommended when N is in the order of thousands.
+//' @param thin Frequency for thinning (default=0, no thinning). (Not Implemented.)
+//' @param compute_loglike_every How often to compute log-likelihood. Relative to the rest of the mcmc updates, computing the likelihood is not that expensive. So it's default is 1 (compute log likelihood every iteration).
+//' @param print_freq How often to print progress. Setting to 1 is recommended when N is in the order of thousands. (default=10)
+//' @param prior_input A list of priors. Set to NULL (default) to use default priors. (More details to come.)
+//' @param truth_input A list containing the values of certain parameters to hold fixed. Primarily used for (1) simultaion studies, and (2) fixing K. Set to NULL (default) to disable. 
+//' @param init_input A list containing the initial values of the parameters. When set to NULL (default), default initial values are used.
 //'
 //' @export 
 // [[Rcpp::export]]
 std::vector<List> cytof_fix_K_fit(
-  const std::vector<arma::mat> &y,
-  Nullable<List> prior_input,
-  Nullable<List> truth_input,
-  Nullable<List> init_input,
-  int B, int burn, int thin, int compute_loglike_every, int print_freq) {
+  const std::vector<arma::mat> &y, int B, int burn,
+  int thin=0, int compute_loglike_every=1, int print_freq=10,
+  Nullable<List> prior_input = R_NilValue,
+  Nullable<List> truth_input = R_NilValue,
+  Nullable<List> init_input = R_NilValue) {
 
   const int I = get_I(y);
   const int J = get_J(y);

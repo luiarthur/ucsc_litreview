@@ -29,6 +29,7 @@ void update_Hjk(State &state, const Data &y, const Prior &prior, int j, int k, d
 void update_H(State &state, const Data &y, const Prior &prior) {
   const int J = get_J(y);
   const int K = state.K;
+  const auto b = compute_b(state);
 
   for (int j=0; j<J; j++) {
     const auto j_idx = arma::regspace<arma::vec>(0, J-1);
@@ -37,6 +38,7 @@ void update_H(State &state, const Data &y, const Prior &prior) {
       arma::uvec at_k; at_k << k;
       const arma::vec mj = prior.R.row(j) * state.H(minus_j, at_k);
       update_Hjk(state, y, prior, j, k, mj(0), prior.S2(j));
+      state.Z(j,k) = compute_zjk(state.H(j,k), prior.G(j,j), b[k]);
     }
   }
 }
