@@ -8,7 +8,8 @@
 using Data = std::vector<arma::mat>;
 
 bool missing(const Data &y, int i, int n, int j) {
-  return std::isnan(y[i](n, j));
+  double y_inj = y[i](n, j);
+  return std::isnan(y_inj) || std::isinf(-y_inj);
 }
 
 //' Just a test
