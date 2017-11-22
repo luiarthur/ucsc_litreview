@@ -72,11 +72,23 @@ my.image(mus1_mean-dat$mus_1, mn=-1, mx=1, col=blueToRed, addLegend=TRUE)
 
 # sig2
 
+
 # Z
 Z <- lapply(out, function(o) o$Z)
 Z_mean <- Reduce("+", Z) / length(Z)
 ord <- left_order(Z_mean)
-my.image(Z_mean[,ord], main="posterior")
-my.image(dat$Z, main="data")
 
+for (i in 1:200) my.image(Z[[i]][,ord], main="posterior", ylab="1:J")
 
+my.image(Z_mean[,ord], main="posterior", ylab="1:J", addL=T)
+my.image(Z_mean[,ord]>.5, main="posterior", ylab="1:J", addL=T)
+my.image(dat$Z, main="data", ylab="1:J", addL=T)
+
+# W
+W <- lapply(out, function(o) o$W)
+W_mean <- Reduce("+", W) / length(W)
+my.image(W_mean[,ord])
+my.image(dat$W)
+
+W_mean[,ord]
+dat$W
