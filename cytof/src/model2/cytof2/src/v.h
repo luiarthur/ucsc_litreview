@@ -59,14 +59,8 @@ void update_vk(State &state, const Data &y, const Prior &prior, int k) {
 
 void update_v(State &state, const Data &y, const Prior &prior) {
   const int K = state.K;
-  const int J = get_J(y);
-  double bk;
   
   for (int k=0; k<K; k++) {
     update_vk(state, y, prior, k);
-    bk = compute_bk(state, k);
-    for (int j=0; j<J; j++) {
-      state.Z(j,k) = compute_zjk(state.H(j,k), prior.G(j,j), bk);
-    }
   }
 }

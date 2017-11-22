@@ -8,6 +8,7 @@ void update_theta(State &state, const Data &y, const Prior &prior, const Fixed &
 
   if (!fixed_param.Z) {
     update_v(state, y, prior);
+    update_Z(state, y, prior);
     update_H(state, y, prior);
     update_Z(state, y, prior);
   }

@@ -32,7 +32,7 @@ my.image(dat$y[[1]], mn=-5, mx=5, col=blueToRed(), addLegend=TRUE)
 
 #system.time(out <- cytof_fix_K_fit(dat$y, truth=list(K=10), B=200, burn=400, init=list(Z=extendZ(dat$Z, 10))))
 #system.time(out <- cytof_fix_K_fit(dat$y, truth=list(K=10), B=2, burn=0))
-system.time(out <- cytof_fix_K_fit(dat$y, truth=list(K=10), B=200, burn=400)
+system.time(out <- cytof_fix_K_fit(dat$y, truth=list(K=10), B=200, burn=400))
 
 ll <- sapply(out, function(o) o$ll)
 plot(ll <- sapply(out, function(o) o$ll), type='l')
@@ -172,7 +172,7 @@ gams_0_mean = rowMeans(gams_0)
 gams_0_ci = t(apply(gams_0, 1, quantile, c(.025,.975)))
 
 plot(c(dat$gams_0), c(gams_0_mean),
-     xlim=c(0,.1), ylim=c(0,30), pch=20, col='blue')
+     xlim=c(0,1), ylim=c(0,1), pch=20, col='blue')
 abline(0,1, col='grey')
 add.errbar(gams_0_ci, x=dat$gams_0, col=rgb(0,0,1,.2))
 
@@ -206,7 +206,7 @@ tau2 <- t(sapply(out, function(o) o$tau2))
 plotPosts(tau2, cnames=paste0('Truth=', c(dat$tau2_0, dat$tau2_1)))
 
 # psi: FIXME: Has not moved!
-#psi <- t(sapply(out, function(o) o$psi))
+psi <- t(sapply(out, function(o) o$psi))
 #plotPosts(psi, cnames=paste0('Truth=', c(dat$psi_0, dat$psi_1)))
 
 # lam: TODO: HOW???
