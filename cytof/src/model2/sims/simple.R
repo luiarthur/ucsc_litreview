@@ -12,8 +12,13 @@ W <- matrix(c(.3, .4, .2, .1,
               .1, .7, .1, .1,
               .2, .3, .3, .2), nrow=I, byrow=TRUE)
 
-dat <- simdat(I=3, N=c(200,300,100), J=J, K=K, Z=genZ(J, K, c(.4,.6)), W=W,
+dat <- simdat(I=3, N=c(2000,3000,1000), J=J, K=K, Z=genZ(J, K, c(.4,.6)), W=W,
               thresh=-4)
+
+missing_count = sapply(dat$y, function(yi)
+  apply(yi, 2, function(col) sum(is.na(col)))
+)
+
 
 mus0_est <- matrix(0, I, J)
 mus1_est <- matrix(0, I, J)
