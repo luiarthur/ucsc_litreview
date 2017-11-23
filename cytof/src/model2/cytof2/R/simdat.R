@@ -1,3 +1,12 @@
+invgamma_ab <- function(mu,sig) {
+  #' Get the parameter values for inv-gamma distribution given mean and sd.
+  #' Parameterization: mu = b / (a-1)
+  #' @export
+  a <- (mu / sig)^2 + 2
+  b <- mu * (a-1)
+  c(a,b)
+}
+
 extendZ <- function(Z,K) {
   #' Extend (or shrink) the columns of Z to have exactly K columns
   #' @export
@@ -45,18 +54,18 @@ genZ <- function(J,K,prob=c(.4,.6)) {
 
 
 simdat <- function(I, N, J, K, W, Z=genZ(J,K),
-                   gams_0=matrix(1/rgamma(I*J, 3, .1), nrow=I),
+                   gams_0=matrix(1/rgamma(I*J, 40, 20), nrow=I),
                    sig2=matrix(1/rgamma(I*J, 3, 1), nrow=I),
                    psi_0=-1, psi_1=1,
-                   tau2_0=2, tau2_1=1,
+                   tau2_0=3, tau2_1=3,
                    thresh=-5) {
   #' Generate simulation data
   #' @examples
-  #W <- matrix(c(.3, .4, .2, .1,
-  #              .1, .7, .1, .1,
-  #              .2, .3, .3, .2), nrow=3, byrow=TRUE)
-  #out <- simdat(I=3, N=c(20,30,10), J=12, K=4, Z=genZ(12, 4, c(.4,.6)), W=W,
-  #              thresh=-2)
+  #' W <- matrix(c(.3, .4, .2, .1,
+  #'               .1, .7, .1, .1,
+  #'               .2, .3, .3, .2), nrow=3, byrow=TRUE)
+  #' out <- simdat(I=3, N=c(20,30,10), J=12, K=4, Z=genZ(12, 4, c(.4,.6)), W=W,
+  #'               thresh=-2)
   #' @export
   stopifnot(NROW(Z)==J && NCOL(Z)==K)
   stopifnot(NROW(W)==I && NCOL(W)==K)
@@ -81,7 +90,6 @@ simdat <- function(I, N, J, K, W, Z=genZ(J,K),
     Ni <- N[[i]]
     y[[i]] <- matrix(NA, Ni, J)
     for (n in 1:Ni) for (j in 1:J) {
-      lin <- lam[[i]][n]
       y[[i]][n, j] <- rnorm(1, mu(i,n,j), sqrt((1+gam(i,n,j))*sig2[i,j]))
     }
 

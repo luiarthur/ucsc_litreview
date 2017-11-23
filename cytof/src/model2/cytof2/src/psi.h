@@ -22,6 +22,10 @@ void update_psi_z(State &state, const Data &y, const Prior &prior, int zz) {
       }
     }
 
+    //Rcout << log_abs_psi << std::endl;
+    //Rcout << zz << std::endl;
+    //Rcout << "ll: " << ll << std::endl;
+    //Rcout << "lp: " << lp << std::endl;
     return lp + ll;
   };
 

@@ -12,8 +12,11 @@ W <- matrix(c(.3, .4, .2, .1,
               .1, .7, .1, .1,
               .2, .3, .3, .2), nrow=I, byrow=TRUE)
 
-dat <- simdat(I=3, N=c(2000,3000,1000), J=J, K=K, Z=genZ(J, K, c(.4,.6)), W=W,
-              thresh=-4)
+dat <- simdat(I=I, N=c(200,300,100), J=J, K=K, Z=genZ(J, K, c(.4,.6)), W=W,
+              psi_0=-1, psi_1=0,
+              tau2_0=1, tau2_1=1,
+              sig2=matrix(1/rgamma(I*J, 3,.2), ncol=J), thresh=-4)
+              #sig2=matrix(1/rgamma(I*J, 3,2), ncol=J), thresh=-4)
 
 missing_count = sapply(dat$y, function(yi)
   apply(yi, 2, function(col) sum(is.na(col)))
@@ -25,22 +28,30 @@ mus1_est <- matrix(0, I, J)
 for (i in 1:I) for (j in 1:J) mus0_est[i,j] <- mean(dat$y[[i]][dat$y[[i]][,j]<0,j], na.rm=T)
 for (i in 1:I) for (j in 1:J) mus1_est[i,j] <- mean(dat$y[[i]][dat$y[[i]][,j]>0,j], na.rm=T)
 
-plot(c(c(dat$mus_0),c(dat$mus_1)), c(c(mus0_est),c(mus1_est))); abline(0,1)
+plot(c(c(dat$mus_0),c(dat$mus_1)), c(c(mus0_est),c(mus1_est)),
+     xlab="true mu*", ylab="empirical estimate of mu*", main='Data: mu*')
+abline(0,1)
 
 
-plot.histModel2(dat$y, xlim=c(-5,5))
-my.image(dat$Z)
-my.image(dat$y[[1]], mn=-5, mx=5, col=blueToRed(), addLegend=TRUE)
+plot.histModel2(dat$y, xlim=c(-5,5), main='Histogram of Data')
+my.image(dat$Z, xlab='j', ylab='k', main='True Z')
+for (i in 1:length(dat$y)) {
+  my.image(dat$y[[i]], mn=-5, mx=5, col=blueToRed(), addLegend=TRUE,
+           main=paste0('y',i), xlab='j', ylab='i')
+}
 
 
 #system.time(out <- cytof_fix_K_fit(dat$y, truth=list(K=10), B=200, burn=400, init=list(Z=extendZ(dat$Z, 10))))
 #system.time(out <- cytof_fix_K_fit(dat$y, truth=list(K=10), B=2, burn=0))
-
-system.time(out <- cytof_fix_K_fit(dat$y, truth=list(K=10), B=200, burn=400))
 #system.time(out <- cytof_fix_K_fit(dat$y, truth=list(K=10), B=200, burn=0))
 
+#truth=list(K=10, psi=c(-1,1), tau2=c(9,9))
+truth=list(K=10)
+system.time(out <- cytof_fix_K_fit(dat$y, truth=truth, B=200, burn=400))
+
 ll <- sapply(out, function(o) o$ll)
-plot(ll <- sapply(out, function(o) o$ll), type='l')
+plot(ll <- sapply(out, function(o) o$ll), type='l',
+     main='log-likelihood', xlab='mcmc iteration', ylab='log-likelihood')
 
 # Z
 Z <- lapply(out, function(o) o$Z)
@@ -48,7 +59,7 @@ Z_mean <- matApply(Z, mean)
 Z_sd <- matApply(Z, sd)
 ord <- left_order(Z_mean>.5)
 
-for (i in 1:length(out)) my.image(Z[[i]][,ord], main="posterior", ylab="1:J")
+#for (i in 1:length(out)) my.image(Z[[i]][,ord], main="posterior", ylab="1:J")
 
 my.image(Z_sd[,ord], main="Posterior SD", ylab="1:J", addL=T)
 my.image(Z_mean[,ord], main="Posterior Mean", ylab="1:J", addL=T)
@@ -62,7 +73,7 @@ W_sd <- matApply(W, sd)
 my.image(W_sd[,ord][,1:4], mn=0, mx=.05, 
          ylab="I", xlab="K", main="Posterior SD: W", addL=TRUE)
 my.image(W_mean[,ord][,1:4], ylab="I", xlab="K", main="Posterior Mean: W", addL=TRUE)
-my.image(dat$W, ylab="I", xlab="K", main="Data: W", addL=TRUE)
+my.image(dat$W, ylab="I", xlab="K", main="W: Truth", addL=TRUE)
 
 W_mean[,ord]
 dat$W
@@ -73,28 +84,29 @@ dat$W
 beta_0 = lapply(out, function(o) matrix(o$beta_0, ncol=J))
 beta_0_mean = matApply(beta_0, mean)
 beta_0_sd = matApply(beta_0, sd)
-my.image(beta_0_mean, mn=-10, mx=-.5, addL=TRUE, xlab='J', ylab='I')
-my.image(beta_0_sd, mn=0, mx=5, addL=TRUE, xlab='J', ylab='I', col=blueToRed())
+#my.image(beta_0_mean, mn=-10, mx=-.5, addL=TRUE, xlab='J', ylab='I')
+#my.image(beta_0_sd, mn=0, mx=5, addL=TRUE, xlab='J', ylab='I', col=blueToRed())
 
 # betaBar_0
 betaBar_0 = sapply(out, function(o) o$betaBar_0)
 betaBar_0_mean <- rowMeans(betaBar_0)
 betaBar_0_ci <- t(apply(betaBar_0, 1, quantile, c(.025,.975)))
-plot(betaBar_0_mean, xlab="Markers", ylim=range(betaBar_0_ci), 
-     fg='grey', pch=20, col='steelblue', cex=2)
-add.errbar(betaBar_0_ci, lty=2, col='steelblue')
+#plot(betaBar_0_mean, xlab="Markers", ylim=range(betaBar_0_ci), 
+#     fg='grey', pch=20, col='steelblue', cex=2)
+#add.errbar(betaBar_0_ci, lty=2, col='steelblue')
 
 # beta_1
 beta_1 = sapply(out, function(o) o$beta_1)
 beta_1_mean = rowMeans(beta_1)
 beta_1_ci <- t(apply(beta_1, 1, quantile, c(.025,.975)))
-plot(beta_1_mean, xlab="Markers", ylim=range(beta_1_ci), 
-     fg='grey', pch=20, col='steelblue', cex=2)
-add.errbar(beta_1_ci, lty=2, col='steelblue')
+#plot(beta_1_mean, xlab="Markers", ylim=range(beta_1_ci), 
+#     fg='grey', pch=20, col='steelblue', cex=2)
+#add.errbar(beta_1_ci, lty=2, col='steelblue')
 
 # Prob of missing
 ys <- seq(-12,12,l=100)
-plot(ys, ys, ylim=0:1, type='n')
+plot(ys, ys, ylim=0:1, type='n', fg='grey', xlab='y', ylab='prob of missing')
+title(main='Prob of missing')
 for (i in 1:I) for (j in 1:J) {
   r=135/255; g=206/255; b=250/255
   plot_beta(out, i, j, plot_line=FALSE, col.area=rgb(r,g,b,.5), y=ys)
@@ -103,10 +115,12 @@ for (i in 1:I) for (j in 1:J) {
   plot_beta(out, i, j, addT=TRUE, plot_area=FALSE, y=ys, col.line=j)
 }
 
-plot(ys, ys, ylim=0:1, type='n', fg='grey')
-j = 14
-for (i in 1:I) {
-  plot_beta(out, i, j, addT=TRUE, plot_a=T, y=ys, col.line='steelblue', lwd=2)
+for (j in c(1, 12)){
+  plot(ys, ys, ylim=0:1, type='n', fg='grey', xlab='y', ylab='prob of missing')
+  title(main=paste0('Prob of missing: marker ',j))
+  for (i in 1:I) {
+    plot_beta(out, i, j, addT=TRUE, plot_a=T, y=ys, col.line='steelblue', lwd=2)
+  }
 }
 
 # mus0
@@ -120,7 +134,8 @@ mus1_mean = rowMeans(mus1)
 mus1_ci = t(apply(mus1, 1, quantile, c(.025,.975)))
 
 #mus
-plot(c(c(dat$mus_0),c(dat$mus_1)), c(c(mus0_mean), c(mus1_mean)), pch=20, col='blue')
+plot(c(c(dat$mus_0),c(dat$mus_1)), c(c(mus0_mean), c(mus1_mean)), pch=20,fg='grey',
+     col='blue', main='Posterior mu*', xlab='true mu*', ylab='posterior mean: mu*')
 abline(0,1, h=0, v=0, col='grey', lty=2)
 add.errbar(rbind(mus0_ci, mus1_ci),
            x=c(c(dat$mus_0), c(dat$mus_1)), col=rgb(0,0,1,.2))
@@ -148,8 +163,10 @@ gams_0 = sapply(out, function(o) o$gams_0)
 gams_0_mean = rowMeans(gams_0)
 gams_0_ci = t(apply(gams_0, 1, quantile, c(.025,.975)))
 
-plot(c(dat$gams_0), c(gams_0_mean),
-     xlim=c(0,1), ylim=c(0,1), pch=20, col='blue')
+plot(c(dat$gams_0), c(gams_0_mean), fg='grey',
+     xlab='Data: gam0*', ylab='Posterior Mean: gam0*', 
+     main=expression('Posterior'~gamma[0]^'*'),
+     xlim=c(0,1), ylim=c(0,3), pch=20, col='blue')
 abline(0,1, col='grey')
 add.errbar(gams_0_ci, x=dat$gams_0, col=rgb(0,0,1,.2))
 
@@ -163,8 +180,10 @@ sig2 = sapply(out, function(o) o$sig2)
 sig2_mean = rowMeans(sig2)
 sig2_ci = t(apply(sig2, 1, quantile, c(.025,.975)))
 
-plot(c(dat$sig2), c(sig2_mean), xlim=c(0,2), ylim=c(0,2), pch=20, col='blue',
-     fg='grey', xlab='truth', ylab='posterior mean', main='sig2')
+sig2_range = range(sig2_mean, dat$sig2)
+plot(c(dat$sig2), c(sig2_mean), xlim=sig2_range, ylim=sig2_range,
+     pch=20, col='blue', fg='grey', xlab='truth', ylab='posterior mean',
+     main=expression(sigma[ij]^2))
 abline(0,1, col='grey')
 add.errbar(sig2_ci, x=c(dat$sig2), col=rgb(0,0,1,.3))
 
@@ -174,17 +193,19 @@ gs <- sapply(out, function(o) o$sig2 * (1 + o$gams_0))
 gs_mean <- rowMeans(gs)
 gs_ci <- t(apply(gs, 1, quantile, c(.025,.975)))
 
-plot(c(dat_gs), rowMeans(gs), pch=20, col='blue', fg='grey')
+plot(c(dat_gs), rowMeans(gs), pch=20, col='blue', fg='grey',
+     xlab='truth', ylab='posterior mean',
+     main=expression(sigma[ij]^2~(1+gamma[0][ij])))
 abline(0,1)
 add.errbar(gs_ci, x=c(dat_gs), col=rgb(0,0,1,.3))
 
 # tau2: TODO: Overestimated
 tau2 <- t(sapply(out, function(o) o$tau2))
-plotPosts(tau2, cnames=paste0('Truth=', c(dat$tau2_0, dat$tau2_1)))
+plotPosts(tau2, cnames=paste0('tau2: Truth=', c(dat$tau2_0, dat$tau2_1)))
 
 # psi: FIXME: Has not moved!
 psi <- t(sapply(out, function(o) o$psi))
-plotPosts(psi, cnames=paste0('Truth=', c(dat$psi_0, dat$psi_1)))
+#plotPosts(psi, cnames=paste0('Truth=', c(dat$psi_0, dat$psi_1)))
 
 # lam: TODO: HOW???
 
@@ -197,12 +218,16 @@ missing_y_mean <- lapply(missing_y, function(m) Reduce("+", m) / length(m))
 
 i=3
 for (i in 1:I) {
-  my.image(dat$y[[i]], mn=-5, mx=5, col=blueToRed(), addLegend=TRUE)
-  my.image(missing_y_mean[[i]], mn=-5, mx=5, col=blueToRed(), addLegend=TRUE)
+  my.image(dat$y[[i]], mn=-5, mx=5, col=blueToRed(), addLegend=TRUE,
+           xlab='markers', main=paste0('Data: y',i))
+  my.image(missing_y_mean[[i]], mn=-5, mx=5, col=blueToRed(), addLegend=TRUE,
+           xlab='markers', main=paste0('Data with imputed missing values: y',i))
 }
 
 i=3
 for (i in 1:I) {
-  my.image(missing_y_mean[[i]] - dat$y_no_missing[[i]], mn=-3, mx=3, col=blueToRed(), addLegend=TRUE)
+  my.image(missing_y_mean[[i]] - dat$y_no_missing[[i]], mn=-3, mx=3,
+           col=blueToRed(), addLegend=TRUE, xlab='markers',
+           main=paste0('Posterior Mean - Full Data',i))
 }
 

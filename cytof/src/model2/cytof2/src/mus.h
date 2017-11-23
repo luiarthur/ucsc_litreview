@@ -19,11 +19,15 @@ void update_mus_ij(State &state, const Data &y, int zz, int i, int j) {
 
   compute_mus_S(state, y, S_sum, S_size, zz, i, j);
 
+  //Rcout << "i:" << i << ", j:" << j << std::endl;
+  //Rcout << S_size << std::endl;
+  //Rcout << S_sum << std::endl;
+
   const double g = (zz == 0) ? state.gams_0(i,j) : 0;
 
   const double var_denom = (g+1) * state.sig2(i,j) + state.tau2[zz] * S_size;
   const double var_num = (g+1) * state.sig2(i,j) * state.tau2[zz];
-  const double mean_num = (zz+1) * state.sig2(i,j) * state.psi[zz] +
+  const double mean_num = (g+1) * state.sig2(i,j) * state.psi[zz] +
                           state.tau2[zz] * S_sum;
 
   const double new_mean = mean_num / var_denom;
@@ -31,20 +35,17 @@ void update_mus_ij(State &state, const Data &y, int zz, int i, int j) {
   const double lo = (zz == 0) ? -INFINITY : 0;
   const double hi = (zz == 0) ? 0 : INFINITY;
 
-  const double new_mus_ij = rtnorm(new_mean, new_sd, lo, hi);
-
-  state.mus(i,j,zz) = new_mus_ij;
+  state.mus(i,j,zz) = rtnorm(new_mean, new_sd, lo, hi);
 }
 
 void update_mus(State &state, const Data &y) {
   const int I = get_I(y);
   const int J = get_J(y);
 
-  for (int zz=0; zz<2; zz++) {
-    for (int i=0; i<I; i++) {
-      for (int j=0; j<J; j++) {
-        update_mus_ij(state, y, zz, i, j);
-      }
+  for (int i=0; i<I; i++) {
+    for (int j=0; j<J; j++) {
+      update_mus_ij(state, y, 0, i, j);
+      update_mus_ij(state, y, 1, i, j);
     }
   }
 }

@@ -4,10 +4,17 @@
 \alias{simdat}
 \title{Generate simulation data}
 \usage{
-simdat(I, N, J, K, W, Z = genZ(J, K), gams_0 = matrix(1/rgamma(I * J, 3,
-  0.1), nrow = I), sig2 = matrix(1/rgamma(I * J, 3, 1), nrow = I),
-  psi_0 = -1, psi_1 = 1, tau2_0 = 2, tau2_1 = 1, thresh = -5)
+simdat(I, N, J, K, W, Z = genZ(J, K), gams_0 = matrix(1/rgamma(I * J, 40,
+  20), nrow = I), sig2 = matrix(1/rgamma(I * J, 3, 1), nrow = I),
+  psi_0 = -1, psi_1 = 1, tau2_0 = 3, tau2_1 = 3, thresh = -5)
 }
 \description{
 Generate simulation data
+}
+\examples{
+W <- matrix(c(.3, .4, .2, .1,
+              .1, .7, .1, .1,
+              .2, .3, .3, .2), nrow=3, byrow=TRUE)
+out <- simdat(I=3, N=c(20,30,10), J=12, K=4, Z=genZ(12, 4, c(.4,.6)), W=W,
+              thresh=-2)
 }

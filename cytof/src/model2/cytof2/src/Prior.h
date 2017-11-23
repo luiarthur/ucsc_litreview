@@ -81,12 +81,12 @@ Prior gen_prior_obj(const Nullable<List> &prior_input, int J) {
   out.a_sig = getOrInit(prior,"a_sig", 2.0);
   out.b_sig = getOrInit(prior,"b_sig", 1.0);
 
-  out.psi0Bar = getOrInit(prior,"psi0Bar", -1.0);
-  out.s2_psi0 = getOrInit(prior,"s2_psi0", 10.0);
+  out.psi0Bar = getOrInit(prior,"psi0Bar", -3.0);
+  out.s2_psi0 = getOrInit(prior,"s2_psi0", 4.0);
   out.cs_psi0 = getOrInit(prior,"cs_psi0", 1.0);
 
-  out.psi1Bar = getOrInit(prior,"psi1Bar", 1.0);
-  out.s2_psi1 = getOrInit(prior,"s2_psi1", 10.0);
+  out.psi1Bar = getOrInit(prior,"psi1Bar", 3);
+  out.s2_psi1 = getOrInit(prior,"s2_psi1", 4.0);
   out.cs_psi1 = getOrInit(prior,"cs_psi1", 1.0);
 
   out.a_tau0 = getOrInit(prior,"a_tau0", 2.0);
