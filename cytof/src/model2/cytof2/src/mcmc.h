@@ -25,8 +25,10 @@ void gibbs(S state,
     assign_to_out(state, i);
 
     if (print_freq > 0 && (i+1) % print_freq == 0) {
-      //Rcout << "\rProgress:  " << i+1 << "/" << B+burn << "\t";
+      // don't checkUserInterrupt if the sampler is super fast.
       Rcpp::checkUserInterrupt();
+
+      //Rcout << "\rProgress:  " << i+1 << "/" << B+burn << "\t";
       Rcout << "\tProgress:  " << i+1 << "/" << B+burn << "\t";
     }
   }
