@@ -58,7 +58,7 @@ simdat <- function(I, N, J, K, W, Z=genZ(J,K),
                    sig2=matrix(1/rgamma(I*J, 3, 1), nrow=I),
                    psi_0=-1, psi_1=1,
                    tau2_0=3, tau2_1=3,
-                   thresh=-5) {
+                   lowest=.3) {
   #' Generate simulation data
   #' @examples
   #' W <- matrix(c(.3, .4, .2, .1,
@@ -83,23 +83,33 @@ simdat <- function(I, N, J, K, W, Z=genZ(J,K),
 
   mu <- function(i, n, j) ifelse(Z[j, lam[[i]][n]] == 0, mus_0[i,j], mus_1[i,j])
   gam <- function(i, n, j) ifelse(Z[j, lam[[i]][n]] == 0, gams_0[i,j], 0)
+
+  set_to_missing <- function(yj) {
+    Ni <- length(yj)
+    y_sorted <- sort(yj)
+    thresh <- y_sorted[as.integer(Ni*lowest)]
+    ifelse(yj < thresh, NA, yj)
+  }
   
   y <- as.list(1:I)
   y_no_missing <- y
   for (i in 1:I) {
     Ni <- N[[i]]
     y[[i]] <- matrix(NA, Ni, J)
-    for (n in 1:Ni) for (j in 1:J) {
-      y[[i]][n, j] <- rnorm(1, mu(i,n,j), sqrt((1+gam(i,n,j))*sig2[i,j]))
+    for (n in 1:Ni) {
+      for (j in 1:J) {
+        y[[i]][n, j] <- rnorm(1, mu(i,n,j), sqrt((1+gam(i,n,j))*sig2[i,j]))
+      }
     }
 
     y_no_missing[[i]] <- y[[i]]
-    y[[i]] <- ifelse(y[[i]] < thresh, NA, y[[i]])
+    #y[[i]] <- ifelse(y[[i]] < thresh, NA, y[[i]])
+    y[[i]] <- apply(y[[i]], 2, set_to_missing)
   }
 
   list(Z=Z, lam=lam, mus_0=mus_0, mus_1=mus_1, y=y, I=I, N=N, J=J, K=K,
        gams_0=gams_0, psi_0=psi_0, psi_1=psi_1, sig2=sig2, tau2_0=tau2_0,
-       tau2_1=tau2_1, W=W, thresh=thresh, y_no_missing=y_no_missing)
+       tau2_1=tau2_1, W=W, lowest=lowest, y_no_missing=y_no_missing)
 }
 
 ### TEST ###

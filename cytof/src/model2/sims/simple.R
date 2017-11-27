@@ -15,13 +15,17 @@ W <- matrix(c(.3, .4, .2, .1,
 dat <- simdat(I=I, N=c(200,300,100), J=J, K=K, Z=genZ(J, K, c(.4,.6)), W=W,
               psi_0=-1, psi_1=0,
               tau2_0=1, tau2_1=1,
-              sig2=matrix(1/rgamma(I*J, 3,.2), ncol=J), thresh=-4)
-              #sig2=matrix(1/rgamma(I*J, 3,2), ncol=J), thresh=-4)
+              gams_0=matrix(1 / rgamma(I*J, 13.1,12.1), I, J),
+              sig2=matrix(1/rgamma(I*J, 3,.2), ncol=J), lowest=.2)
 
 missing_count = sapply(dat$y, function(yi)
   apply(yi, 2, function(col) sum(is.na(col)))
 )
 
+#for (i in 1:I) for (j in 1:J) {
+#  plot_dat(dat$y, i, j, xlim=c(-5,5))
+#  #Sys.sleep(1)
+#}
 
 mus0_est <- matrix(0, I, J)
 mus1_est <- matrix(0, I, J)
@@ -37,7 +41,7 @@ plot.histModel2(dat$y, xlim=c(-5,5), main='Histogram of Data')
 my.image(dat$Z, xlab='j', ylab='k', main='True Z')
 for (i in 1:length(dat$y)) {
   my.image(dat$y[[i]], mn=-5, mx=5, col=blueToRed(), addLegend=TRUE,
-           main=paste0('y',i), xlab='j', ylab='i')
+           main=paste0('y',i), xlab='j', ylab='n')
 }
 
 
@@ -45,7 +49,8 @@ for (i in 1:length(dat$y)) {
 #system.time(out <- cytof_fix_K_fit(dat$y, truth=list(K=10), B=2, burn=0))
 #system.time(out <- cytof_fix_K_fit(dat$y, truth=list(K=10), B=200, burn=0))
 
-#truth=list(K=10, psi=c(-1,1), tau2=c(9,9))
+#truth=list(K=10, psi=c(dat$psi_0, dat$psi_1), tau2=c(dat$tau2_0, dat$tau2_1),
+#           lam=dat$lam)
 truth=list(K=10)
 system.time(out <- cytof_fix_K_fit(dat$y, truth=truth, B=200, burn=400))
 

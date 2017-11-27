@@ -130,3 +130,10 @@ plot.histModel2 <- function(dat, cutoff=NULL, returnStats=FALSE,
 
   if (returnStats) list(mean=Y0.mean, ci=Y0.ci)
 }
+
+plot_dat <- function(y, i, j, ...) {
+  yij <- y[[i]][,j]
+  hist(yij[yij<0], border='white', col=rgb(1,0,0,.5), fg='grey', 
+       main=paste0("Y",i,": Col",j), ...)
+  hist(yij[yij>0], border='white', col=rgb(0,0,1,.5), add=TRUE)
+}
