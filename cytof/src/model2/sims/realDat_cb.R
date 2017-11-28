@@ -36,8 +36,7 @@ for (i in 1:I) {
 
 
 truth = list(K=10)
-#system.time(out <- cytof_fix_K_fit(dat$y, truth=truth, B=200, burn=80, thin=5))
-system.time(out <- cytof_fix_K_fit(y, truth=truth, B=2, burn=0, thin=5))
+system.time(out <- cytof_fix_K_fit(dat$y, truth=truth, B=200, burn=80, thin=5))
 
 ### Loglike
 ll <- sapply(out, function(o) o$ll)
@@ -52,3 +51,4 @@ Z_sd <- matApply(Z, sd)
 my.image(Z_sd, main="Z: posterior sd")
 my.image(Z_mean, main="Z: posterior mean")
 
+save.image()
