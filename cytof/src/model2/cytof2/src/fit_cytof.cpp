@@ -33,7 +33,7 @@
 //' @param y A list of matrices, y[[i]] having dimensions N[i] x J, where N[i] is the number of cells in sample i, J is the number of markers, and i=1,..,I is the sample size with I being the total number of samples.
 //' @param B The number of MCMC samples to collect.
 //' @param burn The burn-in for MCMC.
-//' @param thin Frequency for thinning (default=0, no thinning). (Not Implemented.)
+//' @param thin Frequency for thinning. e.g. thin=10 means only keep every 10th sample. (default=1, no thinning). 
 //' @param compute_loglike_every How often to compute log-likelihood. Relative to the rest of the mcmc updates, computing the likelihood is not that expensive. So it's default is 1 (compute log likelihood every iteration).
 //' @param print_freq How often to print progress. Setting to 1 is recommended when N is in the order of thousands. (default=10)
 //' @param prior_input A list of priors. Set to NULL (default) to use default priors. (More details to come.)
@@ -44,7 +44,7 @@
 // [[Rcpp::export]]
 std::vector<List> cytof_fix_K_fit(
   const std::vector<arma::mat> &y, int B, int burn,
-  int thin=0, int compute_loglike_every=1, int print_freq=10,
+  int thin=1, int compute_loglike_every=1, int print_freq=10,
   Nullable<List> prior_input = R_NilValue,
   Nullable<List> truth_input = R_NilValue,
   Nullable<List> init_input = R_NilValue) {
@@ -59,9 +59,11 @@ std::vector<List> cytof_fix_K_fit(
   const auto init = gen_init_obj(init_input, truth_input, prior, y);
 
 
-  auto update = [&y, &prior, &fixed_params](State &state) {
+  auto update = [&y, &prior, &fixed_params, thin](State &state) {
     Rcout << "\r";
-    update_theta(state, y, prior, fixed_params);
+    for (int t=0; t<thin; t++) {
+      update_theta(state, y, prior, fixed_params);
+    }
   };
 
   std::vector<List> out(B);

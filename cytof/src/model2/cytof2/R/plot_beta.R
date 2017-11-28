@@ -1,3 +1,27 @@
+get_beta <- function(y=c(-5,-3), p_target=c(.99, .01), plotting=TRUE) {
+  #' Compute betas from y and p_target
+  #' @export
+
+  logit <- function(p) p / (1-p)
+  inv_logit <- function(x) 1 / (1+exp(-x))
+
+  mod <- glm(p_target ~ y, family=binomial)
+  b.hat <- mod$coef
+
+  y_grid <- seq(-8,8,l=1000)
+  p <- inv_logit(b.hat[1] + y_grid*b.hat[2])
+
+  if (plotting) {
+    plot(y_grid, p, pch=20, col='grey')
+    points(y,p_target)
+    abline(h=p_target, v=y,lty=2, col='grey')
+  }
+
+  b.hat
+}
+
+#get_beta()
+
 p_missing <- function(o, i, j, y) {
   #' Compute probability of missing across a grid of values (y)
   #' @param o A list containing the parameters from one iteration of MCMC 

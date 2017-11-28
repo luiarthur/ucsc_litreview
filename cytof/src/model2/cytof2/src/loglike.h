@@ -5,7 +5,7 @@ double y_final(const State &state, const Data &y, int i, int n, int j) {
 double p(const State &state, const Data &y, int i, int n, int j) {
   double y_inj = y_final(state, y, i, n, j);
   const double xinj = state.beta_0(i,j) - state.beta_1[j] * y_inj;
-  return inv_logit(xinj, 0, 1);
+  return inv_logit(xinj);
 }
 
 double ll_p(const State &state, const Data &y, int i, int n, int j) {
@@ -17,7 +17,7 @@ double ll_p_given_beta(const State &state, const Data &y,
                        double b0ij, double b1j, int i, int n, int j) {
   double y_inj = y_final(state, y, i, n, j);
   const double x_inj = b0ij - b1j * y_inj;
-  const double p_inj = inv_logit(x_inj, 0, 1);
+  const double p_inj = inv_logit(x_inj);
 
   return missing(y, i, n, j) ? log(p_inj) : log(1-p_inj);
 }

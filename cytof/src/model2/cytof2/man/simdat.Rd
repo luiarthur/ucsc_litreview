@@ -4,9 +4,10 @@
 \alias{simdat}
 \title{Generate simulation data}
 \usage{
-simdat(I, N, J, K, W, Z = genZ(J, K), gams_0 = matrix(1/rgamma(I * J, 40,
-  20), nrow = I), sig2 = matrix(1/rgamma(I * J, 3, 1), nrow = I),
-  psi_0 = -1, psi_1 = 1, tau2_0 = 3, tau2_1 = 3, lowest = 0.3)
+simdat(I, N, J, K, W, Z = genZ(J, K), b0 = matrix(-17.6, I, J),
+  b1 = rep(4.4, J), gams_0 = matrix(1/rgamma(I * J, 40, 20), nrow = I),
+  sig2 = matrix(1/rgamma(I * J, 3, 1), nrow = I), psi_0 = -1, psi_1 = 1,
+  tau2_0 = 3, tau2_1 = 3)
 }
 \description{
 Generate simulation data

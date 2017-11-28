@@ -227,11 +227,18 @@ double dtnorm_log(double x, double m, double s, double lo, double hi) {
   return log(RcppTN::dtn1(x, m, s, lo, hi));
 }
 
+double get_sign(double x) {
+  if (x > 0) return 1;
+  if (x < 0) return -1;
+  return 0;
+}
+
 double lp_log_abs_tn_posneg(double log_abs_x, double m, double s, int zz) {
-  const int sign = (zz == 0) ? -1 : 1;
-  const double lo = (zz == 0) ? -INFINITY : 0;
-  const double hi = (zz == 0) ? 0 : INFINITY;
-  return dtnorm_log(sign*exp(log_abs_x), m, s, lo, hi) + log_abs_x;
+  if (zz == 0) {
+    return dtnorm_log(-exp(log_abs_x), m, s, -INFINITY, 0) + log_abs_x;
+  } else {
+    return dtnorm_log(exp(log_abs_x), m, s, 0, INFINITY) + log_abs_x;
+  }
 }
 
 double rinvgamma(double a, double b) {

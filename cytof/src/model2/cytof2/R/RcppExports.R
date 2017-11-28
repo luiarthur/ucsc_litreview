@@ -12,7 +12,7 @@ missing_R <- function(y, i, n, j) {
 #' @param y A list of matrices, y[[i]] having dimensions N[i] x J, where N[i] is the number of cells in sample i, J is the number of markers, and i=1,..,I is the sample size with I being the total number of samples.
 #' @param B The number of MCMC samples to collect.
 #' @param burn The burn-in for MCMC.
-#' @param thin Frequency for thinning (default=0, no thinning). (Not Implemented.)
+#' @param thin Frequency for thinning. e.g. thin=10 means only keep every 10th sample. (default=1, no thinning). 
 #' @param compute_loglike_every How often to compute log-likelihood. Relative to the rest of the mcmc updates, computing the likelihood is not that expensive. So it's default is 1 (compute log likelihood every iteration).
 #' @param print_freq How often to print progress. Setting to 1 is recommended when N is in the order of thousands. (default=10)
 #' @param prior_input A list of priors. Set to NULL (default) to use default priors. (More details to come.)
@@ -20,7 +20,7 @@ missing_R <- function(y, i, n, j) {
 #' @param init_input A list containing the initial values of the parameters. When set to NULL (default), default initial values are used.
 #'
 #' @export 
-cytof_fix_K_fit <- function(y, B, burn, thin = 0L, compute_loglike_every = 1L, print_freq = 10L, prior_input = NULL, truth_input = NULL, init_input = NULL) {
+cytof_fix_K_fit <- function(y, B, burn, thin = 1L, compute_loglike_every = 1L, print_freq = 10L, prior_input = NULL, truth_input = NULL, init_input = NULL) {
     .Call('_cytof2_cytof_fix_K_fit', PACKAGE = 'cytof2', y, B, burn, thin, compute_loglike_every, print_freq, prior_input, truth_input, init_input)
 }
 

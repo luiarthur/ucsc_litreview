@@ -133,7 +133,17 @@ plot.histModel2 <- function(dat, cutoff=NULL, returnStats=FALSE,
 
 plot_dat <- function(y, i, j, ...) {
   yij <- y[[i]][,j]
-  hist(yij[yij<0], border='white', col=rgb(1,0,0,.5), fg='grey', 
-       main=paste0("Y",i,": Col",j), ...)
-  hist(yij[yij>0], border='white', col=rgb(0,0,1,.5), add=TRUE)
+  yij0 <- yij[yij<0]
+  yij1 <- yij[yij>0]
+
+  num_not_na <- function(x) length(which(!is.na(x)))
+
+  if (num_not_na(yij0) > 0) {
+    hist(yij0, border='white', col=rgb(1,0,0,.5), fg='grey', 
+         main=paste0("Y",i,": Col",j), prob=TRUE, ...)
+    hist(yij1, border='white', col=rgb(0,0,1,.5), add=TRUE, prob=TRUE)
+  } else {
+    hist(yij1, border='white', col=rgb(0,0,1,.5), add=FALSE, prob=TRUE, 
+         main=paste0("Y",i,": Col",j), ...)
+  }
 }

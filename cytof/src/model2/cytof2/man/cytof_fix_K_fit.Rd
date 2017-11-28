@@ -4,7 +4,7 @@
 \alias{cytof_fix_K_fit}
 \title{Cytof Model for fixed K}
 \usage{
-cytof_fix_K_fit(y, B, burn, thin = 0L, compute_loglike_every = 1L,
+cytof_fix_K_fit(y, B, burn, thin = 1L, compute_loglike_every = 1L,
   print_freq = 10L, prior_input = NULL, truth_input = NULL,
   init_input = NULL)
 }
@@ -15,7 +15,7 @@ cytof_fix_K_fit(y, B, burn, thin = 0L, compute_loglike_every = 1L,
 
 \item{burn}{The burn-in for MCMC.}
 
-\item{thin}{Frequency for thinning (default=0, no thinning). (Not Implemented.)}
+\item{thin}{Frequency for thinning. e.g. thin=10 means only keep every 10th sample. (default=1, no thinning).}
 
 \item{compute_loglike_every}{How often to compute log-likelihood. Relative to the rest of the mcmc updates, computing the likelihood is not that expensive. So it's default is 1 (compute log likelihood every iteration).}
 

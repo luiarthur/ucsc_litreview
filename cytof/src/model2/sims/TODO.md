@@ -7,6 +7,8 @@
 - unit test each update
 
 
+### Plan
+
 1. Simulations
     - fixed K
     - random K
