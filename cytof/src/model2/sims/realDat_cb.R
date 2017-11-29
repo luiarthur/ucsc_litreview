@@ -44,7 +44,7 @@ for (i in 1:I) {
 
 
 truth = list(K=10)
-system.time(out <- cytof_fix_K_fit(y, truth=truth, B=200, burn=200, thin=5))
+system.time(out <- cytof_fix_K_fit(y, truth=truth, B=200, burn=400, thin=5))
 #system.time(out <- cytof_fix_K_fit(y, truth=truth, B=5, burn=0, thin=1))
 
 ### Loglike
