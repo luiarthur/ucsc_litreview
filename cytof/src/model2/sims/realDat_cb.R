@@ -139,7 +139,8 @@ gams_0_ci = t(apply(gams_0, 1, quantile, c(.025,.975)))
 plot(c(gams_0_mean), fg='grey',
      ylab='Posterior Mean: gam0*', 
      main=expression('Posterior'~gamma[0]^'*'),
-     xlim=c(0,1), ylim=c(0,3), pch=20, col='blue')
+     pch=20, col='blue')
+add.errbar(gams_0_ci, col=rgb(0,0,1,.3))
 
 # sig2: FIXME! has not moved
 sig2 = sapply(out, function(o) o$sig2)
@@ -156,7 +157,7 @@ gs <- sapply(out, function(o) o$sig2 * (1 + o$gams_0))
 gs_mean <- rowMeans(gs)
 gs_ci <- t(apply(gs, 1, quantile, c(.025,.975)))
 
-plot(c(gs), pch=20, col='blue', fg='grey',
+plot(c(gs_mean), pch=20, col='blue', fg='grey',
      xlab='', ylab='posterior mean',
      main=expression(sigma[ij]^2~(1+gamma[0][ij])))
 add.errbar(gs_ci, col=rgb(0,0,1,.3))
