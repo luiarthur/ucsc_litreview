@@ -73,9 +73,20 @@ for (i in 1:length(dat$y)) {
 }
 
 
+mus_init <- array(0, c(I,J,2))
+mus_init[,,1] <- ifelse(is.na(mus0_est), mean(mus0_est), mus0_est)
+mus_init[,,2] <- ifelse(is.na(mus1_est), mean(mus1_est), mus1_est)
+warmup_truth <- list(K=10, mus=mus_init)
+warmup <- cytof_fix_K_fit(dat$y, truth=warmup_truth, B=300, burn=0, print=1)
+ll_warmup <- sapply(warmup, function(o) o$ll); plot(ll_warmup, type='l')
+my.image(last(warmup)$Z)
+
 truth=list(K=10)
+init=last(warmup)
+init$missing_y <- NULL
 #system.time(out <- cytof_fix_K_fit(dat$y, truth=truth, B=10, burn=0, thin=1))
-system.time(out <- cytof_fix_K_fit(dat$y, truth=truth, B=200, burn=80, thin=5))
+system.time(out <- cytof_fix_K_fit(dat$y, truth=truth, init=init, 
+                                   B=200, burn=80, thin=5))
 
 ll <- sapply(out, function(o) o$ll)
 plot(ll <- sapply(out, function(o) o$ll), type='l',
@@ -139,7 +150,7 @@ if (length(unique(dat$b1)) > 1) {
   abline(0,1)
 } else {
   plot(beta_1_mean, main='b1', pch=20, col=rgb(0,0,1), cex=2, fg='grey')
-  add.errbar(beta_1_ci, x=1:(I*J), lty=2, col=rgb(0,0,1,.5))
+  add.errbar(beta_1_ci, x=1:J, lty=2, col=rgb(0,0,1,.5))
   abline(h=dat$b1[1],col='grey')
 }
 
@@ -178,12 +189,21 @@ mus1 = sapply(out, function(o) c(o$mus[,,2]))
 mus1_mean = rowMeans(mus1)
 mus1_ci = t(apply(mus1, 1, quantile, c(.025,.975)))
 
-#mus
+#mus posterior vs dat
 plot(c(c(dat$mus_0),c(dat$mus_1)), c(c(mus0_mean), c(mus1_mean)), pch=20,fg='grey',
      col='blue', main='Posterior mu*', xlab='true mu*', ylab='posterior mean: mu*')
 abline(0,1, h=0, v=0, col='grey', lty=2)
 add.errbar(rbind(mus0_ci, mus1_ci),
            x=c(c(dat$mus_0), c(dat$mus_1)), col=rgb(0,0,1,.2))
+
+#mus posterior vs empirical est
+plot(c(c(mus0_est),c(mus1_est)), c(c(mus0_mean), c(mus1_mean)), pch=20,fg='grey',
+     col='blue', main='Posterior mu*', xlab='empirical est of mu*',
+     ylab='posterior mean: mu*')
+abline(0,1, h=0, v=0, col='grey', lty=2)
+add.errbar(rbind(mus0_ci, mus1_ci),
+           x=c(c(mus0_est), c(mus1_est)), col=rgb(0,0,1,.2))
+
 
 # gams_0: TODO
 gams_0 = sapply(out, function(o) o$gams_0)
@@ -193,7 +213,7 @@ gams_0_ci = t(apply(gams_0, 1, quantile, c(.025,.975)))
 plot(c(dat$gams_0), c(gams_0_mean), fg='grey',
      xlab='Data: gam0*', ylab='Posterior Mean: gam0*', 
      main=expression('Posterior'~gamma[0]^'*'),
-     xlim=c(0,1), ylim=c(0,3), pch=20, col='blue')
+     pch=20, col='blue')
 abline(0,1, col='grey')
 add.errbar(gams_0_ci, x=dat$gams_0, col=rgb(0,0,1,.2))
 

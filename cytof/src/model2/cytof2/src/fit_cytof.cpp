@@ -83,6 +83,8 @@ std::vector<List> cytof_fix_K_fit(
           Named("sig2") = state.sig2,
           Named("tau2") = state.tau2,
           Named("psi") = state.psi,
+          Named("v") = state.v, // REMOVE IN PRODUCTION
+          Named("H") = state.H, // REMOVE IN PRODUCTION
           Named("Z") = state.Z,
           Named("lam") = state.lam, // REMOVE IN PRODUCTION
           Named("missing_y") = state.missing_y, // REMOVE IN PRODUCTION

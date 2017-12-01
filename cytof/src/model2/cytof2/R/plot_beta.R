@@ -20,6 +20,10 @@ get_beta <- function(y=c(-5,-3), p_target=c(.99, .01), plotting=TRUE) {
   b.hat
 }
 
+#y_grid <- seq(-8,8,l=1000)
+#p <- inv_logit(-20 + -20*y_grid)
+#plot(y_grid, p, xlim=c(-5,5)); abline(v=0)
+
 #get_beta()
 
 p_missing <- function(o, i, j, y) {
