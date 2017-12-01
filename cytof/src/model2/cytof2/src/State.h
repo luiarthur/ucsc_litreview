@@ -105,23 +105,27 @@ State gen_init_obj(const Nullable<List> &init_input,
   init_psi(1) = 1;
   state.psi = getInitOrFix(init, truth, "psi", init_psi);
 
-  const arma::vec init_v = arma::ones<arma::vec>(K) / K;
-  state.v = getInitOrFix(init, truth, "v", init_v);
-
-  const arma::mat init_H = arma::zeros<arma::mat>(J,K);
-  state.H = getInitOrFix(init, truth, "H", init_H);
-
   type_lam init_lam = type_lam(I);
   for (int i=0; i<I; i++) {
     init_lam[i] = std::vector<int>(N[i]);
     for (int n=0; n<N[i]; n++) {
-      init_lam[i][n] = 0;
+      //init_lam[i][n] = 0;
+      init_lam[i][n] = floor(R::runif(0,K));
     }
   };
   state.lam = getInitOrFix(init, truth, "lam", init_lam);
 
   const arma::mat init_W = arma::ones<arma::mat>(I,K) / K;
   state.W = getInitOrFix(init, truth, "W", init_W);
+
+  // Z
+  //const arma::vec init_v = arma::ones<arma::vec>(K) / K;
+  const arma::vec init_v = arma::randu<arma::vec>(K);
+  state.v = getInitOrFix(init, truth, "v", init_v);
+
+  //const arma::mat init_H = arma::zeros<arma::mat>(J,K);
+  const arma::mat init_H = arma::randn<arma::mat>(J,K);
+  state.H = getInitOrFix(init, truth, "H", init_H);
 
   const arma::vec b = arma::cumprod(state.v);
   arma::Mat<int> init_Z = arma::zeros<arma::Mat<int>>(J,K);
@@ -131,6 +135,7 @@ State gen_init_obj(const Nullable<List> &init_input,
     }
   }
   state.Z = getInitOrFix(init, truth, "Z", init_Z);
+  // End of Z
 
   Data init_missing_y = std::vector<arma::mat>(I);
   for (int i=0; i<I; i++) {

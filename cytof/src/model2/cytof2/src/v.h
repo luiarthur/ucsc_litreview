@@ -64,3 +64,49 @@ void update_v(State &state, const Data &y, const Prior &prior) {
     update_vk(state, y, prior, k);
   }
 }
+
+void update_v_jointly(State &state, const Data &y, const Prior &prior) {
+  const int K = state.K;
+
+  auto log_fc = [&](arma::vec logit_v) {
+    double lp = 0;
+    double ll = 0;
+    
+    arma::vec v(K);
+
+    const int I = get_I(y);
+    const int J = get_J(y);
+    const auto N = get_N(y);
+
+    double h_jl;
+    double G_jj;
+    int z_jlin;
+    int lin;
+    
+    for (int k=0; k<K; k++) {
+      lp += lp_logit_beta(logit_v[k], prior.alpha, 1);
+      v[k] = inv_logit(logit_v[k]);
+    }
+
+    const arma::vec b = arma::cumprod(v);
+
+    for (int i=0; i<I; i++) {
+      for (int j=0; j<J; j++) {
+        G_jj = prior.G(j,j);
+        for (int n=0; n<N[i]; n++) {
+          lin = state.lam[i][n];
+          h_jl = state.H(j,lin);
+          z_jlin = compute_zjk(h_jl, G_jj, b[lin]);
+          ll += ll_fz(state, y, i, n, j, z_jlin);
+        }
+      }
+    }
+
+    return lp + ll;
+  };
+
+  const auto logit_v = logit_vec(state.v);
+  const arma::mat I = arma::eye<arma::mat>(K,K);
+  state.v = inv_logit_vec(metropolis::mv(logit_v, log_fc, prior.cs_v*I));
+}
+

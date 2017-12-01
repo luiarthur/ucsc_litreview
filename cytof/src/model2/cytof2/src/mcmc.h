@@ -20,7 +20,9 @@ void gibbs(S state,
           std::function<void(const S&, int)> assign_to_out, // function to assign to out and perhaps do adaptive mcmc
           int B, int burn, int print_freq) {
 
-  for (int i=0; i<B+burn; i++) {
+  assign_to_out(state, 0);
+
+  for (int i=1; i<B+burn; i++) {
     update(state);
     assign_to_out(state, i);
 
@@ -45,6 +47,14 @@ double inv_logit(double x, double a=0, double b=1) {
   return (b + a * u) / (1 + u);
 }
 
+arma::vec logit_vec(arma::vec p, double a=0, double b=1) {
+  return log((p - a) / (b - p));
+}
+
+arma::vec inv_logit_vec(arma::vec x, double a=0, double b=1) {
+  const arma::vec u = exp(-x);
+  return (b + a * u) / (1 + u);
+}
 
 // Weighted sampling: takes prob. array and size; returns index.
 int wsample_index(const double p[], int n) { // GOOD
