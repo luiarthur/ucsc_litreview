@@ -14,7 +14,8 @@ W <- matrix(c(.3, .4, .2, .1,
 
 #bdat = get_beta(y=c(-5,-4), p_tar=c(.99,.01), plot=FALSE)
 
-dat <- simdat(I=I, N=c(200,300,100), J=J, K=K, 
+#dat <- simdat(I=I, N=c(2,3,1)*100, J=J, K=K, 
+dat <- simdat(I=I, N=c(2,3,1)*1000, J=J, K=K, 
               b0=matrix(-5.7,I,J),
               b1=rep(1.7,J),
               Z=genSimpleZ(J, K),
@@ -120,7 +121,7 @@ if (length(unique(c(dat$b0))) > 1) {
   a = sapply(c(t(missing_count) / 30), function(x) min(x,1))
   plot(beta_0_mean, main='b0', pch=20, cex=2, fg='grey', col=rgb(0,0,1,a))
   add.errbar(beta_0_ci, x=1:(I*J), lty=2, col=rgb(0,0,1,.3))
-  abline(h=dat$b0[1],col='grey')
+  abline(h=c(dat$b0[1],0),col='grey')
 }
 
 # betaBar_0
@@ -154,13 +155,18 @@ for (i in 1:I) for (j in 1:J) {
   plot_beta(out, i, j, addT=TRUE, plot_area=FALSE, y=ys, col.line=j)
 }
 
-for (j in c(1, 12)){
-  plot(ys, ys, ylim=0:1, type='n', fg='grey', xlab='y', ylab='prob of missing')
-  title(main=paste0('Prob of missing: marker ',j))
+par(mfrow=c(4,2), mar=mar.ts(), oma=oma.ts())
+for (j in 1:J){
+  plot(ys, ys, ylim=0:1, type='n', fg='grey', xlab='y',
+       xaxt='n',
+       ylab=paste0('prob of missing: ', j))
+  if (j %% 8 == 0 || j %% 8 == 7) { axis(1, fg='grey') }
+  abline(v=c(-5,0,5), col='grey', lty=2)
   for (i in 1:I) {
-    plot_beta(out, i, j, addT=TRUE, plot_a=T, y=ys, col.line='steelblue', lwd=2)
+    plot_beta(out, i, j, addT=TRUE, plot_a=T, y=ys, col.line=i+1, lwd=2)
   }
 }
+par(mfrow=c(1,1), mar=mar.default(), oma=oma.default())
 
 # mus0
 mus0 = sapply(out, function(o) c(o$mus[,,1]))
