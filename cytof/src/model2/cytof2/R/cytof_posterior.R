@@ -111,7 +111,6 @@ plot_cytof_posterior <- function(mcmc, y, name, sim=NULL, supress=c()) {
   }
 
   # gams and sig2
-  print("HERE1")
   gs <- sapply(mcmc, function(o) o$sig2 * (1 + o$gams_0))
   gs_mean <- rowMeans(gs)
   gs_ci <- t(apply(gs, 1, quantile, c(.025,.975)))
@@ -129,7 +128,6 @@ plot_cytof_posterior <- function(mcmc, y, name, sim=NULL, supress=c()) {
          main=expression(sigma[ij]^2~(1+gamma[0][ij])))
     add.errbar(gs_ci, col=rgb(0,0,1,.3))
   }
-  print("HERE2")
 
 
   ### tau2
