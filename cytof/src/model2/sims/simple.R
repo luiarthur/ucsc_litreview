@@ -1,7 +1,11 @@
 library(cytof2)
 library(rcommon)
-
 set.seed(1)
+
+### GLOBALS
+OUTDIR = 'out/simple/'
+fileDest = function(name) paste0(OUTDIR, name)
+system(paste0('mkdir -p ', OUTDIR))
 
 #source("../cytof2/R/readExpression.R")
 
@@ -14,20 +18,34 @@ W <- matrix(c(.3, .4, .2, .1,
 
 #bdat = get_beta(y=c(-5,-4), p_tar=c(.99,.01), plot=FALSE)
 
-#dat <- simdat(I=I, N=c(2,3,1)*100, J=J, K=K, 
-dat <- simdat(I=I, N=c(2,3,1)*100, J=J, K=K, 
-              b0=matrix(-70,I,J),
+dat <- simdat(I=I, N=c(2,3,1)*1000, J=J, K=K, 
+#dat <- simdat(I=I, N=c(2,3,1)*10000, J=J, K=K, 
+              b0=matrix(-50,I,J),
               b1=rep(15,J),
               Z=genSimpleZ(J, K),
               #Z=genZ(J, K, c(.4,.6)),
               W=W,
               psi_0=-2, psi_1=1,
-              tau2_0=1, tau2_1=1,
-              gams_0=matrix(rgamma(I*J, 100000,10000), I, J),
+              tau2_0=1, tau2_1=.1,
+#              gams_0=matrix(rgamma(I*J, 100000,10000), I, J),
+              gams_0=matrix(rgamma(I*J, 50000,10000), I, J),
               sig2=matrix(rgamma(I*J, 1000, 10000), ncol=J))
-plot.histModel2(dat$y, xlim=c(-5,5), main='Histogram of Data', quant=c(.05,.95))
 
+pdf(fileDest('data.pdf'))
+
+### Prob Missing (Truth)
 missing_count = get_missing_count(dat$y)
+sink(fileDest('missing_count.txt'))
+print(missing_count)
+sink()
+
+y_grid = seq(-6,0,l=100)
+plot(y_grid, 1 / (1 + exp(-dat$b0[1] + dat$b1[1]*y_grid)), 
+     xlab='y', ylab='prob of missing', fg='grey', type='b',
+     main='True Probability of Missing')
+abline(v=-4:-3, col='grey')
+#plot.histModel2(dat$y, xlim=c(-5,5), main='Histogram of Data', quant=c(.05,.95))
+
 
 par(mfrow=c(4,2))
 for (i in 1:I) for (j in 1:J) {
@@ -50,17 +68,20 @@ abline(0,1)
 #}
 #par(mfrow=c(1,1))
 
-
 plot.histModel2(dat$y, xlim=c(-5,5), main='Histogram of Data', quant=c(.05,.95))
 plot.histModel2(list(dat$y[[1]]), xlim=c(-5,5), main='Histogram of Data')
 plot.histModel2(list(dat$y[[2]]), xlim=c(-5,5), main='Histogram of Data')
 plot.histModel2(list(dat$y[[3]]), xlim=c(-5,5), main='Histogram of Data')
 
+dev.off()
+
+png(fileDest('rawDat%03d.png'))
 my.image(dat$Z, xlab='j', ylab='k', main='True Z')
 for (i in 1:length(dat$y)) {
   my.image(dat$y[[i]], mn=-5, mx=5, col=blueToRed(), addLegend=TRUE,
            main=paste0('y',i), xlab='j', ylab='n')
 }
+dev.off()
 
 
 #mus_init <- array(0, c(I,J,2))
@@ -102,12 +123,14 @@ for (i in 1:length(dat$y)) {
 #                                   truth=truth, init=init))
 
 
-truth=list(K=10)
+truth=list(K=4)
 prior = list(cs_v=4, cs_h=3)#, a_beta=500000, b_beta=100000)
 #system.time(out <- cytof_fix_K_fit(dat$y, truth=truth, prior=prior,
 #                                   B=100, burn=200, thin=2, print=1))
 system.time(out <- cytof_fix_K_fit(dat$y, truth=truth, prior=prior,
-                                   B=20, burn=0, thin=2, print=1))
+                                   B=20, burn=20, thin=2, print=1))
 
 
-plot_cytof_posterior(out, dat$y, name='simple', sim=dat)
+plot_cytof_posterior(out, dat$y, outdir=OUTDIR, sim=dat)
+#plot_cytof_posterior(out, dat$y, outdir=OUTDIR)
+

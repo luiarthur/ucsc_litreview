@@ -1,0 +1,5 @@
+#!/bin/bash
+
+cd out
+rm -rf */
+rm -f *.{pdf,png,txt}

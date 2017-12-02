@@ -72,13 +72,13 @@ plot_beta <- function(mcmc, dat=NULL) {
   beta_0_mean = rowMeans(beta_0)
   beta_0_ci = t(apply(beta_0, 1, quantile, c(.025,.975)))
   
+  a = sapply(c(t(missing_count) / 30), function(x) min(x,1))
   if (compareWithData) {
     if (length(unique(c(dat$b0))) > 1) {
       plot(dat$b0, beta_0_mean, main='b0')
       add.errbar(beta_0_ci, x=dat$b1)
       abline(0,1)
     } else {
-      a = sapply(c(t(missing_count) / 30), function(x) min(x,1))
       plot(beta_0_mean, main='b0', pch=20, cex=2, fg='grey', col=rgb(0,0,1,a))
       add.errbar(beta_0_ci, x=1:(I*J), lty=2, col=rgb(0,0,1,.3))
       abline(h=c(dat$b0[1],0),col='grey')

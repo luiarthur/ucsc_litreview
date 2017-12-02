@@ -36,8 +36,8 @@ my.image <- function(Z,col=grey(seq(1,0,len=12)),fg='grey',
     Z <- Z[, which(colSums(Z) > 0)]
   }
 
-  N <- nrow(Z)
-  K <- ncol(Z)
+  N <- NROW(Z)
+  K <- NCOL(Z)
   COL <- col
   FG <- fg
   NTICKS <- nticks
