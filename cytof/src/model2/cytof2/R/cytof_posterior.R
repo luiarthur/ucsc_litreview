@@ -151,7 +151,7 @@ plot_cytof_posterior <- function(mcmc, y, name, sim=NULL, supress=c()) {
 
   if (name > "") dev.off()
 
-  ### missing_y
+  ### missing_y: FIXME. Want to plot multiple pages like pdf
   if (name > "") png(paste0(name, '_imputes.png'))
   missing_y <- lapply(as.list(1:I), function(i) lapply(mcmc, function(o) {
     matrix(o$missing_y[[i]], ncol=J)
