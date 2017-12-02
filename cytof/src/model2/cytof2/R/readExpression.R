@@ -132,6 +132,7 @@ plot.histModel2 <- function(dat, cutoff=NULL, returnStats=FALSE,
 }
 
 plot_dat <- function(y, i, j, ...) {
+  #' @export
   yij <- y[[i]][,j]
   yij0 <- yij[yij<0]
   yij1 <- yij[yij>0]
@@ -147,3 +148,36 @@ plot_dat <- function(y, i, j, ...) {
          main=paste0("Y",i,": Col",j), ...)
   }
 }
+
+get_missing_count <- function(y) {
+  #' @export
+  sapply(y, function(yi)
+    apply(yi, 2, function(col) sum(col == -Inf | is.na(col)))
+  )
+}
+ 
+get_mus_est <- function(y) {
+  #' @export
+  I <- length(y)
+  J <- ncol(y[[1]])
+
+  mus0_est <- matrix(0, I, J)
+  mus1_est <- matrix(0, I, J)
+
+  for (i in 1:I) for (j in 1:J) {
+    mus0_est[i,j] <- mean(y[[i]][y[[i]][,j]<0,j], na.rm=T)
+    mus1_est[i,j] <- mean(y[[i]][y[[i]][,j]>0,j], na.rm=T)
+  }
+
+  list(mus0=mus0_est, mus1=mus1_est)
+}
+
+
+plot_simdat <- function(dat,i,j,...) {
+  #' @export
+  lin <- dat$Z[j, dat$lam[[i]]]
+  hist(dat$y[[i]][lin==0,j], border='white', col=rgb(0,0,1,.5), ...)
+  hist(dat$y[[i]][lin==1,j], border='white', col=rgb(1,0,0,.5), add=TRUE, ...)
+}
+
+

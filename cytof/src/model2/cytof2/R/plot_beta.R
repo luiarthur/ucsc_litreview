@@ -20,10 +20,10 @@ get_beta <- function(y=c(-5,-3), p_target=c(.99, .01), plotting=TRUE) {
   b.hat
 }
 
-y_grid <- seq(-8,8,l=1000)
-inv_logit <- function(x) 1 / (1+exp(-x))
-p <- inv_logit(-60 + -15*y_grid)
-plot(y_grid, p, xlim=c(-5,5)); abline(v=0)
+#y_grid <- seq(-8,8,l=1000)
+#inv_logit <- function(x) 1 / (1+exp(-x))
+#p <- inv_logit(-60 + -15*y_grid)
+#plot(y_grid, p, xlim=c(-5,5)); abline(v=0)
 
 #get_beta()
 
@@ -40,9 +40,11 @@ p_missing <- function(o, i, j, y) {
   1 / (1 + exp(-b0ij + b1j * y))
 }
 
-plot_beta <- function(mcmc, i, j, q=c(.025,.975), y_grid=seq(-12,12,len=50), 
-                      plot_line=TRUE, plot_area=TRUE, addToExistingPlot=FALSE, 
-                      col.line='blue',col.area=rgb(0,0,1,.1), ...) {
+plot_prob_missing <- function(mcmc, i, j, q=c(.025,.975),
+                              y_grid=seq(-12,12,len=50), 
+                              plot_line=TRUE, plot_area=TRUE,
+                              addToExistingPlot=FALSE, 
+                              col.line='blue',col.area=rgb(0,0,1,.1), ...) {
   #' Plot the posterior distribution of p_inj across grid of values (y_grid)
   #' @param mcmc The output from cytof_fit
   #' @export
@@ -59,4 +61,92 @@ plot_beta <- function(mcmc, i, j, q=c(.025,.975), y_grid=seq(-12,12,len=50),
                             from=min(y_grid), to=max(y_grid), col=col.area)
 }
 
+plot_beta <- function(mcmc, dat=NULL) {
+  compareWithData = !is.null(dat)
 
+  I <- length(mcmc[[1]]$missing_y)
+  J <- nrow(mcmc[[1]]$Z)
+
+  ### beta ###
+  beta_0 = sapply(mcmc, function(o) o$beta_0)
+  beta_0_mean = rowMeans(beta_0)
+  beta_0_ci = t(apply(beta_0, 1, quantile, c(.025,.975)))
+  
+  if (compareWithData) {
+    if (length(unique(c(dat$b0))) > 1) {
+      plot(dat$b0, beta_0_mean, main='b0')
+      add.errbar(beta_0_ci, x=dat$b1)
+      abline(0,1)
+    } else {
+      a = sapply(c(t(missing_count) / 30), function(x) min(x,1))
+      plot(beta_0_mean, main='b0', pch=20, cex=2, fg='grey', col=rgb(0,0,1,a))
+      add.errbar(beta_0_ci, x=1:(I*J), lty=2, col=rgb(0,0,1,.3))
+      abline(h=c(dat$b0[1],0),col='grey')
+    }
+  } else {
+      plot(beta_0_mean, main='b0', pch=20, cex=2, fg='grey', col=rgb(0,0,1,a))
+      add.errbar(beta_0_ci, x=1:(I*J), lty=2, col=rgb(0,0,1,.3))
+  }
+  
+  # betaBar_0
+  betaBar_0 = sapply(mcmc, function(o) o$betaBar_0)
+  betaBar_0_mean <- rowMeans(betaBar_0)
+  betaBar_0_ci <- t(apply(betaBar_0, 1, quantile, c(.025,.975)))
+  
+  # beta_1
+  beta_1 = sapply(mcmc, function(o) o$beta_1)
+  beta_1_mean = rowMeans(beta_1)
+  beta_1_ci = t(apply(beta_1, 1, quantile, c(.025,.975)))
+  if (compareWithData) {
+    if (length(unique(dat$b1)) > 1) {
+      plot(dat$b1, beta_1_mean, main='b1')
+      add.errbar(beta_1_ci, x=dat$b1)
+      abline(0,1)
+    } else {
+      plot(beta_1_mean, main='b1', pch=20, col=rgb(0,0,1), cex=2, fg='grey')
+      add.errbar(beta_1_ci, x=1:J, lty=2, col=rgb(0,0,1,.5))
+      abline(h=dat$b1[1],col='grey')
+    }
+  } else {
+    plot(beta_1_mean, main='b1', pch=20, col=rgb(0,0,1), cex=2, fg='grey')
+    add.errbar(beta_1_ci, x=1:J, lty=2, col=rgb(0,0,1,.5))
+  }
+  
+  # Prob of missing
+  if (compareWithData) {
+    true_prob_miss=rep(list(list(beta_0=dat$b0, beta_1=as.matrix(dat$b1))), 1)
+  }
+
+  ys <- seq(-12,12,l=100)
+  plot(ys, ys, ylim=0:1, type='n', fg='grey', xlab='y', ylab='prob of missing')
+  title(main='Prob of missing')
+  for (i in 1:I) for (j in 1:J) {
+    r=135/255; g=206/255; b=250/255
+    plot_prob_missing(mcmc, i, j, plot_line=FALSE, col.area=rgb(r,g,b,.5), y=ys)
+  }
+  for (i in 1:I) for (j in 1:J) {
+    plot_prob_missing(mcmc, i, j, addT=TRUE, plot_area=FALSE, y=ys, col.line=j)
+  }
+  abline(v=0, col='grey')
+
+  if (compareWithData) {
+    plot_prob_missing(true_prob_miss,1,1, col.line='black', add=T, lty=2, lwd=3)
+  }
+  
+  
+  par(mfrow=c(4,2), mar=mar.ts(), oma=oma.ts())
+  for (j in 1:J){
+    plot(ys, ys, ylim=0:1, type='n', fg='grey', xlab='y',
+         xaxt='n',
+         ylab=paste0('prob of missing: ', j))
+    if (j %% 8 == 0 || j %% 8 == 7) { axis(1, fg='grey') }
+    abline(v=c(-5,0,5), col='grey', lty=2)
+    for (i in 1:I) {
+      plot_prob_missing(mcmc, i, j, addT=TRUE, plot_a=T, y=ys, col.line=i+1, lwd=2)
+      if (compareWithData) {
+        plot_prob_missing(true_prob_miss,1,1, col.line='black', add=T, lty=2)
+      }
+    }
+  }
+  par(mfrow=c(1,1), mar=mar.default(), oma=oma.default())
+}
