@@ -15,16 +15,17 @@ W <- matrix(c(.3, .4, .2, .1,
 #bdat = get_beta(y=c(-5,-4), p_tar=c(.99,.01), plot=FALSE)
 
 #dat <- simdat(I=I, N=c(2,3,1)*100, J=J, K=K, 
-dat <- simdat(I=I, N=c(2,3,1)*1000, J=J, K=K, 
-              b0=matrix(-5.7,I,J),
-              b1=rep(1.7,J),
+dat <- simdat(I=I, N=c(2,3,1)*100, J=J, K=K, 
+              b0=matrix(-70,I,J),
+              b1=rep(15,J),
               Z=genSimpleZ(J, K),
               #Z=genZ(J, K, c(.4,.6)),
               W=W,
-              psi_0=-2, psi_1=2,
+              psi_0=-2, psi_1=1,
               tau2_0=1, tau2_1=1,
-              gams_0=matrix(1 / rgamma(I*J, 13.1,12.1), I, J),
-              sig2=matrix(1/rgamma(I*J, 3,.2), ncol=J))
+              gams_0=matrix(rgamma(I*J, 100000,10000), I, J),
+              sig2=matrix(rgamma(I*J, 1000, 10000), ncol=J))
+plot.histModel2(dat$y, xlim=c(-5,5), main='Histogram of Data', quant=c(.05,.95))
 
 missing_count = sapply(dat$y, function(yi)
   apply(yi, 2, function(col) sum(is.na(col)))
@@ -61,7 +62,7 @@ plot_simdat <- function(dat,i,j,...) {
 #par(mfrow=c(1,1))
 
 
-plot.histModel2(dat$y, xlim=c(-5,5), main='Histogram of Data')
+plot.histModel2(dat$y, xlim=c(-5,5), main='Histogram of Data', quant=c(.05,.95))
 plot.histModel2(list(dat$y[[1]]), xlim=c(-5,5), main='Histogram of Data')
 plot.histModel2(list(dat$y[[2]]), xlim=c(-5,5), main='Histogram of Data')
 plot.histModel2(list(dat$y[[3]]), xlim=c(-5,5), main='Histogram of Data')
@@ -73,42 +74,49 @@ for (i in 1:length(dat$y)) {
 }
 
 
-mus_init <- array(0, c(I,J,2))
-mus_init[,,1] <- ifelse(is.na(mus0_est), mean(mus0_est), mus0_est)
-mus_init[,,2] <- ifelse(is.na(mus1_est), mean(mus1_est), mus1_est)
-warmup_truth <- list(K=10, mus=mus_init)
-#prior <- list(cs_v=4, cs_h=3)
-prior <- list(cs_v=4, cs_h=3)
-warmup <- cytof_fix_K_fit(dat$y, B=100, burn=0, print=1,
-                          truth=warmup_truth, prior=prior)
-ll_warmup <- sapply(warmup, function(o) o$ll); plot(ll_warmup, type='l')
-my.image(last(warmup)$Z)
-Z_warm <- lapply(warmup, function(o) o$Z)
-for (i in 1:length(Z_warm)) {
-  my.image(Z_warm[[i]], main=paste0('iteration ',i))
-  Sys.sleep(.1)
-}
+#mus_init <- array(0, c(I,J,2))
+#mus_init[,,1] <- ifelse(is.na(mus0_est), mean(mus0_est), mus0_est)
+#mus_init[,,2] <- ifelse(is.na(mus1_est), mean(mus1_est), mus1_est)
+#warmup_truth <- list(K=10, mus=mus_init)
+##prior <- list(cs_v=4, cs_h=3)
+#prior = list(cs_v=4, cs_h=3, a_beta=500000, b_beta=100000)
+#init = list(beta_1=rep(5,J))
+#warmup <- cytof_fix_K_fit(dat$y, B=100, burn=0, print=1,
+#                          truth=warmup_truth, prior=prior, init=init)
+#ll_warmup <- sapply(warmup, function(o) o$ll); plot(ll_warmup, type='l')
+#my.image(last(warmup)$Z)
+#Z_warm <- lapply(warmup, function(o) o$Z)
+#for (i in 1:length(Z_warm)) {
+#  my.image(Z_warm[[i]], main=paste0('iteration ',i))
+#  Sys.sleep(.1)
+#}
+#my.image(matApply(Z_warm,mean), addL=T)
+#
+#### v ###
+#v <- sapply(warmup, function(w) w$v)
+#plot(rowMeans(v), pch=20, cex=2)
+#par(mfrow=c(5,2))
+#for (i in 1:nrow(v)) plot(v[i,], type='l')
+#par(mfrow=c(1,1))
+#
+#### H ###
+#H <- sapply(warmup, function(w) w$H)
+#plot(rowMeans(H), col=last(Z_warm)+3, pch=20)
+#par(mfrow=c(4,2))
+#for (i in 1:nrow(H)) {plot(H[i,], type='l'); abline(h=0, col='grey')}
+#par(mfrow=c(1,1))
+#
+#truth=list(K=10)#, Z=extendZ(dat$Z, 10))
+#init=last(warmup)
+#init$missing_y <- NULL
+#system.time(out <- cytof_fix_K_fit(dat$y, B=200, burn=80, thin=5, print=1,
+#                                   truth=truth, init=init))
 
-### v ###
-v <- sapply(warmup, function(w) w$v)
-plot(rowMeans(v), pch=20, cex=2)
-par(mfrow=c(5,2))
-for (i in 1:nrow(v)) plot(v[i,], type='l')
-par(mfrow=c(1,1))
 
-### H ###
-H <- sapply(warmup, function(w) w$H)
-plot(rowMeans(H), col=last(Z_warm)+3, pch=20)
-par(mfrow=c(4,2))
-for (i in 1:nrow(H)) {plot(H[i,], type='l'); abline(h=0, col='grey')}
-par(mfrow=c(1,1))
-
-truth=list(K=10)#, Z=extendZ(dat$Z, 10))
-init=last(warmup)
-init$missing_y <- NULL
-#system.time(out <- cytof_fix_K_fit(dat$y, truth=truth, B=10, burn=0, thin=1))
-system.time(out <- cytof_fix_K_fit(dat$y, B=200, burn=80, thin=5, print=1,
-                                   truth=truth, init=init))
+truth=list(K=10)
+prior = list(cs_v=4, cs_h=3)#, a_beta=500000, b_beta=100000)
+system.time(out <- cytof_fix_K_fit(dat$y, truth=truth, prior=prior,
+                                   B=100, burn=200, thin=2, print=1))
 
 ll <- sapply(out, function(o) o$ll)
 plot(ll <- sapply(out, function(o) o$ll), type='l',
@@ -177,6 +185,7 @@ if (length(unique(dat$b1)) > 1) {
 }
 
 # Prob of missing
+true_prob_miss=rep(list(list(beta_0=dat$b0, beta_1=as.matrix(dat$b1))), 1)
 ys <- seq(-12,12,l=100)
 plot(ys, ys, ylim=0:1, type='n', fg='grey', xlab='y', ylab='prob of missing')
 title(main='Prob of missing')
@@ -187,6 +196,9 @@ for (i in 1:I) for (j in 1:J) {
 for (i in 1:I) for (j in 1:J) {
   plot_beta(out, i, j, addT=TRUE, plot_area=FALSE, y=ys, col.line=j)
 }
+plot_beta(true_prob_miss,1,1, col.line='black', add=T, lty=2, lwd=3)
+abline(v=0, col='grey')
+
 
 par(mfrow=c(4,2), mar=mar.ts(), oma=oma.ts())
 for (j in 1:J){
@@ -197,6 +209,7 @@ for (j in 1:J){
   abline(v=c(-5,0,5), col='grey', lty=2)
   for (i in 1:I) {
     plot_beta(out, i, j, addT=TRUE, plot_a=T, y=ys, col.line=i+1, lwd=2)
+    plot_beta(true_prob_miss,1,1, col.line='black', add=T, lty=2)
   }
 }
 par(mfrow=c(1,1), mar=mar.default(), oma=oma.default())
@@ -245,7 +258,7 @@ sig2_mean = rowMeans(sig2)
 sig2_ci = t(apply(sig2, 1, quantile, c(.025,.975)))
 
 sig2_range = range(sig2_mean, dat$sig2)
-plot(c(dat$sig2), c(sig2_mean), xlim=sig2_range, ylim=sig2_range,
+plot(c(dat$sig2), c(sig2_mean), #xlim=sig2_range, ylim=sig2_range,
      pch=20, col='blue', fg='grey', xlab='truth', ylab='posterior mean',
      main=expression(sigma[ij]^2))
 abline(0,1, col='grey')
@@ -290,6 +303,10 @@ for (i in 1:I) {
 
 i=3
 for (i in 1:I) {
+  bla <- ifelse(!is.na(dat$y[[i]]), NA, missing_y_mean[[i]])
+  my.image(bla, mn=-5, mx=5,
+           col=blueToRed(), addLegend=TRUE, xlab='markers',
+           main=paste0('Only Imputed Missing Values: y',i))
   my.image(missing_y_mean[[i]] - dat$y_no_missing[[i]], mn=-3, mx=3,
            col=blueToRed(), addLegend=TRUE, xlab='markers',
            main=paste0('Posterior Mean - Full Data',i))
