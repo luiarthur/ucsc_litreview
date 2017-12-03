@@ -8,6 +8,8 @@ OUTDIR='out/simple'
 B=200
 BURN="20 100 500"
 THIN=5
+i=0
+MAX_CORES=10
 
 for j in $J
 do
@@ -19,9 +21,15 @@ do
       do
         for burn in $BURN
         do
+          i=$((i+1)) 
           outdir="${OUTDIR}/j${j}_k${k}_size${s}_z${z}_B${B}_burn${burn}_thin${THIN}/"
           echo $outdir
           Rscript simple.R $j $k $s $z $outdir $B $burn $THIN &
+
+          if  [[ $(( i % MAX_CORES )) == 0 ]]
+          then
+            wait
+          fi
         done
       done
     done
