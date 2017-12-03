@@ -1,0 +1,29 @@
+#!/bin/bash
+
+J=32
+MCMC_K="3 4 5 10"
+DATA_SIZE="100 1000 10000"
+USE_SIMPLE_Z="0 1"
+OUTDIR='out/simple'
+B=200
+BURN="20 100 500"
+THIN=5
+
+for j in $J
+do
+  for k in $MCMC_K
+  do
+    for s in $DATA_SIZE
+    do
+      for z in $USE_SIMPLE_Z
+      do
+        for burn in $BURN
+        do
+          outdir="${OUTDIR}/j${j}_k${k}_size${s}_z${z}_B${B}_burn${burn}_thin${THIN}/"
+          echo $outdir
+          Rscript simple.R $j $k $s $z $outdir $B $burn $THIN &
+        done
+      done
+    done
+  done
+done

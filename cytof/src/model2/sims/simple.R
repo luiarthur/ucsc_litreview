@@ -1,32 +1,34 @@
 #!/usr/bin/env Rscript
-#args = commandArgs(trailingOnly=TRUE)
+args = commandArgs(trailingOnly=TRUE)
 
 library(cytof2)
 library(rcommon)
 set.seed(1)
+#source("../cytof2/R/readExpression.R")
 
-#if (length(args) < 6) {
-#  stop('usage: Rscript simple.R I J SIM_K DATA_SIZE simpleZ OUTDIR')
-#} else {
-#  I <- args[1]
-#  J <- args[2]
-#  SIM_K <- args[3]
-#  DATA_SIZE <- args[4]
-#  simpleZ
-#  OUTDIR <- args[6]
-#}
+if (length(args) < 5) {
+  stop('usage: Rscript simple.R J MCMC_K DATA_SIZE USE_SIMPLE_Z OUTDIR B BURN THIN')
+} else {
+  J <- as.integer(args[1])
+  MCMC_K <- as.integer(args[2])
+  DATA_SIZE <- as.integer(args[3])
+  USE_SIMPLE_Z <- as.integer(args[4])
+  OUTDIR <- args[5]
+  B <- as.integer(args[6])
+  BURN <- as.integer(args[7])
+  THIN <- as.integer(args[8])
+}
 
 ### GLOBALS
-OUTDIR = 'out/simple/'
+#OUTDIR = 'out/simple/'
 fileDest = function(name) paste0(OUTDIR, name)
 system(paste0('mkdir -p ', OUTDIR))
 
-#source("../cytof2/R/readExpression.R")
 
 I = 3
-J = 32
+#J = 32
 K = 4
-DATA_SIZE = 10000
+#DATA_SIZE = 10000
 W <- matrix(c(.3, .4, .2, .1,
               .1, .7, .1, .1,
               .2, .3, .3, .2), nrow=I, byrow=TRUE)
@@ -37,7 +39,7 @@ dat <- simdat(I=I, N=c(2,3,1)*DATA_SIZE, J=J, K=K,
 #dat <- simdat(I=I, N=c(2,3,1)*10000, J=J, K=K, 
               b0=matrix(-50,I,J),
               b1=rep(15,J),
-              Z=genSimpleZ(J, K),
+              Z=if (USE_SIMPLE_Z) genSimpleZ(J, K) else genZ(J,K),
               #Z=genZ(J, K, c(.4,.6)),
               W=W,
               psi_0=-2, psi_1=1,
@@ -138,12 +140,12 @@ dev.off()
 #                                   truth=truth, init=init))
 
 
-truth=list(K=4)
+truth=list(K=MCMC_K)
 prior = list(cs_v=4, cs_h=3)
 #system.time(out <- cytof_fix_K_fit(dat$y, truth=truth, prior=prior,
 #                                   B=100, burn=200, thin=2, print=1))
 system.time(out <- cytof_fix_K_fit(dat$y, truth=truth, prior=prior,
-                                   B=100, burn=100, thin=2, print=1))
+                                   B=B, burn=BURN, thin=THIN, print=1))
 
 
 plot_cytof_posterior(out, dat$y, outdir=OUTDIR, sim=dat)
