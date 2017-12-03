@@ -161,7 +161,7 @@ plot_cytof_posterior <- function(mcmc, y, outdir='', sim=NULL, supress=c(),
     v <- sapply(mcmc, function(o) o$v)
     v_ci <- t(apply(v, 1, quantile, quant))
     plot(rowMeans(v), pch=20, cex=2, ,main='v: Posterior', fg='grey',
-         xlab='k', ylab='v')
+         xlab='k', ylab='v', ylim=c(0,1))
     add.errbar(v_ci, col=rgb(.1,.1,.1,.3))
     par(mfrow=c(5,2), mar=mar.ts(), oma=oma.ts())
     for (i in 1:nrow(v)) {

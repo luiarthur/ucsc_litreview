@@ -1,6 +1,20 @@
+#!/usr/bin/env Rscript
+#args = commandArgs(trailingOnly=TRUE)
+
 library(cytof2)
 library(rcommon)
 set.seed(1)
+
+#if (length(args) < 6) {
+#  stop('usage: Rscript simple.R I J SIM_K DATA_SIZE simpleZ OUTDIR')
+#} else {
+#  I <- args[1]
+#  J <- args[2]
+#  SIM_K <- args[3]
+#  DATA_SIZE <- args[4]
+#  simpleZ
+#  OUTDIR <- args[6]
+#}
 
 ### GLOBALS
 OUTDIR = 'out/simple/'
@@ -12,13 +26,14 @@ system(paste0('mkdir -p ', OUTDIR))
 I = 3
 J = 32
 K = 4
+DATA_SIZE = 10000
 W <- matrix(c(.3, .4, .2, .1,
               .1, .7, .1, .1,
               .2, .3, .3, .2), nrow=I, byrow=TRUE)
 
 #bdat = get_beta(y=c(-5,-4), p_tar=c(.99,.01), plot=FALSE)
 
-dat <- simdat(I=I, N=c(2,3,1)*1000, J=J, K=K, 
+dat <- simdat(I=I, N=c(2,3,1)*DATA_SIZE, J=J, K=K, 
 #dat <- simdat(I=I, N=c(2,3,1)*10000, J=J, K=K, 
               b0=matrix(-50,I,J),
               b1=rep(15,J),
@@ -124,11 +139,11 @@ dev.off()
 
 
 truth=list(K=4)
-prior = list(cs_v=4, cs_h=3)#, a_beta=500000, b_beta=100000)
+prior = list(cs_v=4, cs_h=3)
 #system.time(out <- cytof_fix_K_fit(dat$y, truth=truth, prior=prior,
 #                                   B=100, burn=200, thin=2, print=1))
 system.time(out <- cytof_fix_K_fit(dat$y, truth=truth, prior=prior,
-                                   B=20, burn=20, thin=2, print=1))
+                                   B=100, burn=100, thin=2, print=1))
 
 
 plot_cytof_posterior(out, dat$y, outdir=OUTDIR, sim=dat)
