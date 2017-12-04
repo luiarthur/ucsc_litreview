@@ -1,0 +1,28 @@
+#!/usr/bin/env python
+import os, sys
+
+### Read simulation number ###
+if len(sys.argv) != 2:
+    print "Usage: "
+    print "         ./summarize <PATH_TO_SIMULATION_DIR>"
+    sys.exit(1)
+else:
+    SIMDIR = sys.argv[1]
+    print "Generating report for " + SIMDIR
+
+### Read File as String ###
+def readFile(filepath):
+    with open(filepath,"r") as f:
+        s = ""
+        for line in f:
+            s += line
+        f.close()
+    return s
+
+### Write string to File ###
+def writeFile(filepath, data):
+    with open(filepath,"w") as f:
+        f.write(data)
+        f.close()
+
+

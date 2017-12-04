@@ -6,7 +6,7 @@ library(rcommon)
 set.seed(1)
 #source("../cytof2/R/readExpression.R")
 
-if (length(args) < 5) {
+if (length(args) < 8) {
   stop('usage: Rscript simple.R J MCMC_K DATA_SIZE USE_SIMPLE_Z OUTDIR B BURN THIN')
 } else {
   J <- as.integer(args[1])

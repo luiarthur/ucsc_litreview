@@ -8,6 +8,7 @@ OUTDIR='out/simple'
 B=200
 BURN="20 100 500"
 THIN=5
+
 i=0
 MAX_CORES=10
 
