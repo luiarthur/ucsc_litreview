@@ -54,7 +54,7 @@ def getPngWithHead(d, png):
 
 def subPngWithHead(s, placeholder, d, png, newpage=False):
     pngs = map(lambda x: d + '/' + x, getPngWithHead(d.replace('../../',''), png))
-    cmds = ["\includegraphics{" + p +  "}" for p in pngs]
+    cmds = ["\includegraphics{" + p +  "}" for p in sorted(pngs)]
     return s.replace(placeholder, "\n\\newpage\n".join(cmds))
 
 def compile_md(simtitle):

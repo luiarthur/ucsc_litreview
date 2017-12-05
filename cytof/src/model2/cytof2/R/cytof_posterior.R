@@ -4,7 +4,7 @@ plot_cytof_posterior <- function(mcmc, y, outdir='', sim=NULL, supress=c(),
 
   compareWithData = !is.null(sim)
   I = length(y)
-  J = ncol(y[[1]])
+  J = NCOL(y[[1]])
 
   if (outdir > "") pdf(fileDest("params.pdf"))
 
@@ -214,18 +214,25 @@ plot_cytof_posterior <- function(mcmc, y, outdir='', sim=NULL, supress=c(),
     missing_y <- lapply(as.list(1:I), function(i) lapply(mcmc, function(o) {
       matrix(o$missing_y[[i]], ncol=J)
     }))
+    #missing_y_mean <- lapply(missing_y, function(m) Reduce("+", m) / length(m))
+    missing_y_mean <- lapply(missing_y, function(yi_list) matApply(yi_list, mean))
+
     par(mfrow=c(4,2))
     for (i in 1:I) for (j in 1:J) {
-      plot_dat(missing_y, i, j, xlim=c(-5,5), ylim=c(0,1), xlab=paste0('marker ',j))
+      plot_dat(missing_y_mean, i, j, 
+               xlim=c(-5,5), ylim=c(0,1), xlab=paste0('marker ',j))
     }
     par(mfrow=c(1,1))
+
+    plot.histModel2(missing_y_mean, 
+                    xlim=c(-5,5), main='Histogram of Imputed Data',
+                    quant=c(.05,.95))
   }
   if (outdir > "") dev.off()
 
   ### missing_y: FIXME. Want to plot multiple pages like pdf
   if (!('missing_y' %in% supress)) {
     if (outdir > "") png(fileDest('imputes_%03d.png'))
-    missing_y_mean <- lapply(missing_y, function(m) Reduce("+", m) / length(m))
 
     for (i in 1:I) {
       my.image(y[[i]], mn=-5, mx=5, col=blueToRed(), addLegend=TRUE,

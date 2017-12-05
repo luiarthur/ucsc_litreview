@@ -67,14 +67,15 @@ plot_beta <- function(mcmc, missing_count, dat=NULL) {
   compareWithData = !is.null(dat)
 
   I <- length(mcmc[[1]]$missing_y)
-  J <- nrow(mcmc[[1]]$Z)
+  J <- NROW(mcmc[[1]]$Z)
+  K <- NCOL(mcmc[[1]]$Z)
 
   ### beta ###
   beta_0 = sapply(mcmc, function(o) o$beta_0)
   beta_0_mean = rowMeans(beta_0)
   beta_0_ci = t(apply(beta_0, 1, quantile, c(.025,.975)))
   
-  a = sapply(c(t(missing_count) / 30), function(x) min(x,1))
+  a = sapply(c(t(missing_count) / 30), function(x) max(min(x,1),.1))
   if (compareWithData) {
     if (length(unique(c(dat$b0))) > 1) {
       plot(dat$b0, beta_0_mean, main='b0')
@@ -116,7 +117,8 @@ plot_beta <- function(mcmc, missing_count, dat=NULL) {
   
   # Prob of missing
   if (compareWithData) {
-    true_prob_miss=rep(list(list(beta_0=dat$b0, beta_1=as.matrix(dat$b1))), 1)
+    true_prob_miss <- 
+      rep(list(list(Z=matrix(0,J,K), beta_0=dat$b0, beta_1=as.matrix(dat$b1))), 1)
   }
 
   ys <- seq(-12,12,l=100)
