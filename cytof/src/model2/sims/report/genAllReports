@@ -1,0 +1,10 @@
+#!/bin/bash
+
+i=0
+MAX_CORES=8
+
+for d in `ls $1`
+do
+  ./summarize $1/$d &
+  i=$((i+1)); if  [[ $(( i % MAX_CORES )) == 0 ]]; then wait; fi
+done

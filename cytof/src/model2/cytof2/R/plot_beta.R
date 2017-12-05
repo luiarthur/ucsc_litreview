@@ -35,6 +35,8 @@ p_missing <- function(o, i, j, y) {
   #' @param y A grid of values to compute the probabilities
   #' @export
 
+  J = NCOL(o[[1]]$missing_y)
+
   b0ij <- matrix(o$beta_0, ncol=J)[i,j]
   b1j <- o$beta_1[j]
   1 / (1 + exp(-b0ij + b1j * y))

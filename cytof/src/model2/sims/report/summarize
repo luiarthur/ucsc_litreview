@@ -1,0 +1,90 @@
+#!/usr/bin/env python
+
+import os, sys
+
+### Read simulation number ###
+if len(sys.argv) != 2:
+    print "Usage: "
+    print "         ./summarize <PATH_TO_SIMULATION_DIR>"
+    sys.exit(1)
+else:
+    SIMDIR = sys.argv[1]
+    print "Generating report for " + SIMDIR
+
+### Read File as String ###
+def readFile(filepath):
+    with open(filepath,"r") as f:
+        s = ""
+        for line in f:
+            s += line
+        f.close()
+    return s
+
+### Write string to File ###
+def writeFile(filepath, data):
+    with open(filepath,"w") as f:
+        f.write(data)
+        f.close()
+
+def replaceWithTxt(s, placeholder, txtPath):
+    return s.replace(placeholder, '\\verbatiminput{'+txtPath+'}')
+
+def getPdfPages(filepath):
+    cmd = "pdfinfo " + filepath + " | grep 'Pages' | awk '{print $2}'"
+    return int(os.popen(cmd).read().strip())
+
+def replaceWithPdfPath(s, placeholder, pdfPath):
+    pages = getPdfPages(pdfPath.replace('../../', ''))
+
+    if pages > 1:
+        tmp = "\includegraphics[page=<page>]{" + pdfPath + "}"
+        cmd = ""
+        for i in range(pages):
+            cmd += tmp.replace("<page>", str(i+1)) + "\n"
+    else:
+        cmd = "\includegraphics{" + pdfPath + "}"
+
+    cmd = s.replace(placeholder, cmd) 
+
+    return cmd
+
+def getPngWithHead(d, png):
+    preout = filter(lambda x: png in x, os.listdir(d))
+    return filter(lambda x: '.png' in x, preout)
+
+def subPngWithHead(s, placeholder, d, png, newpage=False):
+    pngs = map(lambda x: d + '/' + x, getPngWithHead(d.replace('../../',''), png))
+    cmds = ["\includegraphics{" + p +  "}" for p in pngs]
+    return s.replace(placeholder, "\n\\newpage\n".join(cmds))
+
+def compile_md(simtitle):
+    junk_ext = 'log,aux,nav,out,snm,toc,blg,bbl,tex,md'
+    compile_cmd = """
+    pandoc --toc  <SIMTITLE>.md -s -o <SIMTITLE>.tex;
+    pdflatex <SIMTITLE>.tex >/dev/null 2>&1;
+    pdflatex <SIMTITLE>.tex >/dev/null 2>&1;
+    """.replace("<SIMTITLE>", simtitle)
+    os.system(compile_cmd)
+    for ext in junk_ext.split(','):
+        os.system('rm -f ' + simtitle + '.' + ext)
+
+
+### GLOBAL VARS ################################################
+OUTDIR = "pdf"
+template = readFile("template.md")
+
+SIMTITLE = os.path.basename(os.path.normpath(SIMDIR))
+template = template.replace('<title>', SIMTITLE)
+template = replaceWithPdfPath(template, '<data-pdf>', SIMDIR+'/data.pdf')
+template = subPngWithHead(template, '<data-png>', SIMDIR, 'rawDat')
+
+template = replaceWithPdfPath(template, '<params-pdf>', SIMDIR+'/params.pdf')
+template = replaceWithTxt(template, '<W-txt>', SIMDIR + '/W.txt')
+template = replaceWithTxt(template, '<missing-count-txt>', SIMDIR + '/missing_count.txt')
+template = subPngWithHead(template, '<imputes-png>', SIMDIR, 'imputes')
+
+#print template
+
+writeFile(SIMTITLE+".md", template)
+compile_md(SIMTITLE)
+os.system("mv " + SIMTITLE + ".pdf pdf")
