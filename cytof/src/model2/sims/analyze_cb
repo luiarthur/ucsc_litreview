@@ -17,7 +17,9 @@ do
   for k in $MCMC_K
   do
     outdir="${OUTDIR}/cb_k${k}_B${B}_burn${burn}_thin${THIN}/"
-    sem -j $MAX_CORES Rscript realDat_cb.R $DATA_DIR $k $outdir $B $burn $THIN
+    cmd="Rscript realDat_cb.R $DATA_DIR $k $outdir $B $burn $THIN"
+    echo $outdir
+    sem --citation -j $MAX_CORES $cmd
   done
 done
 sem --wait
