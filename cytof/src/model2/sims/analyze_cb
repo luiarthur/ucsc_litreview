@@ -1,27 +1,23 @@
 #!/bin/bash
+# Requires GNU Parallel: sem
 
 ### PARAMETERS FOR PARALLEL JOB ###
-i=0
 MAX_CORES=15
-
 
 ### PARAMETERS FOR MCMC ###
 DATA_DIR="dat/cytof_cb.RData"
 MCMC_K="2 3 4 5 6 7 8 9 10"
 OUTDIR="out/cb"
 B=200
-BURN="20 100 500"
+BURN="100 500 1000"
 THIN=5
 
-for k in $MCMC_K
+for burn in $BURN
 do
-  for burn in $BURN
+  for k in $MCMC_K
   do
-    i=$((i+1)) 
     outdir="${OUTDIR}/cb_k${k}_B${B}_burn${burn}_thin${THIN}/"
-
-    Rscript realDat_cb.R $DATA_DIR $k $outdir $B $burn $THIN &
-
-    if  [[ $(( i % MAX_CORES )) == 0 ]]; then wait; fi
+    sem -j $MAX_CORES Rscript realDat_cb.R $DATA_DIR $k $outdir $B $burn $THIN
   done
 done
+sem --wait

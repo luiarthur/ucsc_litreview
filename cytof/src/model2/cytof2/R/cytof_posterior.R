@@ -12,6 +12,11 @@ plot_cytof_posterior <- function(mcmc, y, outdir='', sim=NULL, supress=c(),
   ll <- sapply(mcmc, function(o) o$ll)
   plot(ll, main='log-likelihood', type='b',
        xlab='mcmc iteration', ylab='log-likelihood')
+  # lower dic is preferred
+  dic <- mean(-2*ll) + var(-2*ll) / 2
+  if (outdir > '') sink(fileDest('dic.txt'))
+  cat("DIC:", round(dic,2), "\n")
+  if (outdir > '') sink()
 
   ### Z ###
   if (!("Z" %in% supress)) {
@@ -49,8 +54,10 @@ plot_cytof_posterior <- function(mcmc, y, outdir='', sim=NULL, supress=c(),
     if (outdir > '') sink(fileDest('W.txt'))
     cat("Posterior Mean: W\n")
     print(W_mean)
-    cat("True W\n")
-    if(compareWithData) print(sim$W)
+    if(compareWithData) {
+      cat("True W\n")
+      print(sim$W)
+    }
     if (outdir > '') sink()
   }
 
