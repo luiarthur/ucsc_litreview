@@ -1,5 +1,11 @@
 #!/bin/bash
+### REQUIRES GNU PARALLEL: sem ###
 
+### PARAMETERS FOR PARALLEL JOB ###
+i=0
+MAX_CORES=16
+
+### PARAMETERS FOR MCMC ###
 J=32
 MCMC_K="3 4 5 10"
 DATA_SIZE="100 1000 10000"
@@ -9,8 +15,6 @@ B=200
 BURN="20 100 500"
 THIN=5
 
-i=0
-MAX_CORES=10
 
 for j in $J
 do
@@ -24,13 +28,9 @@ do
         do
           i=$((i+1)) 
           outdir="${OUTDIR}/j${j}_k${k}_size${s}_z${z}_B${B}_burn${burn}_thin${THIN}/"
-          echo $outdir
-          Rscript simple.R $j $k $s $z $outdir $B $burn $THIN &
-
-          if  [[ $(( i % MAX_CORES )) == 0 ]]
-          then
-            wait
-          fi
+          cmd="Rscript simple.R $j $k $s $z $outdir $B $burn $THIN"
+          sem -j $MAX_CORES $cmd
+          echo "Simulation $i: $outdir"
         done
       done
     done

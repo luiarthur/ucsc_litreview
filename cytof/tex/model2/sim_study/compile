@@ -1,0 +1,17 @@
+#!/bin/bash
+
+# -s        =>  create standalone file (in this case report.tex latex file)
+# --toc     =>  create table of contents
+# --natbib  =>  use the natbib package in latex
+# -o        =>  output file name
+
+md-include.py sim_study.md 
+pandoc sim_study.md -s -o sim_study.tex --number-sections
+
+#pdflatex sim_study.tex
+#bibtex sim_study.aux
+#pdflatex sim_study.tex
+pdflatex sim_study.tex
+rm -f *.{log,aux,nav,out,snm,toc,blg,bbl}
+rm -f sim_study.tex
+
