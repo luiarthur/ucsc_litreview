@@ -22,4 +22,4 @@ load(DATA_DIR) # dat/cytof_cb.RData
 
 truth = list(K=MCMC_K)
 system.time(out <- cytof_fix_K_fit(y, truth=truth, B=B, burn=BURN, thin=THIN))
-plot_cytof_posterior(out, dat$y, outdir=OUTDIR)
+plot_cytof_posterior(out, y, outdir=OUTDIR)
