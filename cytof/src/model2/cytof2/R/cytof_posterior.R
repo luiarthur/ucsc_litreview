@@ -208,15 +208,23 @@ plot_cytof_posterior <- function(mcmc, y, outdir='', sim=NULL, supress=c(),
     }
     plotPosts(psi, cnames=tit)
   }
+
+  ### missing_y
+  if(!('missing_y' %in% supress)) {
+    missing_y <- lapply(as.list(1:I), function(i) lapply(mcmc, function(o) {
+      matrix(o$missing_y[[i]], ncol=J)
+    }))
+    par(mfrow=c(4,2))
+    for (i in 1:I) for (j in 1:J) {
+      plot_dat(missing_y, i, j, xlim=c(-5,5), ylim=c(0,1), xlab=paste0('marker ',j))
+    }
+    par(mfrow=c(1,1))
+  }
   if (outdir > "") dev.off()
 
   ### missing_y: FIXME. Want to plot multiple pages like pdf
   if (!('missing_y' %in% supress)) {
     if (outdir > "") png(fileDest('imputes_%03d.png'))
-    missing_y <- lapply(as.list(1:I), function(i) lapply(mcmc, function(o) {
-      matrix(o$missing_y[[i]], ncol=J)
-    }))
-
     missing_y_mean <- lapply(missing_y, function(m) Reduce("+", m) / length(m))
 
     for (i in 1:I) {
