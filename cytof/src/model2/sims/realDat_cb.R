@@ -18,6 +18,7 @@ THIN <- as.integer(args[6])
 fileDest = function(name) paste0(OUTDIR, name)
 
 ### Read in CB Data 
+system(paste0('mkdir -p ', OUTDIR))
 load(DATA_DIR) # dat/cytof_cb.RData
 
 truth = list(K=MCMC_K)
