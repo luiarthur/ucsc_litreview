@@ -1,6 +1,8 @@
 #!/usr/bin/env python
 import os, sys
 
+OUTDIR = 'report'
+
 ### Read simulation number ###
 if len(sys.argv) != 2:
     print "Usage: "

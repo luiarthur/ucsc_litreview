@@ -56,7 +56,8 @@ plot_cytof_posterior <- function(mcmc, y, outdir='', sim=NULL, supress=c(),
 
   ### beta ###
   if (!("beta" %in% supress)) {
-    plot_beta(mcmc, sim)
+    missing_count <- get_missing_count(y)
+    plot_beta(mcmc, missing_count, sim)
   }
 
   ### mus ###

@@ -61,7 +61,7 @@ plot_prob_missing <- function(mcmc, i, j, q=c(.025,.975),
                             from=min(y_grid), to=max(y_grid), col=col.area)
 }
 
-plot_beta <- function(mcmc, dat=NULL) {
+plot_beta <- function(mcmc, missing_count, dat=NULL) {
   compareWithData = !is.null(dat)
 
   I <- length(mcmc[[1]]$missing_y)
