@@ -23,6 +23,7 @@ if (length(args) < 8) {
 #OUTDIR = 'out/simple/'
 fileDest = function(name) paste0(OUTDIR, name)
 system(paste0('mkdir -p ', OUTDIR))
+system(paste0('cp simple.R ', fileDest('src.R')))
 
 
 I = 3
@@ -53,7 +54,14 @@ pdf(fileDest('data.pdf'))
 ### Prob Missing (Truth)
 missing_count = get_missing_count(dat$y)
 sink(fileDest('missing_count.txt'))
+cat("Missing count:\n")
 print(missing_count)
+sink()
+
+missing_prop = get_missing_prop(dat$y)
+sink(fileDest('missing_prop.txt'))
+cat("Missing proportion:\n")
+print(missing_prop)
 sink()
 
 y_grid = seq(-6,0,l=100)
@@ -144,8 +152,11 @@ truth=list(K=MCMC_K)
 prior = list(cs_v=4, cs_h=3)
 #system.time(out <- cytof_fix_K_fit(dat$y, truth=truth, prior=prior,
 #                                   B=100, burn=200, thin=2, print=1))
-system.time(out <- cytof_fix_K_fit(dat$y, truth=truth, prior=prior,
-                                   B=B, burn=BURN, thin=THIN, print=1))
+sim_time <- system.time(
+  out <- cytof_fix_K_fit(dat$y, truth=truth, prior=prior,
+                         B=B, burn=BURN, thin=THIN, print=1)
+)
+sink(fileDest('simtime.txt')); print(sim_time); sink()
 
 
 plot_cytof_posterior(out, dat$y, outdir=OUTDIR, sim=dat)

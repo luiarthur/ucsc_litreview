@@ -147,13 +147,21 @@ plot_dat <- function(y, i, j, ...) {
     hist(yij1, border='white', col=rgb(1,0,0,.5), add=FALSE, prob=TRUE, 
          main=paste0("Y",i,": Col",j),fg='red',...)
   }
-  hist(yij, border='white', col=rgb(0,1,0,.5), add=TRUE, prob=TRUE)
+  #hist(yij, border='white', col=rgb(0,1,0,.1), add=TRUE, prob=TRUE)
+  lines(density(yij,na.rm=TRUE), col='grey')
 }
 
 get_missing_count <- function(y) {
   #' @export
   sapply(y, function(yi)
     apply(yi, 2, function(col) sum(col == -Inf | is.na(col)))
+  )
+}
+
+get_missing_prop <- function(y) {
+  #' @export
+  sapply(y, function(yi)
+    apply(yi, 2, function(col) mean(col == -Inf | is.na(col)))
   )
 }
  

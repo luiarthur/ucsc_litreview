@@ -20,12 +20,20 @@ fileDest = function(name) paste0(OUTDIR, name)
 ### Read in CB Data 
 system(paste0('mkdir -p ', OUTDIR))
 load(DATA_DIR) # dat/cytof_cb.RData
+system(paste0('cp realDat_cb.R ', fileDest('src.R')))
 
 ### Plotting Data ###
 pdf(fileDest('data.pdf'))
 ### Prob Missing
 sink(fileDest('missing_count.txt'))
+cat("Missing count:\n")
 print(get_missing_count(y))
+sink()
+
+missing_prop = get_missing_prop(dat$y)
+sink(fileDest('missing_prop.txt'))
+cat("Missing proportion:\n")
+print(missing_prop)
 sink()
 
 ### Estimate of mu*
@@ -56,5 +64,8 @@ dev.off()
 
 
 truth = list(K=MCMC_K)
-system.time(out <- cytof_fix_K_fit(y, truth=truth, B=B, burn=BURN, thin=THIN))
+sim_time <- system.time(
+  out <- cytof_fix_K_fit(y, truth=truth, B=B, burn=BURN, thin=THIN)
+)
+sink(fileDest('simtime.txt')); print(sim_time); sink()
 plot_cytof_posterior(out, y, outdir=OUTDIR)
