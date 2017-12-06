@@ -4,4 +4,4 @@
 qsub -l nodes=2:ppn=16 -l walltime=48:00:00 -I
 
 ### Go to current work directory
-cd $PBS_O_WORKDIR 
+#cd $PBS_O_WORKDIR 
