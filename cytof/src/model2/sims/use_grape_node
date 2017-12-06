@@ -1,0 +1,7 @@
+#!/bin/bash
+
+qsub -l nodes=2:ppn=16 -l walltime=48:00:00 -I
+
+### Install latest R version
+#wget https://cran.r-project.org/src/base/R-3/R-3.4.3.tar.gz
+#https://support.rstudio.com/hc/en-us/articles/218004217-Building-R-from-source
