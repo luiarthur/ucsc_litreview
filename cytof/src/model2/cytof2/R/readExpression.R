@@ -147,6 +147,7 @@ plot_dat <- function(y, i, j, ...) {
     hist(yij1, border='white', col=rgb(1,0,0,.5), add=FALSE, prob=TRUE, 
          main=paste0("Y",i,": Col",j),fg='red',...)
   }
+  hist(yij, border='white', col=rgb(0,1,0,.5), add=TRUE, prob=TRUE)
 }
 
 get_missing_count <- function(y) {
