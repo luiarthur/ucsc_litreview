@@ -64,8 +64,9 @@ dev.off()
 
 
 truth = list(K=MCMC_K)
+prior = list(d_w=1/MCMC_K)
 sim_time <- system.time(
-  out <- cytof_fix_K_fit(y, truth=truth, B=B, burn=BURN, thin=THIN)
+  out <- cytof_fix_K_fit(y, truth=truth, prior=prior, B=B, burn=BURN, thin=THIN)
 )
 sink(fileDest('simtime.txt')); print(sim_time); sink()
 plot_cytof_posterior(out, y, outdir=OUTDIR)

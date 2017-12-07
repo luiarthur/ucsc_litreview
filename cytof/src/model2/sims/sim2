@@ -1,0 +1,35 @@
+#!/bin/bash
+### REQUIRES GNU PARALLEL: sem ###
+
+### PARAMETERS FOR PARALLEL JOB ###
+i=0
+MAX_CORES=16
+
+### PARAMETERS FOR MCMC ###
+J=32
+MCMC_K="2 3 4 5 6 7"
+N="10000"
+USE_SIMPLE_Z="0 1"
+OUTDIR='out/sim2'
+B=200
+BURN=1000
+THIN=5
+
+
+for j in $J
+do
+  for k in $MCMC_K
+  do
+    for n in $N
+    do
+      for z in $USE_SIMPLE_Z
+      do
+        i=$((i+1)) 
+        outdir="${OUTDIR}/j${j}_k${k}_N${n}_z${z}_B${B}_burn${burn}_thin${THIN}/"
+        cmd="Rscript simple.R $j $k $n $z $outdir $B $burn $THIN"
+        sem -j $MAX_CORES $cmd
+        echo "Simulation $i: $outdir"
+      done
+    done
+  done
+done

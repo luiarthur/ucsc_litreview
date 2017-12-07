@@ -108,14 +108,14 @@ plot_cytof_posterior <- function(mcmc, y, outdir='', sim=NULL, supress=c(),
 
     if (compareWithData) {
       plot(c(sim$gams_0), c(gams_0_mean), fg='grey',
-           xlab='Data: gam0*', ylab='Posterior Mean: gam0*', 
+           xlab='truth', ylab='Posterior Mean: gam0*', 
            main=expression('Posterior'~gamma[0]^'*'),
            pch=20, col='blue')
       abline(0,1, col='grey')
       add.errbar(gams_0_ci, x=sim$gams_0, col=rgb(0,0,1,.2))
     } else {
       plot(c(gams_0_mean), fg='grey',
-           xlab='Data: gam0*', ylab='Posterior Mean: gam0*', 
+           xlab='truth', ylab='Posterior Mean: gam0*', 
            main=expression('Posterior'~gamma[0]^'*'),
            pch=20, col='blue')
       add.errbar(gams_0_ci, col=rgb(0,0,1,.2))

@@ -109,49 +109,9 @@ for (i in 1:length(dat$y)) {
 dev.off()
 
 
-#mus_init <- array(0, c(I,J,2))
-#mus_init[,,1] <- ifelse(is.na(mus0_est), mean(mus0_est), mus0_est)
-#mus_init[,,2] <- ifelse(is.na(mus1_est), mean(mus1_est), mus1_est)
-#warmup_truth <- list(K=10, mus=mus_init)
-##prior <- list(cs_v=4, cs_h=3)
-#prior = list(cs_v=4, cs_h=3, a_beta=500000, b_beta=100000)
-#init = list(beta_1=rep(5,J))
-#warmup <- cytof_fix_K_fit(dat$y, B=100, burn=0, print=1,
-#                          truth=warmup_truth, prior=prior, init=init)
-#ll_warmup <- sapply(warmup, function(o) o$ll); plot(ll_warmup, type='l')
-#my.image(last(warmup)$Z)
-#Z_warm <- lapply(warmup, function(o) o$Z)
-#for (i in 1:length(Z_warm)) {
-#  my.image(Z_warm[[i]], main=paste0('iteration ',i))
-#  Sys.sleep(.1)
-#}
-#my.image(matApply(Z_warm,mean), addL=T)
-#
-#### v ###
-#v <- sapply(warmup, function(w) w$v)
-#plot(rowMeans(v), pch=20, cex=2)
-#par(mfrow=c(5,2))
-#for (i in 1:nrow(v)) plot(v[i,], type='l')
-#par(mfrow=c(1,1))
-#
-#### H ###
-#H <- sapply(warmup, function(w) w$H)
-#plot(rowMeans(H), col=last(Z_warm)+3, pch=20)
-#par(mfrow=c(4,2))
-#for (i in 1:nrow(H)) {plot(H[i,], type='l'); abline(h=0, col='grey')}
-#par(mfrow=c(1,1))
-#
-#truth=list(K=10)#, Z=extendZ(dat$Z, 10))
-#init=last(warmup)
-#init$missing_y <- NULL
-#system.time(out <- cytof_fix_K_fit(dat$y, B=200, burn=80, thin=5, print=1,
-#                                   truth=truth, init=init))
-
-
+### Start MCMC ###
 truth=list(K=MCMC_K)
-prior = list(cs_v=4, cs_h=3)
-#system.time(out <- cytof_fix_K_fit(dat$y, truth=truth, prior=prior,
-#                                   B=100, burn=200, thin=2, print=1))
+prior = list(cs_v=4, cs_h=3, d_w=1/MCMC_K)
 sim_time <- system.time(
   out <- cytof_fix_K_fit(dat$y, truth=truth, prior=prior,
                          B=B, burn=BURN, thin=THIN, print=1)
