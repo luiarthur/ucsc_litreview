@@ -1,5 +1,6 @@
 plot_cytof_posterior <- function(mcmc, y, outdir='', sim=NULL, supress=c(),
-                                 show_all_Z=FALSE, quant=c(.025,.975)) {
+                                 show_all_Z=FALSE, quant=c(.025,.975),
+                                 dat_lim=c(-5,5)) {
   fileDest = function(name) paste0(outdir, name)
 
   compareWithData = !is.null(sim)
@@ -227,13 +228,18 @@ plot_cytof_posterior <- function(mcmc, y, outdir='', sim=NULL, supress=c(),
     par(mfrow=c(4,2))
     for (i in 1:I) for (j in 1:J) {
       plot_dat(missing_y_mean, i, j, 
-               xlim=c(-5,5), ylim=c(0,1), xlab=paste0('marker ',j))
+               xlim=dat_lim, xlab=paste0('marker ',j))
     }
     par(mfrow=c(1,1))
 
     plot.histModel2(missing_y_mean, 
-                    xlim=c(-5,5), main='Histogram of Imputed Data',
+                    xlim=dat_lim, main='Distribution of Imputed Data',
                     quant=c(.05,.95))
+    for (i in 1:I) {
+      plot.histModel2(list(missing_y_mean[[i]]),
+                      xlim=dat_lim, main=paste('Distribution of Imputed Data:',i),
+                      quant=c(.05,.95))
+    }
   }
   if (outdir > "") dev.off()
 
@@ -242,15 +248,17 @@ plot_cytof_posterior <- function(mcmc, y, outdir='', sim=NULL, supress=c(),
     if (outdir > "") png(fileDest('imputes_%03d.png'))
 
     for (i in 1:I) {
-      my.image(y[[i]], mn=-5, mx=5, col=blueToRed(), addLegend=TRUE,
+      my.image(y[[i]], mn=dat_lim[1], mx=dat_lim[2],
+               col=blueToRed(), addLegend=TRUE,
                xlab='markers', main=paste0('Data: y',i))
-      my.image(missing_y_mean[[i]], mn=-5, mx=5, col=blueToRed(), addLegend=TRUE,
+      my.image(missing_y_mean[[i]], mn=dat_lim[1], mx=dat_lim[2],
+               col=blueToRed(), addLegend=TRUE,
                xlab='markers', main=paste0('Data with imputed missing values: y',i))
     }
 
     for (i in 1:I) {
       bla <- ifelse(!is.na(y[[i]]), NA, missing_y_mean[[i]])
-      my.image(bla, mn=-5, mx=5,
+      my.image(bla, mn=dat_lim[1], mx=dat_lim[2],
                col=blueToRed(), addLegend=TRUE, xlab='markers',
                main=paste0('Only Imputed Missing Values: y',i))
       if (compareWithData) {

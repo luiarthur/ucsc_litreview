@@ -139,16 +139,14 @@ plot_dat <- function(y, i, j, ...) {
 
   num_not_na <- function(x) length(which(!is.na(x)))
 
+  hist(yij, col='transparent', fg='grey', border='grey', freq=TRUE,
+       main=paste0("Y",i,": Col",j), ...)
   if (num_not_na(yij0) > 0) {
-    hist(yij0, border='white', col=rgb(0,0,1,.5), fg='grey', 
-         main=paste0("Y",i,": Col",j), prob=TRUE, ...)
-    hist(yij1, border='white', col=rgb(1,0,0,.5), add=TRUE, prob=TRUE)
-  } else {
-    hist(yij1, border='white', col=rgb(1,0,0,.5), add=FALSE, prob=TRUE, 
-         main=paste0("Y",i,": Col",j),fg='red',...)
+    hist(yij0, border='white', col=rgb(0,0,1,.5), add=TRUE, ...)
   }
+  hist(yij1, border='white', col=rgb(1,0,0,.5), add=TRUE, ...)
   #hist(yij, border='white', col=rgb(0,1,0,.1), add=TRUE, prob=TRUE)
-  lines(density(yij,na.rm=TRUE), col='grey')
+  #lines(density(yij,na.rm=TRUE), col='grey')
 }
 
 get_missing_count <- function(y) {

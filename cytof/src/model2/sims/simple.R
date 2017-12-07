@@ -3,7 +3,6 @@ args = commandArgs(trailingOnly=TRUE)
 
 library(cytof2)
 library(rcommon)
-set.seed(1)
 #source("../cytof2/R/readExpression.R")
 
 if (length(args) < 8) {
@@ -17,7 +16,9 @@ if (length(args) < 8) {
   B <- as.integer(args[6])
   BURN <- as.integer(args[7])
   THIN <- as.integer(args[8])
+  SEED <- 1
 }
+set.seed(SEED)
 
 ### GLOBALS
 #OUTDIR = 'out/simple/'
@@ -36,18 +37,28 @@ W <- matrix(c(.3, .4, .2, .1,
 
 #bdat = get_beta(y=c(-5,-4), p_tar=c(.99,.01), plot=FALSE)
 
+dat_lim = c(-10,10)
+y_beta = c(-5,-4.5)
+#y_beta = c(-11,-10)
+bdat = get_beta(y=y_beta, p_tar=c(.99,.01), plot=FALSE)
+
 dat <- simdat(I=I, N=c(2,3,1)*DATA_SIZE, J=J, K=K, 
 #dat <- simdat(I=I, N=c(2,3,1)*10000, J=J, K=K, 
-              b0=matrix(-50,I,J),
-              b1=rep(15,J),
+              b0=matrix(bdat[1],I,J),
+              b1=rep(-bdat[2],J),
+              #b0=matrix(-50,I,J),
+              #b1=rep(15,J),
               Z=if (USE_SIMPLE_Z) genSimpleZ(J, K) else genZ(J,K),
               #Z=genZ(J, K, c(.4,.6)),
               W=W,
-              psi_0=-2, psi_1=1,
-              tau2_0=1, tau2_1=.1,
-#              gams_0=matrix(rgamma(I*J, 100000,10000), I, J),
-              gams_0=matrix(rgamma(I*J, 50000,10000), I, J),
-              sig2=matrix(rgamma(I*J, 1000, 10000), ncol=J))
+              #psi_0=-2, psi_1=1,
+              #tau2_0=1, tau2_1=.1,
+              #gams_0=matrix(rgamma(I*J, 100000,10000), I, J),
+              #gams_0=matrix(rgamma(I*J, 50000,10000), I, J),
+              psi_0=-3.5, psi_1=3.5,
+              tau2_0=.5, tau2_1=.5,
+              gams_0=matrix(1/rgamma(I*J, 27, 13), I, J),
+              sig2=matrix(1/rgamma(I*J, 27, 13), ncol=J))
 
 pdf(fileDest('data.pdf'))
 
@@ -64,17 +75,17 @@ cat("Missing proportion:\n")
 print(missing_prop)
 sink()
 
-y_grid = seq(-6,0,l=100)
+y_grid = seq(-10,0,l=100)
 plot(y_grid, 1 / (1 + exp(-dat$b0[1] + dat$b1[1]*y_grid)), 
      xlab='y', ylab='prob of missing', fg='grey', type='b',
-     main='True Probability of Missing')
-abline(v=-4:-3, col='grey')
+     main='True Probability of Missing', ylim=0:1)
+abline(v=y_beta, col='grey')
 #plot.histModel2(dat$y, xlim=c(-5,5), main='Histogram of Data', quant=c(.05,.95))
 
 
 par(mfrow=c(4,2))
 for (i in 1:I) for (j in 1:J) {
-  plot_dat(dat$y, i, j, xlim=c(-5,5), ylim=c(0,1), xlab=paste0('marker ',j))
+  plot_dat(dat$y, i, j, xlim=dat_lim, xlab=paste0('marker ',j))
   #Sys.sleep(1)
 }
 par(mfrow=c(1,1))
@@ -93,18 +104,19 @@ abline(0,1)
 #}
 #par(mfrow=c(1,1))
 
-plot.histModel2(dat$y, xlim=c(-5,5), main='Histogram of Data', quant=c(.05,.95))
-plot.histModel2(list(dat$y[[1]]), xlim=c(-5,5), main='Histogram of Data')
-plot.histModel2(list(dat$y[[2]]), xlim=c(-5,5), main='Histogram of Data')
-plot.histModel2(list(dat$y[[3]]), xlim=c(-5,5), main='Histogram of Data')
+plot.histModel2(dat$y, xlim=dat_lim, main='Histogram of Data', quant=c(.05,.95))
+for (i in 1:I) {
+  plot.histModel2(list(dat$y[[i]]), xlim=dat_lim,
+                  main=paste('Histogram of Data:',i))
+}
 
 dev.off()
 
 png(fileDest('rawDat%03d.png'))
 my.image(dat$Z, xlab='j', ylab='k', main='True Z')
 for (i in 1:length(dat$y)) {
-  my.image(dat$y[[i]], mn=-5, mx=5, col=blueToRed(), addLegend=TRUE,
-           main=paste0('y',i), xlab='j', ylab='n')
+  my.image(dat$y[[i]], mn=dat_lim[1], mx=dat_lim[2], col=blueToRed(),
+           addLegend=TRUE, main=paste0('y',i), xlab='j', ylab='n')
 }
 dev.off()
 
@@ -119,6 +131,6 @@ sim_time <- system.time(
 sink(fileDest('simtime.txt')); print(sim_time); sink()
 
 
-plot_cytof_posterior(out, dat$y, outdir=OUTDIR, sim=dat)
+plot_cytof_posterior(out, dat$y, outdir=OUTDIR, sim=dat, dat_lim=dat_lim)
 #plot_cytof_posterior(out, dat$y, outdir=OUTDIR)
 
