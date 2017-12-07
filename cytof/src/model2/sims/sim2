@@ -25,8 +25,8 @@ do
       for z in $USE_SIMPLE_Z
       do
         i=$((i+1)) 
-        outdir="${OUTDIR}/j${j}_k${k}_N${n}_z${z}_B${B}_burn${burn}_thin${THIN}/"
-        cmd="Rscript simple.R $j $k $n $z $outdir $B $burn $THIN"
+        outdir="${OUTDIR}/j${j}_k${k}_N${n}_z${z}_B${B}_burn${BURN}_thin${THIN}/"
+        cmd="Rscript simple.R $j $k $n $z $outdir $B $BURN $THIN"
         sem -j $MAX_CORES $cmd
         echo "Simulation $i: $outdir"
       done
