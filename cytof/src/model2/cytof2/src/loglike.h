@@ -29,7 +29,7 @@ double ll_f(const State &state, const Data &y, int i, int n, int j) {
 }
 
 double ll_fz(const State &state, const Data &y, int i, int n, int j, int zz) {
-  const double gam_inj = (zz == 0) ? gam(state, i, n, j) : 0;
+  const double gam_inj = (zz == 0) ? state.gams_0(i,j) : 0;
   const int lg = 1; // log the density
   return R::dnorm(y_final(state, y, i, n, j), state.mus(i, j, zz),
                   sqrt((1 + gam_inj) * state.sig2(i,j)), lg);

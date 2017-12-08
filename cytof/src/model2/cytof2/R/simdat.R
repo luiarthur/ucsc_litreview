@@ -85,6 +85,7 @@ simdat <- function(I, N, J, K, W, Z=genZ(J,K),
   stopifnot(NROW(W)==I && NCOL(W)==K)
 
   lam <- lapply(1:I, function(i) sample(1:K, N[[i]], prob=W[i,], replace=TRUE))
+  lam_base0 <- lapply(1:I, function(i) lam[[i]] - 1)
 
   mus_0 = RcppTN::rtn(.mean=rep(psi_0,I*J),
                       .sd=rep(sqrt(tau2_0), I*J),
@@ -122,7 +123,8 @@ simdat <- function(I, N, J, K, W, Z=genZ(J,K),
 
   list(Z=Z, lam=lam, mus_0=mus_0, mus_1=mus_1, y=y, I=I, N=N, J=J, K=K,
        gams_0=gams_0, psi_0=psi_0, psi_1=psi_1, sig2=sig2, tau2_0=tau2_0,
-       tau2_1=tau2_1, W=W, y_no_missing=y_no_missing, b0=b0, b1=b1)
+       tau2_1=tau2_1, W=W, y_no_missing=y_no_missing, b0=b0, b1=b1,
+       lam_base0=lam_base0)
 }
 
 ### TEST ###

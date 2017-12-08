@@ -6,12 +6,14 @@ void update_gams0ij(State &state, const Data &y, const Prior &prior, int i, int 
     double ll = 0;
     const int Ni = get_Ni(y, i);
     const int lg = 1; // log the normal density
+    const double mus_0ij = state.mus(i,j,0);
+    const double sig2_ij = state.sig2(i,j);
 
     for (int n=0; n<Ni; n++) {
       if (z(state, i, n, j) == 0) {
         ll += R::dnorm(y_final(state, y, i, n, j), 
-                       state.mus(i,j,0),
-                       sqrt((1 + gams_0ij) * state.sig2(i,j)), lg);
+                       mus_0ij,
+                       sqrt(sig2_ij * (1 + gams_0ij)), lg);
       }
     }
 

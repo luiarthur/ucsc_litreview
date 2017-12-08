@@ -126,7 +126,17 @@ dev.off()
 
 
 ### Start MCMC ###
-#truth=list(K=MCMC_K, gams_0=dat$gams_0, sig2=dat$sig2)
+### FIXME: Recover gams_0 ###
+#true_mus = array(NA,dim=c(I,J,2))
+#true_mus[,,1] = dat$mus_0; true_mus[,,2] = dat$mus_1
+#truth=list(K=MCMC_K, 
+#           sig2=dat$sig2,
+#           #gams_0=dat$gams_0,
+#           mus=true_mus, Z=dat$Z, W=dat$W,
+#           beta_0=dat$b0, beta_1=dat$b1, beta_all=NULL,
+#           psi=c(dat$psi_0, dat$psi_1), tau2=c(dat$tau2_0, dat$tau2_1))
+#prior = list(cs_v=4, cs_h=3, d_w=1/MCMC_K, a_gam=2, b_gam=1)
+### END ###
 truth=list(K=MCMC_K)
 prior = list(cs_v=4, cs_h=3, d_w=1/MCMC_K)
 sim_time <- system.time(

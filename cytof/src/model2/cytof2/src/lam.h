@@ -1,23 +1,20 @@
-double update_lin(State &state, const Data &y, const Prior &prior,
-                  const int i, const int n) {
+void update_lin(State &state, const Data &y, const Prior &prior,
+                const int i, const int n) {
 
   const int J = get_J(y);
   const int K = state.K;
-  int Z_jk;
 
   // use metropolis with aux variable to speed up?
   double log_p[K];
-  const auto b = compute_b(state);
 
   for (int k=0; k<K; k++) {
     log_p[k] = log(state.W(i, k));
     for (int j=0; j<J; j++) {
-      Z_jk = compute_zjk(state.H(j,k), prior.G(j,j), b[k]);
-      log_p[k] += ll_fz(state, y, i, n, j, Z_jk);
+      log_p[k] += ll_fz(state, y, i, n, j, state.Z(j,k));
     }
   }
 
-  return wsample_index_log_prob(log_p, K);
+  state.lam[i][n] = wsample_index_log_prob(log_p, K);
 }
 
 void update_lam(State &state, const Data &y, const Prior &prior) {
@@ -27,7 +24,7 @@ void update_lam(State &state, const Data &y, const Prior &prior) {
   // TODO: Parallelize?
   for (int i=0; i<I; i++) {
     for (int n=0; n<N[i]; n++) {
-      state.lam[i][n] = update_lin(state, y, prior, i, n);
+      update_lin(state, y, prior, i, n);
     }
   }
 }
