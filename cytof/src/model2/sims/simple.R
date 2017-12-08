@@ -38,7 +38,9 @@ W <- matrix(c(.3, .4, .2, .1,
 #bdat = get_beta(y=c(-5,-4), p_tar=c(.99,.01), plot=FALSE)
 
 dat_lim = c(-10,10)
-y_beta = c(-5,-4.5)
+y_beta = c(-11,-10)
+#y_beta = c(-6,-5.5)
+#y_beta = c(-5,-4.5)
 #y_beta = c(-11,-10)
 bdat = get_beta(y=y_beta, p_tar=c(.99,.01), plot=FALSE)
 
@@ -55,9 +57,11 @@ dat <- simdat(I=I, N=c(2,3,1)*DATA_SIZE, J=J, K=K,
               #tau2_0=1, tau2_1=.1,
               #gams_0=matrix(rgamma(I*J, 100000,10000), I, J),
               #gams_0=matrix(rgamma(I*J, 50000,10000), I, J),
-              psi_0=-3.5, psi_1=3.5,
-              tau2_0=.5, tau2_1=.5,
-              gams_0=matrix(1/rgamma(I*J, 27, 13), I, J),
+              psi_0=-3, psi_1=3,
+              tau2_0=.1, tau2_1=.1,
+              #gams_0=matrix(1/rgamma(I*J, 10000, 100000), I, J),
+              #sig2=matrix(1/rgamma(I*J, 27, 13), ncol=J))
+              gams_0=matrix(1/rgamma(I*J, 6, .5), I, J),
               sig2=matrix(1/rgamma(I*J, 27, 13), ncol=J))
 
 pdf(fileDest('data.pdf'))
@@ -94,7 +98,7 @@ mus_est = get_mus_est(dat$y)
 
 plot(c(c(dat$mus_0),c(dat$mus_1)), c(c(mus_est$mus0),c(mus_est$mus1)),
      xlab="true mu*", ylab="empirical estimate of mu*", main='Data: mu*')
-abline(0,1)
+abline(0,1, v=0, h=0, lty=2, col='grey')
 
 
 #par(mfrow=c(4,2))
@@ -122,6 +126,7 @@ dev.off()
 
 
 ### Start MCMC ###
+#truth=list(K=MCMC_K, gams_0=dat$gams_0, sig2=dat$sig2)
 truth=list(K=MCMC_K)
 prior = list(cs_v=4, cs_h=3, d_w=1/MCMC_K)
 sim_time <- system.time(
