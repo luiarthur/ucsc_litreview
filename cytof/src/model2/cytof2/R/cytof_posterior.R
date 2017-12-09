@@ -36,8 +36,14 @@ plot_cytof_posterior <- function(mcmc, y, outdir='', sim=NULL, supress=c(),
       my.image(Z_mean[,ord]>.5, main="Posterior Mean", ylab="1:J", addL=T, rm0=TRUE)
     }
 
-    if (compareWithData)
+    my.image(last(Z), main="Z: Point Estimate", ylab="1:J", addL=T)
+    if (sum(last(Z)>.5) > 0) {
+      my.image(last(Z)>.5, main="Z: Point Estimate", ylab="1:J", addL=T, rm0=TRUE)
+    }
+
+    if (compareWithData) {
       my.image(sim$Z, main="True Z", ylab="1:J", addL=T)
+    }
   }
 
   ### W ###

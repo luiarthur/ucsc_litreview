@@ -8,7 +8,8 @@
 ### THIS SCRIPT REQUIRES GNU PARALLEL: sem ###
 
 ### Go to work directory at submission time
-cd $PBS_O_WORKDIR
+# uncomment on grape
+#cd $PBS_O_WORKDIR
 
 ### PARAMETERS FOR PARALLEL JOB ###
 i=0
@@ -21,7 +22,7 @@ N="10000"
 USE_SIMPLE_Z="0 1"
 OUTDIR='out/sim2'
 B=200
-BURN=1000
+BURN=1500
 THIN=5
 
 
@@ -36,7 +37,7 @@ do
         i=$((i+1)) 
         outdir="${OUTDIR}/j${j}_k${k}_N${n}_z${z}_B${B}_burn${BURN}_thin${THIN}/"
         cmd="Rscript simple.R $j $k $n $z $outdir $B $BURN $THIN"
-        sem -j $MAX_CORES $cmd
+        sem -j $MAX_CORES $cmd > $outdir/log.txt
         #echo "Simulation $i: $outdir"
       done
     done
