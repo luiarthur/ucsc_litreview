@@ -14,6 +14,7 @@ OUTDIR <- args[3]
 B <- as.integer(args[4])
 BURN <- as.integer(args[5])
 THIN <- as.integer(args[6])
+dat_lim = c(-10,10)
 
 fileDest = function(name) paste0(OUTDIR, name)
 
@@ -69,4 +70,4 @@ sim_time <- system.time(
   out <- cytof_fix_K_fit(y, truth=truth, prior=prior, B=B, burn=BURN, thin=THIN)
 )
 sink(fileDest('simtime.txt')); print(sim_time); sink()
-plot_cytof_posterior(out, y, outdir=OUTDIR)
+plot_cytof_posterior(out, y, outdir=OUTDIR, dat_lim=dat_lim)

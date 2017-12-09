@@ -84,7 +84,9 @@ plot_cytof_posterior <- function(mcmc, y, outdir='', sim=NULL, supress=c(),
       plot(c(c(sim$mus_0),c(sim$mus_1)), 
            c(c(mus0_mean), c(mus1_mean)), pch=20,fg='grey',
            col='blue', main='Posterior mu*',
-           xlab='true mu*', ylab='posterior mean: mu*')
+           xlab='true mu*', ylab='posterior mean: mu*',
+           ylim=range(c(sim$mus0, sim$mus_1,mus0_mean,mus1_mean)),
+           xlim=range(c(sim$mus0, sim$mus_1,mus0_mean,mus1_mean)))
       abline(0,1, h=0, v=0, col='grey', lty=2)
       add.errbar(rbind(mus0_ci, mus1_ci),
                  x=c(c(sim$mus_0), c(sim$mus_1)), col=rgb(0,0,1,.2))
@@ -111,7 +113,9 @@ plot_cytof_posterior <- function(mcmc, y, outdir='', sim=NULL, supress=c(),
       plot(c(sim$gams_0), c(gams_0_mean), fg='grey',
            xlab='truth', ylab='Posterior Mean: gam0*', 
            main=expression('Posterior'~gamma[0]^'*'),
-           pch=20, col='blue')
+           pch=20, col='blue',
+           ylim=range(c(gams_0_mean,sim$gams_0)),
+           xlim=range(c(gams_0_mean,sim$gams_0)))
       abline(0,1, col='grey')
       add.errbar(gams_0_ci, x=sim$gams_0, col=rgb(0,0,1,.2))
     } else {
@@ -133,7 +137,9 @@ plot_cytof_posterior <- function(mcmc, y, outdir='', sim=NULL, supress=c(),
     if (compareWithData) {
       plot(c(sim$sig2), c(sig2_mean), #xlim=sig2_range, ylim=sig2_range,
            pch=20, col='blue', fg='grey', xlab='truth', ylab='posterior mean',
-           main=expression(sigma[ij]^2))
+           main=expression(sigma[ij]^2),
+           ylim=range(c(sig2_mean, sim$sig2)),
+           xlim=range(c(sig2_mean, sim$sig2)))
       abline(0,1, col='grey')
       add.errbar(sig2_ci, x=c(sim$sig2), col=rgb(0,0,1,.3))
     } else {
@@ -154,6 +160,8 @@ plot_cytof_posterior <- function(mcmc, y, outdir='', sim=NULL, supress=c(),
       dat_gs <- c(sim$sig2 * (sim$gams_0 + 1))
       plot(c(dat_gs), rowMeans(gs), pch=20, col='blue', fg='grey',
            xlab='truth', ylab='posterior mean',
+           xlim=range(c(gs_mean, dat_gs)),
+           ylim=range(c(gs_mean, dat_gs)),
            main=expression(sigma[ij]^2~(1+gamma[0][ij])))
       abline(0,1, col='grey')
       add.errbar(gs_ci, x=c(dat_gs), col=rgb(0,0,1,.3))
@@ -227,8 +235,10 @@ plot_cytof_posterior <- function(mcmc, y, outdir='', sim=NULL, supress=c(),
 
     par(mfrow=c(4,2))
     for (i in 1:I) for (j in 1:J) {
-      plot_dat(missing_y_mean, i, j, 
-               xlim=dat_lim, xlab=paste0('marker ',j))
+      plot_dat(missing_y_mean, i, j, xlim=dat_lim, xlab=paste('marker',j),breaks=10)
+      if (compareWithData) {
+        hist(sim$y_no_missing[[i]][,j], border='grey', add=TRUE, breaks=10)
+      }
     }
     par(mfrow=c(1,1))
 

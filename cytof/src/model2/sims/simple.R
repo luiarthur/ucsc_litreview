@@ -38,10 +38,9 @@ W <- matrix(c(.3, .4, .2, .1,
 #bdat = get_beta(y=c(-5,-4), p_tar=c(.99,.01), plot=FALSE)
 
 dat_lim = c(-10,10)
-y_beta = c(-11,-10)
-#y_beta = c(-6,-5.5)
-#y_beta = c(-5,-4.5)
 #y_beta = c(-11,-10)
+#y_beta = c(-6,-5.5)
+y_beta = c(-5,-4.5)
 bdat = get_beta(y=y_beta, p_tar=c(.99,.01), plot=FALSE)
 
 dat <- simdat(I=I, N=c(2,3,1)*DATA_SIZE, J=J, K=K, 
@@ -52,17 +51,12 @@ dat <- simdat(I=I, N=c(2,3,1)*DATA_SIZE, J=J, K=K,
               #b1=rep(15,J),
               Z=if (USE_SIMPLE_Z) genSimpleZ(J, K) else genZ(J,K),
               #Z=genZ(J, K, c(.4,.6)),
-              W=W,
-              #psi_0=-2, psi_1=1,
-              #tau2_0=1, tau2_1=.1,
-              #gams_0=matrix(rgamma(I*J, 100000,10000), I, J),
-              #gams_0=matrix(rgamma(I*J, 50000,10000), I, J),
+              #psi_0=-5, psi_1=5,
               psi_0=-3, psi_1=3,
               tau2_0=.1, tau2_1=.1,
-              #gams_0=matrix(1/rgamma(I*J, 10000, 100000), I, J),
-              #sig2=matrix(1/rgamma(I*J, 27, 13), ncol=J))
-              gams_0=matrix(1/rgamma(I*J, 6, .5), I, J),
-              sig2=matrix(1/rgamma(I*J, 27, 13), ncol=J))
+              gams_0=matrix(rnorm(I*J,1,.1),I,J),
+              sig2=matrix(rnorm(I*J,1,.1),I,J),
+              W=W)
 
 pdf(fileDest('data.pdf'))
 
@@ -89,7 +83,8 @@ abline(v=y_beta, col='grey')
 
 par(mfrow=c(4,2))
 for (i in 1:I) for (j in 1:J) {
-  plot_dat(dat$y, i, j, xlim=dat_lim, xlab=paste0('marker ',j))
+  plot_dat(dat$y, i, j, xlim=dat_lim, xlab=paste0('marker ',j),breaks=10)
+  hist(dat$y_no_missing[[i]][,j], border='grey', add=TRUE, breaks=10)
   #Sys.sleep(1)
 }
 par(mfrow=c(1,1))
@@ -130,12 +125,12 @@ dev.off()
 #true_mus = array(NA,dim=c(I,J,2))
 #true_mus[,,1] = dat$mus_0; true_mus[,,2] = dat$mus_1
 #truth=list(K=MCMC_K, 
-#           sig2=dat$sig2,
+#           #sig2=dat$sig2,
 #           #gams_0=dat$gams_0,
 #           mus=true_mus, Z=dat$Z, W=dat$W,
 #           beta_0=dat$b0, beta_1=dat$b1, beta_all=NULL,
 #           psi=c(dat$psi_0, dat$psi_1), tau2=c(dat$tau2_0, dat$tau2_1))
-#prior = list(cs_v=4, cs_h=3, d_w=1/MCMC_K, a_gam=2, b_gam=1)
+#prior = list(cs_v=4, cs_h=3, d_w=1/MCMC_K)
 ### END ###
 truth=list(K=MCMC_K)
 prior = list(cs_v=4, cs_h=3, d_w=1/MCMC_K)
@@ -147,5 +142,5 @@ sink(fileDest('simtime.txt')); print(sim_time); sink()
 
 
 plot_cytof_posterior(out, dat$y, outdir=OUTDIR, sim=dat, dat_lim=dat_lim)
-#plot_cytof_posterior(out, dat$y, outdir=OUTDIR)
+#plot_cytof_posterior(out, dat$y, outdir=OUTDIR, dat_lim=dat_lim)
 

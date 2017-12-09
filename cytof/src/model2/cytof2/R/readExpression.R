@@ -134,19 +134,9 @@ plot.histModel2 <- function(dat, cutoff=NULL, returnStats=FALSE,
 plot_dat <- function(y, i, j, ...) {
   #' @export
   yij <- y[[i]][,j]
-  yij0 <- yij[yij<0]
-  yij1 <- yij[yij>0]
-
-  num_not_na <- function(x) length(which(!is.na(x)))
-
-  hist(yij, col='transparent', fg='grey', border='grey', freq=TRUE,
+  hist(yij, col='purple', fg='grey', border='white', freq=TRUE,
        main=paste0("Y",i,": Col",j), ...)
-  if (num_not_na(yij0) > 0) {
-    hist(yij0, border='white', col=rgb(0,0,1,.5), add=TRUE, ...)
-  }
-  hist(yij1, border='white', col=rgb(1,0,0,.5), add=TRUE, ...)
-  #hist(yij, border='white', col=rgb(0,1,0,.1), add=TRUE, prob=TRUE)
-  #lines(density(yij,na.rm=TRUE), col='grey')
+  abline(v=0, col='grey85', lty=2)
 }
 
 get_missing_count <- function(y) {
