@@ -31,7 +31,7 @@ cat("Missing count:\n")
 print(get_missing_count(y))
 sink()
 
-missing_prop = get_missing_prop(dat$y)
+missing_prop = get_missing_prop(y)
 sink(fileDest('missing_prop.txt'))
 cat("Missing proportion:\n")
 print(missing_prop)
