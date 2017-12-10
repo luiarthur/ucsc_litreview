@@ -22,7 +22,7 @@ N="10000"
 USE_SIMPLE_Z="0 1"
 OUTDIR='out/sim2'
 B=200
-BURN=1500
+BURN=2000 #1500 too small. max time 9 hrs.
 THIN=5
 
 
