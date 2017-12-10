@@ -1,9 +1,9 @@
 ---
-title: "Simulation Study for Cytof II"
-author: Arthur Lui
-date: "\\today"
-geometry: margin=1in
-fontsize: 12pt
+#title: "Simulation Study for Cytof II"
+#author: Arthur Lui
+#date: "\\today"
+#geometry: margin=1in
+#fontsize: 12pt
 
 # Uncomment if using natbib:
 
@@ -18,7 +18,7 @@ header-includes:
     - \usepackage{bm}
     - \usepackage{bbm}
     - \usepackage{graphicx}
-    #- \pagestyle{empty}
+    - \pagestyle{empty}
     - \newcommand{\norm}[1]{\left\lVert#1\right\rVert}
     - \newcommand{\p}[1]{\left(#1\right)}
     - \newcommand{\bk}[1]{\left[#1\right]}
@@ -47,11 +47,26 @@ header-includes:
     - \allowdisplaybreaks
     - \def\M{\mathcal{M}}
 #}}}1
+# Other header-includes:
+include-before:
+    - \title{Simulation Study for CYTOF Model II}
+    - \author{Arthur Lui \\ UC Santa Cruz \\ \today}
+    - \maketitle
 ---
 
 [comment]: <> (%
   These are comments
 %)
+
+[comment]: <> (%
+\abstract{
+  PUT ABSTRACT HERE.
+  \keywords{IBP, latent feature allocation model}
+}
+%)
+
+# Introduction
+<include file="includes/intro.md">
 
 # Data Generation
 <include file="includes/data_gen.md">
@@ -64,3 +79,11 @@ header-includes:
 
 
 [//]: # (Footnotes:)
+
+[comment]: <> (%
+For figures and tables to stretch across two columns
+use \begin{figure*} \end{figure*} and
+\begin{table*}\end{table*}
+Also, \begin{figure}[H] keeps figures close.
+%)
+

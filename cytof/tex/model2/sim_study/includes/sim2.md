@@ -25,6 +25,17 @@ Specifically, $N=(20000, 30000, 10000)$.
 
 ![Simulated data $Y_3$](img/rawDat004.png){ height=60% }
 
-![Probability of missing](img/prob_miss.pdf)
+In real CYTOF data, markers that are not expressed are sometimes recorded as
+having negative expression levels due to the mechanics of the measurement
+devices. Scientists interpret negative expression levels recorded by machines
+as non-expression. Consequently, we need to simulate data that have missing values.
+We do so by first generating data from the model, and then with some probability
+setting observations to be missing. Observations with lower values have a 
+higher chance of becoming missing values. In this simulation, we record
+observations as missing using the function in Figure \ref{pmiss}.
+
+![Probability of missing](img/prob_miss.pdf){ id=pmiss height=60% }
+
 
 ## Results
+bla
