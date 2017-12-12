@@ -12,6 +12,7 @@ Remotes: luiarthur/rcommon.git
 Imports:
   Rcpp (>= 0.12.00),
   rcommon,
+  gtools,
   foreach,
   doMC
 LinkingTo: Rcpp, RcppArmadillo, RcppTN

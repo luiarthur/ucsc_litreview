@@ -1,9 +1,9 @@
 ---
 #title: "Simulation Study for Cytof II"
-#author: Arthur Lui
+#author: "Arthur Lui"
 #date: "\\today"
-#geometry: margin=1in
-#fontsize: 12pt
+geometry: margin=1in
+fontsize: 12pt
 
 # Uncomment if using natbib:
 

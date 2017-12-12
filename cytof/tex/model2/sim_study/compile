@@ -9,12 +9,13 @@
 # see github.com/luiarthur/myBin/md-include.py
 
 md-include.py sim_study.md 
-pandoc .sim_study-tmp.md -s -V documentclass:asaproc -o sim_study.tex --number-sections
+#pandoc .sim_study-tmp.md -s -V documentclass:asaproc -o sim_study.tex --number-sections
+pandoc .sim_study-tmp.md -s -o sim_study.tex --number-sections
 
 #pdflatex sim_study.tex
 #bibtex sim_study.aux
 pdflatex sim_study.tex
 pdflatex sim_study.tex
 rm -f *.{log,aux,nav,out,snm,toc,blg,bbl}
-rm -f sim_study.tex
+#rm -f sim_study.tex
 

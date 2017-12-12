@@ -7,19 +7,6 @@ invgamma_ab <- function(mu,sig) {
   c(a,b)
 }
 
-extendZ <- function(Z,K) {
-  #' Extend (or shrink) the columns of Z to have exactly K columns
-  #' @export
-
-  if (NCOL(Z) > K) {
-    Z[,1:K]
-  } else if (NCOL(Z) < K) {
-    extendZ(cbind(Z,0), K)
-  } else {
-    Z
-  }
-}
-
 matApply <- function(mat_ls, f) {
   #' Apply a function to a list of matrices
   #' @export
@@ -85,6 +72,7 @@ simdat <- function(I, N, J, K, W, Z=genZ(J,K),
   stopifnot(NROW(W)==I && NCOL(W)==K)
 
   lam <- lapply(1:I, function(i) sample(1:K, N[[i]], prob=W[i,], replace=TRUE))
+  lam <- lapply(lam, sort)
   lam_base0 <- lapply(1:I, function(i) lam[[i]] - 1)
 
   mus_0 = RcppTN::rtn(.mean=rep(psi_0,I*J),
@@ -110,14 +98,18 @@ simdat <- function(I, N, J, K, W, Z=genZ(J,K),
     Ni <- N[[i]]
     y[[i]] <- matrix(NA, Ni, J)
     y_no_missing[[i]] <- y[[i]]
-    for (n in 1:Ni) {
-      for (j in 1:J) {
-        y_inj <- rnorm(1, mu(i,n,j), sqrt((1+gam(i,n,j))*sig2[i,j]))
-        y_no_missing[[i]][n,j] <- y_inj
+    for (j in 1:J) {
+      y_ij <- rnorm(Ni, mu(i,1:Ni,j), sqrt((1+gam(i,1:Ni,j))*sig2[i,j]))
+      y_no_missing[[i]][,j] <- y_ij
+      prob_miss <- p(b0[i,j], b1[j], y_ij)
+      y[[i]][, j] <- ifelse(prob_miss > runif(Ni), NA, y_ij)
+      #for (n in 1:Ni) {
+      #  y_inj <- rnorm(1, mu(i,n,j), sqrt((1+gam(i,n,j))*sig2[i,j]))
+      #  y_no_missing[[i]][n,j] <- y_inj
 
-        prob_miss <- p(b0[i,j], b1[j], y_inj)
-        y[[i]][n, j] <- ifelse(prob_miss > runif(1), NA, y_inj)
-      }
+      #  prob_miss <- p(b0[i,j], b1[j], y_inj)
+      #  y[[i]][n, j] <- ifelse(prob_miss > runif(1), NA, y_inj)
+      #}
     }
   }
 

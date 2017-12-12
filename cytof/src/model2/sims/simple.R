@@ -6,19 +6,20 @@ library(rcommon)
 #source("../cytof2/R/readExpression.R")
 
 if (length(args) < 8) {
-  stop('usage: Rscript simple.R J MCMC_K DATA_SIZE USE_SIMPLE_Z OUTDIR B BURN THIN')
+  stop('usage: Rscript simple.R J MCMC_K DATA_SIZE USE_SIMPLE_Z OUTDIR B BURN THIN [SEED_DATA] [SEED_MCMC]')
 } else {
   J <- as.integer(args[1])
   MCMC_K <- as.integer(args[2])
   DATA_SIZE <- as.integer(args[3])
   USE_SIMPLE_Z <- as.integer(args[4])
-  OUTDIR <- args[5]
+  OUTDIR <- paste0(args[5],'/')
   B <- as.integer(args[6])
   BURN <- as.integer(args[7])
   THIN <- as.integer(args[8])
-  SEED <- 1
+  SEED_DATA <- ifelse(length(args)>=9,  as.integer(args[9]),  1)
+  SEED_MCMC <- ifelse(length(args)>=10, as.integer(args[10]), 1)
 }
-set.seed(SEED)
+set.seed(SEED_DATA)
 
 ### GLOBALS
 #OUTDIR = 'out/simple/'
@@ -109,10 +110,10 @@ for (i in 1:I) {
                   main=paste('Histogram of Data:',i))
 }
 
+my.image(dat$Z, xlab='j', ylab='k', main='True Z')
 dev.off()
 
 png(fileDest('rawDat%03d.png'))
-my.image(dat$Z, xlab='j', ylab='k', main='True Z')
 for (i in 1:length(dat$y)) {
   my.image(dat$y[[i]], mn=dat_lim[1], mx=dat_lim[2], col=blueToRed(),
            addLegend=TRUE, main=paste0('y',i), xlab='j', ylab='n')
@@ -132,6 +133,8 @@ dev.off()
 #           psi=c(dat$psi_0, dat$psi_1), tau2=c(dat$tau2_0, dat$tau2_1))
 #prior = list(cs_v=4, cs_h=3, d_w=1/MCMC_K)
 ### END ###
+
+set.seed(SEED_MCMC)
 truth=list(K=MCMC_K)
 prior = list(cs_v=4, cs_h=3, d_w=1/MCMC_K)
 sim_time <- system.time(
