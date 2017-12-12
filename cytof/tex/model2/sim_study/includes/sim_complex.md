@@ -5,80 +5,61 @@ in the previous section, with the new $Z$ matrix.
 
 ## Simulated Data
 
-The following figures depict the generated data.
+Figures \ref{complex1} to \ref{complex3} display the simulated data in
+simulation study II.
 
-![Simulated data $Y_1$](img/complex/rawDat002.png){ height=60% }
+![Simulated data $Y_1$](img/complex/rawDat002.png){ id=complex1 height=60% }
 
-![Simulated data $Y_2$](img/complex/rawDat003.png){ height=60% }
+![Simulated data $Y_2$](img/complex/rawDat003.png){ id=complex2 height=60% }
 
-![Simulated data $Y_3$](img/complex/rawDat004.png){ height=60% }
+![Simulated data $Y_3$](img/complex/rawDat004.png){ id=complex3 height=60% }
 
 Observations were recorded as missing with the same probabilities as in the
 previous simulation.
 
-
 ## Results
 
-The parameters of greatest interest in this model are $Z$, $W$, and $\mu^*$.
-Summaries of the posterior distributions from the simulations for those parameters
-will be discussed in this section.
+Once again, the parameters of greatest interest in this model are $Z$, $W$, and
+$\mu^*$.  Summaries of the posterior distributions from the simulations for
+those parameters will be discussed in this section.
 
 ### Posterior Estimate of $Z$
 
-Besides recovering the true $Z$ matrix for the case when the model uses a fixed
-dimension for $Z$  equal to the true dimension of the true $Z$, we want to
-understand how mis-specifying the dimension ($K$) would affect the model. The 
-following figures provide some insight to this objective. Recall that in the
-simulation truth, there are exactly four latent features. Figure \ref{trueComplexZ}
-displays a simple latent feature matrix that was used in this simulation study.
+Figure \ref{trueComplexZ} shows the true $Z$ matrix used in this simulation 
+study.
 
 ![A complex $Z$ matrix used for simulation study.](img/complex/trueZ.pdf){ id=trueComplexZ height=60% }
 
-Figure \ref{z3} shows the posterior mean for $Z$ when the number of columns is 
-fixed at 3 (mis-specified as smaller). In this case, the model learns 3 of the
-2 columns of $Z$ correctly. In the first column, we see that of the 8 markers that
-are supposed to take on feature 1, one marker is not activated and two markers
-are erroneously activated.
+In Figure \ref{z3Complex}, we see that when $K=3$ (smaller than the true $K$),
+the model learns only parts of the true feature allocation matrix. In this
+case, only the first two columns are correctly recovered. The third column
+resembles a combination of the third and fourth columns of the true $Z$.
 
-![$Z$ Posterior mean for 3 columns](img/complex/Z_k3.pdf){ id=zc3 height=60% }
+![$Z$ Posterior mean for 3 columns](img/complex/Z_k3.pdf){ id=z3Complex height=60% }
 
-Figure \ref{z4} shows the posterior mean for $Z$ when the number of columns is 
-fixed at 4 (the truth). In this case, the posterior mean learns two of the four
-columns of $Z$ correctly. By simply changing the random seed in the software
-used to implement the algorithm, the true $Z$ matrix is completely recovered. This
-suggests that the algorithm is slightly sensitive to the starting values 
-of the MCMC. 
+Figure \ref{z4Complex} shows the posterior mean for $Z$ when the number of
+columns is fixed at 4 (the truth). The structure of $Z$ is completely recovered
+in this case.
 
-![$Z$ Posterior mean for 4 columns](img/complex/Z_k4.pdf){ id=zc4 height=60% }
+![$Z$ Posterior mean for 4 columns](img/complex/Z_k4.pdf){ id=z4Complex height=60% }
 
-Figure \ref{z7} shows the posterior mean for $Z$ when the number of columns is
-fixed at 7 (larger than the truth). In this case, the posterior mean learns the
-four columns of $Z$ correctly, and the other columns contain no activated
-features. This suggests that setting the dimensions of $Z$ to be slightly
-higher may allow for the possibility of learning the correct structure for $Z$,
-at a slightly more computational cost. (Increasing the number of columns of
-$Z$ in MCMC increases the log-computation time by a factor of $\log K$, while
-holding the sample-size constant). 
+Figure \ref{z7Complex} shows the posterior mean for $Z$ when the number of
+columns is fixed at 7 (larger than the truth). Similar to the previous study,
+when $K$ is mis-specified larger than the truth, the true $Z$ can still be
+recovered.
 
-![$Z$ Posterior mean for 7 columns](img/complex/Z_k7.pdf){ id=zc7 height=60% }
+![$Z$ Posterior mean for 7 columns](img/complex/Z_k7.pdf){ id=z7Complex height=60% }
 
 ### Posterior Estimate of $W$
 
-The $W$ matrix, describes the proportion of observations within each sample
-that belong to a certain cell-type (one of $K$ cell types in $Z$).
-The true $W$ matrix used in the simulation studies is 
+The conclusions drawn from the posterior means of $W$ under different $K$'s are
+similar to the ones drawn in the previous study. Namely, when $K$ is smaller,
+the proportions are aggregated over some columns. When $K$ is correct and $Z$
+is recovered, $W$ is recovered. When $K$ is larger and $Z$ is correct, $W$ is 
+recovered, with the extra columns in $W$ shrinking towards 0.
 
-$$
-W_{\text{TRUE}} = 
-\begin{bmatrix}
-0.3 &  0.4 &  0.2  & 0.1 \\
-0.1 &  0.7 &  0.1  & 0.1 \\
-0.2 &  0.3 &  0.3  & 0.2 \\
-\end{bmatrix}.
-$$
-
-The interpretation of $W_{ik}$ is the proportion of observations in sample $i$
-belonging to cell-type $k$.
+The posterior means of $W$ will merely be listed here. The true $W$ is the same
+as the one used in the previous simulation.
 
 The posterior mean of the $W$ matrix for which $K=3$ is
 $$
@@ -89,9 +70,6 @@ $$
 0.203 & 0.598 & 0.197\\
 \end{bmatrix}.
 $$
-Notice that in the posterior, since there are fewer columns of $W$ than that in
-the truth, the proportions of the second and third column in $W_{\text{TRUE}}$
-are aggregated into the second column of $\hat W_3$.
 
 The posterior mean of the $W$ matrix for which $K=4$ is
 $$
@@ -102,8 +80,6 @@ $$
 0.203 & 0.305 & 0.294 & 0.197 \\
 \end{bmatrix}.
 $$
-A PERFECT MATCH.
-
 
 The posterior mean of the $W$ matrix for which $K=7$ is
 $$
@@ -114,15 +90,23 @@ $$
  0.204 & 0.304 & 0.293 & 0.197 & 0.00 & 0.00 & 0.00 \\
 \end{bmatrix}
 $$
-The proportions for the first four column are the proportions in
-$W_\text{TRUE}$ up to Monte Carlo error. The last three columns have
-proportions close to 0.
-
 
 ### Posterior Estimate of $\mu^*$
 
-![$\mu^*$ Posterior mean for 3 columns](img/complex/mus_k3.pdf){ id=mus3 height=60% }
+When $Z$ is not recovered completely, $\mu^*$ cannot be recovered completely.
+This is the case when $K=3$. See Figure \ref{musComplex3}.
 
-![$\mu^*$ Posterior mean for 4 columns](img/complex/mus_k4.pdf){ id=mus4 height=60% }
+![$\mu^*$ Posterior mean for 3 columns](img/complex/mus_k3.pdf){ id=musComplex3 height=60% }
 
-![$\mu^*$ Posterior mean for 7 columns](img/complex/mus_k7.pdf){ id=mus7 height=60% }
+When $Z$ is recovered completely (and $K > K_{\text{TRUE}}$), $\mu^*$ can be
+recovered as long as there are data associated with the particular
+$\mu^*_{zij}$.  Notice that there are 9 values of $\mu^*$ that are not
+recovered in Figures \ref{musComplex4} and \ref{musComplex7}. A closer
+examination of data in Figures \ref{complex1} to \ref{complex3} will reveal
+that there are no observations less than 0 for $j=30,31,32$. Consequently, there
+are 9 values of $\mu^*_{0ij}$ where the parameters are sampled from the prior, 
+explaining the large credible intervals.
+
+![$\mu^*$ Posterior mean for 4 columns](img/complex/mus_k4.pdf){ id=musComplex4 height=60% }
+
+![$\mu^*$ Posterior mean for 7 columns](img/complex/mus_k7.pdf){ id=musComplex7 height=60% }

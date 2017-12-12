@@ -18,7 +18,7 @@ header-includes:
     - \usepackage{bm}
     - \usepackage{bbm}
     - \usepackage{graphicx}
-    - \pagestyle{empty}
+    - \pagestyle{plain}
     - \newcommand{\norm}[1]{\left\lVert#1\right\rVert}
     - \newcommand{\p}[1]{\left(#1\right)}
     - \newcommand{\bk}[1]{\left[#1\right]}
@@ -79,6 +79,9 @@ include-before:
 
 # Simulation Study II
 <include file="includes/sim_complex.md">
+
+# Conclusion
+<include file="includes/conclusion.md">
 
 [//]: # (Footnotes:)
 
