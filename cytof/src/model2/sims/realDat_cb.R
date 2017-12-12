@@ -42,15 +42,15 @@ par(mfrow=c(4,2))
 I = length(y)
 J = NCOL(y[[1]])
 for (i in 1:I) for (j in 1:J) {
-  plot_dat(y, i, j, xlim=c(-5,5), ylim=c(0,1), xlab=paste0('marker ',j))
+  plot_dat(y, i, j, xlim=dat_lim, xlab=paste0('marker ',j))
   #Sys.sleep(1)
 }
 par(mfrow=c(1,1))
 
 ### Distribution of Data
-plot.histModel2(y, xlim=c(-5,5), main='Distribution of Data', quant=c(.05,.95))
+plot.histModel2(y, xlim=dat_lim, main='Distribution of Data', quant=c(.05,.95))
 for (i in 1:I) {
-  plot.histModel2(list(y[[i]]), xlim=c(-5,5), main='Distribution of Data')
+  plot.histModel2(list(y[[i]]), xlim=dat_lim, main='Distribution of Data')
 }
 dev.off()
 

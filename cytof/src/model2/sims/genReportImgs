@@ -1,0 +1,41 @@
+#!/bin/bash
+
+K="3 4 7"
+OUTDIR="out/sim2/"
+reportDir="../../../tex/model2/sim_study/img/"
+
+### Move Simple Data ###
+cp $OUTDIR/j32_k4_N10000_z0_B200_burn2000_thin5/rawDat*.png $reportDir/complex
+
+### Move Complex Data ###
+cp $OUTDIR/j32_k4_N10000_z1_B200_burn2000_thin5/rawDat*.png $reportDir/simple
+
+### Move True Z ###
+pdfPage $OUTDIR/j32_k4_N10000_z0_B200_burn2000_thin5/params.pdf 7
+pdfPage $OUTDIR/j32_k4_N10000_z1_B200_burn2000_thin5/params.pdf 7
+mv $OUTDIR/j32_k4_N10000_z0_B200_burn2000_thin5/params_p7.pdf $reportDir/complex/trueZ.pdf
+mv $OUTDIR/j32_k4_N10000_z1_B200_burn2000_thin5/params_p7.pdf $reportDir/simple/trueZ.pdf
+
+### Move True prob missing  ###
+pdfPage $OUTDIR/j32_k4_N10000_z0_B200_burn2000_thin5/data.pdf 1
+pdfPage $OUTDIR/j32_k4_N10000_z1_B200_burn2000_thin5/data.pdf 1
+mv $OUTDIR/j32_k4_N10000_z0_B200_burn2000_thin5/data_p1.pdf $reportDir/complex/prob_miss.pdf
+mv $OUTDIR/j32_k4_N10000_z1_B200_burn2000_thin5/data_p1.pdf $reportDir/simple/prob_miss.pdf
+
+
+for k in $K
+do
+  # move mus posterior
+  pdfPage $OUTDIR/j32_k${k}_N10000_z0_B200_burn2000_thin5/params.pdf 18
+  pdfPage $OUTDIR/j32_k${k}_N10000_z1_B200_burn2000_thin5/params.pdf 18
+
+  mv $OUTDIR/j32_k${k}_N10000_z0_B200_burn2000_thin5/params_p18.pdf $reportDir/complex/mus_k${k}.pdf
+  mv $OUTDIR/j32_k${k}_N10000_z1_B200_burn2000_thin5/params_p18.pdf $reportDir/simple/mus_k${k}.pdf
+
+  # move Z posterior
+  pdfPage $OUTDIR/j32_k${k}_N10000_z0_B200_burn2000_thin5/params.pdf 3
+  pdfPage $OUTDIR/j32_k${k}_N10000_z1_B200_burn2000_thin5/params.pdf 3
+
+  mv $OUTDIR/j32_k${k}_N10000_z0_B200_burn2000_thin5/params_p3.pdf $reportDir/complex/Z_k${k}.pdf
+  mv $OUTDIR/j32_k${k}_N10000_z1_B200_burn2000_thin5/params_p3.pdf $reportDir/simple/Z_k${k}.pdf
+done

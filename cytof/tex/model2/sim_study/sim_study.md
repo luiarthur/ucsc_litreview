@@ -74,9 +74,11 @@ include-before:
 # MCMC Settings
 <include file="includes/mcmc_settings.md">
 
-# Simulation Study
-<include file="includes/sim2.md">
+# Simulation Study I
+<include file="includes/sim_simple.md">
 
+# Simulation Study II
+<include file="includes/sim_complex.md">
 
 [//]: # (Footnotes:)
 
