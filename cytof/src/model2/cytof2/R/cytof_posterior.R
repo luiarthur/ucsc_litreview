@@ -87,9 +87,38 @@ plot_cytof_posterior <- function(mcmc, y, outdir='', sim=NULL, supress=c(),
     mus1_ci = t(apply(mus1, 1, quantile, quant))
 
     #mus posterior vs sim data
+    # pch is ? if num obs < 30
+    S0_ij <- function(i,j) {
+      lastZ = last(out)$Z
+      sum(lastZ[j,1+last(out)$lam[[i]]] == 0) 
+    }
+    S1_ij <- function(i,j) {
+      lastZ = last(out)$Z
+      sum(lastZ[j,1+last(out)$lam[[i]]] == 1) 
+    }
+    S0_count = matrix(NA, I, J)
+    S1_count = matrix(NA, I, J)
+    for (i in 1:I) for (j in 1:J) {
+      S0_count[i,j] = S0_ij(i,j)
+      S1_count[i,j] = S1_ij(i,j)
+    }
+    #ij0_pch = sapply(y, function(yi) {
+    #  apply(yi, 2, function(col) sum(col < 0 | is.na(col)))
+    #})
+    #ij1_pch <- sapply(y, function(yi) {
+    #  apply(yi, 2, function(col) sum(col > 0, na.rm=TRUE))
+    #})
+    ij0_pch = c(ifelse(S0_count > 30, 20, 2))
+    ij1_pch = c(ifelse(S1_count > 30, 20, 2))
+    #print(S0_count)
+    #print(ij0_pch)
+    #print(S1_count)
+    #print(ij1_pch)
     if (compareWithData) {
       plot(c(c(sim$mus_0),c(sim$mus_1)), 
-           c(c(mus0_mean), c(mus1_mean)), pch=20,fg='grey',
+           c(c(mus0_mean), c(mus1_mean)), 
+           pch=c(ij0_pch, ij1_pch),
+           fg='grey',
            col='blue', main='Posterior mu*',
            xlab='true mu*', ylab='posterior mean: mu*',
            ylim=range(c(sim$mus0, sim$mus_1,mus0_mean,mus1_mean)),
@@ -102,7 +131,9 @@ plot_cytof_posterior <- function(mcmc, y, outdir='', sim=NULL, supress=c(),
     #mus posterior vs empirical est
     mus_est = get_mus_est(y)
     plot(c(c(mus_est$mus0),c(mus_est$mus1)),
-         c(c(mus0_mean), c(mus1_mean)), pch=20,fg='grey',
+         c(c(mus0_mean), c(mus1_mean)),
+         pch=c(ij0_pch, ij1_pch),
+         fg='grey',
          col='blue', main='Posterior mu*', xlab='empirical est of mu*',
          ylab='posterior mean: mu*')
     abline(0,1, h=0, v=0, col='grey', lty=2)
@@ -120,7 +151,8 @@ plot_cytof_posterior <- function(mcmc, y, outdir='', sim=NULL, supress=c(),
       plot(c(sim$gams_0), c(gams_0_mean), fg='grey',
            xlab='truth', ylab='Posterior Mean: gam0*', 
            main=expression('Posterior'~gamma[0]^'*'),
-           pch=20, col='blue',
+           pch=ij0_pch,
+           col='blue',
            ylim=range(c(gams_0_mean,sim$gams_0)),
            xlim=range(c(gams_0_mean,sim$gams_0)))
       abline(0,1, col='grey')
@@ -129,7 +161,8 @@ plot_cytof_posterior <- function(mcmc, y, outdir='', sim=NULL, supress=c(),
       plot(c(gams_0_mean), fg='grey',
            xlab='truth', ylab='Posterior Mean: gam0*', 
            main=expression('Posterior'~gamma[0]^'*'),
-           pch=20, col='blue')
+           pch=ij0_pch,
+           col='blue')
       add.errbar(gams_0_ci, col=rgb(0,0,1,.2))
     }
   }

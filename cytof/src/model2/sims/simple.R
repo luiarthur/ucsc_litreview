@@ -142,6 +142,7 @@ sim_time <- system.time(
                          B=B, burn=BURN, thin=THIN, print=1)
 )
 sink(fileDest('simtime.txt')); print(sim_time); sink()
+save(dat, out, file=fileDest('sim_result.RData'))
 
 
 plot_cytof_posterior(out, dat$y, outdir=OUTDIR, sim=dat, dat_lim=dat_lim)

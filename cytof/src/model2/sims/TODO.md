@@ -1,5 +1,13 @@
 # TODO
 
+## Urgent
+
+- consistency with list naming of init, prior, fixed, mcmc_out
+- jointly update v and H
+- implement Dahl's posterior Z summarizer
+
+## Eventually
+
 - Debug!
 - Document
 - Simulations
