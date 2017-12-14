@@ -69,11 +69,21 @@ std::vector<List> cytof_fix_K_fit(
   std::vector<List> out(B);
 
   double ll;
+  Data missing_y_sum = std::vector<arma::mat>(I);
+  for (int i=0; i<I; i++) {
+    missing_y_sum[i] = arma::zeros<arma::mat>(get_Ni(y,i), J);
+  }
+
   auto ass = [&](const State &state, int ii) {
     if (ii - burn >= 0) {
       if ( (ii-burn+1) % compute_loglike_every == 0 || ii == burn ) {
         ll = loglike(state, y);
       }
+
+      for (int s=0; s<I; s++) {
+        missing_y_sum[s] += state.missing_y[s];
+      }
+
       out[ii - burn] = List::create(
           Named("beta_1") = state.beta_1,
           Named("beta_0") = state.beta_0,
@@ -87,13 +97,23 @@ std::vector<List> cytof_fix_K_fit(
           Named("H") = state.H, // REMOVE IN PRODUCTION
           Named("Z") = state.Z,
           Named("lam") = state.lam, // REMOVE IN PRODUCTION
-          Named("missing_y") = state.missing_y, // REMOVE IN PRODUCTION
+          //Named("missing_y") = state.missing_y, // REMOVE IN PRODUCTION
+          Named("missing_y_mean") = NULL,
           Named("W") = state.W,
           Named("ll") = ll);
+    }
+
+    if (ii - burn == B-1) {
+      auto missing_y_mean = init.missing_y;
+      for (int s=0; s<I; s++) {
+        missing_y_mean[s] = missing_y_sum[s] / B;
+      }
+      out[B-1]["missing_y_mean"] = missing_y_mean;
     }
   };
 
   gibbs<State>(init, update, ass, B, burn, print_freq);
+
 
   return out;
 }
