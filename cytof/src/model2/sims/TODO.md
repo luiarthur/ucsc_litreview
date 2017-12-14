@@ -5,6 +5,7 @@
 - consistency with list naming of init, prior, fixed, mcmc_out
 - jointly update v and H
 - implement Dahl's posterior Z summarizer
+- speed up updates of some parameters like mus, gams, by not iterating through data more than once.
 
 ## Eventually
 

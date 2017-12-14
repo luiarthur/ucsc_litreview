@@ -70,4 +70,14 @@ sim_time <- system.time(
   out <- cytof_fix_K_fit(y, truth=truth, prior=prior, B=B, burn=BURN, thin=THIN)
 )
 sink(fileDest('simtime.txt')); print(sim_time); sink()
+save(dat, out, file=fileDest('sim_result.RData'))
+
 plot_cytof_posterior(out, y, outdir=OUTDIR, dat_lim=dat_lim)
+
+png(fileDest('Y%03dsortedByLambda.png'))
+for (i in 1:I) {
+  lami_ord = order(last(out)$lam[[i]])
+  my.image(y[[i]][lami_ord,], mn=dat_lim[1], mx=dat_lim[2],
+           ylab='obs', xlab='markers', col=blueToRed(),addL=TRUE)
+}
+dev.off()
