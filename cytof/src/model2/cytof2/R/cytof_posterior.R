@@ -20,6 +20,7 @@ plot_cytof_posterior <- function(mcmc, y, outdir='', sim=NULL, supress=c(),
   if (outdir > '') sink()
 
   ### Z ###
+  pointEstZ <- estimate_Z(Z)
   if (!("Z" %in% supress)) {
     Z <- lapply(mcmc, function(o) o$Z)
     Z_mean <- matApply(Z, mean)
@@ -37,7 +38,6 @@ plot_cytof_posterior <- function(mcmc, y, outdir='', sim=NULL, supress=c(),
     }
 
     #pointEstZ <- if (NCOL(Z) <= 6) est_Z(Z) else last(mcmc)$Z
-    pointEstZ <- estimate_Z(Z)
     my.image(pointEstZ, main="Z: Point Estimate", ylab="1:J", addL=T)
     if (sum(pointEstZ) > 0) {
       my.image(pointEstZ, main="Z: Point Estimate", ylab="1:J", addL=T, rm0=TRUE)
@@ -90,12 +90,10 @@ plot_cytof_posterior <- function(mcmc, y, outdir='', sim=NULL, supress=c(),
     #mus posterior vs sim data
     # pch is ? if num obs < 30
     S0_ij <- function(i,j) {
-      lastZ = last(out)$Z
-      sum(lastZ[j,1+last(out)$lam[[i]]] == 0) 
+      sum(pointEstZ[j,1+last(out)$lam[[i]]] == 0) 
     }
     S1_ij <- function(i,j) {
-      lastZ = last(out)$Z
-      sum(lastZ[j,1+last(out)$lam[[i]]] == 1) 
+      sum(pointEstZ[j,1+last(out)$lam[[i]]] == 1) 
     }
     S0_count = matrix(NA, I, J)
     S1_count = matrix(NA, I, J)
