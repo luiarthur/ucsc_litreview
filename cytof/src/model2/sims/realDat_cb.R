@@ -65,7 +65,7 @@ dev.off()
 
 
 truth = list(K=MCMC_K)
-prior = list(d_w=1/MCMC_K)
+prior = list(cs_v=4, cs_h=3, d_w=1/MCMC_K, a_beta=200000, b_beta=10000)
 sim_time <- system.time(
   out <- cytof_fix_K_fit(y, truth=truth, prior=prior, B=B, burn=BURN, thin=THIN)
 )
