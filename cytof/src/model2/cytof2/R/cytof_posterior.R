@@ -20,9 +20,9 @@ plot_cytof_posterior <- function(mcmc, y, outdir='', sim=NULL, supress=c(),
   if (outdir > '') sink()
 
   ### Z ###
+  Z <- lapply(mcmc, function(o) o$Z)
   pointEstZ <- estimate_Z(Z)
   if (!("Z" %in% supress)) {
-    Z <- lapply(mcmc, function(o) o$Z)
     Z_mean <- matApply(Z, mean)
     Z_sd <- matApply(Z, sd)
     ord <- left_order(Z_mean>.5)

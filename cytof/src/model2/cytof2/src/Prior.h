@@ -73,7 +73,7 @@ Prior gen_prior_obj(const Nullable<List> &prior_input, int J) {
   out.cs_beta1j = getOrInit(prior,"b_beta1j", 1.0);
   out.s2_beta0 = getOrInit(prior,"s2_beta0", 1000.0);
   out.cs_beta0 = getOrInit(prior,"cs_beta0", 1.0);
-  out.s2_betaBar = getOrInit(prior,"s2_betaBar", 1000.0);
+  out.s2_betaBar = getOrInit(prior,"s2_betaBar", 10000.0);
 
   out.a_gam = getOrInit(prior,"a_gam", 6);
   out.b_gam = getOrInit(prior,"b_gam", 10);

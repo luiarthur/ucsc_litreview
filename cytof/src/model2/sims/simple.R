@@ -137,6 +137,31 @@ dev.off()
 set.seed(SEED_MCMC)
 truth=list(K=MCMC_K)
 prior = list(cs_v=4, cs_h=3, d_w=1/MCMC_K, a_beta=200000, b_beta=10000)
+
+pdf(fileDest('prior_prob_miss.pdf'))
+yy = seq(-15,15,l=100)
+plot(yy, 1 / (1 + exp(-dat$b0[1] + dat$b1[1]*yy)), 
+     xlab='y', ylab='prob of missing', fg='grey', type='l', lwd=2,
+     ylim=0:1, xlim=range(yy))
+#abline(v=y_beta, col='grey')
+
+prob_miss_prior = {
+  SS = 1000
+  bb_samps = rnorm(SS,0,sqrt(1000))
+  b0_samps = rnorm(SS, bb_samps, sqrt(10000))
+  b1_samps = rgamma(SS, prior$a_beta, prior$b_beta)
+  p_samps = sapply(1:SS, function(s) 1 / (1 + exp(-b0_samps[s] + b1_samps[s]*yy)))
+  p_lo = apply(p_samps, 1, quantile, .025)
+  p_hi = apply(p_samps, 1, quantile, .975)
+  p_med = apply(p_samps, 1, quantile, .5)
+  p_mean = rowMeans(p_samps)
+  color.btwn(yy, p_lo, p_hi, from=yy[1], to=yy[length(yy)],
+             col.area=rgb(1,0,0,.2))
+  lines(yy,p_mean,col='red', lwd=1, lty=2)
+  lines(yy,p_med,col='red', lwd=3, lty=2)
+}
+dev.off()
+
 sim_time <- system.time(
   out <- cytof_fix_K_fit(dat$y, truth=truth, prior=prior,
                          B=B, burn=BURN, thin=THIN, print=1)
