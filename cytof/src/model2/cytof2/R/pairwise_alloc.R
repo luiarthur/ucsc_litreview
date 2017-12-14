@@ -1,4 +1,8 @@
 pairwise_alloc <- function(Z) {
+  #' Returns a pairwise allocation matrix of a feature allocation (binary) matrix Z
+  #' using SALSO by David B. Dahl.
+  #' @export
+
   J <- NROW(Z)
   K <- NCOL(Z)
 
@@ -18,6 +22,10 @@ pairwise_alloc <- function(Z) {
 }
 
 estimate_Z <- function(Zs) {
+  #' Provides a point esitmate of Z using SALSO for feature allocation 
+  #' by David B. Dahl.
+  #' @export
+
   As = lapply(Zs, pairwise_alloc)
   A_mean = matApply(As, mean)
   mse = sapply(As, function(A) mean((A-A_mean)^2))
