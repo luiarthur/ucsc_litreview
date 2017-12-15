@@ -63,32 +63,17 @@ as the one used in the previous simulation.
 
 The posterior mean of the $W$ matrix for which $K=3$ is
 $$
-\hat{W}_3 =
-\begin{bmatrix}
-0.298 & 0.599 & 0.102\\
-0.098 & 0.801 & 0.099\\
-0.203 & 0.598 & 0.197\\
-\end{bmatrix}.
+\hat{W}_3 = \input{img/complex/W_mean_k3.tex}
 $$
 
 The posterior mean of the $W$ matrix for which $K=4$ is
 $$
-\hat{W}_4 =
-\begin{bmatrix}
-0.297 & 0.401 & 0.198 & 0.102 \\
-0.098 & 0.699 & 0.102 & 0.099 \\
-0.203 & 0.305 & 0.294 & 0.197 \\
-\end{bmatrix}.
+\hat{W}_4 = \input{img/complex/W_mean_k4.tex}
 $$
 
 The posterior mean of the $W$ matrix for which $K=7$ is
 $$
-\hat{W}_7 =
-\begin{bmatrix}
- 0.297 & 0.401 & 0.198 & 0.102 & 0.00 & 0.00 & 0.00 \\
- 0.098 & 0.699 & 0.102 & 0.099 & 0.00 & 0.00 & 0.00 \\
- 0.204 & 0.304 & 0.293 & 0.197 & 0.00 & 0.00 & 0.00 \\
-\end{bmatrix}
+\hat{W}_7 = \input{img/complex/W_mean_k7.tex}
 $$
 
 ### Posterior Estimate of $\mu^*$

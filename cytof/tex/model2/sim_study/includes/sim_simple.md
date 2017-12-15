@@ -34,10 +34,13 @@ as non-expression. Consequently, we need to simulate data that have missing valu
 We do so by first generating data from the model, and then with some probability
 setting observations to be missing. Observations with lower values have a 
 higher chance of becoming missing values. In this simulation, we record
-observations as missing using the function in Figure \ref{pmiss}.
+observations as missing using the function in Figure \ref{pmiss}. 
+The figure contains the simulation truth (in black) and the prior distribution
+over the logistic function (implied by the priors on $\beta$). Note that a strong
+prior is placed on logistic functions that are steep, and a loose prior is placed
+on the location of the logistic function.
 
-
-![Probability of missing](img/simple/prob_miss.pdf){ id=pmiss height=60% }
+![Probability of missing. The black line represents the simulation truth. The thick red dashed line represents the prior median. The thin red dashed line represents the prior mean. The red area is the prior 95% credible interval. ](img/simple/prior_prob_miss.pdf){ id=pmiss height=60% }
 
 
 ## Results
@@ -107,12 +110,7 @@ belonging to cell-type $k$.
 
 The posterior mean of the $W$ matrix for which $K=3$ is
 $$
-\hat{W}_3 =
-\begin{bmatrix}
-0.401 & 0.400 & 0.197 \\
-0.197 & 0.699 & 0.102 \\
-0.402 & 0.304 & 0.292 \\
-\end{bmatrix}.
+\hat{W}_3 = \input{img/simple/W_mean_k3.tex}
 $$
 Notice that in the posterior, since there are fewer columns of $W$ than that in
 the truth, the proportions of the first and fourth column in $W_{\text{TRUE}}$
@@ -120,23 +118,13 @@ are aggregated into the first column of $\hat W_3$.
 
 The posterior mean of the $W$ matrix for which $K=4$ is
 $$
-\hat{W}_4 =
-\begin{bmatrix}
-0.400 & 0.104 & 0.491 & 0.003 \\
-0.699 & 0.099 & 0.004 & 0.196 \\
-0.304 & 0.196 & 0.094 & 0.404 \\
-\end{bmatrix}.
+\hat{W}_4 = \input{img/simple/W_mean_k4.tex}
 $$
 
 
 The posterior mean of the $W$ matrix for which $K=7$ is
 $$
-\hat{W}_7 =
-\begin{bmatrix}
-0.298 & 0.400 & 0.196 & 0.10361152 & 0.00 & 0.00 & 0.00 \\
-0.098 & 0.700 & 0.102 & 0.09904309 & 0.00 & 0.00 & 0.00 \\
-0.204 & 0.304 & 0.293 & 0.19727416 & 0.00 & 0.00 & 0.00 \\
-\end{bmatrix}
+\hat{W}_7 = \input{img/simple/W_mean_k7.tex}
 $$
 The proportions for the first four column are the proportions in
 $W_\text{TRUE}$ up to Monte Carlo error. The last three columns have

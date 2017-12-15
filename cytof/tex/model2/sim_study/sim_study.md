@@ -46,6 +46,26 @@ header-includes:
     #
     - \allowdisplaybreaks
     - \def\M{\mathcal{M}}
+    # This Project
+    - \def\logit{\text{logit}}
+    - \def\Bern{\text{Bernoulli}}
+    - \def\N{\text{Normal}}
+    - \def\G{\text{Gamma}}
+    - \def\IG{\text{Inverse-Gamma}}
+    - \def\Dir{\text{Dirichlet}}
+    - \def\Be{\text{Beta}}
+    - \def\lin{\lambda_{in}}
+    - \def\btheta{\bm{\theta}}
+    - \def\y{\bm{y}}
+    - \newcommand\m{\bm{m}}
+    - \def\mus{\mu^*}
+    - \newcommand{\Ind}[1]{\mathbbm{1}\bc{#1}}
+    - \def\rest{\text{rest}}
+    - \def\bang{\boldsymbol{\cdot}}
+    - \def\h{\bm{h}}
+    - \def\Z{\bm{Z}}
+    - \def\Unif{\text{Unif}}
+
 #}}}1
 # Other header-includes:
 include-before:
