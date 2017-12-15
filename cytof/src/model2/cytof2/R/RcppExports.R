@@ -20,8 +20,8 @@ missing_R <- function(y, i, n, j) {
 #' @param init_input A list containing the initial values of the parameters. When set to NULL (default), default initial values are used.
 #'
 #' @export 
-cytof_fix_K_fit <- function(y, B, burn, thin = 1L, compute_loglike_every = 1L, print_freq = 10L, prior_input = NULL, truth_input = NULL, init_input = NULL) {
-    .Call('_cytof2_cytof_fix_K_fit', PACKAGE = 'cytof2', y, B, burn, thin, compute_loglike_every, print_freq, prior_input, truth_input, init_input)
+cytof_fix_K_fit <- function(y, B, burn, thin = 1L, compute_loglike_every = 1L, print_freq = 10L, ncores = 1L, show_timings = FALSE, prior_input = NULL, truth_input = NULL, init_input = NULL) {
+    .Call('_cytof2_cytof_fix_K_fit', PACKAGE = 'cytof2', y, B, burn, thin, compute_loglike_every, print_freq, ncores, show_timings, prior_input, truth_input, init_input)
 }
 
 #' My Unit Tests

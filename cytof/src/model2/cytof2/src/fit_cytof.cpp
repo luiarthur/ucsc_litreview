@@ -22,6 +22,8 @@
 #include "W.h"
 
 #include "missing_y.h"
+
+#include "mytime.h"
 #include "theta.h"
 
 #include "K.h" // TODO
@@ -44,7 +46,8 @@
 // [[Rcpp::export]]
 std::vector<List> cytof_fix_K_fit(
   const std::vector<arma::mat> &y, int B, int burn,
-  int thin=1, int compute_loglike_every=1, int print_freq=10,
+  int thin=1, int compute_loglike_every=1, int print_freq=10, int ncores=1,
+  bool show_timings=false,
   Nullable<List> prior_input = R_NilValue,
   Nullable<List> truth_input = R_NilValue,
   Nullable<List> init_input = R_NilValue) {
@@ -59,10 +62,10 @@ std::vector<List> cytof_fix_K_fit(
   const auto init = gen_init_obj(init_input, truth_input, prior, y);
 
 
-  auto update = [&y, &prior, &fixed_params, thin](State &state) {
+  auto update = [&y, &prior, &fixed_params, thin, show_timings](State &state) {
     Rcout << "\r";
     for (int t=0; t<thin; t++) {
-      update_theta(state, y, prior, fixed_params);
+      update_theta(state, y, prior, fixed_params, show_timings);
     }
   };
 
@@ -112,8 +115,8 @@ std::vector<List> cytof_fix_K_fit(
     }
   };
 
+  omp_set_num_threads(ncores);
   gibbs<State>(init, update, ass, B, burn, print_freq);
-
 
   return out;
 }
