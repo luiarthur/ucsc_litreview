@@ -1,6 +1,7 @@
 #!/usr/bin/env Rscript
 args = commandArgs(trailingOnly=TRUE)
 library(xtable) # print_bmat
+library(cytof2)
 
 ### Declaring global vars ###
 if (length(args) < 1) {
