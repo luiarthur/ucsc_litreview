@@ -70,7 +70,7 @@ sim_time <- system.time(
   out <- cytof_fix_K_fit(y, truth=truth, prior=prior, B=B, burn=BURN, thin=THIN)
 )
 sink(fileDest('simtime.txt')); print(sim_time); sink()
-save(dat, out, file=fileDest('sim_result.RData'))
+save(y, out, file=fileDest('sim_result.RData'))
 
 plot_cytof_posterior(out, y, outdir=OUTDIR, dat_lim=dat_lim)
 
