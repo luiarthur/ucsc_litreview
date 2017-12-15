@@ -61,34 +61,64 @@ displays a simple latent feature matrix that was used in this simulation study.
 
 ![A simple $Z$ matrix used for simulation study I.](img/simple/trueZ.pdf){ id=trueSimpleZ height=60% }
 
-Figure \ref{z3} shows the posterior mean for $Z$ when the number of columns is 
-fixed at 3 (mis-specified as smaller). In this case, the model learns 3 of the
-2 columns of $Z$ correctly. In the first column, we see that of the 8 markers that
-are supposed to take on feature 1, one marker is not activated and two markers
-are erroneously activated. The effect is similar for when $K$ is mis-specified
-as 2.
+I have summarized the posterior distribution of $Z$ in two ways. The first is
+the posterior mean, which is simply the average of all posterior samples of $Z$
+from the MCMC. After averaging, the resulting matrix is sorted by column into
+its left-ordered form. The other summary statistic for $Z$ is an adaptation
+of the sequentially-allocated latent structure optimization (SALSO) by David Dahl. 
+In SALSO, a point estimate is obtained by finding a $\hat{Z}$ that minimizes
+the expression
 
-![$Z$ Posterior mean for 3 columns](img/simple/Z_k3.pdf){ id=z3 height=60% }
+$$
+\text{argmin}_Z\sum_{r=1}^J\sum_{c=1}^J(A(Z)_{rc} - \bar{A}_{rc})^2,
+$$
 
-Figure \ref{z4} shows the posterior mean for $Z$ when the number of columns is 
-fixed at 4 (the truth). In this case, the posterior mean learns two of the four
-columns of $Z$ correctly. But by simply changing the random seed in the software
-used to implement the algorithm, the true $Z$ matrix is completely recovered. This
-suggests that the algorithm is slightly sensitive to the starting values 
-of the MCMC. 
+where $A(Z)$ is the pairwise allocation matrix corresponding to a binary matrix
+$Z$, and $\hat A$ is the pairwise allocation matrix averaged over all 
+posterior samples of $Z$. The adaptation I have made is I have not used
+any optimization methods to compute $\hat Z$. I have simply selected the $Z$ 
+from the posterior samples of $Z$ that minimizes the expression above. In this
+section, I'll mostly comment on the point-estimate of $Z$ but I have included
+the posterior mean as a reference.
 
-![$Z$ Posterior mean for 4 columns](img/simple/Z_k4.pdf){ id=z4 height=60% }
+Figure \ref{fig:z3} shows the point-estimate for $Z$ (left) when the number of
+columns is fixed at 3 (mis-specified as smaller). In this case, the model
+learns 1 of the 4 columns of $Z$ correctly. One column is duplicated. The
+remaining column shows no clear pattern. The effect is similar for when $K$ is
+mis-specified as 2.
 
-Figure \ref{z7} shows the posterior mean for $Z$ when the number of columns is
-fixed at 7 (larger than the truth). In this case, the posterior mean learns the
-four columns of $Z$ correctly, and the other columns contain no activated
-features. This suggests that setting the dimensions of $Z$ to be slightly
-higher may allow for the possibility of learning the correct structure for $Z$,
-at a slightly more computational cost. (Increasing the number of columns of
-$Z$ in MCMC increases the log-computation time by a factor of $\log K$, while
-holding the sample-size constant). 
+\beginmyfig
+![](img/simple/Z_point_k3.pdf){ height=40% }
+![](img/simple/Z_k3.pdf){ height=40% }
+\caption{Posterior point-estimate (left) and mean (right) for $Z$ of 3 columns}
+\label{fig:z3}
+\endmyfig
 
-![$Z$ Posterior mean for 7 columns](img/simple/Z_k7.pdf){ id=z7 height=60% }
+Figure \ref{fig:z4} shows the point-estimate for $Z$ (left) when the number of
+columns is fixed at 4 (the truth). In this case, the true $Z$ is learned.
+
+\beginmyfig
+![](img/simple/Z_point_k4.pdf){ height=40% }
+![](img/simple/Z_k4.pdf){ height=40% }
+\caption{Posterior point-estimate (left) and mean (right) for $Z$ of 4 columns}
+\label{fig:z4}
+\endmyfig
+
+Figure \ref{fig:z7} shows the point-estimate for $Z$ (left) when the number of
+columns is fixed at 7 (larger than the truth). In this case, the four columns
+of $Z$ are learned correctly, two of the columns contain no activated features,
+and one column contains one active feature. This suggests that setting the
+dimensions of $Z$ to be slightly higher may allow for the possibility of
+learning the correct structure for $Z$, at a slightly more computational cost.
+(Increasing the number of columns of $Z$ in MCMC increases the log-computation
+time by a factor of $\log K$, while holding the sample-size constant). 
+
+\beginmyfig
+![](img/simple/Z_point_k7.pdf){ height=40% }
+![](img/simple/Z_k7.pdf){ height=40% }
+\caption{Posterior point-estimate (left) and mean (right) for $Z$ of 7 columns}
+\label{fig:z7}
+\endmyfig
 
 ### Posterior Estimate of $W$
 
@@ -112,38 +142,49 @@ The posterior mean of the $W$ matrix for which $K=3$ is
 $$
 \hat{W}_3 = \input{img/simple/W_mean_k3.tex}
 $$
-Notice that in the posterior, since there are fewer columns of $W$ than that in
-the truth, the proportions of the first and fourth column in $W_{\text{TRUE}}$
-are aggregated into the first column of $\hat W_3$.
+The posterior mean is obtained by simple averaging of the posterior samples of
+$W$.  Notice that in the posterior, since there are fewer columns of $W$ than
+that in the truth, the proportions of the second column of $W_{\text{TRUE}}$
+are now in the first column of $\hat W_3$. The second column of $\hat W_3$
+is close to 0. The remaining column takes the remaining proportions.
 
 The posterior mean of the $W$ matrix for which $K=4$ is
 $$
 \hat{W}_4 = \input{img/simple/W_mean_k4.tex}
 $$
-
+which closely resembles the truth (ignoring column ordering).
 
 The posterior mean of the $W$ matrix for which $K=7$ is
 $$
 \hat{W}_7 = \input{img/simple/W_mean_k7.tex}
 $$
-The proportions for the first four column are the proportions in
-$W_\text{TRUE}$ up to Monte Carlo error. The last three columns have
-proportions close to 0.
+Ignoring the column ordering and the columns of zeros, $\hat W_7$ closely
+resembles the truth.
 
 
 ### Posterior Estimate of $\mu^*$
 
 The posterior distribution of $\mu^*$ for different choices of $K$ is
-summarized in this section. In general, when $Z$ is not recovered in the posterior,
-$\mu^*$ will not be recovered. Moreover, when no observations are assigned to
-take on a particular $\mu^*_{zij}$ the parameter will simply be sampled from the
-prior (see Figures \ref{musSimple3} and \ref{musSimple4}).
+summarized in this section. In general, when $Z$ is not recovered in the
+posterior, $\mu^*$ will not be recovered. Moreover, for $z=\bc{0,1}$, when
+$\sum_{n=1}^{N_i} \Ind{Z_{j,\lambda_{in}} = z}$ is small, $\mu^*_{zij}$ will
+simply be sampled more heavily from the prior.
 
-![$\mu^*$ Posterior mean vs. true $\mu^*$ for $K=3$](img/simple/mus_k3.pdf){ id=musSimple3 height=60% }
+For example, in Figure \ref{musSimple3}, we see a lot of uncertainty for $\mu^*$
+which are supposed to be positively-valued. This is due to the posterior $Z$ 
+matrices lacking active features where they are needed (see Figure \ref{fig:z3}).
+
+![$\mu^*$ Posterior mean vs. true $\mu^*$ for $K=3$. Circles represent the posterior mean. Vertical lines represent the 95% credible intervals. Triangles also represent the posterior mean, but for $mu_{zij}$ that have fewer than 30 corresponding $Z_{j,\lambda_{in}}$. They should have large intervals.](img/simple/mus_k3.pdf){ id=musSimple3 height=60% }
+
+In the case where $Z$ is recovered correctly, $\mu^*$ can possibly be recovered
+correctly. Figure \ref{musSimple4} shows the posterior distribution of $\mu^*$
+for which $K=4$. The posterior means line up with the truth. The credible intervals
+are short due to the number of observations.
 
 ![$\mu^*$ Posterior mean vs. true $\mu^*$ for $K=4$](img/simple/mus_k4.pdf){ id=musSimple4 height=60% }
 
-In the case where $Z$ is recovered correctly, $\mu^*$ can possibly be recovered
-correctly. (See Figure \ref{musSimple7}.)
+Finally, Figure \ref{musSimple7} shows the posterior distribution of $\mu^*$
+for which $K=7$. As $Z$ is recovered, the posterior means line up with the
+truth.
 
 ![$\mu^*$ Posterior mean vs. true $\mu^*$ for $K=7$](img/simple/mus_k7.pdf){ id=musSimple7 height=60% }

@@ -103,6 +103,11 @@ include-before:
 # Conclusion
 <include file="includes/conclusion.md">
 
+# Appendix 
+
+## Imputed Missing Values
+<include file="includes/imputed_y.md">
+
 [//]: # (Footnotes:)
 
 [comment]: <> (%

@@ -22,8 +22,8 @@ mv $OUTDIR/j32_k4_N10000_z0_B200_burn${BURN}_thin5/params_p7.pdf $reportDir/comp
 mv $OUTDIR/j32_k4_N10000_z1_B200_burn${BURN}_thin5/params_p7.pdf $reportDir/simple/trueZ.pdf
 
 ### Move True prob missing  ###
-mv $OUTDIR/j32_k4_N10000_z0_B200_burn${BURN}_thin5/prior_prob_miss.pdf $reportDir/complex/
-mv $OUTDIR/j32_k4_N10000_z1_B200_burn${BURN}_thin5/prior_prob_miss.pdf $reportDir/simple/
+cp $OUTDIR/j32_k4_N10000_z0_B200_burn${BURN}_thin5/prior_prob_miss.pdf $reportDir/complex/
+cp $OUTDIR/j32_k4_N10000_z1_B200_burn${BURN}_thin5/prior_prob_miss.pdf $reportDir/simple/
 
 
 for k in $K
@@ -40,10 +40,24 @@ do
   mv $OUTDIR/j32_k${k}_N10000_z0_B200_burn${BURN}_thin5/params_p18.pdf $reportDir/complex/mus_k${k}.pdf
   mv $OUTDIR/j32_k${k}_N10000_z1_B200_burn${BURN}_thin5/params_p18.pdf $reportDir/simple/mus_k${k}.pdf
 
-  # move Z posterior
+  # move Z posterior mean
   pdfPage $OUTDIR/j32_k${k}_N10000_z0_B200_burn${BURN}_thin5/params.pdf 3
   pdfPage $OUTDIR/j32_k${k}_N10000_z1_B200_burn${BURN}_thin5/params.pdf 3
 
   mv $OUTDIR/j32_k${k}_N10000_z0_B200_burn${BURN}_thin5/params_p3.pdf $reportDir/complex/Z_k${k}.pdf
   mv $OUTDIR/j32_k${k}_N10000_z1_B200_burn${BURN}_thin5/params_p3.pdf $reportDir/simple/Z_k${k}.pdf
+
+  # move Z pointest
+  pdfPage $OUTDIR/j32_k${k}_N10000_z0_B200_burn${BURN}_thin5/params.pdf 5
+  pdfPage $OUTDIR/j32_k${k}_N10000_z1_B200_burn${BURN}_thin5/params.pdf 5
+
+  mv $OUTDIR/j32_k${k}_N10000_z0_B200_burn${BURN}_thin5/params_p5.pdf $reportDir/complex/Z_point_k${k}.pdf
+  mv $OUTDIR/j32_k${k}_N10000_z1_B200_burn${BURN}_thin5/params_p5.pdf $reportDir/simple/Z_point_k${k}.pdf
+
+  # move imputed y
+  pdfPage $OUTDIR/j32_k${k}_N10000_z0_B200_burn${BURN}_thin5/params.pdf 28-39
+  pdfPage $OUTDIR/j32_k${k}_N10000_z1_B200_burn${BURN}_thin5/params.pdf 28-39
+
+  mv $OUTDIR/j32_k${k}_N10000_z0_B200_burn${BURN}_thin5/params_p28-39.pdf $reportDir/complex/imputed${k}.pdf
+  mv $OUTDIR/j32_k${k}_N10000_z1_B200_burn${BURN}_thin5/params_p28-39.pdf $reportDir/simple/imputed${k}.pdf
 done

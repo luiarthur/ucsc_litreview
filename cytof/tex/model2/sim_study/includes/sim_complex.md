@@ -35,20 +35,35 @@ the model learns only parts of the true feature allocation matrix. In this
 case, only the first two columns are correctly recovered. The third column
 resembles a combination of the third and fourth columns of the true $Z$.
 
-![$Z$ Posterior mean for 3 columns](img/complex/Z_k3.pdf){ id=z3Complex height=60% }
+\beginmyfig
+![](img/complex/Z_point_k3.pdf){ height=40% }
+![](img/complex/Z_k3.pdf){ height=40% }
+\caption{$Z$ Point estimate (left) and posterior mean (right) for 3 columns}
+\label{z3Complex}
+\endmyfig
 
 Figure \ref{z4Complex} shows the posterior mean for $Z$ when the number of
 columns is fixed at 4 (the truth). The structure of $Z$ is completely recovered
 in this case.
 
-![$Z$ Posterior mean for 4 columns](img/complex/Z_k4.pdf){ id=z4Complex height=60% }
+\beginmyfig
+![](img/complex/Z_point_k4.pdf){ height=40% }
+![](img/complex/Z_k4.pdf){ height=40% }
+\caption{$Z$ Point estimate (left) and posterior mean (right) for 4 columns}
+\label{z4Complex}
+\endmyfig
 
 Figure \ref{z7Complex} shows the posterior mean for $Z$ when the number of
 columns is fixed at 7 (larger than the truth). Similar to the previous study,
 when $K$ is mis-specified larger than the truth, the true $Z$ can still be
 recovered.
 
-![$Z$ Posterior mean for 7 columns](img/complex/Z_k7.pdf){ id=z7Complex height=60% }
+\beginmyfig
+![](img/complex/Z_point_k7.pdf){ height=40% }
+![](img/complex/Z_k7.pdf){ height=40% }
+\caption{$Z$ Point estimate (left) and posterior mean (right) for 7 columns}
+\label{z7Complex}
+\endmyfig
 
 ### Posterior Estimate of $W$
 
