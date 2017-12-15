@@ -21,11 +21,11 @@ tens of thousands. Specifically, $N=(20000, 30000, 10000)$. Note that these
 are heatmaps of $y_{inj}$ (rather than $\tilde y_{inj}$). Red for positive
 values, blue for negative values, and white for missing values.
 
-![Simulated data $Y_1$](img/simple/rawDat002.png){ id=simple1 height=60% }
+![Simulated data $Y_1$](img/simple/rawDat001.png){ id=simple1 height=60% }
 
-![Simulated data $Y_2$](img/simple/rawDat003.png){ id=simple2 height=60% }
+![Simulated data $Y_2$](img/simple/rawDat002.png){ id=simple2 height=60% }
 
-![Simulated data $Y_3$](img/simple/rawDat004.png){ id=simple3 height=60% }
+![Simulated data $Y_3$](img/simple/rawDat003.png){ id=simple3 height=60% }
 
 In real CYTOF data, markers that are not expressed are sometimes recorded as
 having negative expression levels due to the mechanics of the measurement

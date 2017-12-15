@@ -3,6 +3,18 @@ args = commandArgs(trailingOnly=TRUE)
 
 library(cytof2)
 library(rcommon)
+library(xtable) # print_bmat
+
+print_bmat = function(X, file) {
+  # Prints a matrix to tex file
+  # requires xtable
+  sink(file)
+  xtab = xtable(X, align=rep("", ncol(X)+1))
+  print(xtab, floating=FALSE, tabular.environment="bmatrix", 
+        hline.after=NULL, include.rownames=FALSE, include.colnames=FALSE)
+  sink()
+}
+
 #source("../cytof2/R/readExpression.R")
 
 if (length(args) < 8) {
@@ -180,3 +192,8 @@ for (i in 1:I) {
            col=blueToRed(),addL=TRUE)
 }
 dev.off()
+
+print_bmat(dat$W, fileDest("W_truth.tex"))
+print_bmat(matApply(lapply(out, function(o) o$W), mean), fileDest("W_mean.tex"))
+
+

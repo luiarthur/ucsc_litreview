@@ -8,11 +8,11 @@ in the previous section, with the new $Z$ matrix.
 Figures \ref{complex1} to \ref{complex3} display the simulated data in
 simulation study II.
 
-![Simulated data $Y_1$](img/complex/rawDat002.png){ id=complex1 height=60% }
+![Simulated data $Y_1$](img/complex/rawDat001.png){ id=complex1 height=60% }
 
-![Simulated data $Y_2$](img/complex/rawDat003.png){ id=complex2 height=60% }
+![Simulated data $Y_2$](img/complex/rawDat002.png){ id=complex2 height=60% }
 
-![Simulated data $Y_3$](img/complex/rawDat004.png){ id=complex3 height=60% }
+![Simulated data $Y_3$](img/complex/rawDat003.png){ id=complex3 height=60% }
 
 Observations were recorded as missing with the same probabilities as in the
 previous simulation.
