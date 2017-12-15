@@ -22,7 +22,7 @@ print_bmat = function(X, file) {
 }
 
 
-load(OUTDIR)
+load(fileDest('sim_result.RData'))
 print_bmat(dat$W, fileDest("W_truth.tex"))
 print_bmat(matApply(lapply(out, function(o) o$W), mean), fileDest("W_mean.tex"))
 
