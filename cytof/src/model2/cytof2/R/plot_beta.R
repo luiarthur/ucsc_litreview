@@ -66,23 +66,26 @@ plot_prob_missing <- function(mcmc, i, j, q=c(.025,.975),
 plot_beta <- function(mcmc, missing_count, dat=NULL) {
   compareWithData = !is.null(dat)
 
-  I <- length(mcmc[[1]]$missing_y)
+  I <- length(last(mcmc)$missing_y)
   J <- NROW(mcmc[[1]]$Z)
   K <- NCOL(mcmc[[1]]$Z)
 
   ### beta ###
-  beta_0 = sapply(mcmc, function(o) o$beta_0)
+  beta_0 = sapply(mcmc, function(o) c(o$beta_0))
   beta_0_mean = rowMeans(beta_0)
   beta_0_ci = t(apply(beta_0, 1, quantile, c(.025,.975)))
+  b0_ylim = range(c(beta_0_ci))
   
   a = sapply(c(t(missing_count) / 30), function(x) max(min(x,1),.1))
   if (compareWithData) {
     if (length(unique(c(dat$b0))) > 1) {
-      plot(dat$b0, beta_0_mean, main='b0')
-      add.errbar(beta_0_ci, x=dat$b1)
+      plot(c(dat$b0), beta_0_mean, main='b0', ylim=b0_ylim)
+      add.errbar(beta_0_ci, x=c(dat$b0))
       abline(0,1)
     } else {
-      plot(beta_0_mean, main='b0', pch=20, cex=2, fg='grey', col=rgb(0,0,1,a))
+      b0_ylim = range(b0_ylim, dat$b0[1])
+      plot(beta_0_mean, main='b0', pch=20, cex=2, fg='grey', col=rgb(0,0,1,a),
+           ylim=b0_ylim)
       add.errbar(beta_0_ci, x=1:(I*J), lty=2, col=rgb(0,0,1,.3))
       abline(h=c(dat$b0[1],0),col='grey')
     }
@@ -100,13 +103,16 @@ plot_beta <- function(mcmc, missing_count, dat=NULL) {
   beta_1 = sapply(mcmc, function(o) o$beta_1)
   beta_1_mean = rowMeans(beta_1)
   beta_1_ci = t(apply(beta_1, 1, quantile, c(.025,.975)))
+  b1_ylim = range(c(beta_1_ci))
   if (compareWithData) {
     if (length(unique(dat$b1)) > 1) {
-      plot(dat$b1, beta_1_mean, main='b1')
+      plot(dat$b1, beta_1_mean, main='b1', ylim=b1_ylim)
       add.errbar(beta_1_ci, x=dat$b1)
       abline(0,1)
     } else {
-      plot(beta_1_mean, main='b1', pch=20, col=rgb(0,0,1), cex=2, fg='grey')
+      b1_ylim = range(b1_ylim, dat$b1[1])
+      plot(beta_1_mean, main='b1', pch=20, col=rgb(0,0,1), cex=2, fg='grey',
+           ylim=b1_ylim)
       add.errbar(beta_1_ci, x=1:J, lty=2, col=rgb(0,0,1,.5))
       abline(h=dat$b1[1],col='grey')
     }
