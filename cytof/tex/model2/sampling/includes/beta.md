@@ -38,20 +38,20 @@ p(\beta_{0ij} \mid \bar\beta_{0j}) \times
 \mhSpiel{\beta_{0ij}}
 
 ### Full Conditional for $\bar\beta_{0j}$
-Recall that $\bar\beta_{0j} \sim \N(0,s^2_\beta)$.
+Recall that $\bar\beta_{0j} \sim \N(m_\beta,s^2_\beta)$.
 
 \begin{align*}
 p(\bar\beta_{0j} \mid \y, \rest) &\propto
 p(\bar\beta_{0j}) \prod_{i=1}^I p(\beta_{0ij} \mid \bar\beta_{0j}) \\
 &\propto
-\exp\bc{\frac{-\bar\beta_{0j}^2}{2 s^2_\beta}}
+\exp\bc{\frac{-(\bar\beta_{0j} - m_\beta)^2}{2 s^2_\beta}}
 \prod_{i=1}^I \exp\bc{\frac{-(\beta_{0ij}-\bar\beta_{0j})^2}{2s^2_{\beta_0}}}
 \end{align*}
 
 Due to conjugacy,
 $$
 \bar\beta_{0j} \mid \y, \rest \sim \N\p{
-  \frac{s^2_{\beta_0}\sum_{i=1}^I\beta_{0ij}}{s^2_{\beta_0} + s^2_\beta I},
+  \frac{s^2_{\beta_0}m_\beta+s^2_{\beta}\sum_{i=1}^I\beta_{0ij}}{s^2_{\beta_0} + s^2_\beta I},
   \frac{s^2_{\beta_0} s^2_\beta}{s^2_{\beta_0} + s^2_\beta I}
 }.
 $$
