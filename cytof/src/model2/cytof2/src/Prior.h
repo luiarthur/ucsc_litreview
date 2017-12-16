@@ -4,7 +4,7 @@ struct Prior {
   // beta_{0ij} | betaBar_{0j} ~ N(betaBar_{0j}, s2_beta0)
   double s2_beta0; double cs_beta0;
   // betaBar_{0j} ~ N(0, s2_beta)
-  double s2_betaBar;
+  double m_betaBar; double s2_betaBar;
   
   // gamma_{0ij}
   double a_gam; double b_gam; double cs_gam;
@@ -75,6 +75,7 @@ Prior gen_prior_obj(const Nullable<List> &prior_input, int J) {
   out.cs_beta1j = getOrInit(prior,"b_beta1j", 1.0);
   out.s2_beta0 = getOrInit(prior,"s2_beta0", 1000.0);
   out.cs_beta0 = getOrInit(prior,"cs_beta0", 1.0);
+  out.m_betaBar = getOrInit(prior,"m_betaBar", 0);
   out.s2_betaBar = getOrInit(prior,"s2_betaBar", 10000.0);
 
   out.a_gam = getOrInit(prior,"a_gam", 6);

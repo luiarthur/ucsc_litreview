@@ -50,7 +50,9 @@ void update_betaBar0j(State &state, const Data &y, const Prior &prior, int j) {
   }
 
   const double var_denom = prior.s2_betaBar * I + prior.s2_beta0;
-  const double new_mean = prior.s2_beta0 * sum_b0ij / var_denom;
+  const double mean_num = prior.m_betaBar * prior.s2_beta0 + 
+                          sum_b0ij * prior.s2_betaBar;
+  const double new_mean = mean_num / var_denom;
   const double new_var = prior.s2_betaBar * prior.s2_beta0 / var_denom;
 
   state.betaBar_0[j] = R::rnorm(new_mean, sqrt(new_var));

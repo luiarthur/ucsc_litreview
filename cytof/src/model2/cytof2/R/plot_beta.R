@@ -63,7 +63,22 @@ plot_prob_missing <- function(mcmc, i, j, q=c(.025,.975),
                             from=min(y_grid), to=max(y_grid), col=col.area)
 }
 
-plot_beta <- function(mcmc, missing_count, dat=NULL) {
+add_beta_prior <- function(prior, yy=seq(-10,10,l=100), SS=1000) {
+  bb_samps = rnorm(SS, prior$m_betaBar,sqrt(prior$s2_betaBar))
+  b0_samps = rnorm(SS, bb_samps, sqrt(prior$s2_beta0))
+  b1_samps = rgamma(SS, prior$a_beta, prior$b_beta)
+  p_samps = sapply(1:SS, function(s) 1 / (1 + exp(-b0_samps[s] + b1_samps[s]*yy)))
+  p_lo = apply(p_samps, 1, quantile, .025)
+  p_hi = apply(p_samps, 1, quantile, .975)
+  p_med = apply(p_samps, 1, quantile, .5)
+  p_mean = rowMeans(p_samps)
+  color.btwn(yy, p_lo, p_hi, from=yy[1], to=yy[length(yy)],
+             col.area=rgb(1,0,0,.2))
+  lines(yy,p_mean,col='red', lwd=1, lty=2)
+  lines(yy,p_med,col='red', lwd=3, lty=2)
+}
+
+plot_beta <- function(mcmc, missing_count, dat=NULL, prior=NULL) {
   compareWithData = !is.null(dat)
 
   I <- length(last(mcmc)$missing_y)
@@ -129,6 +144,7 @@ plot_beta <- function(mcmc, missing_count, dat=NULL) {
 
   ys <- seq(-12,12,l=100)
   plot(ys, ys, ylim=0:1, type='n', fg='grey', xlab='y', ylab='prob of missing')
+  if (!is.null(prior)) add_beta_prior(prior)
   title(main='Prob of missing')
   for (i in 1:I) for (j in 1:J) {
     r=135/255; g=206/255; b=250/255
@@ -160,3 +176,5 @@ plot_beta <- function(mcmc, missing_count, dat=NULL) {
   }
   par(mfrow=c(1,1), mar=mar.default(), oma=oma.default())
 }
+
+

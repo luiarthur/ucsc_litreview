@@ -53,6 +53,7 @@ W <- matrix(c(.3, .4, .2, .1,
 dat_lim = c(-10,10)
 #y_beta = c(-11,-10)
 #y_beta = c(-6,-5.5)
+#y_beta = c(-5,-2)
 y_beta = c(-5,-4.5)
 bdat = get_beta(y=y_beta, p_tar=c(.99,.01), plot=FALSE)
 
@@ -148,7 +149,10 @@ dev.off()
 
 set.seed(SEED_MCMC)
 truth=list(K=MCMC_K)
-prior = list(cs_v=4, cs_h=3, d_w=1/MCMC_K, a_beta=200000, b_beta=10000)
+prior = list(cs_v=4, cs_h=3, d_w=1/MCMC_K,
+             a_beta=90, b_beta=30,
+             m_betaBar=-11, s2_betaBar=.1, 
+             s2_beta0=.1)
 
 pdf(fileDest('prior_prob_miss.pdf'))
 yy = seq(-15,15,l=100)
@@ -159,8 +163,8 @@ plot(yy, 1 / (1 + exp(-dat$b0[1] + dat$b1[1]*yy)),
 
 prob_miss_prior = {
   SS = 1000
-  bb_samps = rnorm(SS,0,sqrt(1000))
-  b0_samps = rnorm(SS, bb_samps, sqrt(10000))
+  bb_samps = rnorm(SS,prior$m_betaBar,sqrt(prior$s2_betaBar))
+  b0_samps = rnorm(SS, bb_samps, sqrt(prior$s2_beta0))
   b1_samps = rgamma(SS, prior$a_beta, prior$b_beta)
   p_samps = sapply(1:SS, function(s) 1 / (1 + exp(-b0_samps[s] + b1_samps[s]*yy)))
   p_lo = apply(p_samps, 1, quantile, .025)
@@ -196,4 +200,6 @@ dev.off()
 print_bmat(dat$W, fileDest("W_truth.tex"))
 print_bmat(matApply(lapply(out, function(o) o$W), mean), fileDest("W_mean.tex"))
 
-
+pdf(fileDest('post_beta.pdf'))
+plot_beta(out, missing_count, dat, prior)
+dev.off()
