@@ -84,6 +84,8 @@ simdat <- function(I, N, J, K, W, Z=genZ(J,K),
   mus_0 <- matrix(mus_0, nrow=I)
   mus_1 <- matrix(mus_1, nrow=I)
 
+  mus = simplify2array(list(mus_0,mus_1))
+
   mu <- function(i, n, j) ifelse(Z[j, lam[[i]][n]] == 0, mus_0[i,j], mus_1[i,j])
   gam <- function(i, n, j) ifelse(Z[j, lam[[i]][n]] == 0, gams_0[i,j], 0)
 
@@ -116,7 +118,7 @@ simdat <- function(I, N, J, K, W, Z=genZ(J,K),
   list(Z=Z, lam=lam, mus_0=mus_0, mus_1=mus_1, y=y, I=I, N=N, J=J, K=K,
        gams_0=gams_0, psi_0=psi_0, psi_1=psi_1, sig2=sig2, tau2_0=tau2_0,
        tau2_1=tau2_1, W=W, y_no_missing=y_no_missing, b0=b0, b1=b1,
-       lam_base0=lam_base0)
+       lam_base0=lam_base0, mus=mus, psi=c(psi_0, psi_1), tau2=c(tau2_0, tau2_1))
 }
 
 ### TEST ###

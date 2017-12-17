@@ -9,12 +9,12 @@ iterations. The MCMC was thinned by a factor of 5. (i.e. only one of every
 The specific prior distributions (including hyper-parameters) are included here.
 
 \begin{align*}
-\beta_{1j} &\sim \G(200000, 10000) ~~~~ \text{(mean=20, var=.002)} \\
-\beta_{0ij} \mid \bar\beta_{0j} &\sim \N(\bar\beta_{0j}, \text{var}=1000) \\
-\bar\beta_{0j} &\sim \N(0, \text{var}=10000) \\
+\beta_{1j} &\sim \G(90, 30) ~~~~ \text{(mean=3, var=0.1)} \\
+\beta_{0ij} \mid \bar\beta_{0j} &\sim \N(\bar\beta_{0j}, \text{var}=0.1) \\
+\bar\beta_{0j} &\sim \N(-11, \text{var}=0.1) \\
 \\
 \gamma_{1ij}^* &:= 0 \\
-\gamma_{0ij}^* &\sim \IG(6.10) ~~~~ \text{(mean=2, var=1)} \\
+\gamma_{0ij}^* &\sim \IG(6, 10) ~~~~ \text{(mean=2, var=1)} \\
 \sigma^2_{ij} &\sim \IG(2, 1) ~~~~ \text{(mean=1, var=$\infty$)} \\
 \mus_{0ij} \mid \psi_0, \tau^2_0 &\sim \N_-(\psi_0, \tau^2_0) \\
 \mus_{1ij} \mid \psi_1, \tau^2_1 &\sim \N_+(\psi_1, \tau^2_1) \\

@@ -1,5 +1,29 @@
 # TODO
 
+## By 22 Dec, 2017
+
+- [ ] Intro to problem
+    - [ ] Inference goals
+- [ ] model description
+- [ ] Literature review
+    - [ ] Cytometry
+    - [ ] Feature Allocation models (IBP)
+- [ ] Simulations studies with informative prior on beta
+- [ ] Don't include posterior mean for Z, only posterior estimate
+- [ ] Remove legends for all Z matrices
+- [ ] $Z_{TRUE}$ => $Z^{TR}$
+- [ ] Look at a few posterior distributions for $y_{inj}$
+- [ ] Change all bullet points to sentences
+
+## Christmas
+- [ ] Random K
+- [ ] 6000 burn-in, 2000 samples, after thinning by 5 (i.e. B=2000, burn=1500, thin=5)
+- [ ] Full conditionals in appendix
+- [ ] Change beta prior based on data
+- [ ] In simulation 3, set mu* closer to 0.
+- [ ] Analyze real CB data
+- [ ] Stick breaking construction of AIBD
+
 ## Urgent
 
 - consistency with list naming of init, prior, fixed, mcmc_out

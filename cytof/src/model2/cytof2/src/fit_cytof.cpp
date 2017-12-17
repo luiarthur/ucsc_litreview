@@ -55,6 +55,8 @@ std::vector<List> cytof_fix_K_fit(
   const int I = get_I(y);
   const int J = get_J(y);
 
+  const auto idx_of_missing = get_idx_of_missing(y); // REMOVE IN PRODUCTION
+
   Rcout << "I:" << I << ", J:" << J << std::endl;
 
   const auto fixed_params = gen_fixed_obj(truth_input);

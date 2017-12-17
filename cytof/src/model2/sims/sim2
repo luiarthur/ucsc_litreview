@@ -27,9 +27,12 @@ MCMC_K="2 3 4 5 6 7"
 N="10000"
 USE_SIMPLE_Z="0 1"
 OUTDIR='out/sim2'
-B=200
-BURN=1000 #max time 9 hrs.
-THIN=5
+#B=200
+#BURN=1200 #max time 12 hrs.
+#THIN=5
+B=2000
+BURN=6000 #max time 12 hrs.
+THIN=1
 
 
 for j in $J

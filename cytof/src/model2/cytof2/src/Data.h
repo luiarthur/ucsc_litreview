@@ -42,3 +42,29 @@ std::vector<int> get_N(const Data &y) {
 
   return N;
 }
+
+
+arma::Mat<int> get_idx_of_missing(const Data &y) {
+  arma::Mat<int> indices(0,3); // each row is a (i, n, j) tuple
+
+  const int I = get_I(y);
+  const int J = get_J(y);
+  const auto N = get_N(y);
+  int counter = 0;
+
+  for (int i=0; i<I; i++) {
+    for (int j=0; j<J; j++) {
+      for (int n=0; n<N[i]; n++) {
+        if (missing(y, i, n, j)) {
+          indices.resize(counter+1, 3);
+          indices(counter, 0) = i;
+          indices(counter, 1) = n;
+          indices(counter, 2) = j;
+          counter++;
+        }
+      }
+    }
+  }
+
+  return indices;
+}
