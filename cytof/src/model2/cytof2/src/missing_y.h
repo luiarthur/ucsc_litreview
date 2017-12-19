@@ -38,3 +38,18 @@ void update_missing_y(State &state, const Data &y, const Prior &prior) {
     }
   }
 }
+
+arma::vec get_missing_only(const State &state, const arma::Mat<int> &indices) {
+  const int M = indices.n_rows;
+  arma::vec missing_y_only(M);
+  int i,n,j;
+
+  for (int mm=0; mm < M; mm++) {
+    i = indices(mm, 0);
+    n = indices(mm, 1);
+    j = indices(mm, 2);
+    missing_y_only[mm] = state.missing_y[i](n,j);
+  }
+
+  return missing_y_only;
+}

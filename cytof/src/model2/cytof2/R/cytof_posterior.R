@@ -266,7 +266,7 @@ plot_cytof_posterior <- function(mcmc, y, outdir='', sim=NULL, supress=c(),
 
   ### missing_y
   if(!('missing_y' %in% supress)) {
-    missing_y_mean <- lapply(last(mcmc)$missing_y, 
+    missing_y_mean <- lapply(last(mcmc)$missing_y_mean,
                              function(mean_y) matrix(mean_y,ncol=J))
 
     par(mfrow=c(4,2))

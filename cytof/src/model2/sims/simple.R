@@ -203,3 +203,17 @@ print_bmat(matApply(lapply(out, function(o) o$W), mean), fileDest("W_mean.tex"))
 pdf(fileDest('post_beta.pdf'))
 plot_beta(out, missing_count, dat, prior)
 dev.off()
+
+### Plots of missing values posterior ###
+idx_miss = last(out)$idx + 1
+y_miss = sapply(out, function(o) o$missing_y_only)
+
+pdf(fileDest('missing_y.pdf'))
+idx = sample(1:nrow(idx_miss), 30, replace=TRUE)
+for (i in idx) {
+  plotPost(y_miss[i,], main='',
+           xlab=paste0('(i,n,j): ', paste0(idx_miss[i,], collapse=',')))
+}
+
+hist(c(y_miss), xlab='Missing values')
+dev.off()

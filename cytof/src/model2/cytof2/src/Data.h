@@ -68,3 +68,6 @@ arma::Mat<int> get_idx_of_missing(const Data &y) {
 
   return indices;
 }
+
+
+

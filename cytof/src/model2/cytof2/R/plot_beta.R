@@ -81,7 +81,7 @@ add_beta_prior <- function(prior, yy=seq(-10,10,l=100), SS=1000) {
 plot_beta <- function(mcmc, missing_count, dat=NULL, prior=NULL) {
   compareWithData = !is.null(dat)
 
-  I <- length(last(mcmc)$missing_y)
+  I <- length(last(mcmc)$missing_y_mean)
   J <- NROW(mcmc[[1]]$Z)
   K <- NCOL(mcmc[[1]]$Z)
 

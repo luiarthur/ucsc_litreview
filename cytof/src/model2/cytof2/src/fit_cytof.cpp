@@ -101,9 +101,8 @@ std::vector<List> cytof_fix_K_fit(
           Named("v") = state.v, // REMOVE IN PRODUCTION
           Named("H") = state.H, // REMOVE IN PRODUCTION
           Named("Z") = state.Z,
-          Named("lam") = state.lam, // REMOVE IN PRODUCTION
-          //Named("missing_y") = state.missing_y, // REMOVE IN PRODUCTION
-          Named("missing_y_mean") = NULL,
+          Named("lam") = state.lam, // REMOVE IN PRODUCTION. Just keep last one.
+          Named("missing_y_only") = get_missing_only(state, idx_of_missing), // REMOVE IN PRODUCTION
           Named("W") = state.W,
           Named("ll") = ll);
     }
@@ -114,6 +113,7 @@ std::vector<List> cytof_fix_K_fit(
         missing_y_mean[s] = missing_y_sum[s] / B;
       }
       out[B-1]["missing_y_mean"] = missing_y_mean;
+      out[B-1]["idx_of_missing"] = idx_of_missing;
     }
   };
 
