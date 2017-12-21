@@ -209,8 +209,7 @@ idx_miss = last(out)$idx + 1
 y_miss = sapply(out, function(o) o$missing_y_only)
 
 pdf(fileDest('missing_y.pdf'))
-idx = sample(1:nrow(idx_miss), 30, replace=TRUE)
-for (i in idx) {
+for (i in 1:nrow(idx_miss)) {
   plotPost(y_miss[i,], main='',
            xlab=paste0('(i,n,j): ', paste0(idx_miss[i,], collapse=',')))
 }
