@@ -62,3 +62,8 @@ Q1:  Is it from a real data analysis?  Then it seems not so interesting... Can y
 Q2: Page 2: I see white color that is not in the color key.  What does "white" mean?
 
 Q3: Page 3:  I thought that prob(missing) becomes almost zero for y > some value like -3 or below -3 (or even -5).  We are almost sure that y_{i,n, j} is missing since it is so small and z_{j,k}=0 with \lambda_in=k.   I see that even Y ~=-3 has relatively large prob of missing.  Do you have any insights for this?  
+
+### Scala Implementation Notes
+
+In Scala, creating the data for order 10000 doesn't work only using Array of
+Arrays.  But using Arrays of matrices works. Strange...
