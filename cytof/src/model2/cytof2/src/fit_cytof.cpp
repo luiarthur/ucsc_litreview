@@ -55,7 +55,13 @@ std::vector<List> cytof_fix_K_fit(
   const int I = get_I(y);
   const int J = get_J(y);
 
-  const auto idx_of_missing = get_idx_of_missing(y); // REMOVE IN PRODUCTION
+  // REMOVE THE FOLLOWING LINES IN PRODUCTION
+  const auto idx_of_all_missing = get_idx_of_missing(y);
+  arma::uvec top_20(20);
+  for (int i=0; i<20; i++) top_20[i] = i;
+  std::random_shuffle(top_20.begin(), top_20.end());
+  const arma::Mat<int> idx_of_missing = idx_of_all_missing.rows(top_20);
+  // REMOVE THE PRECEDING LINES IN PRODUCTION
 
   Rcout << "I:" << I << ", J:" << J << std::endl;
 
