@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# -s        =>  create standalone file (in this case report.tex latex file)
+# --toc     =>  create table of contents
+# --natbib  =>  use the natbib package in latex
+# -o        =>  output file name
+
+# includes all <include file="file/to/include.txt">
+# see github.com/luiarthur/myBin/md-include.py
+
+md-include.py report.md 
+#pandoc .report-tmp.md -s -V documentclass:asaproc -o report.tex --number-sections
+pandoc .report-tmp.md -s -o report.tex --number-sections --natbib --toc
+
+pdflatex report.tex
+bibtex report.aux
+pdflatex report.tex
+pdflatex report.tex
+rm -f *.{log,aux,nav,out,snm,toc,blg,bbl}
+#rm -f report.tex
+

@@ -38,13 +38,13 @@ plot_cytof_posterior <- function(mcmc, y, outdir='', sim=NULL, supress=c(),
     }
 
     #pointEstZ <- if (NCOL(Z) <= 6) est_Z(Z) else last(mcmc)$Z
-    my.image(pointEstZ, main="Z: Point Estimate", ylab="1:J", addL=T)
+    my.image(pointEstZ, main="Z: Point Estimate", ylab="1:J", addL=F)
     if (sum(pointEstZ) > 0) {
-      my.image(pointEstZ, main="Z: Point Estimate", ylab="1:J", addL=T, rm0=TRUE)
+      my.image(pointEstZ, main="Z: Point Estimate", ylab="1:J", addL=F, rm0=TRUE)
     }
 
     if (compareWithData) {
-      my.image(sim$Z, main="True Z", ylab="1:J", addL=T)
+      my.image(sim$Z, main="True Z", ylab="1:J", addL=F)
     }
   }
 
