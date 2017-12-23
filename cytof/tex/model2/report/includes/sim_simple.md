@@ -88,16 +88,6 @@ remaining column shows no clear pattern. The effect is similar for when $K$ is
 mis-specified as 2.
 
 \beginmyfig
-![](img/simple/Z_point_k3.pdf){ height=40% }
-![](img/simple/Z_k3.pdf){ height=40% }
-\caption{Posterior point-estimate (left) and mean (right) for $Z$ of 3 columns}
-\label{fig:z3}
-\endmyfig
-
-Figure \ref{fig:z4} shows the point-estimate for $Z$ (left) when the number of
-columns is fixed at 4 (the truth). In this case, the true $Z$ is learned.
-
-\beginmyfig
 ![](img/simple/Z_point_k3.pdf){ height=30% }
 ![](img/simple/Z_point_k4.pdf){ height=30% }
 ![](img/simple/Z_point_k7.pdf){ height=30% }
@@ -105,6 +95,10 @@ columns is fixed at 4 (the truth). In this case, the true $Z$ is learned.
 and 7 columns (right).}
 \label{fig:zpoint}
 \endmyfig
+
+Figure \ref{fig:z4} shows the point-estimate for $Z$ (left) when the number of
+columns is fixed at 4 (the truth). In this case, the true $Z$ is learned.
+
 
 Figure \ref{fig:z7} shows the point-estimate for $Z$ (left) when the number of
 columns is fixed at 7 (larger than the truth). In this case, the four columns
@@ -114,13 +108,6 @@ dimensions of $Z$ to be slightly higher may allow for the possibility of
 learning the correct structure for $Z$, at a slightly more computational cost.
 (Increasing the number of columns of $Z$ in MCMC increases the log-computation
 time by a factor of $\log K$, while holding the sample-size constant). 
-
-\beginmyfig
-![](img/simple/Z_point_k7.pdf){ height=40% }
-![](img/simple/Z_k7.pdf){ height=40% }
-\caption{Posterior point-estimate (left) and mean (right) for $Z$ of 7 columns}
-\label{fig:z7}
-\endmyfig
 
 #### Posterior Estimate of $W$
 
