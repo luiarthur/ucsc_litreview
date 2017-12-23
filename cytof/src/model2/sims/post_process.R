@@ -12,19 +12,6 @@ OUTDIR = args[1]
 fileDest = function(name) paste0(OUTDIR, name)
 ### Finished declaring global vars ###
 
-print_bmat = function(X, file, ...) {
-  # Prints a matrix to tex file
-  # requires xtable
-  sink(file)
-  xtab = xtable(X, align=rep("", ncol(X)+1), ...)
-  print(xtab, floating=FALSE, tabular.environment="bmatrix", 
-        hline.after=NULL, include.rownames=FALSE, include.colnames=FALSE)
-  sink()
-}
-
-
+### Load Data ###
 load(fileDest('sim_result.RData'))
-print_bmat(dat$W, fileDest("W_truth.tex"), digits=3)
-print_bmat(matApply(lapply(out, function(o) o$W), mean),
-           fileDest("W_mean.tex"), digits=3)
-
+plot_cytof_posterior(out, dat$y, outdir=OUTDIR, sim=dat, dat_lim=c(-10,10))
