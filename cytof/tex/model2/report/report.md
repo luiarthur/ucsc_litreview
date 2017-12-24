@@ -106,8 +106,8 @@ include-before:
 ## Cytometry
 <include file="includes/cytometry.md">
 
-## Feature Allocation models
-<include file="includes/ibp.md">
+## Feature Allocation Models
+<include file="includes/new_ibp.md">
 
 
 

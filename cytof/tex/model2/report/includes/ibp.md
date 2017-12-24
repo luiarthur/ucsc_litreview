@@ -1,6 +1,18 @@
 ### The Indian Buffet Process
 
-REDO
+The Indian buffet process (IBP) developed by @griffiths2011indian 
+
+$$
+\begin{split}
+\pi_k \mid \alpha &\sim \text{Beta}(\alpha/K, 1) \\
+Z_{ik} \mid \pi_k &\sim \text{Bernoulli}(\pi_k)
+\end{split}
+$$
+
+The matrix $Z$ has an IBP distribution with concentration parameter $\alpha$
+when the $\pi_k$ are integrated out and in the limit $K \rightarrow \infty$ .
+That is, marginally, $Z \sim \text{IBP}(\alpha)$.
+
 
 The purpose of the review so far is to show the methods that have been used to
 incorporate distance information into the CRP. The goal of this project is to
@@ -58,48 +70,10 @@ where $H_N$ is the harmonic number, $\suml{i}{1}{N}\ds\frac{1}{i}$, $K_+$ is
 the number of non-zero columns in $\bm Z$, $m_k$ is the $k^{th}$ column sum of
 $\bm Z$, and $K_1^{(i)}$ is the "number of new dishes" sampled by customer $i$.
 
-### Gibbs Sampler for Indian Buffet Process
-One way to get a draw from the IBP($\alpha$) is to simulate the process
-according to the description above. Another way is to implement a Gibbs sampler
-(@griffiths2011indian). We can implement a Gibbs sampler to draw from the IBP
-as follows:
 
-\begin{enumerate}
-  \item Start with an arbitrary binary matrix of $N$ rows
-  \item For each row, $i$,
-  \begin{enumerate}
-    \item For each column, $k$,
-    \item if $m_{-i,k}$ = $0$, delete column $k$. Otherwise,
-    \item set $z_{ik}$ to $0$
-    \item set $z_{ik}$ to $1$ with probability $P(z_{ik}=1|\bm{z_{-i,k}}) = \frac{m_{-i,k}}{i}$
-    \item at the end of row $i$, add Poisson($\ds\frac{\alpha}{N}$) columns of $1$'s
-  \end{enumerate}
-  \item iterate step 2 a large number of times
-\end{enumerate}
-We can likewise incorporate this Gibbs sampler to sample from the posterior
-distribution (@griffiths2011indian) P($\bm{Z|X}$) where $\bm Z \sim
-\text{IBP}(\alpha)$ by sampling from the complete conditional
-\begin{equation}
-  P(z_{ik}=1|\bm{Z_{-(ik)},X})  \propto p(\bm{X|Z}) P(z_{ik}=1|\bm{Z_{-(ik)}}).
-\end{equation}
+### Stick-breaking Construction for the IBP
 
-The parameter $\alpha$ is often unknown, so it should be modeled. Note that the
-conjugate prior for $\alpha$ is a Gamma distribution. Using a Gamma
-distribution is appropriate since $\alpha$ is positive.
-
-$$
-  \begin{array}{rcl}
-    \bm Z|\alpha & \sim & \text{IBP}(\alpha)\\
-          \alpha & \sim & \text{Gamma}(a,b), \text{where $b$ is the scale parameter}\\
-    & & \\
-    p(\alpha|\bm Z) & \propto & p(\bm Z|\alpha) p(\alpha)\\
-    p(\alpha|\bm Z) & \propto & \alpha^{K_+} e^{-\alpha H_N}  
-                                \alpha^{a-1} e^{-\alpha/b}\\
-    p(\alpha|\bm Z) & \propto & \alpha^{a+K_+-1} e^{-\alpha(1/b+H_N)}\\
-  \end{array}
-$$
-\begin{equation}
-  \alpha|\bm Z  \sim  \text{Gamma}(a+K_+, (1/b+H_N)^{-1})
-\end{equation}
+The stick-breaking construction for the IBP was proposed by @teh2007stick.
 
 
+### Dependent IBP
