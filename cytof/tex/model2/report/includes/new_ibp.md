@@ -19,7 +19,8 @@ computational advantages and properties. We will first discuss the original
 representation by @griffiths2011indian. Then we will review the stick-breaking
 construction for the IBP developed by @teh2007stick. We will then review the
 dependent IBP (dIBP) developed by @williamson2010dependent for feature
-allocation models that are informed on how the features are correlated.
+allocation models where prior information on the correlation between the features
+is available.
 
 ### The Indian Buffet Process
 
@@ -27,7 +28,10 @@ The Indian buffet process (IBP) proposed by @griffiths2011indian can be
 constructed by first considering the finite feature allocation model, and then
 taking the limit with respect to the number of features.
 
-
+For the remainder of this section, let $Z$ be an $n \times K$ binary matrix.
+The prior probability that object $i$ possessing feature $k$ is $\pi_k$.
+Let $\pi_k$ have prior distribution $\text{Beta}(\alpha/K, 1)$. For the time being,
+assume that $\alpha$ is known and fixed.
 
 $$
 \begin{split}
@@ -38,7 +42,19 @@ $$
 
 The matrix $Z$ has an IBP distribution with concentration parameter $\alpha$
 when the $\pi_k$ are integrated out and in the limit $K \rightarrow \infty$ .
-That is, marginally, $Z \sim \text{IBP}(\alpha)$.
+That is, marginally, $Z \sim \text{IBP}(\alpha)$. While the binary matrix 
+$Z$ is unbounded in the columns, it can be shown that the number non-zero
+of columns $K^+$ is distributed $\text{Poisson}(\alpha \suml \frac{1}{i})$.
+Moreover, the each row in $Z$ has is expected to have $\alpha$ active features.
+This can be shown using law of total expectation:
+$$
+\E\bk{\sum_{k=1}^K Z_{ik}} = \sum_{k=1}^K \E\bk{Z_{ik}} 
+=\sum_{k=1}^K \E\bk{\E\bk{Z_{ik}\mid\pi_k}}
+=\sum_{k=1}^K \E\bk{\pi_k}
+=\sum_{k=1}^K \alpha/K
+= \alpha.
+$$
+
 
 ### Stick-breaking Construction for the IBP
 
@@ -59,10 +75,12 @@ $$
 \begin{split}
 v_k \mid \alpha &\sim \text{Beta}(\alpha,1) \\
 \pi_k &:= \prod_{l=1}^k v_k \\
-h_{ik} &\sim \N(\bm\mu, \bm\Sigma) \\
-Z_{ik} \mid \pi_k &\sim \Ind{\Phi\p{\frac{h_{ik} - \mu_i}{\sqrt\Sigma_{kk}}} < \pi_k} \\
+\bm h_{k} &\sim \N(\bm\mu, \bm\Sigma) \\
+Z_{ik} \mid \pi_k &:= \Ind{\Phi\p{\frac{h_{ik} - \mu_i}{\sqrt\Sigma_{kk}}} < \pi_k} \\
 \end{split}
 $$
+
+### Attraction Indian Buffet Distribution
 
 ### Prior for $\alpha$ in Stick-breaking Construction for IBP
 
@@ -76,3 +94,4 @@ $$
 Under a Gamma prior, $\alpha$ is conjugate and its full conditional has the form
 
 $$\alpha \mid \bm v \sim \text{Gamma}(a + K, b - \sum_{k=1}^K \log v_k)$$
+
