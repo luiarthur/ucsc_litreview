@@ -33,20 +33,22 @@ The prior probability that object $i$ possessing feature $k$ is $\pi_k$.
 Let $\pi_k$ have prior distribution $\text{Beta}(\alpha/K, 1)$. For the time being,
 assume that $\alpha$ is known and fixed.
 
-$$
+\begin{align}
 \begin{split}
 \pi_k \mid \alpha &\sim \text{Beta}(\alpha/K, 1) \\
-Z_{ik} \mid \pi_k &\sim \text{Bernoulli}(\pi_k)
+Z_{ik} \mid \pi_k &\sim \text{Bernoulli}(\pi_k) \\
 \end{split}
-$$
+\label{eq:ibp}
+\end{align}
 
-The matrix $Z$ has an IBP distribution with concentration parameter $\alpha$
-when the $\pi_k$ are integrated out and in the limit $K \rightarrow \infty$ .
-That is, marginally, $Z \sim \text{IBP}(\alpha)$. While the binary matrix 
-$Z$ is unbounded in the columns, it can be shown that the number non-zero
-of columns $K^+$ is distributed $\text{Poisson}(\alpha \suml \frac{1}{i})$.
-Moreover, the each row in $Z$ has is expected to have $\alpha$ active features.
-This can be shown using law of total expectation:
+The matrix $Z$ has an IBP distribution with mass parameter $\alpha$ when the
+$\pi_k$ are integrated out and in the limit $K \rightarrow \infty$ .  That is,
+marginally, $Z \sim \text{IBP}(\alpha)$. While the binary matrix $Z$ is
+unbounded in the columns, it can be shown that the number non-zero of columns
+$K^+$ is distributed $\text{Poisson}(\alpha \suml \frac{1}{i})$.  Moreover, the
+each row in $Z$ has is expected to have $\alpha$ active features.  In other
+words, the mass parameter $\alpha$ influences the final number of columns in
+the sampled matrices.  This can be shown using law of total expectation:
 $$
 \E\bk{\sum_{k=1}^K Z_{ik}} = \sum_{k=1}^K \E\bk{Z_{ik}} 
 =\sum_{k=1}^K \E\bk{\E\bk{Z_{ik}\mid\pi_k}}
@@ -55,19 +57,57 @@ $$
 = \alpha.
 $$
 
+Since sampled matrix from model in (\ref{eq:ibp}) is extremely sparse,
+arranging the columns in a way such that columns with more active features are
+at the left most columns can yield computational advantages.
+@griffiths2011indian suggest modeling, instead, the equivalence class
+left-ordered of the binary matrices drawn from the model in (\ref{eq:ibp}).
+That is, columns that represent a higher binary number are at the left of the
+matrix. The probability mass function (pmf) of the left-ordered matrices can be
+shown to have the following form:
+
+\begin{equation}
+  P(\bm{Z}) = \frac{\alpha^{K_+}}{\prod_{i=1}^N {K_1}^{(i)}!} 
+              \exp\bc{-\alpha H_N}\prod_{k=1}^{K_+}
+              \frac{(N-m_k)!(m_k-1)!}{N!},
+\end{equation}
+
+where $H_N=\sum_{i=1}^N i^{-1}$ is the harmonic number, $K_+$ is
+the number of non-zero columns in $\bm Z$, $m_k$ is the $k^{th}$ column sum of
+$\bm Z$, and $K_1^{(i)}$ is the number of features activated in row $i$ of 
+$Z$ that are not activated in previous rows.
+
+The name of this process, like the Chinese restaurant process, suggests a
+culinary metaphor. The metaphor is as follows. Let $Z$ be an $N \times \infty$
+binary matrix. Each row in $Z$ represents a customer who enters an Indian
+buffet restaurant and each column represents one dish (out of an infinite
+number of dishes) in the buffet. Customers enter the restaurant one after
+another. The first customer samples an $r=\text{Poisson}(\alpha)$ number of
+dishes, where $\alpha > 0$.  This is indicated by setting the first $r$ columns
+of the first row in $Z$ to be $1$.  The other values in the row are set to $0$.
+Each subsequent customer samples each previously sampled dish with probability
+proportional to its popularity.  That is, the next customer samples dish $k$
+with probability $m_k/i$, where $m_k=\sum_{j=1}^{i-1} Z_{jk}$ is the number of
+customers that have sampled dish $k$, and $i$ is the current customer number
+(or row number in $Z$). Each customer also samples an additional
+Poisson$(\alpha/i)$ number of new dishes.  Once all the $N$ customers have gone
+through this process, the resulting $Z$ matrix will be a draw from the Indian
+buffet process with mass parameter $\alpha$.
+
+Other representations and extensions of the IBP have been proposed. I will
+discuss a few that are relevant to this project.
 
 ### Stick-breaking Construction for the IBP
 
 The stick-breaking construction for the IBP was proposed by @teh2007stick.
 
-$$
+\begin{align}
 \begin{split}
-v_k \mid \alpha &\sim \text{Beta}(\alpha,1) \\
-\pi_k &:= \prod_{l=1}^k v_k \\
+v_k \mid \alpha &\sim \text{Beta}(\alpha,1) \nonumber \\
+\pi_k &:= \prod_{l=1}^k v_k \nonumber \nonumber \\
 Z_{ik} \mid \pi_k &\sim \text{Bernoulli}(\pi_k)
 \end{split}
-$$
-
+\end{align}
 
 ### Dependent IBP
 

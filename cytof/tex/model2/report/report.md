@@ -98,7 +98,7 @@ include-before:
 
 
 
-# Literature review
+# Literature Review
 <include file="includes/lit_review.md">
 
 
