@@ -19,8 +19,8 @@ computational advantages and properties. We will first discuss the original
 representation by @griffiths2011indian. Then we will review the stick-breaking
 construction for the IBP developed by @teh2007stick. We will then review the
 dependent IBP (dIBP) developed by @williamson2010dependent for feature
-allocation models where prior information on the correlation between the features
-is available.
+allocation models where prior information on the correlation between the objects
+(rows) is available.
 
 ### The Indian Buffet Process
 
@@ -99,39 +99,70 @@ discuss a few that are relevant to this project.
 
 ### Stick-breaking Construction for the IBP
 
-The stick-breaking construction for the IBP was proposed by @teh2007stick.
+The stick-breaking construction for the IBP was proposed by @teh2007stick,
+and can be sampled from by the following scheme:
 
 \begin{align}
 \begin{split}
-v_k \mid \alpha &\sim \text{Beta}(\alpha,1) \nonumber \\
-\pi_k &:= \prod_{l=1}^k v_k \nonumber \nonumber \\
-Z_{ik} \mid \pi_k &\sim \text{Bernoulli}(\pi_k)
+v_k \mid \alpha &\sim \text{Beta}(\alpha,1) \\
+\pi_k &:= \prod_{l=1}^k v_k \\
+Z_{ik} \mid \pi_k &\sim \text{Bernoulli}(\pi_k). \\
 \end{split}
+\label{eq:sbibp}
 \end{align}
+
+This "stick-breaking" construction is can be derived by first starting with
+model (\ref{eq:ibp}), then ordering the $\pi_k$ so that $Z_{ik} \mid
+{\pi_{(k)}} \sim \text{Bernoulli}(\pi_{(k)})$, where $\pi_{(j)} > \pi_{(k)}$
+for all $j > k$, and $j,k \in \mathbb{N}$.
+
+The features in this model are ordered in the sense that activated features
+tend to appear in the left-most columns. This representation resembles
+the stick-breaking representation of the Dirichlet process (DP), and so can be 
+extended in similar ways that the DP has been extended. In a Gibbs sampler, the
+elements in $Z$ can be easily updated using Gibbs steps and metropolis steps.
+
+The number of columns in $Z$ can be fixed in advanced at some large value. But
+as noted by \ref{@teh2007stick}, the truncation value is a somewhat arbitrary and
+unnecessary approximation. A slice-sampler can be used to 
+
 
 ### Dependent IBP
 
-$$
+The dependent IBP (dIBP) is one extension of the IBP under the stick-breaking
+representation which allows prior information on the correlation between 
+items (rows) to be included in feature allocation models. The model is as
+follow:
+
+\begin{align}
 \begin{split}
 v_k \mid \alpha &\sim \text{Beta}(\alpha,1) \\
 \pi_k &:= \prod_{l=1}^k v_k \\
-\bm h_{k} &\sim \N(\bm\mu, \bm\Sigma) \\
-Z_{ik} \mid \pi_k &:= \Ind{\Phi\p{\frac{h_{ik} - \mu_i}{\sqrt\Sigma_{kk}}} < \pi_k} \\
+\bm h_{k} &\sim \N(\bm 0, \bm S) \\
+Z_{ik} \mid \pi_k &:= \Ind{\Phi\p{\frac{h_{ik} - m_i}{\sqrt S_{kk}}} < \pi_k} \\
 \end{split}
-$$
+\label{eq:dibp}
+\end{align}
 
-### Attraction Indian Buffet Distribution
+Here, $\Ind{\cdot}$ is the indicator function, $\Phi(\cdot)$ is the cumulative
+standard Normal distribution function, and $\bm S$ is known and contains the
+covariance of the objects $i=1,...,N$.  Note that when $\bm S = \I$ then the
+dIBP reduces to the stick-breaking construction of the IBP.
 
 ### Prior for $\alpha$ in Stick-breaking Construction for IBP
+
+In the previous sections, $\alpha$ is treated as fixed and known. A prior 
+distribution can be placed on $\alpha$ to reflect uncertainty. In general,
+for variants of the IBP that make use of the stick-breaking representation,
+a Gamma prior is conjugate, and its full conditional as follows:
 
 $$
 \begin{split}
 v_k |\alpha &\sim \text{Beta}(\alpha, 1) \\
 \alpha &\sim \text{Gamma}(a,b), ~~~ \text{with mean } (a/b) \\
+\alpha \mid \bm v &\sim \text{Gamma}(a + K, b - \sum_{k=1}^K \log v_k) \\
 \end{split}
 $$
 
-Under a Gamma prior, $\alpha$ is conjugate and its full conditional has the form
 
-$$\alpha \mid \bm v \sim \text{Gamma}(a + K, b - \sum_{k=1}^K \log v_k)$$
 
