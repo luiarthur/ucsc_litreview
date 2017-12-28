@@ -94,7 +94,7 @@ include-before:
 # Literature Review
 <include file="includes/lit_review.md">
 
-## Cytometry
+## Mass Cytometry
 <include file="includes/cytometry.md">
 
 ## Feature Allocation Models
