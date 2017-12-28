@@ -12,9 +12,9 @@
 - [x] Don't include posterior mean for Z, only posterior estimate
 - [x] Remove legends for all Z matrices
 - [x] $Z_{TRUE}$ => $Z^{TR}$
-- [ ] Look at a few posterior distributions for $y_{inj}$
+- [x] Look at a few posterior distributions for $y_{inj}$
 - [x] Change all bullet points to sentences
-- [ ] Salso doesn't work well. My method based on Salso seems to work better.
+- [x] Salso doesn't work well. My method based on Salso seems to work better.
     - picking close initial value may be necessary. so, may need to combine what i did with what he did.
 
 ## Christmas
@@ -25,6 +25,7 @@
 - [ ] In simulation 3, set mu* closer to 0.
 - [ ] Analyze real CB data
 - [ ] Stick breaking construction of AIBD
+- [ ] Read new papers
 
 ## Urgent
 
