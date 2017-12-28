@@ -1,5 +1,6 @@
-The model and prior specifications are presented in this section. Some notation
-which will be used throughout this paper is first presented.
+The model and prior specifications are presented in this section.  Note that
+the dIBP will be used in the prior specifications.  Some notation which will be
+used throughout this paper is first presented.
 
 ## Notation
 
@@ -37,7 +38,7 @@ missing, and is to be imputed.
 
 ## Model
 
-With the notation above presented, we are now ready to present the sampling 
+Based on the notation presented above, we are now ready to present the sampling 
 distribution.
 
 \begin{align}
@@ -51,8 +52,8 @@ distribution.
 \end{align}
 
 Let $\btheta$ represent all parameters (discussed in the next section).
-Let $\y$ represent all $y_{inj} ~ \forall(i,n,j)$.
-Let $\m$ represent all $m_{inj} ~ \forall(i,n,j)$.
+Let $\y$ represent $y_{inj} ~ \forall(i,n,j)$.
+Let $\m$ represent $m_{inj} ~ \forall(i,n,j)$.
 
 The resulting **likelihood** is as follows:
 
@@ -87,10 +88,10 @@ The specific prior distributions (including hyper-parameters) are included here.
 \tau^2_{1} &\sim \IG(2, 1) \\
 \\
 v_k &\sim \Be(\alpha=1, 1) \\
-%b_k &:= \prod_{l=1}^k v_k \\
+\pi_k &:= \prod_{l=1}^k v_l \\
 \h_k &\sim \N(\bm{0}, \bm G=\I_J) \\
 Z_{jk} \mid h_{jk}, v_{1,...,k} &:=
-\Ind{\Phi(h_{jk} \mid 0, G_{jj}) < \prod_{l=1}^k v_l} \\
+\Ind{\pi_k > \Phi\p{\frac{h_{jk} - 0}{\sqrt{G_{jj}}}}} \\
 \\
 p(\lin=k \mid \bm W_i) &= W_{ik} \\
 \bm W_{i} &\sim \Dir(1/K, ..., 1/K) \\

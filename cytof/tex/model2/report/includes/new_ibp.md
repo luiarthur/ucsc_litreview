@@ -113,8 +113,8 @@ Z_{ik} \mid \pi_k &\sim \text{Bernoulli}(\pi_k). \\
 
 This "stick-breaking" construction is can be derived by first starting with
 model (\ref{eq:ibp}), then ordering the $\pi_k$ so that $Z_{ik} \mid
-{\pi_{(k)}} \sim \text{Bernoulli}(\pi_{(k)})$, where $\pi_{(j)} > \pi_{(k)}$
-for all $j > k$, and $j,k \in \mathbb{N}$.
+{\pi_{(k)}} \sim \text{Bernoulli}(\pi_{(k)})$, where $\pi_{(a)} > \pi_{(b)}$
+for all $a < b$, and $a,b \in \mathbb{N}$.
 
 The features in this model are ordered in the sense that activated features
 tend to appear in the left-most columns. This representation resembles
@@ -123,7 +123,7 @@ extended in similar ways that the DP has been extended. In a Gibbs sampler, the
 elements in $Z$ can be easily updated using Gibbs steps and metropolis steps.
 
 The number of columns in $Z$ can be fixed in advanced at some large value. But
-as noted by \ref{@teh2007stick}, the truncation value is somewhat arbitrary.  A
+as noted by @teh2007stick, the truncation value is somewhat arbitrary.  A
 slice-sampler can be used to avoid this unnecessary approximation.
 Alternatively, a prior can be placed on $K^+$, which is what we do in this
 project.
@@ -141,7 +141,7 @@ follow:
 v_k \mid \alpha &\sim \text{Beta}(\alpha,1) \\
 \pi_k &:= \prod_{l=1}^k v_k \\
 \bm h_{k} &\sim \N(\bm 0, \bm S) \\
-Z_{ik} \mid \pi_k &:= \Ind{\Phi\p{\frac{h_{ik} - m_i}{\sqrt S_{kk}}} < \pi_k} \\
+Z_{ik} \mid \pi_k &:= \Ind{\pi_k > \Phi\p{\frac{h_{ik} - 0}{\sqrt{S_{kk}}}}} \\
 \end{split}
 \label{eq:dibp}
 \end{align}

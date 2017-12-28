@@ -4,7 +4,7 @@
 
 - [ ] Intro to problem
     - [ ] Inference goals
-- [ ] model description
+- [x] model description
 - [ ] Literature review
     - [ ] Cytometry
     - [x] Feature Allocation models (IBP)

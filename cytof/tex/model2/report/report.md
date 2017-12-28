@@ -91,17 +91,8 @@ include-before:
 ## Inference Goal
 <include file="includes/inference_goals.md">
 
-
-
-# Model Description
-<include file="includes/model.md">
-
-
-
 # Literature Review
 <include file="includes/lit_review.md">
-
-
 
 ## Cytometry
 <include file="includes/cytometry.md">
@@ -109,7 +100,8 @@ include-before:
 ## Feature Allocation Models
 <include file="includes/new_ibp.md">
 
-
+# Model Description
+<include file="includes/model.md">
 
 # Simulation Study
 <include file="includes/sim_study.md">
