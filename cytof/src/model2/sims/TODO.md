@@ -14,6 +14,7 @@
 - [ ] $Z_{TRUE}$ => $Z^{TR}$
 - [ ] Look at a few posterior distributions for $y_{inj}$
 - [ ] Change all bullet points to sentences
+- [ ] Salso doesn't work well. My method based on Salso seems to work better.
 
 ## Christmas
 - [ ] Random K

@@ -123,8 +123,10 @@ extended in similar ways that the DP has been extended. In a Gibbs sampler, the
 elements in $Z$ can be easily updated using Gibbs steps and metropolis steps.
 
 The number of columns in $Z$ can be fixed in advanced at some large value. But
-as noted by \ref{@teh2007stick}, the truncation value is a somewhat arbitrary and
-unnecessary approximation. A slice-sampler can be used to 
+as noted by \ref{@teh2007stick}, the truncation value is somewhat arbitrary.  A
+slice-sampler can be used to avoid this unnecessary approximation.
+Alternatively, a prior can be placed on $K^+$, which is what we do in this
+project.
 
 
 ### Dependent IBP
@@ -151,16 +153,17 @@ dIBP reduces to the stick-breaking construction of the IBP.
 
 ### Prior for $\alpha$ in Stick-breaking Construction for IBP
 
-In the previous sections, $\alpha$ is treated as fixed and known. A prior 
-distribution can be placed on $\alpha$ to reflect uncertainty. In general,
-for variants of the IBP that make use of the stick-breaking representation,
-a Gamma prior is conjugate, and its full conditional as follows:
+In the previous sections, $\alpha$ is treated as fixed and known. A prior
+distribution can be placed on $\alpha$ to reflect uncertainty. In general, for
+variants of the IBP that make use of the stick-breaking representation, a
+(conjugate) Gamma prior can be placed on $\alpha$, and its full conditional is
+as follows:
 
 $$
 \begin{split}
 v_k |\alpha &\sim \text{Beta}(\alpha, 1) \\
 \alpha &\sim \text{Gamma}(a,b), ~~~ \text{with mean } (a/b) \\
-\alpha \mid \bm v &\sim \text{Gamma}(a + K, b - \sum_{k=1}^K \log v_k) \\
+\alpha \mid \bm v &\sim \text{Gamma}(a + K, b - \sum_{k=1}^K \log v_k). \\
 \end{split}
 $$
 
