@@ -5,11 +5,21 @@ rm -f cytof2/NAMESPACE
 R -q -e "roxygen2::roxygenise('cytof2');Rcpp::compileAttributes('cytof2');"
 R -q -e "roxygen2::roxygenise('cytof2');Rcpp::compileAttributes('cytof2');"
 
-##### Install Package Locally ###
-rm -f cytof2_*
-R CMD REMOVE cytof2
-R CMD build cytof2 
-R CMD INSTALL cytof2*.tar.gz
+### Install Package Locally ###
+R CMD INSTALL --no-multiarch cytof2
 
 ### Run Cpp Unit Tests ###
 R -q -e "library(cytof2); system.time(cytof2::unit_tests())"
+
+
+### OLD ########################
+#rm -f cytof2_*
+#R CMD REMOVE cytof2
+
+### Generate .tar.gz
+#R CMD build cytof2 
+
+#R CMD INSTALL cytof2*.tar.gz
+
+### Run Cpp Unit Tests ###
+#R -q -e "library(cytof2); system.time(cytof2::unit_tests())"
