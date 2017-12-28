@@ -1,43 +1,54 @@
+The model and prior specifications are presented in this section. Some notation
+which will be used throughout this paper is first presented.
+
 ## Notation
 
-Let $I$ represent the number of samples.
-Let $N_i$ represent the number of cells in sample $i$, where $i = 1,2,...,I$.
-Let $J$ represent the number of markers.
+Let $I$ represent the number of samples.  Let $N_i$ represent the number of
+cells in sample $i$, where $i = 1,2,...,I$.  Let $J$ represent the number of
+markers.  Hence, the raw data $\tilde{y}_{inj}$ represent the raw data for
+sample $i$, cell $n$, and marker $j$. From a computation perspective, a
+suitable data structure for the data could be a list (of length $I$) of
+matrices of (variable) dimensions ($N_i \times J$).  Let $c_{ij}$ denote the
+"cutoff" values (provided by the cytometry measuring devices) for sample $i$,
+marker $j$. And define the missingness indicator
 
-Let $\tilde{y}_{inj}$ represent the raw data for sample $i$, cell $n$, and marker $j$.
-Let $c_{ij}$ denote the "cutoff" values (provided by scientists) for sample $i$, marker $j$.
-
-Define the missingness indicator
 $$
 m_{inj} = \begin{cases}
   0, & \text{if } \log\p{\frac{\tilde{y}_{inj}}{c_{ij}}} < -\infty \\
   1, & \text{otherwise.}
 \end{cases}
 $$
-That is, $m_{inj}=1$ indicates that the expression level **is missing** for sample $i$, cell $n$, marker $j$.
 
-Furthermore, define a transformation of the data
+That is, $m_{inj}=1$ indicates that the expression level **is missing** for sample $i$, cell $n$, marker $j$. Furthermore, define a transformation of the data
+
 $$
 y_{inj} = \begin{cases}
   \log\p{\frac{\tilde{y}_{inj}}{c_{ij}}}, & \text{if }  m_{inj} = 0\\
   \text{To be imputed}, & \text{if } m_{inj} = 1. \\
   \end{cases}
 $$
-Note that under this transformation:
 
-1. The data have infinite support.
-2. $y_{inj} = 0$ has a special meaning, which is that the data take on the same value as the cutoff. Consequently, $y_{inj} > 0$ means that the data take on values greater than the cutoff, etc.
-3. $y_{inj}$ for which $\tilde{y}_{inj} = 0$ are regarded as missing, and is to be imputed.
+This transformation will be used in the final model.  Note that under this
+transformation (1) the data have infinite support. (2) $y_{inj} = 0$ has a
+special meaning, which is that the data take on the same value as the cutoff.
+Consequently, $y_{inj} > 0$ means that the data take on values greater than the
+cutoff, etc. (3) $y_{inj}$ for which $\tilde{y}_{inj} = 0$ are regarded as
+missing, and is to be imputed.
 
-\begin{align*}
-  m_{inj} \mid p_{inj}, y_{inj} &\sim \Bern(p_{inj}) \\
-  \logit(p_{inj}) &:= \beta_{0ij} - \beta_{1j}~y_{inj} \\
-  \\
+## Model
+
+With the notation above presented, we are now ready to present the sampling 
+distribution.
+
+\begin{align}
+  m_{inj} \mid p_{inj}, y_{inj} &\sim \Bern(p_{inj}) \nonumber \\
+  \logit(p_{inj}) &:= \beta_{0ij} - \beta_{1j}~y_{inj} \nonumber \\
+  \nonumber \\
   y_{inj} \mid \mu_{inj}, \gamma_{inj}, \sigma^2_{ij}, \bm Z, \lin
-  &\sim \N(\mu_{inj}, (\gamma_{inj}+1) \sigma^2_{ij}) \\
-  \mu_{inj} &:= \mu^*_{Z_{j\lin}ij} \\
-  \gamma_{inj} &:= \gamma_{Z_{j\lin}ij}^* \\
-\end{align*}
+  &\sim \N(\mu_{inj}, (\gamma_{inj}+1) \sigma^2_{ij}) \nonumber \\
+  \mu_{inj} &:= \mu^*_{Z_{j\lin}ij} \nonumber\\
+  \gamma_{inj} &:= \gamma_{Z_{j\lin}ij}^*
+\end{align}
 
 Let $\btheta$ represent all parameters (discussed in the next section).
 Let $\y$ represent all $y_{inj} ~ \forall(i,n,j)$.

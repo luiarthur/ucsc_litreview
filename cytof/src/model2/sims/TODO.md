@@ -7,7 +7,7 @@
 - [ ] model description
 - [ ] Literature review
     - [ ] Cytometry
-    - [ ] Feature Allocation models (IBP)
+    - [x] Feature Allocation models (IBP)
 - [ ] Simulations studies with informative prior on beta
 - [ ] Don't include posterior mean for Z, only posterior estimate
 - [ ] Remove legends for all Z matrices
