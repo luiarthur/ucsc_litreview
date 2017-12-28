@@ -2,19 +2,20 @@
 
 ## By 22 Dec, 2017
 
-- [ ] Intro to problem
-    - [ ] Inference goals
+- [x] Intro to problem
+    - [x] Inference goals
 - [x] model description
-- [ ] Literature review
-    - [ ] Cytometry
+- [x] Literature review
+    - [x] Cytometry
     - [x] Feature Allocation models (IBP)
-- [ ] Simulations studies with informative prior on beta
-- [ ] Don't include posterior mean for Z, only posterior estimate
-- [ ] Remove legends for all Z matrices
-- [ ] $Z_{TRUE}$ => $Z^{TR}$
+- [x] Simulations studies with informative prior on beta
+- [x] Don't include posterior mean for Z, only posterior estimate
+- [x] Remove legends for all Z matrices
+- [x] $Z_{TRUE}$ => $Z^{TR}$
 - [ ] Look at a few posterior distributions for $y_{inj}$
-- [ ] Change all bullet points to sentences
+- [x] Change all bullet points to sentences
 - [ ] Salso doesn't work well. My method based on Salso seems to work better.
+    - picking close initial value may be necessary. so, may need to combine what i did with what he did.
 
 ## Christmas
 - [ ] Random K

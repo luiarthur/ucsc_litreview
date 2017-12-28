@@ -85,16 +85,13 @@ include-before:
 }
 %)
 
-# Introduction
+# Introduction and Inferential Goal
 <include file="includes/intro.md">
-
-## Inference Goal
-<include file="includes/inference_goals.md">
 
 # Literature Review
 <include file="includes/lit_review.md">
 
-## Mass Cytometry
+## Cytometry
 <include file="includes/cytometry.md">
 
 ## Feature Allocation Models

@@ -5,14 +5,16 @@ in the previous section, with the new $Z$ matrix.
 
 ### Simulated Data
 
-Figures \ref{complex1} to \ref{complex3} display the simulated data in
+Figure \ref{fig:complexDat} display the simulated data in
 simulation study II.
 
-![Simulated data $Y_1$](img/complex/rawDat001.png){ id=complex1 height=60% }
-
-![Simulated data $Y_2$](img/complex/rawDat002.png){ id=complex2 height=60% }
-
-![Simulated data $Y_3$](img/complex/rawDat003.png){ id=complex3 height=60% }
+\beginmyfig
+![](img/complex/rawDat001.png){ height=30% }
+![](img/complex/rawDat001.png){ height=30% }
+![](img/complex/rawDat001.png){ height=30% }
+\caption{Simulated Data. $Y_1$ (left), $Y_2$ (middle), $Y_3$ (right).}
+\label{fig:complexDat}
+\endmyfig
 
 Observations were recorded as missing with the same probabilities as in the
 previous simulation.
@@ -28,12 +30,12 @@ those parameters will be discussed in this section.
 Figure \ref{trueComplexZ} shows the true $Z$ matrix used in this simulation 
 study.
 
-![A complex $Z$ matrix used for simulation study.](img/complex/trueZ.pdf){ id=trueComplexZ height=60% }
+![A complex $Z$ matrix used for simulation study.](img/complex/trueZ.pdf){ id=trueComplexZ height=40% }
 
-In Figure \ref{z3Complex}, we see that when $K=3$ (smaller than the true $K$),
-the model learns only parts of the true feature allocation matrix. In this
-case, only the first two columns are correctly recovered. The third column
-resembles a combination of the third and fourth columns of the true $Z$.
+In Figure \ref{fig:zpointComplex} (left), we see that when $K=3$ (smaller than the
+true $K$), the model learns only parts of the true feature allocation matrix.
+In this case, only the first two columns are correctly recovered. The third
+column resembles a combination of the third and fourth columns of the true $Z$.
 
 \beginmyfig
 ![](img/complex/Z_point_k3.pdf){ height=30% }
@@ -41,18 +43,18 @@ resembles a combination of the third and fourth columns of the true $Z$.
 ![](img/complex/Z_point_k7.pdf){ height=30% }
 \caption{Posterior point-estimate for $Z$ of 3 columns (left), 4 columns (middle),
 and 7 columns (right).}
-\label{fig:zpoint}
+\label{fig:zpointComplex}
 \endmyfig
 
 
-Figure \ref{z4Complex} shows the posterior mean for $Z$ when the number of
-columns is fixed at 4 (the truth). The structure of $Z$ is completely recovered
-in this case.
+Figure \ref{fig:zpointComplex} (middle) shows the posterior mean for $Z$ when the
+number of columns is fixed at 4 (the truth). The structure of $Z$ is completely
+recovered in this case.
 
-Figure \ref{z7Complex} shows the posterior mean for $Z$ when the number of
-columns is fixed at 7 (larger than the truth). Similar to the previous study,
-when $K$ is mis-specified larger than the truth, the true $Z$ can still be
-recovered.
+Figure \ref{fig:zpointComplex} (right) shows the posterior mean for $Z$ when the
+number of columns is fixed at 7 (larger than the truth). Similar to the
+previous study, when $K$ is mis-specified larger than the truth, the true $Z$
+can still be recovered.
 
 #### Posterior Estimate of $W$
 
@@ -83,19 +85,27 @@ $$
 #### Posterior Estimate of $\mu^*$
 
 When $Z$ is not recovered completely, $\mu^*$ cannot be recovered completely.
-This is the case when $K=3$. See Figure \ref{musComplex3}.
+This is the case when $K=3$. See Figure \ref{fig:musComplex} (left).
 
-![$\mu^*$ Posterior mean for 3 columns](img/complex/mus_k3.pdf){ id=musComplex3 height=60% }
-
-When $Z$ is recovered completely (and $K > K_{\text{TRUE}}$), $\mu^*$ can be
+When $Z$ is recovered completely (and $K > K^{\text{TR}}$), $\mu^*$ can be
 recovered as long as there are data associated with the particular
 $\mu^*_{zij}$.  Notice that there are 9 values of $\mu^*$ that are not
-recovered in Figures \ref{musComplex4} and \ref{musComplex7}. A closer
-examination of data in Figures \ref{complex1} to \ref{complex3} will reveal
-that there are no observations less than 0 for $j=30,31,32$. Consequently, there
-are 9 values of $\mu^*_{0ij}$ where the parameters are sampled from the prior, 
-explaining the large credible intervals.
+recovered in Figures \ref{fig:musComplex} (middle) and \ref{fig:musComplex}
+(right). A closer examination of data in Figures \ref{complexDat} to will
+reveal that there are no observations less than 0 for $j=30,31,32$.
+Consequently, there are 9 values of $\mu^*_{0ij}$ where the parameters are
+sampled from the prior, explaining the large credible intervals.
 
-![$\mu^*$ Posterior mean for 4 columns](img/complex/mus_k4.pdf){ id=musComplex4 height=60% }
 
-![$\mu^*$ Posterior mean for 7 columns](img/complex/mus_k7.pdf){ id=musComplex7 height=60% }
+\beginmyfig
+![](img/complex/mus_k3.pdf){ height=32% }
+![](img/complex/mus_k4.pdf){ height=32% }
+![](img/complex/mus_k7.pdf){ height=32% }
+\caption{$\mu^*$ Posterior mean vs. true $\mu^*$ for $K=3$ (left), $K=4$
+(middle), and $K=7$ (right). Circles represent the posterior mean. Vertical
+lines represent the 95\% credible intervals.  Triangles also represent the
+posterior mean, but for $\mu_{zij}$ that have fewer than 30 corresponding
+$Z_{j,\lambda_{in}}$. They should have large intervals.}
+\label{fig:musComplex}
+\endmyfig
+
