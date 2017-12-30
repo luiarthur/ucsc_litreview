@@ -6,6 +6,7 @@ R -q -e "roxygen2::roxygenise('cytof2');Rcpp::compileAttributes('cytof2');"
 R -q -e "roxygen2::roxygenise('cytof2');Rcpp::compileAttributes('cytof2');"
 
 ### Install Package Locally ###
+rm -f cytof2/src/*.{so,o}
 R CMD INSTALL --no-multiarch cytof2
 
 ### Run Cpp Unit Tests ###

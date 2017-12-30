@@ -255,3 +255,13 @@ double rinvgamma(double a, double b) {
   // random draw from inverse-gamma with mean b / (a-1)
   return 1 / R::rgamma(a, 1/b); // R::Gamma(shape,scale) instead of rate.
 }
+
+//' Shuffle matrix by rows
+//' @export
+//[[Rcpp::export]]
+arma::mat shuffle_mat(arma::mat X) { //Tested. Good.
+  const int N = X.n_rows;
+  const uvec idx = arma::linspace<arma::uvec>(0, N-1, N);
+  std::random_shuffle(idx.begin(), idx.end());
+  return X.rows(idx);
+}

@@ -3,6 +3,7 @@
 #include "mcmc.h"
 
 #include "Data.h"
+#include "Data_idx.h" // TODO
 #include "Prior.h"
 #include "State.h"
 #include "Fixed.h"
@@ -47,7 +48,7 @@
 std::vector<List> cytof_fix_K_fit(
   const std::vector<arma::mat> &y, int B, int burn,
   int thin=1, int compute_loglike_every=1, int print_freq=10, int ncores=1,
-  bool show_timings=false,
+  bool show_timings=false, double prop_for_training=.05, bool shuffle_data=false,
   Nullable<List> prior_input = R_NilValue,
   Nullable<List> truth_input = R_NilValue,
   Nullable<List> init_input = R_NilValue) {
@@ -68,13 +69,28 @@ std::vector<List> cytof_fix_K_fit(
 
   const auto fixed_params = gen_fixed_obj(truth_input);
   const auto prior = gen_prior_obj(prior_input, J);
-  const auto init = gen_init_obj(init_input, truth_input, prior, y);
+  const int K = getInitOrFix(safeList(init_input), safeList(truth_input), 
+                             "K", (prior.K_min + prior.K_max) / 2);
+  const auto init = gen_init_obj(init_input, truth_input, prior, y, K);
 
+  // Random K
+  Data y_TE, y_TR;
+  std::vector<State> thetas(prior.K_max - prior.K_min + 1);
 
-  auto update = [&y, &prior, &fixed_params, thin, show_timings](State &state) {
+  if (!fixed_params.K) {
+    gen_data_idx(y, prop_for_training, shuffle_data);
+    thetas = gen_vec_init_obj(init_input, truth_input, prior, y_TR);
+    Rcout << "K is random." << std::endl;
+  }
+  // End of Random K
+
+  auto update = [&y, &prior, &fixed_params, &y_TR, &y_TE, &thetas, thin, show_timings](State &state) {
     Rcout << "\r";
     for (int t=0; t<thin; t++) {
       update_theta(state, y, prior, fixed_params, show_timings);
+      if (!fixed_params.K) { // Random K
+        update_K_theta(state, y_TE, y_TR, y, fixed_params, prior, thetas);
+      }
     }
   };
 
