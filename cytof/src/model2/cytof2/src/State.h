@@ -1,4 +1,4 @@
-using type_lam = std::vector<arma::Vec<int>>;
+using type_lam = std::vector<arma::Col<int>>;
 
 struct State {
   arma::vec beta_1;    // J
@@ -60,7 +60,7 @@ T getInitOrFix(List init_ls, List truth_ls, const char* param, T init) {
   }
 }
 
-List safeList(List ls) {
+List safeList(Nullable<List> ls) {
   return ls.isNull() ? List::create() : as<List>(ls);
 }
 
@@ -109,7 +109,7 @@ State gen_init_obj(const Nullable<List> &init_input,
 
   type_lam init_lam = type_lam(I);
   for (int i=0; i<I; i++) {
-    init_lam[i] = arma::Vec<int>(N[i]);
+    init_lam[i] = arma::Col<int>(N[i]);
     for (int n=0; n<N[i]; n++) {
       //init_lam[i][n] = 0;
       init_lam[i][n] = floor(R::runif(0,K));
@@ -160,15 +160,12 @@ State gen_init_obj(const Nullable<List> &init_input,
   return state;
 }
 
-std::vector<State> gen_vec_init_obj(const Nullable<List> &init_input,
-                       const Nullable<List> &truth_input, 
-                       const Prior &prior, const Data &y_TR) {
-  const int num_of_k = prior.K_max - prior.K_min + 1;
-
-  std::vector<State> thetas(num_of_k);
+void gen_vec_init_obj(const Nullable<List> &init_input,
+                      const Nullable<List> &truth_input, 
+                      const Prior &prior, const Data_idx &data_idx,
+                      std::vector<State> &thetas) {
+  const int num_of_k = thetas.size();
   for (int k=0; k<num_of_k; k++) {
-    thetas[k] = gen_init_obj(init_input, truth_input, prior, y_TR, prior.K_min + k);
+    thetas[k] = gen_init_obj(init_input, truth_input, prior, data_idx.y_TR, prior.K_min + k);
   }
-
-  return thetas;
 }

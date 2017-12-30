@@ -147,12 +147,13 @@ dev.off()
 #prior = list(cs_v=4, cs_h=3, d_w=1/MCMC_K)
 ### END ###
 
+dat$y <- lapply(dat$y, shuffle_mat)
 set.seed(SEED_MCMC)
-truth=list(K=MCMC_K)
 prior = list(cs_v=4, cs_h=3, d_w=1/MCMC_K,
              a_beta=90, b_beta=30,
              m_betaBar=-11, s2_betaBar=.1, 
-             s2_beta0=.1)
+             s2_beta0=.1,
+             K_min=1, K_max=10, a_K=2)
 
 pdf(fileDest('prior_prob_miss.pdf'))
 yy = seq(-15,15,l=100)
@@ -178,9 +179,13 @@ prob_miss_prior = {
 }
 dev.off()
 
+#truth=list(K=MCMC_K)
+truth=list()
+init=list(K=1)
 sim_time <- system.time(
-  out <- cytof_fix_K_fit(dat$y, truth=truth, prior=prior,
-                         B=B, burn=BURN, thin=THIN, print=1)
+  out <- cytof_fix_K_fit(dat$y, truth=truth, prior=prior, init=init, thin_K=5,
+                         warmup=100, B=B, burn=BURN, thin=THIN, print=1,
+                         ncores=8, prop=.1, show_timings=FALSE)
 )
 sink(fileDest('simtime.txt')); print(sim_time); sink()
 save(dat, out, file=fileDest('sim_result.RData'))
@@ -215,4 +220,11 @@ for (i in 1:nrow(idx_miss)) {
 }
 
 hist(c(y_miss), xlab='Missing values')
+dev.off()
+
+### K posterior ###
+pdf(fileDest('K.pdf'))
+K_post = sapply(out, function(o) NCOL(o$Z))
+plot(K_post, type='b', ylab='K', xlab='iteration')
+plot(table(K_post) / length(K_post), xlab='K', ylab='proportion')
 dev.off()

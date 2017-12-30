@@ -47,7 +47,9 @@
 // [[Rcpp::export]]
 std::vector<List> cytof_fix_K_fit(
   const std::vector<arma::mat> &y, int B, int burn,
-  int thin=1, int compute_loglike_every=1, int print_freq=10, int ncores=1,
+  int warmup=100,
+  int thin=1, int thin_K=5,
+  int compute_loglike_every=1, int print_freq=10, int ncores=1,
   bool show_timings=false, double prop_for_training=.05, bool shuffle_data=false,
   Nullable<List> prior_input = R_NilValue,
   Nullable<List> truth_input = R_NilValue,
@@ -74,22 +76,22 @@ std::vector<List> cytof_fix_K_fit(
   const auto init = gen_init_obj(init_input, truth_input, prior, y, K);
 
   // Random K
-  Data y_TE, y_TR;
+  Data_idx data_idx;
   std::vector<State> thetas(prior.K_max - prior.K_min + 1);
 
   if (!fixed_params.K) {
-    gen_data_idx(y, prop_for_training, shuffle_data);
-    thetas = gen_vec_init_obj(init_input, truth_input, prior, y_TR);
+    gen_data_idx(y, data_idx, prop_for_training, shuffle_data);
+    gen_vec_init_obj(init_input, truth_input, prior, data_idx, thetas);
     Rcout << "K is random." << std::endl;
   }
   // End of Random K
 
-  auto update = [&y, &prior, &fixed_params, &y_TR, &y_TE, &thetas, thin, show_timings](State &state) {
+  auto update = [&](State &state) {
     Rcout << "\r";
     for (int t=0; t<thin; t++) {
       update_theta(state, y, prior, fixed_params, show_timings);
       if (!fixed_params.K) { // Random K
-        update_K_theta(state, y_TE, y_TR, y, fixed_params, prior, thetas);
+        update_K_theta(state, y, data_idx, fixed_params, prior, thetas, thin_K);
       }
     }
   };
@@ -141,6 +143,17 @@ std::vector<List> cytof_fix_K_fit(
   };
 
   omp_set_num_threads(ncores);
+
+  if (!fixed_params.K) {
+    for (int k=0; k<thetas.size(); k++) {
+      Rcout << "warmup for k=" << prior.K_min + k<< std::endl;
+#pragma omp parallel for
+      for (int i=0; i<warmup; i++) {
+        update_theta(thetas[k], data_idx.y_TR, prior, fixed_params, show_timings);
+      }
+    }
+  }
+
   gibbs<State>(init, update, ass, B, burn, print_freq);
 
   return out;

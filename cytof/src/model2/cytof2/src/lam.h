@@ -46,12 +46,11 @@ type_lam sample_lam_prior(const arma::mat &W, const Data &y) {
 }
 
 type_lam get_lam_TE(const type_lam &lam, const Data_idx data_idx) {
-  const int I = get_I(y_TE);
+  const int I = get_I(data_idx.y_TE);
   type_lam lam_TE(I);
 
   for (int i=0; i<I; i++) {
-    const int Ni_TE = get_Ni(y_TE, i);
-    lam_TE[i] = lam[i].subvec(data_idx.idx_TE[i]);
+    lam_TE[i] = lam[i](data_idx.idx_TE[i]);
   }
 
   return lam_TE;

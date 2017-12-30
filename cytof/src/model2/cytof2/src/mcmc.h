@@ -261,7 +261,7 @@ double rinvgamma(double a, double b) {
 //[[Rcpp::export]]
 arma::mat shuffle_mat(arma::mat X) { //Tested. Good.
   const int N = X.n_rows;
-  const uvec idx = arma::linspace<arma::uvec>(0, N-1, N);
+  arma::uvec idx = arma::linspace<arma::uvec>(0, N-1, N);
   std::random_shuffle(idx.begin(), idx.end());
   return X.rows(idx);
 }

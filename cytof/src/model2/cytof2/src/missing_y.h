@@ -53,3 +53,40 @@ arma::vec get_missing_only(const State &state, const arma::Mat<int> &indices) {
 
   return missing_y_only;
 }
+
+Data sample_missing_y_prior(const State &state, const Data &y) {
+  const int I = get_I(y);
+  const int J = get_J(y);
+  double mean_inj, sd_inj;
+  Data missing_y(I);
+
+  for (int i=0; i<I; i++) {
+    const int N_i = get_Ni(y, i);
+    missing_y[i].resize(N_i, J);
+    for (int j=0; j<J; j++) {
+      for (int n=0; n<N_i; n++) {
+        // Need lam, Z, mus, gams
+        mean_inj = mu(state, i, n, j);
+        sd_inj = sqrt((1+gam(state,i,n,j)) * state.sig2(i,j));
+        if (missing(y, i, n, j)) {
+          missing_y[i](n,j) = R::rnorm(mean_inj, sd_inj);
+        } else {
+          missing_y[i](n,j) = y[i](n,j);
+        }
+      }
+    }
+  }
+  
+  return missing_y;
+}
+
+Data get_missing_y_TE(const Data &missing_y, const Data_idx data_idx) {
+  const int I = get_I(data_idx.y_TE);
+  Data missing_y_TE(I);
+
+  for (int i=0; i<I; i++) {
+    missing_y_TE[i] = missing_y[i].rows(data_idx.idx_TE[i]);
+  }
+
+  return missing_y_TE;
+}

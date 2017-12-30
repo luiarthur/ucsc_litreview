@@ -21,24 +21,38 @@ BEGIN_RCPP
 END_RCPP
 }
 // cytof_fix_K_fit
-std::vector<List> cytof_fix_K_fit(std::vector<arma::mat> y, int B, int burn, int thin, int compute_loglike_every, int print_freq, int ncores, bool show_timings, double prop_for_training, Nullable<List> prior_input, Nullable<List> truth_input, Nullable<List> init_input);
-RcppExport SEXP _cytof2_cytof_fix_K_fit(SEXP ySEXP, SEXP BSEXP, SEXP burnSEXP, SEXP thinSEXP, SEXP compute_loglike_everySEXP, SEXP print_freqSEXP, SEXP ncoresSEXP, SEXP show_timingsSEXP, SEXP prop_for_trainingSEXP, SEXP prior_inputSEXP, SEXP truth_inputSEXP, SEXP init_inputSEXP) {
+std::vector<List> cytof_fix_K_fit(const std::vector<arma::mat>& y, int B, int burn, int warmup, int thin, int thin_K, int compute_loglike_every, int print_freq, int ncores, bool show_timings, double prop_for_training, bool shuffle_data, Nullable<List> prior_input, Nullable<List> truth_input, Nullable<List> init_input);
+RcppExport SEXP _cytof2_cytof_fix_K_fit(SEXP ySEXP, SEXP BSEXP, SEXP burnSEXP, SEXP warmupSEXP, SEXP thinSEXP, SEXP thin_KSEXP, SEXP compute_loglike_everySEXP, SEXP print_freqSEXP, SEXP ncoresSEXP, SEXP show_timingsSEXP, SEXP prop_for_trainingSEXP, SEXP shuffle_dataSEXP, SEXP prior_inputSEXP, SEXP truth_inputSEXP, SEXP init_inputSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< std::vector<arma::mat> >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const std::vector<arma::mat>& >::type y(ySEXP);
     Rcpp::traits::input_parameter< int >::type B(BSEXP);
     Rcpp::traits::input_parameter< int >::type burn(burnSEXP);
+    Rcpp::traits::input_parameter< int >::type warmup(warmupSEXP);
     Rcpp::traits::input_parameter< int >::type thin(thinSEXP);
+    Rcpp::traits::input_parameter< int >::type thin_K(thin_KSEXP);
     Rcpp::traits::input_parameter< int >::type compute_loglike_every(compute_loglike_everySEXP);
     Rcpp::traits::input_parameter< int >::type print_freq(print_freqSEXP);
     Rcpp::traits::input_parameter< int >::type ncores(ncoresSEXP);
     Rcpp::traits::input_parameter< bool >::type show_timings(show_timingsSEXP);
     Rcpp::traits::input_parameter< double >::type prop_for_training(prop_for_trainingSEXP);
+    Rcpp::traits::input_parameter< bool >::type shuffle_data(shuffle_dataSEXP);
     Rcpp::traits::input_parameter< Nullable<List> >::type prior_input(prior_inputSEXP);
     Rcpp::traits::input_parameter< Nullable<List> >::type truth_input(truth_inputSEXP);
     Rcpp::traits::input_parameter< Nullable<List> >::type init_input(init_inputSEXP);
-    rcpp_result_gen = Rcpp::wrap(cytof_fix_K_fit(y, B, burn, thin, compute_loglike_every, print_freq, ncores, show_timings, prop_for_training, prior_input, truth_input, init_input));
+    rcpp_result_gen = Rcpp::wrap(cytof_fix_K_fit(y, B, burn, warmup, thin, thin_K, compute_loglike_every, print_freq, ncores, show_timings, prop_for_training, shuffle_data, prior_input, truth_input, init_input));
+    return rcpp_result_gen;
+END_RCPP
+}
+// shuffle_mat
+arma::mat shuffle_mat(arma::mat X);
+RcppExport SEXP _cytof2_shuffle_mat(SEXP XSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< arma::mat >::type X(XSEXP);
+    rcpp_result_gen = Rcpp::wrap(shuffle_mat(X));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -54,7 +68,8 @@ END_RCPP
 
 static const R_CallMethodDef CallEntries[] = {
     {"_cytof2_missing_R", (DL_FUNC) &_cytof2_missing_R, 4},
-    {"_cytof2_cytof_fix_K_fit", (DL_FUNC) &_cytof2_cytof_fix_K_fit, 12},
+    {"_cytof2_cytof_fix_K_fit", (DL_FUNC) &_cytof2_cytof_fix_K_fit, 15},
+    {"_cytof2_shuffle_mat", (DL_FUNC) &_cytof2_shuffle_mat, 1},
     {"_cytof2_unit_tests", (DL_FUNC) &_cytof2_unit_tests, 0},
     {NULL, NULL, 0}
 };
