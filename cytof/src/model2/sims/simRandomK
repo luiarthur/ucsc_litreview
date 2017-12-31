@@ -1,0 +1,54 @@
+#!/bin/bash
+#PBS -S /bin/bash
+#PBS -N Cytof_Sim2
+#PBS -l nodes=1:ppn=16
+#PBS -l walltime=48:00:00
+#PBS -V
+
+### THIS SCRIPT REQUIRES GNU PARALLEL: sem ###
+
+### To use compute node on grape: qsub sim2
+### To use interactive node (muscat, jerez, mencia) instead, do: ./sim2
+
+### Go to work directory at submission time if using a compute node on grape
+if [[ $HOSTNAME == *"grape"* || $HOSTNAME == *"compute"* ]]
+then
+  cd $PBS_O_WORKDIR
+fi
+
+
+### PARAMETERS FOR PARALLEL JOB ###
+i=0
+MAX_CORES=4
+
+### PARAMETERS FOR MCMC ###
+J=32
+MCMC_K_INIT="1 10"
+N="100"
+USE_SIMPLE_Z="0 1"
+OUTDIR='out/simRandomK/'
+
+B=2000
+BURN=1200 #max time 12 hrs.
+THIN=5
+
+for j in $J
+do
+  for k in $MCMC_K_INIT
+  do
+    for n in $N
+    do
+      for z in $USE_SIMPLE_Z
+      do
+        i=$((i+1)) 
+        outdir="${OUTDIR}/j${j}_k${k}_N${n}_z${z}_B${B}_burn${BURN}_thin${THIN}/"
+        cmd="Rscript simple.R $j $k $n $z $outdir $B $BURN $THIN"
+        mkdir -p $outdir
+        sem -j $MAX_CORES $cmd > ${outdir}log.txt
+        #echo "Simulation $i: $outdir"
+      done
+    done
+  done
+done
+sem --wait
+
