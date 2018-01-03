@@ -9,8 +9,8 @@ MAX_CORES=16
 DATA_DIR="dat/cytof_cb.RData"
 MCMC_K="1 10"
 OUTDIR="out/cb"
-B=200
-BURN="500 1000"
+B=2000
+BURN="500 1200"
 THIN=5
 
 for burn in $BURN
