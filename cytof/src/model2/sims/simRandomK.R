@@ -210,17 +210,17 @@ plot_beta(out, missing_count, dat, prior)
 dev.off()
 
 ### Plots of missing values posterior ###
-idx_miss = last(out)$idx + 1
-y_miss = sapply(out, function(o) o$missing_y_only)
+#idx_miss = last(out)$idx + 1
+#y_miss = sapply(out, function(o) o$missing_y_only)
 
-pdf(fileDest('missing_y.pdf'))
-for (i in 1:nrow(idx_miss)) {
-  plotPost(y_miss[i,], main='',
-           xlab=paste0('(i,n,j): ', paste0(idx_miss[i,], collapse=',')))
-}
-
-hist(c(y_miss), xlab='Missing values')
-dev.off()
+#pdf(fileDest('missing_y.pdf'))
+#for (i in 1:nrow(idx_miss)) {
+#  plotPost(y_miss[i,], main='',
+#           xlab=paste0('(i,n,j): ', paste0(idx_miss[i,], collapse=',')))
+#}
+#
+#hist(c(y_miss), xlab='Missing values')
+#dev.off()
 
 ### K posterior ###
 pdf(fileDest('K.pdf'))

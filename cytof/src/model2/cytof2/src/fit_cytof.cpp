@@ -59,12 +59,12 @@ std::vector<List> cytof_fix_K_fit(
   const int J = get_J(y);
 
   // REMOVE THE FOLLOWING LINES IN PRODUCTION
-  const auto idx_of_all_missing = get_idx_of_missing(y);
-  arma::uvec top_20(idx_of_all_missing.n_rows);
-  for (int i=0; i<idx_of_all_missing.n_rows; i++) top_20[i] = i;
-  std::random_shuffle(top_20.begin(), top_20.end());
-  top_20.resize(20);
-  const arma::Mat<int> idx_of_missing = idx_of_all_missing.rows(top_20);
+  //const auto idx_of_all_missing = get_idx_of_missing(y);
+  //arma::uvec top_20(idx_of_all_missing.n_rows);
+  //for (int i=0; i<idx_of_all_missing.n_rows; i++) top_20[i] = i;
+  //std::random_shuffle(top_20.begin(), top_20.end());
+  //top_20.resize(20);
+  //const arma::Mat<int> idx_of_missing = idx_of_all_missing.rows(top_20);
   // REMOVE THE PRECEDING LINES IN PRODUCTION
 
   Rcout << "I:" << I << ", J:" << J << std::endl;
@@ -127,7 +127,7 @@ std::vector<List> cytof_fix_K_fit(
           Named("H") = state.H, // REMOVE IN PRODUCTION
           Named("Z") = state.Z,
           Named("lam") = state.lam, // REMOVE IN PRODUCTION. Just keep last one.
-          Named("missing_y_only") = get_missing_only(state, idx_of_missing), // REMOVE IN PRODUCTION
+          //Named("missing_y_only") = get_missing_only(state, idx_of_missing), // REMOVE IN PRODUCTION
           Named("W") = state.W,
           Named("ll") = ll);
     }
@@ -138,19 +138,23 @@ std::vector<List> cytof_fix_K_fit(
         missing_y_mean[s] = missing_y_sum[s] / B;
       }
       out[B-1]["missing_y_mean"] = missing_y_mean;
-      out[B-1]["idx_of_missing"] = idx_of_missing;
+      //out[B-1]["idx_of_missing"] = idx_of_missing; // REMOVE IN PRODUCTION.
     }
   };
 
   omp_set_num_threads(ncores);
 
   if (!fixed_params.K) {
-    for (int k=0; k<thetas.size(); k++) {
-      Rcout << "warmup for k=" << prior.K_min + k<< std::endl;
-#pragma omp parallel for
+    auto warmup_theta = [&](int k) {
       for (int i=0; i<warmup; i++) {
         update_theta(thetas[k], data_idx.y_TR, prior, fixed_params, show_timings);
       }
+    };
+
+#pragma omp parallel for
+    for (int k=0; k<thetas.size(); k++) {
+      Rcout << "warmup for k=" << prior.K_min + k << std::endl;
+      warmup_theta(k);
     }
   }
 

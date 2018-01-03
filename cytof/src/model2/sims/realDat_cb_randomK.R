@@ -77,8 +77,8 @@ print("Start MCMC")
 
 sim_time <- system.time(
   out <- cytof_fix_K_fit(y, init=init, prior=prior, B=B, burn=BURN, thin=THIN,
-                         warmup=1, thin_K=5, ncores=8,
-                         prop_for_training=.1, print=1, truth=list())
+                         warmup=2000, thin_K=5, ncores=8,
+                         prop_for_training=.1, print=1)
 )
 sink(fileDest('simtime.txt')); print(sim_time); sink()
 save(y, out, file=fileDest('sim_result.RData'))
