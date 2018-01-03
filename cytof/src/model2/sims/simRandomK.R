@@ -21,7 +21,7 @@ if (length(args) < 8) {
   stop('usage: Rscript simple.R J MCMC_K_INIT DATA_SIZE USE_SIMPLE_Z OUTDIR B BURN THIN [SEED_DATA] [SEED_MCMC]')
 } else {
   J <- as.integer(args[1])
-  MCMC_K <- as.integer(args[2])
+  MCMC_K_INIT <- as.integer(args[2])
   DATA_SIZE <- as.integer(args[3])
   USE_SIMPLE_Z <- as.integer(args[4])
   OUTDIR <- paste0(args[5],'/')
@@ -149,7 +149,7 @@ dev.off()
 
 dat$y <- lapply(dat$y, shuffle_mat)
 set.seed(SEED_MCMC)
-prior = list(cs_v=4, cs_h=3, d_w=1/MCMC_K,
+prior = list(cs_v=4, cs_h=3, d_w=1/MCMC_K_INIT,
              a_beta=90, b_beta=30,
              m_betaBar=-11, s2_betaBar=.1, 
              s2_beta0=.1,
