@@ -1,0 +1,27 @@
+#!/bin/bash
+# Requires GNU Parallel: sem
+
+### PARAMETERS FOR PARALLEL JOB ###
+i=0
+MAX_CORES=16
+
+### PARAMETERS FOR MCMC ###
+DATA_DIR="dat/cytof_cb.RData"
+MCMC_K="1 10"
+OUTDIR="out/cb"
+B=200
+BURN="500 1000"
+THIN=5
+
+for burn in $BURN
+do
+  for k in $MCMC_K
+  do
+    i=$(( i + 1 ))
+    outdir="${OUTDIR}/cb_k${k}_B${B}_burn${burn}_thin${THIN}/"
+    cmd="Rscript realDat_cb_randomK.R $DATA_DIR $k $outdir $B $burn $THIN"
+    sem -j $MAX_CORES $cmd
+    echo "Simulation $i: $outdir"
+  done
+done
+sem --wait
