@@ -10,7 +10,7 @@ DATA_DIR="dat/cytof_cb.RData"
 MCMC_K="1 10"
 OUTDIR="out/cb"
 B=2000
-BURN="500 1200"
+BURN="1200"
 THIN=5
 
 for burn in $BURN
