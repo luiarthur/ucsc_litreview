@@ -65,12 +65,20 @@ dev.off()
 
 
 init = list(K=MCMC_K)
-prior = list(cs_v=4, cs_h=3, d_w=1/MCMC_K, a_beta=200000, b_beta=10000,
+#prior = list(cs_v=4, cs_h=3, d_w=1/MCMC_K, a_beta=200000, b_beta=10000,
+#             K_min=1, K_max=10, a_K=2)
+prior = list(cs_v=4, cs_h=3, d_w=1/MCMC_K,
+             a_beta=90, b_beta=30,
+             m_betaBar=-11, s2_betaBar=.1, 
+             s2_beta0=.1,
              K_min=1, K_max=10, a_K=2)
+
+print("Start MCMC")
+
 sim_time <- system.time(
   out <- cytof_fix_K_fit(y, init=init, prior=prior, B=B, burn=BURN, thin=THIN,
-                         warmup=2000, thin_K=5, ncores=8,
-                         prop_for_training=.1)
+                         warmup=1, thin_K=5, ncores=8,
+                         prop_for_training=.1, print=1, truth=list())
 )
 sink(fileDest('simtime.txt')); print(sim_time); sink()
 save(y, out, file=fileDest('sim_result.RData'))
