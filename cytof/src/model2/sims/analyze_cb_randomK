@@ -8,7 +8,7 @@ MAX_CORES=16
 ### PARAMETERS FOR MCMC ###
 DATA_DIR="dat/cytof_cb.RData"
 MCMC_K="1 10"
-OUTDIR="out/cb"
+OUTDIR="out/cb_randomK"
 B=2000
 BURN="1200"
 THIN=5
