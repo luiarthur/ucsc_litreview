@@ -42,7 +42,7 @@ do
       do
         i=$((i+1)) 
         outdir="${OUTDIR}/j${j}_k${k}_N${n}_z${z}_B${B}_burn${BURN}_thin${THIN}/"
-        cmd="Rscript simple.R $j $k $n $z $outdir $B $BURN $THIN"
+        cmd="Rscript simRandomK.R $j $k $n $z $outdir $B $BURN $THIN"
         mkdir -p $outdir
         sem -j $MAX_CORES $cmd > ${outdir}log.txt
         #echo "Simulation $i: $outdir"
