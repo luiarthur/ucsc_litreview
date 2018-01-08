@@ -179,13 +179,10 @@ prob_miss_prior = {
 }
 dev.off()
 
-#truth=list(K=MCMC_K)
-truth=list()
-init=list(K=1)
+truth=list(K=MCMC_K)
 sim_time <- system.time(
-  out <- cytof_fix_K_fit(dat$y, truth=truth, prior=prior, init=init, thin_K=5,
-                         warmup=100, B=B, burn=BURN, thin=THIN, print=1,
-                         ncores=8, prop=.1, show_timings=FALSE)
+  out <- cytof_fix_K_fit(dat$y, truth=truth, prior=prior, 
+                         B=B, burn=BURN, thin=THIN, print=1, show_timings=FALSE)
 )
 sink(fileDest('simtime.txt')); print(sim_time); sink()
 save(dat, out, file=fileDest('sim_result.RData'))
@@ -209,22 +206,22 @@ pdf(fileDest('post_beta.pdf'))
 plot_beta(out, missing_count, dat, prior)
 dev.off()
 
-### Plots of missing values posterior ###
-idx_miss = last(out)$idx + 1
-y_miss = sapply(out, function(o) o$missing_y_only)
-
-pdf(fileDest('missing_y.pdf'))
-for (i in 1:nrow(idx_miss)) {
-  plotPost(y_miss[i,], main='',
-           xlab=paste0('(i,n,j): ', paste0(idx_miss[i,], collapse=',')))
-}
-
-hist(c(y_miss), xlab='Missing values')
-dev.off()
-
-### K posterior ###
-pdf(fileDest('K.pdf'))
-K_post = sapply(out, function(o) NCOL(o$Z))
-plot(K_post, type='b', ylab='K', xlab='iteration')
-plot(table(K_post) / length(K_post), xlab='K', ylab='proportion')
-dev.off()
+#### Plots of missing values posterior ###
+#idx_miss = last(out)$idx + 1
+#y_miss = sapply(out, function(o) o$missing_y_only)
+#
+#pdf(fileDest('missing_y.pdf'))
+#for (i in 1:nrow(idx_miss)) {
+#  plotPost(y_miss[i,], main='',
+#           xlab=paste0('(i,n,j): ', paste0(idx_miss[i,], collapse=',')))
+#}
+#
+#hist(c(y_miss), xlab='Missing values')
+#dev.off()
+#
+#### K posterior ###
+#pdf(fileDest('K.pdf'))
+#K_post = sapply(out, function(o) NCOL(o$Z))
+#plot(K_post, type='b', ylab='K', xlab='iteration')
+#plot(table(K_post) / length(K_post), xlab='K', ylab='proportion')
+#dev.off()
