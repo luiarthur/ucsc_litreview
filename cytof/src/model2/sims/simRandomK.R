@@ -37,7 +37,7 @@ set.seed(SEED_DATA)
 #OUTDIR = 'out/simple/'
 fileDest = function(name) paste0(OUTDIR, name)
 system(paste0('mkdir -p ', OUTDIR))
-system(paste0('cp simple.R ', fileDest('src.R')))
+system(paste0('cp simRandomK.R ', fileDest('src.R')))
 
 
 I = 3
