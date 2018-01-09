@@ -10,31 +10,46 @@ markers.  Hence, the raw data $\tilde{y}_{inj}$ represent the raw data for
 sample $i$, cell $n$, and marker $j$. From a computation perspective, a
 suitable data structure for the data could be a list (of length $I$) of
 matrices of (variable) dimensions ($N_i \times J$).  Let $c_{ij}$ denote the
-"cutoff" values (provided by the cytometry measuring devices) for sample $i$,
-marker $j$. And define the missingness indicator
+"cutoff" values for sample $i$, marker $j$.  For a particular cell ($n$) in
+sample $i$, a marker expressions level above the cutoff value $c_{ij}$ for
+sample $i$ and marker $j$ indicates that marker $j$ is most likely expressed. A
+marker expression level below its corresponding cutoff value, indicates the
+marker is not expressed.  These cutoff values are provided by the CyTOF
+instrument to correct for background measurement noise picked up by the
+instrument, and are positively valued. Since the expression levels for a marker
+depends on the number of metals detected in a reading, and the amount of metal
+ions present can vary greatly by sample and marker, a different cutoff value is
+assumed for each sample and marker combination.
 
+Let $\tilde{y}_{inj}$ be the expression level for sample $i$, cell $n$, marker
+$j$ as measured by the CyTOF instrument. Intuitively, expression levels should
+only take on positive values and higher values should correspond to higher
+probabilities of expression. But due to the precision of the machine, negative
+values can be recorded. In such cases, the values are truncated instead as 0
+(by scientists) and can be thought of as missing as the expression levels were
+so low that they could not be measured. In our modeling, rather than discarding
+these values, we can treat them as missing values due to the precision of the
+machinery. Specifically, these values can be treated as missing and known to
+take on small (negative) values. 
+
+We transform the data so that $y_{inj} = \log\p{\frac{\tilde{y}_{inj}}{c_{ij}}}$.
+Notice that if $\tilde{y}_{inj} \le 0$, this quantity is undefined. We consequently
+treat these values as missing and we define the missingness indicator
 $$
 m_{inj} = \begin{cases}
-  0, & \text{if } \log\p{\frac{\tilde{y}_{inj}}{c_{ij}}} < -\infty \\
+  %0, & \text{if } \log\p{\frac{\tilde{y}_{inj}}{c_{ij}}} < -\infty \\
+  0, & \text{if } \tilde{y}_{inj} = 0 \\
   1, & \text{otherwise.}
 \end{cases}
 $$
 
-That is, $m_{inj}=1$ indicates that the expression level **is missing** for sample $i$, cell $n$, marker $j$. Furthermore, define a transformation of the data
-
-$$
-y_{inj} = \begin{cases}
-  \log\p{\frac{\tilde{y}_{inj}}{c_{ij}}}, & \text{if }  m_{inj} = 0\\
-  \text{To be imputed}, & \text{if } m_{inj} = 1. \\
-  \end{cases}
-$$
-
-This transformation will be used in the final model.  Note that under this
-transformation (1) the data have infinite support. (2) $y_{inj} = 0$ has a
-special meaning, which is that the data take on the same value as the cutoff.
-Consequently, $y_{inj} > 0$ means that the data take on values greater than the
-cutoff, etc. (3) $y_{inj}$ for which $\tilde{y}_{inj} = 0$ are regarded as
-missing, and is to be imputed.
+That is, $m_{inj}=1$ indicates that the expression level **is missing** for
+sample $i$, cell $n$, marker $j$.  Note that under this transformation (1) the
+data have infinite support. (2) $y_{inj} = 0$ has a special meaning, which is
+that the data take on the same value as the cutoff.  Consequently, $y_{inj} >
+0$ means that the data take on values greater than the cutoff, etc. (3)
+$y_{inj}$ for which $\tilde{y}_{inj} = 0$ are regarded as missing values, and are 
+treated as random variables to be imputed.
 
 ## Model
 
@@ -49,12 +64,36 @@ distribution.
   &\sim \N(\mu_{inj}, (\gamma_{inj}+1) \sigma^2_{ij}) \nonumber \\
   \mu_{inj} &:= \mu^*_{Z_{j\lin}ij} \nonumber\\
   \gamma_{inj} &:= \gamma_{Z_{j\lin}ij}^*
+  \label{eq:model}
 \end{align}
+
+In the first line, we model the probability of missing as a function of the
+data.  Specifically, we want a higher probability of missingness to be
+associated with lower expression levels. We therefore model the probability of
+missing $p_{inj}$ with a logistic function of the data $y_inj$. An intercept
+term for each sample and marker and a slope term for each marker are included.
+In addition, we constrain the slope terms to have only positive support to
+reflect that lower expression levels are more likely to be missing.
+
+I will now explain the other parameters in the model introduced in
+$(\ref{eq:model})$. Each observed expression level in sample $i$ for marker $j$
+is believed to be distributed Normally centered at some value $\mu^*_{1ij}$
+(which has positive support) if the marker is expressed, or $\mu^*_{0ij}$
+(which has negative support) if the marker is not expressed. Likewise, their
+variances are $\sigma_{ij}$ if the marker is expressed, or
+$(1+\gamma^*_{0ij})\sigma^2_{ij}$ (for some positive $\gamma^*_{0ij}$) if the
+marker is not expressed. $\bm Z$ which is a $J\times K$ binary matrix
+is a latent binary matrix where $Z_{jk} = 1$ indicates that marker $j$ is
+active in some cell-type $k$. $\lambda_{in}$ is the cell-type for cell $n$ in
+sample $i$.  Note that the total possible number of cell-types is $2^J$, but as
+mentioned previously, we do not enumerate all cell-types but simply learn the 
+most prevalent cell-types. Therefore, $\lambda_{in}$ takes on only a finite
+number of (contiguous) positive integer values.
+
 
 Let $\btheta$ represent all parameters (discussed in the next section).
 Let $\y$ represent $y_{inj} ~ \forall(i,n,j)$.
 Let $\m$ represent $m_{inj} ~ \forall(i,n,j)$.
-
 The resulting **likelihood** is as follows:
 
 \begin{align*}

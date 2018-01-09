@@ -28,15 +28,15 @@ The Indian buffet process (IBP) proposed by @griffiths2011indian can be
 constructed by first considering the finite feature allocation model, and then
 taking the limit with respect to the number of features.
 
-For the remainder of this section, let $Z$ be an $n \times K$ binary matrix.
-The prior probability that object $i$ possessing feature $k$ is $\pi_k$.
+For the remainder of this section, let $Z$ be an $J \times K$ binary matrix.
+The prior probability that object $j$ possessing feature $k$ is $\pi_k$.
 Let $\pi_k$ have prior distribution $\text{Beta}(\alpha/K, 1)$. For the time being,
 assume that $\alpha$ is known and fixed.
 
 \begin{align}
 \begin{split}
 \pi_k \mid \alpha &\sim \text{Beta}(\alpha/K, 1) \\
-Z_{ik} \mid \pi_k &\sim \text{Bernoulli}(\pi_k) \\
+Z_{jk} \mid \pi_k &\sim \text{Bernoulli}(\pi_k) \\
 \end{split}
 \label{eq:ibp}
 \end{align}
@@ -45,12 +45,13 @@ The matrix $Z$ has an IBP distribution with mass parameter $\alpha$ when the
 $\pi_k$ are integrated out and in the limit $K \rightarrow \infty$ .  That is,
 marginally, $Z \sim \text{IBP}(\alpha)$. While the binary matrix $Z$ is
 unbounded in the columns, it can be shown that the number non-zero of columns
-$K^+$ is distributed $\text{Poisson}(\alpha \suml \frac{1}{i})$.  Moreover, the
-each row in $Z$ has is expected to have $\alpha$ active features.  In other
-words, the mass parameter $\alpha$ influences the final number of columns in
-the sampled matrices.  This can be shown using law of total expectation:
+$K^+$ is distributed $\text{Poisson}(\alpha \sum_{j=1}^J j^{-1})$.
+Moreover, the each row in $Z$ has is expected to have $\alpha$ active features.
+In other words, the mass parameter $\alpha$ influences the final number of
+columns in the sampled matrices.  This can be shown using law of total
+expectation:
 $$
-\E\bk{\sum_{k=1}^K Z_{ik}} = \sum_{k=1}^K \E\bk{Z_{ik}} 
+\E\bk{\sum_{k=1}^K Z_{jk}} = \sum_{k=1}^K \E\bk{Z_{jk}} 
 =\sum_{k=1}^K \E\bk{\E\bk{Z_{ik}\mid\pi_k}}
 =\sum_{k=1}^K \E\bk{\pi_k}
 =\sum_{k=1}^K \alpha/K
@@ -67,18 +68,19 @@ matrix. The probability mass function (pmf) of the left-ordered matrices can be
 shown to have the following form:
 
 \begin{equation}
-  P(\bm{Z}) = \frac{\alpha^{K_+}}{\prod_{i=1}^N {K_1}^{(i)}!} 
+  P(\bm{Z}) = \frac{\alpha^{K_+}}{\prod_{j=1}^J {K_1}^{(j)}!} 
               \exp\bc{-\alpha H_N}\prod_{k=1}^{K_+}
-              \frac{(N-m_k)!(m_k-1)!}{N!},
+              \frac{(J-m_k)!(m_k-1)!}{J!},
+  \label{eq:ibplo}
 \end{equation}
 
-where $H_N=\sum_{i=1}^N i^{-1}$ is the harmonic number, $K_+$ is
+where $H_J=\sum_{j=1}^J j^{-1}$ is the harmonic number, $K_+$ is
 the number of non-zero columns in $\bm Z$, $m_k$ is the $k^{th}$ column sum of
-$\bm Z$, and $K_1^{(i)}$ is the number of features activated in row $i$ of 
+$\bm Z$, and $K_1^{(j)}$ is the number of features activated in row $j$ of 
 $Z$ that are not activated in previous rows.
 
 The name of this process, like the Chinese restaurant process, suggests a
-culinary metaphor. The metaphor is as follows. Let $Z$ be an $N \times \infty$
+culinary metaphor. The metaphor is as follows. Let $Z$ be an $J \times \infty$
 binary matrix. Each row in $Z$ represents a customer who enters an Indian
 buffet restaurant and each column represents one dish (out of an infinite
 number of dishes) in the buffet. Customers enter the restaurant one after
@@ -87,10 +89,10 @@ dishes, where $\alpha > 0$.  This is indicated by setting the first $r$ columns
 of the first row in $Z$ to be $1$.  The other values in the row are set to $0$.
 Each subsequent customer samples each previously sampled dish with probability
 proportional to its popularity.  That is, the next customer samples dish $k$
-with probability $m_k/i$, where $m_k=\sum_{j=1}^{i-1} Z_{jk}$ is the number of
-customers that have sampled dish $k$, and $i$ is the current customer number
+with probability $m_k/j$, where $m_k=\sum_{l=1}^{j-1} Z_{lk}$ is the number of
+customers that have sampled dish $k$, and $l$ is the current customer number
 (or row number in $Z$). Each customer also samples an additional
-Poisson$(\alpha/i)$ number of new dishes.  Once all the $N$ customers have gone
+Poisson$(\alpha/j)$ number of new dishes.  Once all the $J$ customers have gone
 through this process, the resulting $Z$ matrix will be a draw from the Indian
 buffet process with mass parameter $\alpha$.
 
@@ -106,21 +108,24 @@ and can be sampled from by the following scheme:
 \begin{split}
 v_k \mid \alpha &\sim \text{Beta}(\alpha,1) \\
 \pi_k &:= \prod_{l=1}^k v_k \\
-Z_{ik} \mid \pi_k &\sim \text{Bernoulli}(\pi_k). \\
+Z_{jk} \mid \pi_k &\sim \text{Bernoulli}(\pi_k). \\
 \end{split}
 \label{eq:sbibp}
 \end{align}
 
 This "stick-breaking" construction is can be derived by first starting with
-model (\ref{eq:ibp}), then ordering the $\pi_k$ so that $Z_{ik} \mid
+model (\ref{eq:ibp}), then ordering the $\pi_k$ so that $Z_{jk} \mid
 {\pi_{(k)}} \sim \text{Bernoulli}(\pi_{(k)})$, where $\pi_{(a)} > \pi_{(b)}$
-for all $a < b$, and $a,b \in \mathbb{N}$.
-
-The features in this model are ordered in the sense that activated features
-tend to appear in the left-most columns. This representation resembles
-the stick-breaking representation of the Dirichlet process (DP), and so can be 
-extended in similar ways that the DP has been extended. In a Gibbs sampler, the
-elements in $Z$ can be easily updated using Gibbs steps and metropolis steps.
+for all $a < b$, and $a,b \in \mathbb{N}$. The features in this model are
+ordered in the sense that activated features tend to appear in the left-most
+columns. This differs from the traditional definition of the IBP in
+(\ref{eq:ibp}) as the features are not in any way ordered. Moreover, this
+construction does not yield binary matrices that are left-ordered. So this
+process does not yield the probability mass function in (\ref{eq:ibplo}). This
+stick-breaking representation resembles the stick-breaking representation of
+the Dirichlet process (DP), and so can be extended in similar ways that the DP
+has been extended. In a Gibbs sampler, the elements in $Z$ can be easily
+updated using Gibbs steps and metropolis steps.
 
 The number of columns in $Z$ can be fixed in advanced at some large value. But
 as noted by @teh2007stick, the truncation value is somewhat arbitrary.  A
@@ -141,15 +146,16 @@ follow:
 v_k \mid \alpha &\sim \text{Beta}(\alpha,1) \\
 \pi_k &:= \prod_{l=1}^k v_k \\
 \bm h_{k} &\sim \N(\bm 0, \bm S) \\
-Z_{ik} \mid \pi_k &:= \Ind{\pi_k > \Phi\p{\frac{h_{ik} - 0}{\sqrt{S_{kk}}}}} \\
+Z_{jk} \mid \pi_k &:= \Ind{\pi_k > \Phi\p{\frac{h_{jk} - 0}{\sqrt{S_{kk}}}}} \\
 \end{split}
 \label{eq:dibp}
 \end{align}
 
 Here, $\Ind{\cdot}$ is the indicator function, $\Phi(\cdot)$ is the cumulative
 standard Normal distribution function, and $\bm S$ is known and contains the
-covariance of the objects $i=1,...,N$.  Note that when $\bm S = \I$ then the
-dIBP reduces to the stick-breaking construction of the IBP.
+covariance of the objects $j=1,...,J$.  Note that when $\bm S = \I$ then the
+dIBP reduces to the stick-breaking construction of the IBP. Hence, the
+"dependency" between objects is introduced to the model through $\bm S$.
 
 ### Prior for $\alpha$ in Stick-breaking Construction for IBP
 
