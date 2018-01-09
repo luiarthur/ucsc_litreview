@@ -91,7 +91,7 @@ When $Z$ is recovered completely (and $K > K^{\text{TR}}$), $\mu^*$ can be
 recovered as long as there are data associated with the particular
 $\mu^*_{zij}$.  Notice that there are 9 values of $\mu^*$ that are not
 recovered in Figures \ref{fig:musComplex} (middle) and \ref{fig:musComplex}
-(right). A closer examination of data in Figures \ref{complexDat} to will
+(right). A closer examination of data in Figures \ref{fig:complexDat} to will
 reveal that there are no observations less than 0 for $j=30,31,32$.
 Consequently, there are 9 values of $\mu^*_{0ij}$ where the parameters are
 sampled from the prior, explaining the large credible intervals.

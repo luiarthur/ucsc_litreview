@@ -162,17 +162,17 @@ posterior, $\mu^*$ will not be recovered. Moreover, for $z=\bc{0,1}$, when
 $\sum_{n=1}^{N_i} \Ind{Z_{j,\lambda_{in}} = z}$ is small, $\mu^*_{zij}$ will
 simply be sampled more heavily from the prior.
 
-For example, in Figure \ref{musSimple} (left), we see a lot of uncertainty for
+For example, in Figure \ref{fig:musSimple} (left), we see a lot of uncertainty for
 $\mu^*$ which are supposed to be positively-valued. This is due to the
 posterior $Z$ matrices lacking active features where they are needed (see
-Figure \ref{fig:z3}).
+Figure \ref{fig:zpoint}).
 
 In the case where $Z$ is recovered correctly, $\mu^*$ can possibly be recovered
-correctly. Figure \ref{musSimple} (middle) shows the posterior distribution of
+correctly. Figure \ref{fig:musSimple} (middle) shows the posterior distribution of
 $\mu^*$ for which $K=4$. The posterior means line up with the truth. The
 credible intervals are short due to the number of observations.
 
-Finally, Figure \ref{musSimple} (right) shows the posterior distribution of
+Finally, Figure \ref{fig:musSimple} (right) shows the posterior distribution of
 $\mu^*$ for which $K=7$. As $Z$ is recovered, the posterior means line up with
 the truth.
 
