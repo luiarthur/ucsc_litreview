@@ -2,11 +2,11 @@ library(cytof2)
 
 load("dat/cytof_cb.RData")
 Y = do.call(rbind, y)
-Y = ifelse(is.na(Y), -10, Y)
+Y = ifelse(is.na(Y), -6, Y)
 
 my.image(Y, col=blueToRed(), mn=-4, mx=4, xlab='markers', ylab='obs', addL=T)
 
-K = 8
+K = 10
 out = kmeans(Y, K)
 plot(table(out$clus))
 my.image(Y[order(out$clus),],
@@ -18,6 +18,7 @@ colMeans(Y[out$clus==1,]) > 0
 
 ### Z ###
 Z = sapply(1:K, function(k) 1 * (colMeans(Y[out$clus==k,]) > 0))
+Z = unique(Z,MARGIN=2)
 my.image(Z)
 
 
@@ -52,7 +53,7 @@ dat <- simdat(I=I, N=c(2,3,1)*DATA_SIZE, J=J, K=K,
 Y = do.call(rbind, dat$y)
 Y = ifelse(is.na(Y), -6, Y)
 
-K.hat = 4
+K.hat = 10
 out = kmeans(Y, K.hat)
 plot(table(out$clus))
 my.image(Y[order(out$clus),],
@@ -60,5 +61,7 @@ my.image(Y[order(out$clus),],
 
 ### Z ###
 Z = sapply(1:K.hat, function(k) 1 * (colMeans(Y[out$clus==k,]) > 0))
+Z = unique(Z,MARGIN=2)
 my.image(Z[,left_order(Z)])
 my.image(dat$Z)
+
