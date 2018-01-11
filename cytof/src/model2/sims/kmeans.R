@@ -6,15 +6,15 @@ Y = ifelse(is.na(Y), -6, Y)
 
 my.image(Y, col=blueToRed(), mn=-4, mx=4, xlab='markers', ylab='obs', addL=T)
 
-K = 10
+K = 4
 out = kmeans(Y, K)
 plot(table(out$clus))
 my.image(Y[order(out$clus),],
          col=blueToRed(), mn=-3, mx=3, xlab='markers', ylab='obs', addL=T)
 
 
-my.image(Y[out$clus==1,], col=blueToRed(), mn=-3, mx=3, addL=T)
-colMeans(Y[out$clus==1,]) > 0
+Ymiss = ifelse(Y==-6, NA, Y)
+my.image(Ymiss[out$clus==1,], col=blueToRed(), mn=-3, mx=3, addL=T)
 
 ### Z ###
 Z = sapply(1:K, function(k) 1 * (colMeans(Y[out$clus==k,]) > 0))
