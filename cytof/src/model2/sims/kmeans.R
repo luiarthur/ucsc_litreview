@@ -9,7 +9,7 @@ Y = ifelse(is.na(Y), -6, Y)
 
 my.image(Y, col=blueToRed(), mn=-4, mx=4, xlab='markers', ylab='obs', addL=T)
 
-K = 3
+K = 10
 out = kmeans(Y, K, alg='Lloyd', iter.max=100)
 plot(table(out$clus))
 my.image(Y[order(out$clus),],
