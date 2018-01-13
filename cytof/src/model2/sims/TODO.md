@@ -1,5 +1,15 @@
 # TODO
 
+## 13 Jan, 2017
+
+- [ ] change logistic link to new link function
+    - [ ] use it for CB
+    - [ ] simulation studies
+- [ ] keep a record of the proposed and current K, theta, and acceptance ratio
+- [ ] change priors to
+      - [ ] $\gamma_^*{0ij} ~ IG(\text{mean}\approx 0, \text{var}=4)$
+      - [ ] $\sigma_^2{ij}  ~ IG(\text{mean}=1, \text{var}<\infty)$
+
 ## By 22 Dec, 2017
 
 - [x] Intro to problem

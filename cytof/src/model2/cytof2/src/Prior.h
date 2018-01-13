@@ -29,6 +29,9 @@ struct Prior {
 
   // missing y
   double cs_y;
+  double c0 = -2;
+  double c_lo = -1;
+  double c_hi = -3;
 
   // K
   int K_min;  // 1?
