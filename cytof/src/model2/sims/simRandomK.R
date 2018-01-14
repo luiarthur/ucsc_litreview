@@ -184,8 +184,8 @@ truth=list()
 init=list(K=MCMC_K_INIT)
 sim_time <- system.time(
   out <- cytof_fix_K_fit(dat$y, truth=truth, prior=prior, init=init, thin_K=5,
-                         warmup=200, B=B, burn=BURN, thin=THIN, print=1,
-                         ncores=8, prop=.5, show_timings=FALSE)
+                         warmup=2000, B=B, burn=BURN, thin=THIN, print=1,
+                         ncores=8, prop=.1, show_timings=FALSE)
 )
 sink(fileDest('simtime.txt')); print(sim_time); sink()
 save(dat, out, file=fileDest('sim_result.RData'))
