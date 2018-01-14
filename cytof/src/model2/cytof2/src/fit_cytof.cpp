@@ -151,11 +151,13 @@ std::vector<List> cytof_fix_K_fit(
       }
     };
 
+    Rcout << "warmup for k = ";
 #pragma omp parallel for
     for (int k=0; k<thetas.size(); k++) {
-      Rcout << "warmup for k=" << prior.K_min + k << std::endl;
+      Rcout << prior.K_min + k << " ";
       warmup_theta(k);
     }
+    Rcout << std::endl;
   }
 
   gibbs<State>(init, update, ass, B, burn, print_freq);

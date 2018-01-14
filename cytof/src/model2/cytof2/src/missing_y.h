@@ -90,3 +90,14 @@ Data get_missing_y_TE(const Data &missing_y, const Data_idx data_idx) {
 
   return missing_y_TE;
 }
+
+Data get_missing_y_TR(const Data &missing_y, const Data_idx data_idx) {
+  const int I = get_I(data_idx.y_TR);
+  Data missing_y_TR(I);
+
+  for (int i=0; i<I; i++) {
+    missing_y_TR[i] = missing_y[i].rows(data_idx.idx_TR[i]);
+  }
+
+  return missing_y_TR;
+}

@@ -1,3 +1,13 @@
+get_beta_new = function(y=c(-3, -2, -1), p_target=c(), plotting=FALSE) {
+  #' Compute betas from y and p_target (new version)
+  #' @export
+  # TODO
+
+  stopifnot(length(y) == 3)
+  stopifnot( all(sort(y) == y) )
+}
+
+
 get_beta <- function(y=c(-5,-3), p_target=c(.99, .01), plotting=TRUE) {
   #' Compute betas from y and p_target
   #' @export

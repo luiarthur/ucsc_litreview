@@ -161,6 +161,7 @@ void update_K_theta(State &state,
   const int J = get_J(y);
 
   // current theta
+  // Should current state be full theta? or theta_TR_curr?
   const auto curr_lam = state.lam;
   state.lam = get_lam_TE(curr_lam, data_idx);
 
@@ -170,38 +171,57 @@ void update_K_theta(State &state,
 
 
   /* propose a new theta_K */
-  update_theta(thetas[K_cand - K_min], data_idx.y_TR, prior, fixed_param, false);
+  //update_theta(thetas[K_cand - K_min], data_idx.y_TR, prior, fixed_param, false);
+  const auto y_TR = get_missing_y_TR(curr_missing_y, data_idx);
+  thetas[K_cand - K_min].missing_y = y_TR;
+
+  for (int t=0; t<thin_K; t++) update_theta_no_K(thetas[K_cand - K_min], data_idx.y_TR, prior, fixed_param, false);
 
   // Sample new theta_ALL, theta_TE
-  State *proposed_theta_TR = &thetas[K_cand - K_min];
-  State proposed_theta_ALL = thetas[K_cand - K_min];
+  //State *proposed_theta_TR = &thetas[K_cand - K_min];
+  //State proposed_theta_ALL = thetas[K_cand - K_min];
   State proposed_theta_TE = thetas[K_cand - K_min];
 
   // Update proposed_theta_ALL
-  proposed_theta_ALL.lam = sample_lam_prior(proposed_theta_TR->W, y);
-  proposed_theta_ALL.missing_y = sample_missing_y_prior(proposed_theta_ALL, y);
+  //proposed_theta_ALL.lam = sample_lam_prior(proposed_theta_TR->W, y);
+  //proposed_theta_ALL.missing_y = sample_missing_y_prior(proposed_theta_ALL, y);
 
-  for (int t=0; t<thin_K; t++) {
-    update_missing_y(proposed_theta_ALL, y, prior);
-    update_lam(proposed_theta_ALL, y, prior);
-  }
+  //for (int t=0; t<thin_K; t++) {
+  //  update_missing_y(proposed_theta_ALL, y, prior);
+  //  update_lam(proposed_theta_ALL, y, prior);
+  //}
 
   // Update proposed_theta_TE
-  proposed_theta_TE.lam = get_lam_TE(proposed_theta_ALL.lam, data_idx);
-  proposed_theta_TE.missing_y = get_missing_y_TE(proposed_theta_ALL.missing_y, data_idx);
+  //proposed_theta_TE.lam = get_lam_TE(proposed_theta_ALL.lam, data_idx);
+  //proposed_theta_TE.missing_y = get_missing_y_TE(proposed_theta_ALL.missing_y, data_idx);
 
+  proposed_theta_TE.missing_y = state.missing_y;
   // Compute acceptance probability
   double log_acc_prob = lq_k_from(K_cand) - lq_k_from(K_curr);
-  log_acc_prob += loglike(proposed_theta_TE, data_idx.y_TE);
-  log_acc_prob -= loglike(state, data_idx.y_TE);
+  //log_acc_prob += loglike(proposed_theta_TE, data_idx.y_TE);
+  //log_acc_prob -= loglike(state, data_idx.y_TE);
+
+  //log_acc_prob += loglike_marginal(proposed_theta_TE, data_idx.y_TE);
+  //log_acc_prob -= loglike_marginal(state, data_idx.y_TE);
+  const double l1 = loglike_marginal(proposed_theta_TE, data_idx.y_TE);
+  const double l2 = loglike_marginal(state, data_idx.y_TE);
+  log_acc_prob += l1 - l2;
 
   const double u = R::runif(0, 1);
 
   //Rcout << "log_acc_prob: " << log_acc_prob << std::endl;
   //Rcout << "log_u:        " << log(u) << std::endl;
+  Rcout << "l1: " << l1 << ", l2: " << l2 << ", ratio: " << log_acc_prob << ", curr_K: "<< K_curr << ", cand_K: " << K_cand << ", K_new: " << (log_acc_prob > log(u) ? K_cand : K_curr) << std::endl;
+
   if (log_acc_prob > log(u)) {
     // swap back the states
-    state = proposed_theta_ALL;
+    state = proposed_theta_TE;
+    state.missing_y = curr_missing_y;
+    state.lam = curr_lam;
+    for (int t=0; t<thin_K; t++) {
+      update_lam(state, y, prior);
+      update_missing_y(state, y, prior);
+    }
   } else {
     state.lam = curr_lam;
     state.missing_y = curr_missing_y;

@@ -28,6 +28,29 @@ double ll_f(const State &state, const Data &y, int i, int n, int j) {
                   sqrt((1 + gam(state, i, n, j)) * state.sig2(i,j)), lg);
 }
 
+double ll_marginal(const State &state, const Data &y, int i, int n, int j) {
+  const int lg = 1; // log the density
+
+  double E_ij = 0;
+  double V_ij = 0;
+  double EV_ij = 0;
+
+  const int K = state.K;
+
+  // Compute E_ij;
+  for (int k=0; k<K; k++) {
+    E_ij += state.W(i,k) * state.mus(i,j,state.Z(j,k));
+  }
+  // Compute V_ij;
+  for (int k=0; k<K; k++) {
+    V_ij += state.W(i,k) * pow(state.mus(i,j,state.Z(j,k)) - E_ij, 2);
+    EV_ij += state.W(i,k) * (state.Z(j,k) == 0 ? state.gams_0(i,j) : 0);
+  }
+  V_ij += (1 + EV_ij) * state.sig2(i,j);
+
+  return R::dnorm(y_final(state, y, i, n, j), E_ij, sqrt(V_ij), lg);
+}
+
 double ll_fz(const State &state, const Data &y, int i, int n, int j, int zz) {
   const double gam_inj = (zz == 0) ? state.gams_0(i,j) : 0;
   const int lg = 1; // log the density
@@ -42,16 +65,31 @@ double loglike(const State &state, const Data &y) {
   const auto N = get_N(y);
   const int J = get_J(y);
   
-  double lg_inj, lf_inj;
-  double y_inj;
-  double mus_inj, sig2_ij, gams_inj;
-  int z_inj;
-
   // TODO: Parallelize?
   for (int i=0; i<I; i++) {
     for (int j=0; j<J; j++) {
       for (int n=0; n<N[i]; n++) {
         ll += ll_p(state, y, i, n, j) + ll_f(state, y, i, n, j);
+      }
+    }
+  }
+
+  return ll;
+}
+
+double loglike_marginal(const State &state, const Data &y) {
+  double ll = 0;
+
+  const int I = get_I(y);
+  const auto N = get_N(y);
+  const int J = get_J(y);
+  
+  // TODO: Parallelize?
+  for (int i=0; i<I; i++) {
+    for (int j=0; j<J; j++) {
+      for (int n=0; n<N[i]; n++) {
+        //ll += ll_p(state, y, i, n, j) + ll_marginal(state, y, i, n, j);
+        ll += ll_marginal(state, y, i, n, j);
       }
     }
   }

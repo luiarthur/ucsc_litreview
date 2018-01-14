@@ -9,6 +9,7 @@
 - [ ] change priors to
       - [ ] $\gamma_^*{0ij} ~ IG(\text{mean}\approx 0, \text{var}=4)$
       - [ ] $\sigma_^2{ij}  ~ IG(\text{mean}=1, \text{var}<\infty)$
+- [ ] change proportion of "training data" in reversible jump
 
 ## By 22 Dec, 2017
 
