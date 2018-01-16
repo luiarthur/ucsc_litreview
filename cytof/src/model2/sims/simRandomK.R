@@ -194,13 +194,13 @@ save(dat, out, file=fileDest('sim_result.RData'))
 plot_cytof_posterior(out, dat$y, outdir=OUTDIR, sim=dat, dat_lim=dat_lim)
 
 ### TMP ###
-maxK = max(sapply(out, function(o) NCOL(o$Z)))
-for(k in 2:maxK) {
-  out_k = Filter(function(o) NCOL(o$Z) == k, out)
-  plot_cytof_posterior(out_k, dat$y, outdir=paste0(OUTDIR,'_out',k,'_'),
-                       sim=dat, dat_lim=dat_lim, supress=c('beta'))
-}
-### TMP ###
+#maxK = max(sapply(out, function(o) NCOL(o$Z)))
+#for(k in 2:maxK) {
+#  out_k = Filter(function(o) NCOL(o$Z) == k, out)
+#  plot_cytof_posterior(out_k, dat$y, outdir=paste0(OUTDIR,'_out',k,'_'),
+#                       sim=dat, dat_lim=dat_lim, supress=c('beta'))
+#}
+#### TMP ###
 
 #plot_cytof_posterior(out, dat$y, outdir=OUTDIR, dat_lim=dat_lim)
 
