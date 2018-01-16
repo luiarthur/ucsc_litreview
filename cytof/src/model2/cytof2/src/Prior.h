@@ -81,8 +81,8 @@ Prior gen_prior_obj(const Nullable<List> &prior_input, int J) {
   out.m_betaBar = getOrInit(prior,"m_betaBar", 0);
   out.s2_betaBar = getOrInit(prior,"s2_betaBar", 10000.0);
 
-  out.a_gam = getOrInit(prior,"a_gam", 6);
-  out.b_gam = getOrInit(prior,"b_gam", 10);
+  out.a_gam = getOrInit(prior,"a_gam", 2.25);
+  out.b_gam = getOrInit(prior,"b_gam", .625); // -> mean .5, var = 1
   out.cs_gam = getOrInit(prior,"cs_gam", 1.0);
   out.a_sig = getOrInit(prior,"a_sig", 2.0);
   out.b_sig = getOrInit(prior,"b_sig", 1.0);

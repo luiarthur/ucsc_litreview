@@ -21,7 +21,7 @@ pairwise_alloc <- function(Z) {
   A
 }
 
-estimate_Z <- function(Zs) {
+estimate_Z <- function(Zs, returnIndex=FALSE) {
   #' Provides a point esitmate of Z using SALSO for feature allocation 
   #' by David B. Dahl.
   #' @export
@@ -29,7 +29,12 @@ estimate_Z <- function(Zs) {
   As = lapply(Zs, pairwise_alloc)
   A_mean = matApply(As, mean)
   mse = sapply(As, function(A) mean((A-A_mean)^2))
-  Zs[[which.min(mse)]]
+
+  if (!returnIndex) {
+    Zs[[which.min(mse)]]
+  } else {
+    which.min(mse)
+  }
 }
 
 #set.seed(1)

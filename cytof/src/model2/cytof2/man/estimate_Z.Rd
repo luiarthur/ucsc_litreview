@@ -5,7 +5,7 @@
 \title{Provides a point esitmate of Z using SALSO for feature allocation 
 by David B. Dahl.}
 \usage{
-estimate_Z(Zs)
+estimate_Z(Zs, returnIndex = FALSE)
 }
 \description{
 Provides a point esitmate of Z using SALSO for feature allocation 

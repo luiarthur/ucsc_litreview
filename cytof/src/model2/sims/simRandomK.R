@@ -184,7 +184,7 @@ truth=list()
 init=list(K=MCMC_K_INIT)
 sim_time <- system.time(
   out <- cytof_fix_K_fit(dat$y, truth=truth, prior=prior, init=init, thin_K=5,
-                         warmup=2000, B=B, burn=BURN, thin=THIN, print=1,
+                         warmup=1000, B=B, burn=BURN, thin=THIN, print=1,
                          ncores=8, prop=.1, show_timings=FALSE)
 )
 sink(fileDest('simtime.txt')); print(sim_time); sink()
@@ -192,6 +192,16 @@ save(dat, out, file=fileDest('sim_result.RData'))
 
 
 plot_cytof_posterior(out, dat$y, outdir=OUTDIR, sim=dat, dat_lim=dat_lim)
+
+### TMP ###
+maxK = max(sapply(out, function(o) NCOL(o$Z)))
+for(k in 2:maxK) {
+  out_k = Filter(function(o) NCOL(o$Z) == k, out)
+  plot_cytof_posterior(out_k, dat$y, outdir=paste0(OUTDIR,'_out',k,'_'),
+                       sim=dat, dat_lim=dat_lim, supress=c('beta'))
+}
+### TMP ###
+
 #plot_cytof_posterior(out, dat$y, outdir=OUTDIR, dat_lim=dat_lim)
 
 png(fileDest('Y%03dsortedByLambda.png'))
@@ -203,7 +213,9 @@ for (i in 1:I) {
 dev.off()
 
 print_bmat(dat$W, fileDest("W_truth.tex"))
-print_bmat(matApply(lapply(out, function(o) o$W), mean), fileDest("W_mean.tex"))
+#print_bmat(matApply(lapply(out, function(o) o$W), mean), fileDest("W_mean.tex"))
+maxK = max(sapply(out, function(o) NCOL(o$Z)))
+print_bmat(matApply(lapply(out, function(o) extendZ(o$W, maxK)), mean), fileDest("W_mean.tex"))
 
 pdf(fileDest('post_beta.pdf'))
 plot_beta(out, missing_count, dat, prior)

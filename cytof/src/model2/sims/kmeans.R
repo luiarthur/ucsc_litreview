@@ -27,8 +27,24 @@ Z = unique(Z,MARGIN=2)
 my.image(Z)
 
 
+K = 10; J=5
+out = as.list(1:((K-1) * J))
+i = 1
+for (k in 2:K) {
+  for (j in 1:J) {
+    print(i)
+    tmp = kmeans(Y,k,alg='Lloyd', iter.max=500)
+    Z = sapply(1:k, function(l) 1 * (colMeans(Y[tmp$clus==l,]) > 0))
+    out[[i]] = unique(Z,MARGIN=2)
+    i = i + 1 
+  }
+}
 
-
+bad_idx = which(sapply(out, function(x) is.na(sum(x))))
+Z.est = if(length(bad_idx)) estimate_Z(out[-bad_idx]) else estimate_Z(out)
+my.image(Z.est[,left_order(Z.est)])
+my.image(t(Z.est[,left_order(Z.est)]))
+#my.image(dat$Z[,left_order(dat$Z)])
 
 ### Simdat $$$
 

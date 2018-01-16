@@ -21,10 +21,13 @@ plot_cytof_posterior <- function(mcmc, y, outdir='', sim=NULL, supress=c(),
 
   ### Z ###
   Z <- lapply(mcmc, function(o) o$Z)
+  idx = estimate_Z(Z, returnIndex=TRUE)
   pointEstZ <- estimate_Z(Z)
+  K = sapply(Z, NCOL)
   if (!("Z" %in% supress)) {
-    Z_mean <- matApply(Z, mean)
-    Z_sd <- matApply(Z, sd)
+    Z_same_dim = lapply(Z, extendZ, max(K))
+    Z_mean <- matApply(Z_same_dim, mean)
+    Z_sd <- matApply(Z_same_dim, sd)
     ord <- left_order(Z_mean>.5)
 
     if (show_all_Z) for (i in 1:length(mcmc)) {
@@ -51,8 +54,10 @@ plot_cytof_posterior <- function(mcmc, y, outdir='', sim=NULL, supress=c(),
   ### W ###
   if (!("W" %in% supress)) {
     W <- lapply(mcmc, function(o) o$W)
-    W_mean <- matApply(W, mean)
-    W_sd <- matApply(W, sd)
+    K = sapply(W, NCOL)
+    W_same_dim = lapply(W, extendZ, max(K))
+    W_mean <- matApply(W_same_dim, mean)
+    W_sd <- matApply(W_same_dim, sd)
     my.image(W_sd[,ord], mn=0, mx=.1, 
              ylab="I", xlab="K", main="Posterior SD: W", addL=TRUE)
     my.image(W_mean[,ord], ylab="I", xlab="K", main="Posterior Mean: W", addL=TRUE)
@@ -63,6 +68,15 @@ plot_cytof_posterior <- function(mcmc, y, outdir='', sim=NULL, supress=c(),
     if (outdir > '') sink(fileDest('W.txt'))
     cat("Posterior Mean: W\n")
     print(W_mean)
+    if(compareWithData) {
+      cat("True W\n")
+      print(sim$W)
+    }
+    if (outdir > '') sink()
+
+    if (outdir > '') sink(fileDest('W_pointEst.txt'))
+    cat("Posterior Point Estimate for W:\n")
+    print(W[[idx]])
     if(compareWithData) {
       cat("True W\n")
       print(sim$W)
@@ -90,10 +104,10 @@ plot_cytof_posterior <- function(mcmc, y, outdir='', sim=NULL, supress=c(),
     #mus posterior vs sim data
     # pch is ? if num obs < 30
     S0_ij <- function(i,j) {
-      sum(pointEstZ[j,1+last(out)$lam[[i]]] == 0) 
+      sum(pointEstZ[j,1+out[[idx]]$lam[[i]]] == 0) 
     }
     S1_ij <- function(i,j) {
-      sum(pointEstZ[j,1+last(out)$lam[[i]]] == 1) 
+      sum(pointEstZ[j,1+out[[idx]]$lam[[i]]] == 1) 
     }
     S0_count = matrix(NA, I, J)
     S1_count = matrix(NA, I, J)
@@ -214,7 +228,7 @@ plot_cytof_posterior <- function(mcmc, y, outdir='', sim=NULL, supress=c(),
 
   ### v ###
   if (!('v' %in% supress)) {
-    v <- sapply(mcmc, function(o) o$v)
+    v <- sapply(mcmc, function(o) extendZ(t(o$v), max(K)))
     v_ci <- t(apply(v, 1, quantile, quant))
     plot(rowMeans(v), pch=20, cex=2, ,main='v: Posterior', fg='grey',
          xlab='k', ylab='v', ylim=c(0,1))
@@ -229,7 +243,8 @@ plot_cytof_posterior <- function(mcmc, y, outdir='', sim=NULL, supress=c(),
   
   ### H ###
   if (!('H' %in% supress)) {
-    H <- sapply(mcmc, function(w) w$H)
+    H <- lapply(mcmc, function(w) w$H)
+    H = sapply(H, extendZ, max(K))
     H_ci = t(apply(H, 1, quantile, quant))
     if (!('Z' %in% supress)) {
       plot(rowMeans(H), col=(Z_mean>.5)+3, pch=20, fg='grey', ylab='H',
