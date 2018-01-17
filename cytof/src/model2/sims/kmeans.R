@@ -29,21 +29,37 @@ my.image(Z)
 
 K = 10; J=5
 out = as.list(1:((K-1) * J))
+km = as.list(1:((K-1) * J))
 i = 1
 for (k in 2:K) {
   for (j in 1:J) {
     print(i)
     tmp = kmeans(Y,k,alg='Lloyd', iter.max=500)
-    Z = sapply(1:k, function(l) 1 * (colMeans(Y[tmp$clus==l,]) > 0))
+    #tmp = kmeans((Y>0)*1,k,alg='Lloyd', iter.max=500)
+    #Z = sapply(1:k, function(l) 1 * (colMeans(Y[tmp$clus==l,]) > 0))
+    Z = t((tmp$centers>0) * 1)
+    #Z = t((tmp$centers>.5) * 1)
     out[[i]] = unique(Z,MARGIN=2)
+    km[[i]] = tmp
     i = i + 1 
   }
 }
 
 bad_idx = which(sapply(out, function(x) is.na(sum(x))))
 Z.est = if(length(bad_idx)) estimate_Z(out[-bad_idx]) else estimate_Z(out)
+ind.est = if(length(bad_idx)) estimate_Z(out[-bad_idx],ret=T) else estimate_Z(out, ret=T)
 my.image(Z.est[,left_order(Z.est)])
 my.image(t(Z.est[,left_order(Z.est)]))
+
+### Image of Y by clusters ###
+layout(matrix(c(1,1,1,1,1,1,2,2,2), 3, 3, byrow = TRUE))
+my.image(Y[km[[ind.est]]$clus,], mn=-4, mx=4, col=blueToRed())
+my.image(t(Z.est))
+par(mfrow=c(1,1))
+#my.image(km[[ind.est]]$centers, mn=-4, mx=4, col=blueToRed())
+#my.image(t(Z.est[,left_order(Z.est)]))
+#my.image(km[[ind.est]]$centers>0)
+#par(mfrow=c(1,1))
 #my.image(dat$Z[,left_order(dat$Z)])
 
 ### Simdat $$$
