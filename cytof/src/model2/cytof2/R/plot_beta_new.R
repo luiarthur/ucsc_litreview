@@ -4,8 +4,8 @@ get_beta_new = function(y=c(-3, -2, -1), p_target=c(.1, .99, .01), plotting=FALS
   # TODO
 
   b0 = logit(p_target[2])
-  b1 = (b0 - logit(p_target[1])) / (p_target[2] - p_target[1])^2
-  x = (logit(p_target[3]) - b0) / (p_target[3] - p_target[1]) / b1
+  b1 = (b0 - logit(p_target[1])) / (y[2] - y[1])^2
+  x = -(logit(p_target[3]) - b0) / (y[3] - y[2])^.5 / b1
 
   c(b0=b0, b1=b1, x=x)
 }
@@ -63,7 +63,7 @@ plot_prob_missing_new <- function(mcmc, i, j, c0, q=c(.025,.975),
                             from=min(y_grid), to=max(y_grid), col=col.area)
 }
 
-add_beta_prior_new <- function(prior, yy=seq(-10,10,l=100), SS=1000) {
+add_beta_prior_new <- function(prior, yy=seq(-10,10,l=100), SS=1000, ret=FALSE) {
   c0 = prior$c0
   bb_samps = rnorm(SS, prior$m_betaBar,sqrt(prior$s2_betaBar))
   b0_samps = rnorm(SS, bb_samps, sqrt(prior$s2_beta0))
@@ -82,6 +82,8 @@ add_beta_prior_new <- function(prior, yy=seq(-10,10,l=100), SS=1000) {
              col.area=rgb(1,0,0,.2))
   lines(yy,p_mean,col='red', lwd=1, lty=2)
   lines(yy,p_med,col='red', lwd=3, lty=2)
+
+  if (ret) p_samps
 }
 
 plot_beta_new <- function(mcmc, missing_count, dat=NULL, prior=NULL) {

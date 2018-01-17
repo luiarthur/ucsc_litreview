@@ -78,16 +78,16 @@ State gen_init_obj(const Nullable<List> &init_input,
   State state;
   state.K = K;
 
-  const arma::vec init_beta_1 = arma::ones<arma::vec>(J);
+  const arma::vec init_beta_1 = arma::ones<arma::vec>(J) * prior.a_beta / prior.b_beta;
   state.beta_1 = getInitOrFix(init, truth, "beta_1", init_beta_1);
 
-  const arma::vec init_x = arma::ones<arma::vec>(J);
+  const arma::vec init_x = arma::ones<arma::vec>(J) * prior.a_x / prior.b_x;
   state.x = getInitOrFix(init, truth, "x", init_x);
 
-  const arma::mat init_beta_0 = arma::zeros<arma::mat>(I,J);
+  const arma::mat init_beta_0 = arma::ones<arma::mat>(I,J) * prior.m_betaBar;
   state.beta_0 = getInitOrFix(init, truth, "beta_0", init_beta_0);
 
-  const arma::vec init_betaBar_0 = arma::zeros<arma::vec>(J);
+  const arma::vec init_betaBar_0 = arma::ones<arma::vec>(J) * prior.m_betaBar;
   state.betaBar_0 = getInitOrFix(init, truth, "betaBar_0", init_betaBar_0);
 
   const arma::mat init_gams_0 = arma::ones<arma::mat>(I,J);
