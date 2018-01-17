@@ -14,7 +14,7 @@ OUTDIR <- args[3]
 B <- as.integer(args[4])
 BURN <- as.integer(args[5])
 THIN <- as.integer(args[6])
-dat_lim = c(-4,4)
+dat_lim = c(-5,5)
 
 fileDest = function(name) paste0(OUTDIR, name)
 
