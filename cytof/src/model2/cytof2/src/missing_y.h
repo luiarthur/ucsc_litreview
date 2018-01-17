@@ -1,6 +1,11 @@
-double ll_p_given_yinj(const State &state, double yinj, int i, int n, int j) {
-  const double xinj = state.beta_0(i,j) - state.beta_1[j] * yinj;
-  return log(inv_logit(xinj)); // It should be missing!
+double ll_p_given_yinj(const State &state, double yinj, const Prior &prior, int i, int n, int j) {
+  //const double xinj = state.beta_0(i,j) - state.beta_1[j] * yinj;
+
+  // NEW STUFF
+  const double rinj = r_inj(state.beta_0(i,j),state.beta_1(j),state.x(j),prior.c0,yinj);
+  // END of NEW STUFF
+
+  return log(inv_logit(rinj)); // It should be missing!
 }
 
 double ll_f_given_yinj(const State &state, double yinj, int i, int n, int j) {
@@ -13,7 +18,7 @@ void update_missing_yinj(State &state, const Data &y, const Prior &prior,
                          int i, int n, int j) {
 
   auto log_fc = [&](double y_inj) {
-    return ll_p_given_yinj(state, y_inj, i, n, j) +
+    return ll_p_given_yinj(state, y_inj, prior, i, n, j) +
            ll_f_given_yinj(state, y_inj, i, n, j);
   };
 

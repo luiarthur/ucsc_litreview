@@ -9,7 +9,7 @@ void update_beta1j(State &state, const Data &y, const Prior &prior, int j) {
 
     for (int i=0; i<I; i++) {
       for (int n=0; n<N[i]; n++) {
-        ll += ll_p_given_beta(state, y, state.beta_0(i,j), b1j, i, n ,j);
+        ll += ll_p_given_beta(state, y, prior, state.beta_0(i,j), b1j, state.x(j), i, n ,j);
       }
     }
 
@@ -20,17 +20,42 @@ void update_beta1j(State &state, const Data &y, const Prior &prior, int j) {
   state.beta_1[j] = exp(metropolis::uni(log_b1j, log_fc, prior.cs_beta1j));
 }
 
+void update_xj(State &state, const Data &y, const Prior &prior, int j) {
+  auto log_fc = [&](double log_xj) {
+    const double lp = lp_log_gamma(log_xj, prior.a_x, prior.b_x);
+    const double xj = exp(log_xj);
+    const double b1j = state.beta_1(j);
+
+    const int I = get_I(y);
+    const auto N = get_N(y);
+    double ll = 0;
+
+    for (int i=0; i<I; i++) {
+      for (int n=0; n<N[i]; n++) {
+        ll += ll_p_given_beta(state, y, prior, state.beta_0(i,j), b1j, xj, i, n ,j);
+      }
+    }
+
+    return lp + ll;
+  };
+
+  const double log_xj= log(state.x(j));
+  state.x(j) = exp(metropolis::uni(log_xj, log_fc, prior.cs_x));
+}
+
+
 void update_beta0ij(State &state, const Data &y, const Prior &prior, int i, int j) {
   auto log_fc = [&](double b0ij) {
     const int lg = 1; // log density
-    const double lp = R::dnorm(b0ij, state.betaBar_0[j], sqrt(prior.s2_beta0), lg);
+    const double lp = R::dnorm(b0ij, state.betaBar_0(j), sqrt(prior.s2_beta0), lg);
 
     const int Ni = get_Ni(y, i);
-    const double b1j = state.beta_1[j];
+    const double b1j = state.beta_1(j);
+    const double xj = state.x(j);
     double ll = 0;
 
     for (int n=0; n<Ni; n++) {
-      ll += ll_p_given_beta(state, y, b0ij, b1j, i, n ,j);
+      ll += ll_p_given_beta(state, y, prior, b0ij, b1j, xj, i, n ,j);
     }
 
     return lp + ll;
@@ -65,6 +90,7 @@ void update_beta(State &state, const Data &y, const Prior &prior) {
   for (int j=0; j<J; j++) {
     update_betaBar0j(state, y, prior, j);
     update_beta1j(state, y, prior, j);
+    update_xj(state, y, prior, j); // NEW STUFF
     for (int i=0; i<I; i++) {
       update_beta0ij(state, y, prior, i, j);
     }

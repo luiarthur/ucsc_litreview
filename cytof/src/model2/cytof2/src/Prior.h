@@ -5,6 +5,8 @@ struct Prior {
   double s2_beta0; double cs_beta0;
   // betaBar_{0j} ~ N(0, s2_beta)
   double m_betaBar; double s2_betaBar;
+  // x_j ~ Gamma(a_x, b_x)
+  double a_x; double b_x; double cs_x;
   
   // gamma_{0ij}
   double a_gam; double b_gam; double cs_gam;
@@ -30,8 +32,6 @@ struct Prior {
   // missing y
   double cs_y;
   double c0 = -2;
-  double c_lo = -1;
-  double c_hi = -3;
 
   // K
   int K_min;  // 1?
@@ -75,6 +75,10 @@ Prior gen_prior_obj(const Nullable<List> &prior_input, int J) {
   out.a_beta = getOrInit(prior,"a_beta", 200000); // .001
   out.b_beta = getOrInit(prior,"b_beta", 10000);  // .001
 
+  out.a_x = getOrInit(prior,"a_x", 1.0);
+  out.b_x = getOrInit(prior,"b_x", 1.0);
+  out.cs_x = getOrInit(prior,"cs_x", 1.0);
+
   out.cs_beta1j = getOrInit(prior,"b_beta1j", 1.0);
   out.s2_beta0 = getOrInit(prior,"s2_beta0", 1000.0);
   out.cs_beta0 = getOrInit(prior,"cs_beta0", 1.0);
@@ -114,6 +118,7 @@ Prior gen_prior_obj(const Nullable<List> &prior_input, int J) {
   out.d_w = getOrInit(prior,"d_w", 1.0);
 
   out.cs_y = getOrInit(prior,"cs_y", 1.0);
+  out.c0 = getOrInit(prior,"c0", -2.0);
 
   out.K_min = getOrInit(prior,"K_min", 1);
   out.K_max = getOrInit(prior,"K_max", 15);

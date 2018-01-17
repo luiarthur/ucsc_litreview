@@ -1,4 +1,4 @@
-plot_cytof_posterior <- function(mcmc, y, outdir='', sim=NULL, supress=c(),
+plot_cytof_posterior <- function(mcmc, y, prior, outdir='', sim=NULL, supress=c(),
                                  show_all_Z=FALSE, quant=c(.025,.975),
                                  dat_lim=c(-5,5)) {
   fileDest = function(name) paste0(outdir, name)
@@ -87,7 +87,7 @@ plot_cytof_posterior <- function(mcmc, y, outdir='', sim=NULL, supress=c(),
   ### beta ###
   if (!("beta" %in% supress)) {
     missing_count <- get_missing_count(y)
-    plot_beta(mcmc, missing_count, sim)
+    plot_beta_new(mcmc, missing_count, sim, prior)
   }
 
   ### mus ###

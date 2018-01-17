@@ -2,6 +2,7 @@ using type_lam = std::vector<arma::Col<int>>;
 
 struct State {
   arma::vec beta_1;    // J
+  arma::vec x;         // J
   arma::mat beta_0;    // I x J
   arma::vec betaBar_0; // J
 
@@ -79,6 +80,9 @@ State gen_init_obj(const Nullable<List> &init_input,
 
   const arma::vec init_beta_1 = arma::ones<arma::vec>(J);
   state.beta_1 = getInitOrFix(init, truth, "beta_1", init_beta_1);
+
+  const arma::vec init_x = arma::ones<arma::vec>(J);
+  state.x = getInitOrFix(init, truth, "x", init_x);
 
   const arma::mat init_beta_0 = arma::zeros<arma::mat>(I,J);
   state.beta_0 = getInitOrFix(init, truth, "beta_0", init_beta_0);

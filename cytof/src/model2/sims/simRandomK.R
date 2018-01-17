@@ -54,8 +54,12 @@ dat_lim = c(-10,10)
 #y_beta = c(-11,-10)
 #y_beta = c(-6,-5.5)
 #y_beta = c(-5,-2)
-y_beta = c(-5,-4.5)
-bdat = get_beta(y=y_beta, p_tar=c(.99,.01), plot=FALSE)
+
+#y_beta = c(-5, -4, -4.5)
+#bdat = get_beta_new(y=y_beta, p_tar=c(.1, .99,.01), plot=FALSE)
+
+y_beta = c(-5, -4.5)
+bdat = get_beta(y=y_beta, p_tar=c(.99, .01), plot=FALSE)
 
 dat <- simdat(I=I, N=c(2,3,1)*DATA_SIZE, J=J, K=K, 
 #dat <- simdat(I=I, N=c(2,3,1)*10000, J=J, K=K, 
@@ -150,33 +154,21 @@ dev.off()
 dat$y <- lapply(dat$y, shuffle_mat)
 set.seed(SEED_MCMC)
 prior = list(cs_v=4, cs_h=3, d_w=1/MCMC_K_INIT,
-             a_beta=90, b_beta=30,
-             m_betaBar=-11, s2_betaBar=.1, 
-             s2_beta0=.1,
+             m_betaBar=4.6, s2_betaBar=.1, s2_beta0=.1, #b0
+             a_beta=8.6*10, b_beta=10, # b1
+             c0=-4, a_x=12*10, b_x=10, # x
              K_min=1, K_max=10, a_K=2)
 
 pdf(fileDest('prior_prob_miss.pdf'))
 yy = seq(-15,15,l=100)
-plot(yy, 1 / (1 + exp(-dat$b0[1] + dat$b1[1]*yy)), 
+pp = logistic(dat$b0[1] - dat$b1[1] * yy)
+plot(yy, pp, 
      xlab='y', ylab='prob of missing', fg='grey', type='l', lwd=2,
      ylim=0:1, xlim=range(yy))
 #abline(v=y_beta, col='grey')
 
-prob_miss_prior = {
-  SS = 1000
-  bb_samps = rnorm(SS,prior$m_betaBar,sqrt(prior$s2_betaBar))
-  b0_samps = rnorm(SS, bb_samps, sqrt(prior$s2_beta0))
-  b1_samps = rgamma(SS, prior$a_beta, prior$b_beta)
-  p_samps = sapply(1:SS, function(s) 1 / (1 + exp(-b0_samps[s] + b1_samps[s]*yy)))
-  p_lo = apply(p_samps, 1, quantile, .025)
-  p_hi = apply(p_samps, 1, quantile, .975)
-  p_med = apply(p_samps, 1, quantile, .5)
-  p_mean = rowMeans(p_samps)
-  color.btwn(yy, p_lo, p_hi, from=yy[1], to=yy[length(yy)],
-             col.area=rgb(1,0,0,.2))
-  lines(yy,p_mean,col='red', lwd=1, lty=2)
-  lines(yy,p_med,col='red', lwd=3, lty=2)
-}
+#plot(0, type='n', ylim=0:1, xlim=c(-6,0))
+add_beta_prior_new(prior, yy=yy, SS=1000)
 dev.off()
 
 #truth=list(K=MCMC_K)
@@ -191,7 +183,7 @@ sink(fileDest('simtime.txt')); print(sim_time); sink()
 save(dat, out, file=fileDest('sim_result.RData'))
 
 
-plot_cytof_posterior(out, dat$y, outdir=OUTDIR, sim=dat, dat_lim=dat_lim)
+plot_cytof_posterior(out, dat$y, prior, outdir=OUTDIR, sim=dat, dat_lim=dat_lim)
 
 ### TMP ###
 #maxK = max(sapply(out, function(o) NCOL(o$Z)))

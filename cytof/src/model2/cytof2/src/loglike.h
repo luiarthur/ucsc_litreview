@@ -2,22 +2,48 @@ double y_final(const State &state, const Data &y, int i, int n, int j) {
   return missing(y,i,n,j) ? state.missing_y[i](n,j) : y[i](n,j);
 }
 
-double p(const State &state, const Data &y, int i, int n, int j) {
-  double y_inj = y_final(state, y, i, n, j);
-  const double xinj = state.beta_0(i,j) - state.beta_1[j] * y_inj;
-  return inv_logit(xinj);
+double r_inj(double b0ij, double b1j, double xj, double c0, double yinj) {
+  double out;
+
+  if (yinj < c0) {
+    out = b0ij - b1j * pow(yinj - c0, 2);
+  } else {
+    out = b0ij - b1j * xj * pow(yinj - c0, .5);
+  }
+
+  return out;
 }
 
-double ll_p(const State &state, const Data &y, int i, int n, int j) {
-  double p_inj = p(state, y, i, n, j);
+double p(const State &state, const Data &y, const Prior &prior,
+         int i, int n, int j) {
+  double y_inj = y_final(state, y, i, n, j);
+  //const double r_inj = state.beta_0(i,j) - state.beta_1[j] * y_inj;
+
+  // NEW STUFF
+  const double c0 = prior.c0;
+  const double rinj = r_inj(state.beta_0(i,j), state.beta_1(j), state.x(j), prior.c0, y_inj);
+  // END of NEW STUFF
+
+  return inv_logit(rinj);
+}
+
+double ll_p(const State &state, const Data &y, const Prior &prior, 
+            int i, int n, int j) {
+  double p_inj = p(state, y, prior, i, n, j);
   return missing(y, i, n, j) ? log(p_inj) : log(1-p_inj);
 }
 
-double ll_p_given_beta(const State &state, const Data &y, 
-                       double b0ij, double b1j, int i, int n, int j) {
+double ll_p_given_beta(const State &state, const Data &y, const Prior &prior,
+                       double b0ij, double b1j, double xj, int i, int n, int j) {
   double y_inj = y_final(state, y, i, n, j);
-  const double x_inj = b0ij - b1j * y_inj;
-  const double p_inj = inv_logit(x_inj);
+  //const double r_inj = b0ij - b1j * y_inj;
+
+  // NEW STUFF
+  const double c0 = prior.c0;
+  const double rinj = r_inj(b0ij, b1j, xj, prior.c0, y_inj);
+  // END of NEW STUFF
+
+  const double p_inj = inv_logit(rinj);
 
   return missing(y, i, n, j) ? log(p_inj) : log(1-p_inj);
 }
@@ -58,7 +84,7 @@ double ll_fz(const State &state, const Data &y, int i, int n, int j, int zz) {
                   sqrt((1 + gam_inj) * state.sig2(i,j)), lg);
 }
 
-double loglike(const State &state, const Data &y) {
+double loglike(const State &state, const Data &y, const Prior &prior) {
   double ll = 0;
 
   const int I = get_I(y);
@@ -69,7 +95,7 @@ double loglike(const State &state, const Data &y) {
   for (int i=0; i<I; i++) {
     for (int j=0; j<J; j++) {
       for (int n=0; n<N[i]; n++) {
-        ll += ll_p(state, y, i, n, j) + ll_f(state, y, i, n, j);
+        ll += ll_p(state, y, prior, i, n, j) + ll_f(state, y, i, n, j);
       }
     }
   }

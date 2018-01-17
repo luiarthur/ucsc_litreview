@@ -107,7 +107,7 @@ std::vector<List> cytof_fix_K_fit(
   auto ass = [&](const State &state, int ii) {
     if (ii - burn >= 0) {
       if ( (ii-burn+1) % compute_loglike_every == 0 || ii == burn ) {
-        ll = loglike(state, y);
+        ll = loglike(state, y, prior);
       }
 
       for (int s=0; s<I; s++) {
@@ -115,6 +115,7 @@ std::vector<List> cytof_fix_K_fit(
       }
 
       out[ii - burn] = List::create(
+          Named("x") = state.x,
           Named("beta_1") = state.beta_1,
           Named("beta_0") = state.beta_0,
           Named("betaBar_0") = state.betaBar_0,
