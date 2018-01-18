@@ -55,26 +55,20 @@ double ll_f(const State &state, const Data &y, int i, int n, int j) {
 }
 
 double ll_marginal(const State &state, int i, int n, int j) {
-  const int lg = 1; // log the density
+  const int lg = 0; // log the density
 
-  double E_ij = 0;
-  double V_ij = 0;
-  double EV_ij = 0;
-
+  double fm = 0;
   const int K = state.K;
-
-  // Compute E_ij;
+  double g;
+  
   for (int k=0; k<K; k++) {
-    E_ij += state.W(i,k) * state.mus(i,j,state.Z(j,k));
+    g = state.Z(j,k) == 0 ? state.gams_0(i,j) : 0;
+    fm += state.W(i,k) * R::dnorm(state.missing_y[i](n,j),
+                                  state.mus(i,j,state.Z(j,k)),
+                                  sqrt(state.sig2(i,j) * (1 + g)), lg);
   }
-  // Compute V_ij;
-  for (int k=0; k<K; k++) {
-    V_ij += state.W(i,k) * pow(state.mus(i,j,state.Z(j,k)) - E_ij, 2);
-    EV_ij += state.W(i,k) * (state.Z(j,k) == 0 ? state.gams_0(i,j) : 0);
-  }
-  V_ij += (1 + EV_ij) * state.sig2(i,j);
 
-  return R::dnorm(state.missing_y[i](n,j), E_ij, sqrt(V_ij), lg);
+  return log(fm);
 }
 
 double ll_fz(const State &state, const Data &y, int i, int n, int j, int zz) {

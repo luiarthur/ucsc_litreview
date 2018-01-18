@@ -151,7 +151,7 @@ dev.off()
 #prior = list(cs_v=4, cs_h=3, d_w=1/MCMC_K)
 ### END ###
 
-bdat.prior = get_beta_new(y=c(-7,-4,-3.5), p_tar=c(.5, .99,.01), plot=FALSE)
+bdat.prior = get_beta_new(y=c(-5, c0 <- -2, -1), p_tar=c(.1, .99,.01))
 print(bdat.prior)
 
 dat$y <- lapply(dat$y, shuffle_mat)
@@ -159,7 +159,7 @@ set.seed(SEED_MCMC)
 prior = list(cs_v=4, cs_h=3, d_w=1/MCMC_K_INIT,
              m_betaBar=bdat.prior['b0'], s2_betaBar=.001, s2_beta0=.001, #b0
              a_beta=bdat.prior['b1'] * 50, b_beta=50, # b1
-             c0=-4, a_x=bdat.prior['x'] * 50, b_x=50, # x
+             c0=c0, a_x=bdat.prior['x'] * 50, b_x=50, # x
              K_min=1, K_max=10, a_K=2)
 print(prior)
 
