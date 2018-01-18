@@ -18,6 +18,12 @@ my.image(unique(Y[order(out[[ind.est]]$km$clus),]>0,MARGIN=1))
 my.image(t(Z.est[, left_order(Z.est)]))
 par(mfrow=c(1,1))
 
+### PCA VERSION ###
+pY = prcomp(Y,scale=T)$x[,1:5]
+outPy = kmeans(pY, 7, iter=1000)
+plot(table(outPy$cluster) / sum(table(outPy$cluster)))
+my.image(Y[outPy$clus,], mn=-4, mx=4, col=blueToRed())
+
 ### Simdat $$$
 
 I = 3
