@@ -1,10 +1,19 @@
 # TODO
 
+## 18 Jan, 2017
+
+- [ ] Fix: `loglike_marginal`
+- [ ] Fix: `ll_marginal`
+- [ ] Fix: `update_K_theta`
+    - [ ] Remove: `update_theta_no_K`
+    - [ ] Add: `update_theta_depending_on_K`
+- [ ] Fix: `ll_p` (integrate over missing y with Monte Carlo averaging)
+
 ## 13 Jan, 2017
 
-- [ ] change logistic link to new link function
+- [x] change logistic link to new link function
     - [ ] use it for CB
-    - [ ] simulation studies
+    - [x] simulation studies
 - [x] keep a record of the proposed and current K, theta, and acceptance ratio
 - [x] change priors to
       - [x] $\gamma_^*{0ij} ~ IG(\text{mean}\approx 0, \text{var}=4)$
