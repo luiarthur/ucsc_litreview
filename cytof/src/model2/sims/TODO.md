@@ -2,8 +2,9 @@
 
 ## 18 Jan, 2017
 
-- [ ] Fix: `loglike_marginal`
 - [ ] Fix: `ll_marginal`
+- [ ] Fix: `loglike_marginal`
+    - [ ] impute stuff
 - [ ] Fix: `update_K_theta`
     - [ ] Remove: `update_theta_no_K`
     - [ ] Add: `update_theta_depending_on_K`

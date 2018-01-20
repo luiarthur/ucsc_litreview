@@ -55,6 +55,8 @@ double ll_f(const State &state, const Data &y, int i, int n, int j) {
 }
 
 double ll_marginal(const State &state, int i, int n, int j) {
+  // loglike as a function of y only, and not m
+  // with lambda marginalized out.
   const int lg = 0; // log the density
 
   double fm = 0;
@@ -109,7 +111,7 @@ double loglike_marginal(const State &state) {
     for (int j=0; j<J; j++) {
       for (int n=0; n<N[i]; n++) {
         //ll += ll_p(state, y, i, n, j) + ll_marginal(state, y, i, n, j);
-        ll += ll_marginal(state, i, n, j);
+        ll += ll_marginal(state, i, n, j); // Need to add ll_p marginalized 
       }
     }
   }
