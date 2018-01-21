@@ -9,6 +9,7 @@
     - [ ] Remove: `update_theta_no_K`
     - [ ] Add: `update_theta_depending_on_K`
 - [ ] Fix: `ll_p` (integrate over missing y with Monte Carlo averaging)
+- [ ] Change: data simulation missing mechanism
 
 ## 13 Jan, 2017
 
