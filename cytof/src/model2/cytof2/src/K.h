@@ -1,4 +1,4 @@
-void update_K_theta(State &state, 
+void update_K_theta(State &state,
                     const Data &y, const Data_idx &data_idx,
                     const Fixed &fixed_param,
                     const Prior &prior, std::vector<State> &thetas,
@@ -8,7 +8,7 @@ void update_K_theta(State &state,
   const int K_min = prior.K_min;
   const int K_max = prior.K_max;
   const int a = prior.a_K;
-  
+
   auto sample_k = [K_max, K_min, a](int K) {
     int out;
 
@@ -67,8 +67,8 @@ void update_K_theta(State &state,
 
   // Compute acceptance probability
   double log_acc_prob = lq_k_from(K_cand) - lq_k_from(K_curr);
-  const double l1 = loglike_marginal(proposed_theta);
-  const double l2 = loglike_marginal(curr_theta);
+  const double l1 = loglike_marginal(proposed_theta, curr_theta.missing_y, prior);
+  const double l2 = loglike_marginal(curr_theta, curr_theta.missing_y, prior);
   log_acc_prob += l1 - l2;
 
   const double u = R::runif(0, 1);

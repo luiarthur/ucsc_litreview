@@ -2,13 +2,13 @@
 
 ## 18 Jan, 2017
 
-- [ ] Fix: `ll_marginal`
-- [ ] Fix: `loglike_marginal`
-    - [ ] impute stuff
+- [x] Fix: `ll_marginal`
+- [x] Fix: `loglike_marginal`
+    - [x] impute stuff
+- [x] Fix: `ll_p` (integrate over missing y with Monte Carlo averaging)
 - [ ] Fix: `update_K_theta`
     - [ ] Remove: `update_theta_no_K`
     - [ ] Add: `update_theta_depending_on_K`
-- [ ] Fix: `ll_p` (integrate over missing y with Monte Carlo averaging)
 - [ ] Change: data simulation missing mechanism
 
 ## 13 Jan, 2017

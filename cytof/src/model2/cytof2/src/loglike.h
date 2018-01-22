@@ -57,7 +57,7 @@ double ll_f(const State &state, const Data &y, int i, int n, int j) {
 double ll_marginal(const State &state, int i, int n, int j) {
   // loglike as a function of y only, and not m
   // with lambda marginalized out.
-  const int lg = 0; // log the density
+  const int lg = 0; // don't log the density
 
   double fm = 0;
   const int K = state.K;
@@ -71,6 +71,23 @@ double ll_marginal(const State &state, int i, int n, int j) {
   }
 
   return log(fm);
+}
+
+double rand_marginal(const State &state, int i, int n, int j) {
+  // sample y from marginal distribution (with lambda marginalized out).
+  const int K = state.K;
+  double log_p[K];
+
+  for (int k=0; k<K; k++) {
+    log_p[k] = log(state.W(i,k));
+  }
+
+  const int rand_k = wsample_index_log_prob(log_p, K);
+  const double g = state.Z(j,rand_k) == 0 ? state.gams_0(i,j) : 0;
+  const double r_y = R::rnorm(state.mus(i,j,state.Z(j,rand_k)),
+                              sqrt(state.sig2(i,j) * (1 + g)));
+
+  return log(r_y);
 }
 
 double ll_fz(const State &state, const Data &y, int i, int n, int j, int zz) {
@@ -99,7 +116,32 @@ double loglike(const State &state, const Data &y, const Prior &prior) {
   return ll;
 }
 
-double loglike_marginal(const State &state) {
+arma::vec missing_y_samps(const State &state, const Data &y, int i, int n, int j, const int T=10) {
+  arma::vec out(T);
+  for (int t=0; t<T; t++) {
+    out[t] = rand_marginal(state, i, n, j);
+  }
+  return out;
+}
+
+double lf_m_given_y_theta(const State &state, const Data &y, const Prior &prior, int i, int n, int j, const int T=10) {
+  const auto y_imp = missing_y_samps(state, y, i, n, j, T);
+  arma::vec out(T);
+
+  const double c0 = prior.c0;
+  double rinj;
+  double pinj;
+ 
+  for (int t=0; t<T; t++) {
+    rinj =  r_inj(state.beta_0(i,j), state.beta_1(j), state.x(j), prior.c0, y_imp[t]);
+    pinj = inv_logit(rinj);
+    out[t] = pinj;
+  }
+
+  return mean(out);
+}
+
+double loglike_marginal(const State &state, const Data &y, const Prior &prior, const int T=10) {
   double ll = 0;
 
   const int I = get_I(state.missing_y);
@@ -111,7 +153,14 @@ double loglike_marginal(const State &state) {
     for (int j=0; j<J; j++) {
       for (int n=0; n<N[i]; n++) {
         //ll += ll_p(state, y, i, n, j) + ll_marginal(state, y, i, n, j);
-        ll += ll_marginal(state, i, n, j); // Need to add ll_p marginalized
+
+        // NEW STUFF
+        if (missing(y,i,n,j)) {
+          ll += lf_m_given_y_theta(state, y, prior, i, n, j, T);
+        } else {
+          ll += ll_marginal(state, i, n, j); // f(m | y, theta) is cancelled in metropolis ratio
+        }
+
       }
     }
   }

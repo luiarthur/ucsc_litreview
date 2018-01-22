@@ -24,7 +24,7 @@ void gen_data_idx(const Data &y, Data_idx &data_idx, double prop_for_training=.0
     if (shuf) {
       std::random_shuffle(idx.begin(), idx.end());
     }
-    
+
     idx_train[i] = idx.head(n_train);
     idx_test[i] = idx.tail(n_test);
 

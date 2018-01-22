@@ -8,7 +8,7 @@ using namespace Rcpp;
 
 // missing_R
 bool missing_R(const std::vector<arma::mat>& y, int i, int n, int j);
-RcppExport SEXP _cytof2_missing_R(SEXP ySEXP, SEXP iSEXP, SEXP nSEXP, SEXP jSEXP) {
+RcppExport SEXP cytof2_missing_R(SEXP ySEXP, SEXP iSEXP, SEXP nSEXP, SEXP jSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -22,7 +22,7 @@ END_RCPP
 }
 // cytof_fix_K_fit
 std::vector<List> cytof_fix_K_fit(const std::vector<arma::mat>& y, int B, int burn, int warmup, int thin, int thin_K, int compute_loglike_every, int print_freq, int ncores, bool show_timings, double prop_for_training, bool shuffle_data, Nullable<List> prior_input, Nullable<List> truth_input, Nullable<List> init_input);
-RcppExport SEXP _cytof2_cytof_fix_K_fit(SEXP ySEXP, SEXP BSEXP, SEXP burnSEXP, SEXP warmupSEXP, SEXP thinSEXP, SEXP thin_KSEXP, SEXP compute_loglike_everySEXP, SEXP print_freqSEXP, SEXP ncoresSEXP, SEXP show_timingsSEXP, SEXP prop_for_trainingSEXP, SEXP shuffle_dataSEXP, SEXP prior_inputSEXP, SEXP truth_inputSEXP, SEXP init_inputSEXP) {
+RcppExport SEXP cytof2_cytof_fix_K_fit(SEXP ySEXP, SEXP BSEXP, SEXP burnSEXP, SEXP warmupSEXP, SEXP thinSEXP, SEXP thin_KSEXP, SEXP compute_loglike_everySEXP, SEXP print_freqSEXP, SEXP ncoresSEXP, SEXP show_timingsSEXP, SEXP prop_for_trainingSEXP, SEXP shuffle_dataSEXP, SEXP prior_inputSEXP, SEXP truth_inputSEXP, SEXP init_inputSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -47,7 +47,7 @@ END_RCPP
 }
 // shuffle_mat
 arma::mat shuffle_mat(arma::mat X);
-RcppExport SEXP _cytof2_shuffle_mat(SEXP XSEXP) {
+RcppExport SEXP cytof2_shuffle_mat(SEXP XSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -58,23 +58,10 @@ END_RCPP
 }
 // unit_tests
 void unit_tests();
-RcppExport SEXP _cytof2_unit_tests() {
+RcppExport SEXP cytof2_unit_tests() {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     unit_tests();
     return R_NilValue;
 END_RCPP
-}
-
-static const R_CallMethodDef CallEntries[] = {
-    {"_cytof2_missing_R", (DL_FUNC) &_cytof2_missing_R, 4},
-    {"_cytof2_cytof_fix_K_fit", (DL_FUNC) &_cytof2_cytof_fix_K_fit, 15},
-    {"_cytof2_shuffle_mat", (DL_FUNC) &_cytof2_shuffle_mat, 1},
-    {"_cytof2_unit_tests", (DL_FUNC) &_cytof2_unit_tests, 0},
-    {NULL, NULL, 0}
-};
-
-RcppExport void R_init_cytof2(DllInfo *dll) {
-    R_registerRoutines(dll, NULL, CallEntries, NULL, NULL);
-    R_useDynamicSymbols(dll, FALSE);
 }

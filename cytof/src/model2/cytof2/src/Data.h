@@ -1,8 +1,7 @@
-#include <math.h> // isnan
 /*
  * Data y:
- *   
- *   is a length (I) vector of (N_i x J) matrices. 
+ *
+ *   is a length (I) vector of (N_i x J) matrices.
  */
 
 using Data = std::vector<arma::mat>;

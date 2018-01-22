@@ -1,3 +1,4 @@
+#pragma Once
 // Reference for distributions in R
 //http://dirk.eddelbuettel.com/code/rcpp/html/Rmath_8h_source.html#l00051
 
@@ -5,6 +6,8 @@
 #include <RcppTN.h>        // truncated normal header files
 #include <functional>      // std::function
 #include <algorithm>       // std::max(a,b) returns the larger of a and b
+#include <math.h>          // isnan
+#include <omp.h>           // shared memory multicore parallelism
 
 
 using namespace Rcpp;
@@ -15,7 +18,7 @@ using namespace Rcpp;
 
 // Generic Gibbs Sampler
 template <typename S>
-void gibbs(S state, 
+void gibbs(S state,
           std::function<void(S&)> update, // function to update state
           std::function<void(const S&, int)> assign_to_out, // function to assign to out and perhaps do adaptive mcmc
           int B, int burn, int print_freq) {
@@ -111,7 +114,7 @@ double logdmvnorm(arma::vec y, arma::vec m, arma::mat S) {
 
   const int n = y.size();
   const auto c = y - m;
-  
+
   const arma::vec v = c.t() * S.i() * c;
   return -0.5 * (ld_S + v[0] + n * log(2*M_PI));
 }
@@ -119,7 +122,7 @@ double logdmvnorm(arma::vec y, arma::vec m, arma::mat S) {
 namespace metropolis {
 
   // Uniariate Metropolis step with Normal proposal
-  double uni(double curr, std::function<double(double)> log_fc, 
+  double uni(double curr, std::function<double(double)> log_fc,
              double stepSig) {
 
     const double cand = R::rnorm(curr,stepSig);
@@ -136,7 +139,7 @@ namespace metropolis {
   }
 
   // Uniariate Metropolis step with Normal proposal
-  arma::vec mv(arma::vec curr, std::function<double(arma::vec)> log_fc, 
+  arma::vec mv(arma::vec curr, std::function<double(arma::vec)> log_fc,
                arma::mat stepSig) {
 
     const auto cand = rmvnorm(curr, stepSig);

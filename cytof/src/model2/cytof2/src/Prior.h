@@ -7,7 +7,7 @@ struct Prior {
   double m_betaBar; double s2_betaBar;
   // x_j ~ Gamma(a_x, b_x)
   double a_x; double b_x; double cs_x;
-  
+
   // gamma_{0ij}
   double a_gam; double b_gam; double cs_gam;
   // sig2_{ij}
@@ -24,7 +24,7 @@ struct Prior {
   // h_k ~ N(0, G)
   arma::mat G;
   double cs_h;
-  arma::mat R;  // J x J-1 // precomputed R_{j,} = G_{j,-j} * G_{-j,-j}^{-1} 
+  arma::mat R;  // J x J-1 // precomputed R_{j,} = G_{j,-j} * G_{-j,-j}^{-1}
   arma::vec S2; // J       // precomputed S_j^2 = G_{j,j} - R_{j,} * G_{-j,j}
   // W_i ~ Dir_K(d,...,d)
   double d_w;

@@ -66,7 +66,7 @@ List safeList(Nullable<List> ls) {
 }
 
 State gen_init_obj(const Nullable<List> &init_input,
-                   const Nullable<List> &truth_input, 
+                   const Nullable<List> &truth_input,
                    const Prior &prior, const Data &y, int K) {
   const List init = safeList(init_input);
   const List truth = safeList(truth_input);
@@ -165,7 +165,7 @@ State gen_init_obj(const Nullable<List> &init_input,
 }
 
 void gen_vec_init_obj(const Nullable<List> &init_input,
-                      const Nullable<List> &truth_input, 
+                      const Nullable<List> &truth_input,
                       const Prior &prior, const Data_idx &data_idx,
                       std::vector<State> &thetas) {
   const int num_of_k = thetas.size();
