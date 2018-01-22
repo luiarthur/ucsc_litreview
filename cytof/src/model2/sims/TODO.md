@@ -7,6 +7,7 @@
     - [x] impute stuff
 - [x] Fix: `ll_p` (integrate over missing y with Monte Carlo averaging)
 - [ ] Fix: `update_K_theta`
+    - [ ] Edit the code accordingly to previous items
     - [ ] Remove: `update_theta_no_K`
     - [ ] Add: `update_theta_depending_on_K`
 - [ ] Change: data simulation missing mechanism
