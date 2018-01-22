@@ -5,7 +5,7 @@ void update_W(State &state, const Data&y, const Prior &prior) {
   arma::rowvec d_new(state.K);
 
   for (int i=0; i<I; i++) {
-    d_new.fill(prior.d_w);
+    d_new.fill(prior.d_w / state.K);
     N_i = get_Ni(y, i);
 
     for (int n=0; n<N_i; n++) {

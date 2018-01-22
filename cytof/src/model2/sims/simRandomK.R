@@ -156,7 +156,7 @@ print(bdat.prior)
 
 dat$y <- lapply(dat$y, shuffle_mat)
 set.seed(SEED_MCMC)
-prior = list(cs_v=4, cs_h=3, d_w=1/MCMC_K_INIT,
+prior = list(cs_v=4, cs_h=3, d_w=1,
              m_betaBar=bdat.prior['b0'], s2_betaBar=.001, s2_beta0=.001, #b0
              a_beta=bdat.prior['b1'] * 50, b_beta=50, # b1
              c0=c0, a_x=bdat.prior['x'] * 50, b_x=50, # x
