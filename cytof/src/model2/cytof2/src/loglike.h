@@ -27,7 +27,7 @@ double p(const State &state, const Data &y, const Prior &prior,
   return inv_logit(rinj);
 }
 
-double ll_p(const State &state, const Data &y, const Prior &prior, 
+double ll_p(const State &state, const Data &y, const Prior &prior,
             int i, int n, int j) {
   double p_inj = p(state, y, prior, i, n, j);
   return missing(y, i, n, j) ? log(p_inj) : log(1-p_inj);
@@ -50,7 +50,7 @@ double ll_p_given_beta(const State &state, const Data &y, const Prior &prior,
 
 double ll_f(const State &state, const Data &y, int i, int n, int j) {
   const int lg = 1; // log the density
-  return R::dnorm(y_final(state, y, i, n, j), mu(state, i, n, j), 
+  return R::dnorm(y_final(state, y, i, n, j), mu(state, i, n, j),
                   sqrt((1 + gam(state, i, n, j)) * state.sig2(i,j)), lg);
 }
 
@@ -62,7 +62,7 @@ double ll_marginal(const State &state, int i, int n, int j) {
   double fm = 0;
   const int K = state.K;
   double g;
-  
+
   for (int k=0; k<K; k++) {
     g = state.Z(j,k) == 0 ? state.gams_0(i,j) : 0;
     fm += state.W(i,k) * R::dnorm(state.missing_y[i](n,j),
@@ -86,7 +86,7 @@ double loglike(const State &state, const Data &y, const Prior &prior) {
   const int I = get_I(y);
   const auto N = get_N(y);
   const int J = get_J(y);
-  
+
   // TODO: Parallelize?
   for (int i=0; i<I; i++) {
     for (int j=0; j<J; j++) {
@@ -105,13 +105,13 @@ double loglike_marginal(const State &state) {
   const int I = get_I(state.missing_y);
   const auto N = get_N(state.missing_y);
   const int J = get_J(state.missing_y);
-  
+
   // TODO: Parallelize?
   for (int i=0; i<I; i++) {
     for (int j=0; j<J; j++) {
       for (int n=0; n<N[i]; n++) {
         //ll += ll_p(state, y, i, n, j) + ll_marginal(state, y, i, n, j);
-        ll += ll_marginal(state, i, n, j); // Need to add ll_p marginalized 
+        ll += ll_marginal(state, i, n, j); // Need to add ll_p marginalized
       }
     }
   }
