@@ -54,7 +54,7 @@ double ll_f(const State &state, const Data &y, int i, int n, int j) {
                   sqrt((1 + gam(state, i, n, j)) * state.sig2(i,j)), lg);
 }
 
-double ll_marginal(const State &state, int i, int n, int j) {
+double ll_marginal(const State &state, const Data & y, int i, int n, int j) {
   // loglike as a function of y only, and not m
   // with lambda marginalized out.
   const int lg = 0; // don't log the density
@@ -65,7 +65,7 @@ double ll_marginal(const State &state, int i, int n, int j) {
 
   for (int k=0; k<K; k++) {
     g = state.Z(j,k) == 0 ? state.gams_0(i,j) : 0;
-    fm += state.W(i,k) * R::dnorm(state.missing_y[i](n,j),
+    fm += state.W(i,k) * R::dnorm(y[i](n,j),
                                   state.mus(i,j,state.Z(j,k)),
                                   sqrt(state.sig2(i,j) * (1 + g)), lg);
   }
@@ -87,7 +87,7 @@ double rand_marginal(const State &state, int i, int n, int j) {
   const double r_y = R::rnorm(state.mus(i,j,state.Z(j,rand_k)),
                               sqrt(state.sig2(i,j) * (1 + g)));
 
-  return log(r_y);
+  return r_y;
 }
 
 double ll_fz(const State &state, const Data &y, int i, int n, int j, int zz) {
@@ -126,39 +126,35 @@ arma::vec missing_y_samps(const State &state, const Data &y, int i, int n, int j
 
 double lf_m_given_y_theta(const State &state, const Data &y, const Prior &prior, int i, int n, int j, const int T=10) {
   const auto y_imp = missing_y_samps(state, y, i, n, j, T);
-  arma::vec out(T);
+  arma::vec pinj(T);
 
   const double c0 = prior.c0;
   double rinj;
-  double pinj;
  
   for (int t=0; t<T; t++) {
     rinj =  r_inj(state.beta_0(i,j), state.beta_1(j), state.x(j), prior.c0, y_imp[t]);
-    pinj = inv_logit(rinj);
-    out[t] = pinj;
+    pinj[t] = inv_logit(rinj);
   }
 
-  return mean(out);
+  return log(mean(pinj)); // should be missing
 }
 
 double loglike_marginal(const State &state, const Data &y, const Prior &prior, const int T=10) {
   double ll = 0;
 
-  const int I = get_I(state.missing_y);
-  const auto N = get_N(state.missing_y);
-  const int J = get_J(state.missing_y);
+  const int I = get_I(y);
+  const auto N = get_N(y);
+  const int J = get_J(y);
 
   // TODO: Parallelize?
   for (int i=0; i<I; i++) {
     for (int j=0; j<J; j++) {
       for (int n=0; n<N[i]; n++) {
-        //ll += ll_p(state, y, i, n, j) + ll_marginal(state, y, i, n, j);
 
-        // NEW STUFF
         if (missing(y,i,n,j)) {
           ll += lf_m_given_y_theta(state, y, prior, i, n, j, T);
         } else {
-          ll += ll_marginal(state, i, n, j); // f(m | y, theta) is cancelled in metropolis ratio
+          ll += ll_marginal(state, y, i, n, j); // f(m | y, theta) is cancelled in metropolis ratio
         }
 
       }
@@ -168,3 +164,20 @@ double loglike_marginal(const State &state, const Data &y, const Prior &prior, c
   return ll;
 }
 
+void impute_y(State &state, const Data &y, const int T=10) {
+  const int I = get_I(y);
+  const auto N = get_N(y);
+  const int J = get_I(y);
+  arma::vec imp_y(T);
+
+  for (int i=0; i<I; i++) {
+    for (int n=0; n<N[i]; n++) {
+      for (int j=0; j<J; j++) {
+        for (int t=0; t<T; t++) {
+          imp_y[t] = rand_marginal(state, i, n, j);
+        }
+        state.missing_y[i](n,j) = arma::mean(imp_y);
+      }
+    }
+  }
+}

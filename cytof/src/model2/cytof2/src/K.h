@@ -2,7 +2,8 @@ void update_K_theta(State &state,
                     const Data &y, const Data_idx &data_idx,
                     const Fixed &fixed_param,
                     const Prior &prior, std::vector<State> &thetas,
-                    int thin_K=5) {
+                    int thin_K=5,
+                    const int T=10) {
 
   // Propose K, theta
   const int K_min = prior.K_min;
@@ -50,25 +51,30 @@ void update_K_theta(State &state,
   // current theta
   // Should current state be full theta? or theta_TR_curr?
   State curr_theta = state;
-  curr_theta.lam = get_lam_TE(state.lam, data_idx);
-  curr_theta.missing_y = get_missing_y_TE(state.missing_y, data_idx);
+  //curr_theta.lam = get_lam_TE(state.lam, data_idx);
+  //curr_theta.missing_y = get_missing_y_TE(state.missing_y, data_idx);
   const auto y_TR = get_missing_y_TR(state.missing_y, data_idx);
 
   /* propose a new theta_K */
-  thetas[K_cand - K_min].missing_y = y_TR;
+  //thetas[K_cand - K_min].missing_y = y_TR;
 
+  impute_y(thetas[K_cand - K_min], y_TR, T);
+  substitute_training_params_not_depending_K(thetas[K_cand - K_min], state);
   for (int t=0; t<thin_K; t++) {
-    update_theta_no_K(thetas[K_cand - K_min], y_TR, prior, fixed_param, false);
+    //update_theta_no_K(thetas[K_cand - K_min], y_TR, prior, fixed_param, false);
+    update_W(thetas[K_cand - K_min], y_TR, prior);
+    update_v(thetas[K_cand - K_min], y_TR, prior);
+    update_H(thetas[K_cand - K_min], y_TR, prior);
   }
 
   // Proposed theta
   State proposed_theta = thetas[K_cand - K_min];
-  proposed_theta.missing_y = curr_theta.missing_y;
+  //proposed_theta.missing_y = curr_theta.missing_y;
 
   // Compute acceptance probability
   double log_acc_prob = lq_k_from(K_cand) - lq_k_from(K_curr);
-  const double l1 = loglike_marginal(proposed_theta, curr_theta.missing_y, prior);
-  const double l2 = loglike_marginal(curr_theta, curr_theta.missing_y, prior);
+  const double l1 = loglike_marginal(proposed_theta, data_idx.y_TE, prior,T);
+  const double l2 = loglike_marginal(curr_theta, data_idx.y_TE, prior,T);
   log_acc_prob += l1 - l2;
 
   const double u = R::runif(0, 1);

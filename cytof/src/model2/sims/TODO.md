@@ -6,11 +6,13 @@
 - [x] Fix: `loglike_marginal`
     - [x] impute stuff
 - [x] Fix: `ll_p` (integrate over missing y with Monte Carlo averaging)
-- [ ] Fix: `update_K_theta`
-    - [ ] Edit the code accordingly to previous items
-    - [ ] Remove: `update_theta_no_K`
-    - [ ] Add: `update_theta_depending_on_K`
+- [x] Fix: `update_K_theta`
+    - [x] Edit the code accordingly to previous items
+    - [x] Remove: `update_theta_no_K`
+    - [x] Add: `update_theta_depending_on_K`
+- [ ] Double check changes in `K.h`, `loglike.h`, and `theta.h`
 - [ ] Change: data simulation missing mechanism
+- [ ] Do some simulations with N=(1000,10000), prop_train=(.1,.3,.5,.9)
 
 ## 13 Jan, 2017
 

@@ -81,3 +81,15 @@ void update_theta_no_K(State &state, const Data &y, const Prior &prior, const Fi
   if (!fixed_param.W) update_W(state, y, prior);
   if (show_timings) print_time("W", start_time);
 }
+
+void substitute_training_params_not_depending_K(State &theta_k, const State &state) {
+  theta_k.mus = state.mus;
+  theta_k.sig2 = state.sig2;
+  theta_k.gams_0 = state.gams_0;
+  theta_k.psi = state.psi;
+  theta_k.tau2 = state.tau2;
+  theta_k.beta_1 = state.beta_1;
+  theta_k.beta_0 = state.beta_0;
+  theta_k.x = state.x;
+  theta_k.betaBar_0 = state.betaBar_0;
+}
