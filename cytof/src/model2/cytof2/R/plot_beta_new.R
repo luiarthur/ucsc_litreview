@@ -156,7 +156,11 @@ plot_beta_new <- function(mcmc, missing_count, dat=NULL, prior=NULL) {
   # Prob of missing
   if (compareWithData) {
     true_prob_miss <- 
-      rep(list(list(Z=matrix(0,J,K), beta_0=dat$b0, beta_1=as.matrix(dat$b1))), 1)
+      rep(list(list(Z=matrix(0,J,K),
+                    x=dat$x,
+                    c0=dat$c0,
+                    beta_0=dat$b0,
+                    beta_1=as.matrix(dat$b1))), 1)
   }
 
   ys <- seq(-12,12,l=100)
@@ -173,7 +177,7 @@ plot_beta_new <- function(mcmc, missing_count, dat=NULL, prior=NULL) {
   abline(v=0, col='grey')
 
   if (compareWithData) {
-    plot_prob_missing(true_prob_miss,1,1, col.line='black', add=T, lty=2, lwd=3)
+    plot_prob_missing_new(true_prob_miss,1,1, c0, col.line='black', add=T, lty=2, lwd=3)
   }
   
   
@@ -187,7 +191,7 @@ plot_beta_new <- function(mcmc, missing_count, dat=NULL, prior=NULL) {
     for (i in 1:I) {
       plot_prob_missing_new(mcmc, i, j, c0, addT=TRUE, plot_a=T, y=ys, col.line=i+1, lwd=2)
       if (compareWithData) {
-        plot_prob_missing(true_prob_miss,1,1, col.line='black', add=T, lty=2)
+        plot_prob_missing_new(true_prob_miss,1,1, c0, col.line='black', add=T, lty=2, lwd=3)
       }
     }
   }

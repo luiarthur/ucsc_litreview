@@ -13,6 +13,7 @@
 - [ ] Double check changes in `K.h`, `loglike.h`, and `theta.h`
 - [ ] Change: data simulation missing mechanism
 - [ ] Do some simulations with N=(1000,10000), prop_train=(.1,.3,.5,.9)
+- [ ] In `params.pdf`, fix `prob_of_missing` 
 
 ## 13 Jan, 2017
 

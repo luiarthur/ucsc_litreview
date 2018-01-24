@@ -18,7 +18,8 @@ print_bmat = function(X, file) {
 #source("../cytof2/R/readExpression.R")
 
 if (length(args) < 8) {
-  stop('usage: Rscript simple.R J MCMC_K_INIT DATA_SIZE USE_SIMPLE_Z OUTDIR B BURN THIN [SEED_DATA] [SEED_MCMC]')
+  print(args)
+  stop('usage: Rscript simple.R J MCMC_K_INIT DATA_SIZE USE_SIMPLE_Z OUTDIR B BURN THIN [PROP] [SEED_DATA] [SEED_MCMC]')
 } else {
   J <- as.integer(args[1])
   MCMC_K_INIT <- as.integer(args[2])
@@ -28,8 +29,9 @@ if (length(args) < 8) {
   B <- as.integer(args[6])
   BURN <- as.integer(args[7])
   THIN <- as.integer(args[8])
-  SEED_DATA <- ifelse(length(args)>=9,  as.integer(args[9]),  1)
-  SEED_MCMC <- ifelse(length(args)>=10, as.integer(args[10]), 1)
+  PROP <- ifelse(length(args)>=9,  as.numeric(args[9]),  .1)
+  SEED_DATA <- ifelse(length(args)>=10,  as.integer(args[10]),  1)
+  SEED_MCMC <- ifelse(length(args)>=11, as.integer(args[11]), 1)
 }
 set.seed(SEED_DATA)
 
@@ -187,7 +189,7 @@ init=list(K=MCMC_K_INIT)
 sim_time <- system.time(
   out <- cytof_fix_K_fit(dat$y, truth=truth, prior=prior, init=init, thin_K=5,
                          warmup=1000, B=B, burn=BURN, thin=THIN, print=1,
-                         ncores=8, prop=.1, show_timings=FALSE)
+                         ncores=8, prop=PROP, show_timings=FALSE)
 )
 sink(fileDest('simtime.txt')); print(sim_time); sink()
 save(dat, out, file=fileDest('sim_result.RData'))
