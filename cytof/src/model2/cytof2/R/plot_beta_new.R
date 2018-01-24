@@ -70,9 +70,10 @@ add_beta_prior_new <- function(prior, yy=seq(-10,10,l=100), SS=1000, ret=FALSE) 
   b1_samps = rgamma(SS, prior$a_beta, prior$b_beta)
   x_samps = rgamma(SS, prior$a_x, prior$b_x)
   p_samps = sapply(1:SS, function(s) {
-    ifelse(yy < prior$c0,
-           logistic(b0_samps[s] - b1_samps[s] * (yy-c0)^2),
-           logistic(b0_samps[s] - b1_samps[s] * x_samps[s] * (yy-c0)^.5))
+    pm(b0_samps[s], b1_samps[s], x_samps[s], c0, yy)
+    #ifelse(yy < prior$c0,
+    #       logistic(b0_samps[s] - b1_samps[s] * (yy-c0)^2),
+    #       logistic(b0_samps[s] - b1_samps[s] * x_samps[s] * (yy-c0)^.5))
   })
   p_lo = apply(p_samps, 1, quantile, .025)
   p_hi = apply(p_samps, 1, quantile, .975)
@@ -130,6 +131,9 @@ plot_beta_new <- function(mcmc, missing_count, dat=NULL, prior=NULL) {
   plot(rowMeans(x), xlab='x', col=rgb(0,0,1), cex=2, fg='grey', pch=20,
        ylim=range(c(x_ci)))
   add.errbar(x_ci, x=1:J, lty=2, col=rgb(0,0,1,.5))
+  if (compareWithData) {
+    abline(h=c(dat$x[1],0),col='grey')
+  }
   
   # beta_1
   beta_1 = sapply(mcmc, function(o) o$beta_1)
@@ -165,7 +169,7 @@ plot_beta_new <- function(mcmc, missing_count, dat=NULL, prior=NULL) {
 
   ys <- seq(-12,12,l=100)
   plot(ys, ys, ylim=0:1, type='n', fg='grey', xlab='y', ylab='prob of missing')
-  if (!is.null(prior)) add_beta_prior_new(prior)
+  if (!is.null(prior)) add_beta_prior_new(prior, y=ys)
   title(main='Prob of missing')
   for (i in 1:I) for (j in 1:J) {
     r=135/255; g=206/255; b=250/255
@@ -177,7 +181,7 @@ plot_beta_new <- function(mcmc, missing_count, dat=NULL, prior=NULL) {
   abline(v=0, col='grey')
 
   if (compareWithData) {
-    plot_prob_missing_new(true_prob_miss,1,1, c0, col.line='black', add=T, lty=2, lwd=3)
+    plot_prob_missing_new(true_prob_miss,1,1, c0, col.line='black', add=T, lty=2, lwd=3, y=ys)
   }
   
   

@@ -57,7 +57,8 @@ dat_lim = c(-10,10)
 #y_beta = c(-6,-5.5)
 #y_beta = c(-5,-2)
 
-y_beta = c(-8, -3, -1)
+y_beta = c(-8, c0 <- -3, -1)
+#y_beta = c(-3, c0 <- -2, -1)
 bdat = get_beta_new(y=y_beta, p_tar=c(.1, .6,.01))
 
 #y_beta = c(-5, -4.5)
@@ -105,7 +106,9 @@ abline(v=y_beta, col='grey')
 
 par(mfrow=c(4,2))
 for (i in 1:I) for (j in 1:J) {
-  plot_dat(dat$y, i, j, xlim=dat_lim, xlab=paste0('marker ',j),breaks=10)
+  hist(dat$y_no_missing[[i]][,j], border='grey', xlab=paste0('marker ',j),
+       xlim=dat_lim, breaks=10, fg='grey', main=paste0("Y",i,": Col",j))
+  plot_dat(dat$y, i, j, xlim=dat_lim, xlab=paste0('marker ',j),breaks=10, add=TRUE)
   hist(dat$y_no_missing[[i]][,j], border='grey', add=TRUE, breaks=10)
   #Sys.sleep(1)
 }
@@ -158,34 +161,35 @@ dev.off()
 #y_beta = c(-8, -3, -1)
 #bdat = get_beta_new(y=y_beta, p_tar=c(.1, .6,.01))
 #bdat.prior = get_beta_new(y=c(-5, c0 <- -2, -1), p_tar=c(.1, .99,.01))
-bdat.prior = get_beta_new(y=c(-8, c0 <- -3, -1), p_tar=c(.1, .6,.01))
+#bdat.prior = get_beta_new(y=c(-8, c0 <- -3, -1), p_tar=c(.1, .6,.01))
+bdat.prior = bdat
 print(bdat.prior)
 
 dat$y <- lapply(dat$y, shuffle_mat)
 set.seed(SEED_MCMC)
 prior = list(cs_v=4, cs_h=3, d_w=1,
-             m_betaBar=bdat.prior['b0'], s2_betaBar=.001, s2_beta0=.001, #b0
-             a_beta=bdat.prior['b1'] * 50, b_beta=50, # b1
-             c0=c0, a_x=bdat.prior['x'] * 50, b_x=50, # x
+             m_betaBar=bdat.prior['b0'], s2_betaBar=.0001, s2_beta0=.0001, #b0
+             a_beta=bdat.prior['b1'] * 100, b_beta=100, # b1
+             c0=c0, a_x=bdat.prior['x'] * 100, b_x=100, # x
              K_min=1, K_max=10, a_K=2)
 print(prior)
 
 pdf(fileDest('prior_prob_miss.pdf'))
-yy = seq(-15,15,l=100)
+#yy = seq(-15,15,l=100)
 #pp = logistic(dat$b0[1] - dat$b1[1] * yy)
-pp = pm(dat$b0[1], dat$b1[1], dat$x[1], dat$c0, yy)
-plot(yy, pp, 
+#pp = pm(dat$b0[1], dat$b1[1], dat$x[1], dat$c0, yy)
+plot(y_grid, pp, 
      xlab='y', ylab='prob of missing', fg='grey', type='l', lwd=2,
-     ylim=0:1, xlim=range(yy))
-#abline(v=y_beta, col='grey')
+     ylim=0:1, xlim=range(y_grid))
+abline(v=y_beta, col='grey')
 
 #plot(0, type='n', ylim=0:1, xlim=c(-6,0))
-add_beta_prior_new(prior, yy=yy, SS=1000)
+add_beta_prior_new(prior, yy=y_grid, SS=1000)
 dev.off()
 
 #truth=list(K=MCMC_K)
 truth=list()
-init=list(K=MCMC_K_INIT)
+init=list(K=MCMC_K_INIT, beta_0=matrix(prior$m_betaBar,I,J))
 sim_time <- system.time(
   out <- cytof_fix_K_fit(dat$y, truth=truth, prior=prior, init=init, thin_K=5,
                          warmup=1000, B=B, burn=BURN, thin=THIN, print=1,

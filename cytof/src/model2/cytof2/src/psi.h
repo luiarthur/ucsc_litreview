@@ -30,7 +30,9 @@ void update_psi_z(State &state, const Data &y, const Prior &prior, int zz) {
   state.psi(zz) = metropolis::uni(psi_z, log_fc, cs);
 }
 
-void update_psi(State &state, const Data &y, const Prior &prior) {
-  update_psi_z(state, y, prior, 0);
-  update_psi_z(state, y, prior, 1);
+void update_psi(State &state, const Data &y, const Prior &prior, const int T=5) {
+  for (int t=0; t<T; t++) {
+    update_psi_z(state, y, prior, 0);
+    update_psi_z(state, y, prior, 1);
+  }
 }
