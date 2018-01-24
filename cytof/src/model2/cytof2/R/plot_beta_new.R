@@ -7,7 +7,7 @@ get_beta_new = function(y=c(-3, -2, -1), p_target=c(.1, .99, .01), plotting=FALS
   b1 = (b0 - logit(p_target[1])) / (y[2] - y[1])^2
   x = -(logit(p_target[3]) - b0) / (y[3] - y[2])^.5 / b1
 
-  c(b0=b0, b1=b1, x=x)
+  c(b0=b0, b1=b1, x=x, c0=y[2])
 }
 
 pm = function(b0, b1, x, c0, y) {

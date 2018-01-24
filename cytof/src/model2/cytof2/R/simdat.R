@@ -54,8 +54,9 @@ genSimpleZ <- function(J, K) {
 }
 
 simdat <- function(I, N, J, K, W, Z=genZ(J,K),
-                   b0=matrix(-17.6,I,J),
-                   b1=rep(4.4,J),
+                   b0=matrix(4.6,I,J),
+                   b1=rep(6.8,J),
+                   x=matrix(1.35,I,J), c0=-2,
                    gams_0=matrix(1/rgamma(I*J, 40, 20), nrow=I),
                    sig2=matrix(1/rgamma(I*J, 3, 1), nrow=I),
                    psi_0=-1, psi_1=1,
@@ -89,10 +90,10 @@ simdat <- function(I, N, J, K, W, Z=genZ(J,K),
   mu <- function(i, n, j) ifelse(Z[j, lam[[i]][n]] == 0, mus_0[i,j], mus_1[i,j])
   gam <- function(i, n, j) ifelse(Z[j, lam[[i]][n]] == 0, gams_0[i,j], 0)
 
-  p <- function(b0,b1,y) {
-    x <- b0 - b1*y
-    1 / (1+exp(-x))
-  }
+  #p <- function(b0,b1,y) {
+  #  x <- b0 - b1*y
+  #  1 / (1+exp(-x))
+  #}
   
   y <- as.list(1:I)
   y_no_missing <- y
@@ -103,7 +104,10 @@ simdat <- function(I, N, J, K, W, Z=genZ(J,K),
     for (j in 1:J) {
       y_ij <- rnorm(Ni, mu(i,1:Ni,j), sqrt((1+gam(i,1:Ni,j))*sig2[i,j]))
       y_no_missing[[i]][,j] <- y_ij
-      prob_miss <- p(b0[i,j], b1[j], y_ij)
+
+      #prob_miss <- p(b0[i,j], b1[j], y_ij)
+      prob_miss = pm(b0[i,j], b1[j], x[i,j], c0, y_ij)
+
       y[[i]][, j] <- ifelse(prob_miss > runif(Ni), NA, y_ij)
       #for (n in 1:Ni) {
       #  y_inj <- rnorm(1, mu(i,n,j), sqrt((1+gam(i,n,j))*sig2[i,j]))
@@ -117,7 +121,7 @@ simdat <- function(I, N, J, K, W, Z=genZ(J,K),
 
   list(Z=Z, lam=lam, mus_0=mus_0, mus_1=mus_1, y=y, I=I, N=N, J=J, K=K,
        gams_0=gams_0, psi_0=psi_0, psi_1=psi_1, sig2=sig2, tau2_0=tau2_0,
-       tau2_1=tau2_1, W=W, y_no_missing=y_no_missing, b0=b0, b1=b1,
+       tau2_1=tau2_1, W=W, y_no_missing=y_no_missing, b0=b0, b1=b1, x=x, c0=c0,
        lam_base0=lam_base0, mus=mus, psi=c(psi_0, psi_1), tau2=c(tau2_0, tau2_1))
 }
 

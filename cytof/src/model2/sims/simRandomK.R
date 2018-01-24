@@ -55,18 +55,17 @@ dat_lim = c(-10,10)
 #y_beta = c(-6,-5.5)
 #y_beta = c(-5,-2)
 
-#y_beta = c(-5, -4, -4.5)
-#bdat = get_beta_new(y=y_beta, p_tar=c(.1, .99,.01), plot=FALSE)
+y_beta = c(-8, -3, -1)
+bdat = get_beta_new(y=y_beta, p_tar=c(.1, .6,.01))
 
-y_beta = c(-5, -4.5)
-bdat = get_beta(y=y_beta, p_tar=c(.99, .01), plot=FALSE)
+#y_beta = c(-5, -4.5)
+#bdat = get_beta(y=y_beta, p_tar=c(.99, .01), plot=FALSE)
 
 dat <- simdat(I=I, N=c(2,3,1)*DATA_SIZE, J=J, K=K, 
-#dat <- simdat(I=I, N=c(2,3,1)*10000, J=J, K=K, 
-              b0=matrix(bdat[1],I,J),
-              b1=rep(-bdat[2],J),
-              #b0=matrix(-50,I,J),
-              #b1=rep(15,J),
+              b0=matrix(bdat['b0'],I,J),
+              b1=rep(bdat['b1'],J),
+              x=matrix(bdat['x'], I,J),
+              c0=bdat['c0'],
               Z=if (USE_SIMPLE_Z) genSimpleZ(J, K) else genZ(J,K),
               #Z=genZ(J, K, c(.4,.6)),
               #psi_0=-5, psi_1=5,
@@ -92,8 +91,11 @@ print(missing_prop)
 sink()
 
 y_grid = seq(-10,0,l=100)
-plot(y_grid, 1 / (1 + exp(-dat$b0[1] + dat$b1[1]*y_grid)), 
-     xlab='y', ylab='prob of missing', fg='grey', type='b',
+#pp = pm(dat$b0[1], dat$b1[1], dat$x[1], dat$c0, y_grid)
+pp = pm(dat$b0[1], dat$b1[1], dat$x[1], dat$c0, y_grid)
+print(dat$c0)
+
+plot(y_grid, pp, xlab='y', ylab='prob of missing', fg='grey', type='b',
      main='True Probability of Missing', ylim=0:1)
 abline(v=y_beta, col='grey')
 #plot.histModel2(dat$y, xlim=c(-5,5), main='Histogram of Data', quant=c(.05,.95))
@@ -151,7 +153,10 @@ dev.off()
 #prior = list(cs_v=4, cs_h=3, d_w=1/MCMC_K)
 ### END ###
 
-bdat.prior = get_beta_new(y=c(-5, c0 <- -2, -1), p_tar=c(.1, .99,.01))
+#y_beta = c(-8, -3, -1)
+#bdat = get_beta_new(y=y_beta, p_tar=c(.1, .6,.01))
+#bdat.prior = get_beta_new(y=c(-5, c0 <- -2, -1), p_tar=c(.1, .99,.01))
+bdat.prior = get_beta_new(y=c(-8, c0 <- -3, -1), p_tar=c(.1, .6,.01))
 print(bdat.prior)
 
 dat$y <- lapply(dat$y, shuffle_mat)
@@ -165,7 +170,8 @@ print(prior)
 
 pdf(fileDest('prior_prob_miss.pdf'))
 yy = seq(-15,15,l=100)
-pp = logistic(dat$b0[1] - dat$b1[1] * yy)
+#pp = logistic(dat$b0[1] - dat$b1[1] * yy)
+pp = pm(dat$b0[1], dat$b1[1], dat$x[1], dat$c0, yy)
 plot(yy, pp, 
      xlab='y', ylab='prob of missing', fg='grey', type='l', lwd=2,
      ylim=0:1, xlim=range(yy))
