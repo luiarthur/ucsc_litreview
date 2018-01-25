@@ -1,9 +1,11 @@
 #!/usr/bin/env Rscript
 args = commandArgs(trailingOnly=TRUE)
+#source("../cytof2/R/readExpression.R")
 
 library(cytof2)
 library(rcommon)
 library(xtable) # print_bmat
+source("getOpts.R") # read commandline args
 
 print_bmat = function(X, file) {
   # Prints a matrix to tex file
@@ -15,27 +17,27 @@ print_bmat = function(X, file) {
   sink()
 }
 
-#source("../cytof2/R/readExpression.R")
+### PARSE COMMAND LINE ARGS ###
+opt_parser = getOpts()
+opt = parse_args(opt_parser)
 
-if (length(args) < 8) {
-  print(args)
-  stop('usage: Rscript simple.R J MCMC_K_INIT DATA_SIZE USE_SIMPLE_Z OUTDIR B BURN THIN [PROP] [SEED_DATA] [SEED_MCMC]')
-} else {
-  J <- as.integer(args[1])
-  MCMC_K_INIT <- as.integer(args[2])
-  DATA_SIZE <- as.integer(args[3])
-  USE_SIMPLE_Z <- as.integer(args[4])
-  OUTDIR <- paste0(args[5],'/')
-  B <- as.integer(args[6])
-  BURN <- as.integer(args[7])
-  THIN <- as.integer(args[8])
-  PROP <- ifelse(length(args)>=9,  as.numeric(args[9]),  .1)
-  SEED_DATA <- ifelse(length(args)>=10,  as.integer(args[10]),  1)
-  SEED_MCMC <- ifelse(length(args)>=11, as.integer(args[11]), 1)
-}
+### GLOBAL VARS ###
+J = getOrFail(opt$J, opt_parser)
+MCMC_K_INIT = getOrFail(opt$mcmc_k_init, opt_parser)
+DATA_SIZE = getOrFail(opt$data_size, opt_parser)
+USE_SIMPLE_Z = getOrFail(opt$use_simple_z, opt_parser)
+OUTDIR = getOrFail(opt$outdir, opt_parser)
+B = getOrFail(opt$B, opt_parser)
+BURN = getOrFail(opt$burn, opt_parser)
+THIN = getOrFail(opt$thin, opt_parser)
+PROP = getOrFail(opt$prop_train, opt_parser)
+SEED_DATA = getOrFail(opt$seed_data, opt_parser)
+SEED_MCMC = getOrFail(opt$seed_mcmc, opt_parser)
+
+### Set seed for data ###
 set.seed(SEED_DATA)
 
-### GLOBALS
+### OTHER GLOBALS
 #OUTDIR = 'out/simple/'
 fileDest = function(name) paste0(OUTDIR, name)
 system(paste0('mkdir -p ', OUTDIR))
