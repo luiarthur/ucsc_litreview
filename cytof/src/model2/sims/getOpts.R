@@ -12,7 +12,9 @@ getOpts = function() {
     make_option("--thin", type='integer', default=1),
     make_option("--prop_train", type='double', default=0.1),
     make_option("--seed_data", type='integer', default=1),
-    make_option("--seed_mcmc",type='integer', default=1)
+    make_option("--seed_mcmc",type='integer', default=1),
+    make_option(c("--warmup", "-w"),type='integer', default=1000),
+    make_option("--ncores",type='integer', default=8)
   )
 
   opt_parser = OptionParser(option_list=option_list);

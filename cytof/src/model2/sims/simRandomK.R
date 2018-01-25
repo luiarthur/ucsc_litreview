@@ -26,13 +26,15 @@ J = getOrFail(opt$J, opt_parser)
 MCMC_K_INIT = getOrFail(opt$mcmc_k_init, opt_parser)
 DATA_SIZE = getOrFail(opt$data_size, opt_parser)
 USE_SIMPLE_Z = getOrFail(opt$use_simple_z, opt_parser)
-OUTDIR = getOrFail(opt$outdir, opt_parser)
+OUTDIR = getOrFail(paste0(opt$outdir,'/'), opt_parser)
 B = getOrFail(opt$B, opt_parser)
 BURN = getOrFail(opt$burn, opt_parser)
 THIN = getOrFail(opt$thin, opt_parser)
 PROP = getOrFail(opt$prop_train, opt_parser)
 SEED_DATA = getOrFail(opt$seed_data, opt_parser)
 SEED_MCMC = getOrFail(opt$seed_mcmc, opt_parser)
+NCORES = getOrFail(opt$ncores, opt_parser)
+WARMUP = getOrFail(opt$warmup, opt_parser)
 
 ### Set seed for data ###
 set.seed(SEED_DATA)
@@ -194,8 +196,8 @@ truth=list()
 init=list(K=MCMC_K_INIT, beta_0=matrix(prior$m_betaBar,I,J))
 sim_time <- system.time(
   out <- cytof_fix_K_fit(dat$y, truth=truth, prior=prior, init=init, thin_K=5,
-                         warmup=1000, B=B, burn=BURN, thin=THIN, print=1,
-                         ncores=8, prop=PROP, show_timings=FALSE)
+                         warmup=WARMUP, B=B, burn=BURN, thin=THIN, print=1,
+                         ncores=NCORES, prop=PROP, show_timings=FALSE)
 )
 sink(fileDest('simtime.txt')); print(sim_time); sink()
 save(dat, out, file=fileDest('sim_result.RData'))
