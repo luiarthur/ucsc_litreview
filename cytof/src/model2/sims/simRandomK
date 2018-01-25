@@ -19,13 +19,14 @@ fi
 
 ### PARAMETERS FOR PARALLEL JOB ###
 i=0
-MAX_CORES=16
+MAX_CORES=20
 
 ### PARAMETERS FOR MCMC ###
 J=32
 MCMC_K_INIT="1 10"
 N="10000"
 USE_SIMPLE_Z="0 1"
+PROP="0.1 0.3 0.5 0.7 0.9"
 OUTDIR='out/simRandomK/'
 
 B=2000
@@ -42,7 +43,7 @@ do
       do
         i=$((i+1)) 
         outdir="${OUTDIR}/j${j}_k${k}_N${n}_z${z}_B${B}_burn${BURN}_thin${THIN}/"
-        cmd="Rscript simRandomK.R $j $k $n $z $outdir $B $BURN $THIN"
+        cmd="Rscript simRandomK.R --J=$j --mcmc_k_init=$k --data_size=$n --use_simple_z=$z --outdir=$outdir --b=$B --burn=$BURN --thin=$THIN --prop_train=0.5"
         mkdir -p $outdir
         sem -j $MAX_CORES $cmd > ${outdir}log.txt
         #echo "Simulation $i: $outdir"

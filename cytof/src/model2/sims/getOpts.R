@@ -3,10 +3,10 @@ library(optparse)
 getOpts = function() {
   option_list = list(
     make_option("--J", type='integer'),
-    make_option("--mcmc_k_init", type='integer'),
-    make_option("--data_size", type='integer'),
-    make_option("--use_simple_z", type='integer'),
-    make_option("--outdir", type='string'),
+    make_option(c("--mcmc_k_init","-k"), type='integer'),
+    make_option(c("--data_size","-n"), type='integer'),
+    make_option(c("--use_simple_z", "-z"), type='integer'),
+    make_option(c("--outdir", "-o"), type='character'),
     make_option("--B", type='integer'),
     make_option("--burn", type='integer'),
     make_option("--thin", type='integer', default=1),
@@ -27,6 +27,6 @@ getOpts = function() {
 getOrFail = function(x, opt_parser) {
   if (is.null(x)) {
     print_help(opt_parser)
-    stop() 
+    stop()
   } else x
 }
