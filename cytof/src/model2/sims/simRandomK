@@ -46,7 +46,7 @@ do
         do
           i=$((i+1)) 
           outdir="${OUTDIR}/j${j}_k${k}_N${n}_z${z}_B${B}_burn${BURN}_thin${THIN}/"
-          cmd="Rscript simRandomK.R --J=$j --mcmc_k_init=$k --data_size=$n --use_simple_z=$z --outdir=$outdir --b=$B --burn=$BURN --thin=$THIN --prop_train=$p --ncores=$NCORES"
+          cmd="Rscript simRandomK.R --J=$j --mcmc_k_init=$k --data_size=$n --use_simple_z=$z --outdir=$outdir --B=$B --burn=$BURN --thin=$THIN --prop_train=$p --ncores=$NCORES"
           mkdir -p $outdir
           sem -j $MAX_CORES $cmd > ${outdir}log.txt
           #echo "Simulation $i: $outdir"
