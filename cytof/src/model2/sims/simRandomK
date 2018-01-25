@@ -19,7 +19,7 @@ fi
 
 ### PARAMETERS FOR PARALLEL JOB ###
 i=0
-MAX_CORES=8
+MAX_CORES=10
 
 ### PARAMETERS FOR MCMC ###
 J=32
@@ -45,11 +45,11 @@ do
         for p in $PROP
         do
           i=$((i+1)) 
-          outdir="${OUTDIR}/j${j}_k${k}_N${n}_z${z}_B${B}_burn${BURN}_thin${THIN}/"
+          outdir="${OUTDIR}/j${j}_k${k}_N${n}_z${z}_B${B}_burn${BURN}_thin${THIN}_prop${p}/"
           cmd="Rscript simRandomK.R --J=$j --mcmc_k_init=$k --data_size=$n --use_simple_z=$z --outdir=$outdir --B=$B --burn=$BURN --thin=$THIN --prop_train=$p --ncores=$NCORES"
           mkdir -p $outdir
           sem -j $MAX_CORES $cmd > ${outdir}log.txt
-          #echo "Simulation $i: $outdir"
+          echo "Simulation $i: $outdir"
         done
       done
     done
