@@ -7,6 +7,10 @@ package object util {
   import Numeric.Implicits._ // mean, std
   type Data = Array[breeze.linalg.DenseMatrix[Double]]
 
+  def getI(y:Data) = y.size
+  def getN(y:Data) = y.map(_.rows)
+  def getJ(y:Data) = y(0).cols
+
   def timer[R](block: => R) = {
     val t0 = System.nanoTime()
     val result = block

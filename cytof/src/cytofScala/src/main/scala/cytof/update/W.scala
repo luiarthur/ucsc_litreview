@@ -7,8 +7,8 @@ import cytof.MCMC
 
 object W {
   def update(state:State, y:Data, prior:Prior) {
-    val I = y.size
-    val N = y.map(_.size)
+    val I = getI(y)
+    val N = getN(y)
 
     (0 until I).foreach{ i =>
       val dNew = Vec.fill(state.K)(1.0 / state.K) // TODO: CHANGE THIS!
