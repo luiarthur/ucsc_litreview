@@ -1,5 +1,4 @@
 package cytof
-import typeDefs._
 
 object Summarize {
 

@@ -4,6 +4,8 @@ version := "0.1.0"
 
 scalaVersion := "2.11.8"
 
+scalacOptions := Seq("-unchecked", "-deprecation")
+
 libraryDependencies ++= Seq(
   //"org.ddahl" %% "rscala" % "2.5.0",
   
@@ -13,3 +15,4 @@ libraryDependencies ++= Seq(
 
   "org.scalatest" %% "scalatest" % "3.0.0" % "test"
 )
+

@@ -3,11 +3,14 @@ package cytof
 object MCMC {
   import breeze.linalg.{DenseMatrix=>Mat, DenseVector=>Vec}
   import breeze.numerics.{lgamma, log, exp, pow, sqrt}
-  import org.apache.commons.math3.special.Gamma.{gamma, logGamma}
-  val Rand = new org.apache.commons.math3.random.RandomDataGenerator()
 
-  def rgamma(shp: Double, rate: Double) = Rand.nextGamma(shp, 1.0/rate)
-  def rig(shp: Double, rate: Double) = 1.0 / rgamma(shp, rate)
+  //val Rand = new org.apache.commons.math3.random.RandomDataGenerator()
+  def rgamma(shp: Double, rate: Double) = {
+    //Rand.nextGamma(shp, 1.0/rate) // commons math is slightly slower
+    //breeze uses shape and scale
+    breeze.stats.distributions.Gamma(shp, 1/rate).sample
+  }
+  def rinvgamma(shp: Double, rate: Double) = 1.0 / rgamma(shp, rate)
 
   def gibbs[T](state:T, update:T=>Unit, assign:(T,Int)=>Unit,
                iterations:Int, burn:Int, printEvery:Int=0) {
@@ -30,16 +33,21 @@ object MCMC {
     (b + a * u) / (1 + u)
   }
 
-  def metropolis(curr:Double,logLikePlusLogPrior:Double=>Double,cs:Double) = {
+  def metropolis(curr:Double,logFullCond:Double=>Double,cs:Double) = {
     val cand = scala.util.Random.nextGaussian * cs + curr
-    val logu = math.log(scala.util.Random.nextDouble)
-    val logp = logLikePlusLogPrior(cand) - logLikePlusLogPrior(curr)
-    if (logp > logu) cand else curr
+    val u = scala.util.Random.nextDouble
+    if (logFullCond(cand) - logFullCond(curr) > log(u)) cand else curr
   }
 
-  def metropolisMV(curr:Vec[Double], logLikePlusLogPrior:Vec[Double]=>Vec[Double],
-                   S:Mat[Double]) {
-    ???
+  def rmvnorm(m:Vec[Double], S:Mat[Double]):Vec[Double] = {
+    breeze.stats.distributions.MultivariateGaussian(m,S).sample
+  }
+
+  def metropolisMV(curr:Vec[Double], logFullCond:Vec[Double]=>Double,
+                   S:Mat[Double]):Vec[Double] = {
+    val cand = rmvnorm(curr,S)
+    val u = scala.util.Random.nextDouble
+    if (logFullCond(cand) - logFullCond(curr) > log(u)) cand else curr
   }
 
   // weighted sampling
@@ -109,7 +117,7 @@ object MCMC {
   def rdir(a: Vec[Double]):Vec[Double] = {
     val n = a.size
     val x = Vec.tabulate(n){ i => rgamma(a(i), 1) }
-    x / x.sum
+    x / breeze.linalg.sum(x)
   }
 }
 
