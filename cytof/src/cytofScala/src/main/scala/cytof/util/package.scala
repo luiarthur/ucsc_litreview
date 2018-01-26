@@ -24,6 +24,11 @@ package object util {
     lazy val v = xs.map{ xi => math.pow(xi.toDouble-xbar,2) / (n-1) }.sum
     math.sqrt(v)
   }
+
+  def round(x: Double, d: Int=4) = {
+    val s = math pow (10, d)
+    (math round x * s) / s
+  }
 }
 
 
