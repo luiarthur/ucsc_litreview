@@ -14,6 +14,8 @@
 - [ ] Change: data simulation missing mechanism
 - [ ] Do some simulations with N=(1000,10000), prop_train=(.1,.3,.5,.9)
 - [ ] In `params.pdf`, fix `prob_of_missing` 
+- [ ] Write up changes
+    - [ ] Note that I'm also updating lambda in theta3, because W changes
 
 ## 13 Jan, 2017
 

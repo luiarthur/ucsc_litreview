@@ -63,8 +63,13 @@ void update_K_theta(State &state,
   for (int t=0; t<thin_K; t++) {
     //update_theta_no_K(thetas[K_cand - K_min], y_TR, prior, fixed_param, false);
     update_W(thetas[K_cand - K_min], y_TR, prior);
-    update_v(thetas[K_cand - K_min], y_TR, prior);
+    update_lam(thetas[K_cand - K_min], y_TR, prior);
+
+    update_v_jointly(thetas[K_cand - K_min], y_TR, prior); // try not jointly also?
+    update_Z(thetas[K_cand - K_min], y_TR, prior);
+
     update_H(thetas[K_cand - K_min], y_TR, prior);
+    update_Z(thetas[K_cand - K_min], y_TR, prior);
   }
 
   // Proposed theta
