@@ -5,6 +5,7 @@ package object util {
    * https://stackoverflow.com/questions/6188990/writing-a-generic-mean-function-in-scala
   */
   import Numeric.Implicits._ // mean, std
+  type Data = Array[breeze.linalg.DenseMatrix[Double]]
 
   def timer[R](block: => R) = {
     val t0 = System.nanoTime()

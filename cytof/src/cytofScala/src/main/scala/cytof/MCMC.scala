@@ -1,8 +1,13 @@
 package cytof
 
-object Mcmc {
+object MCMC {
   import breeze.linalg.{DenseMatrix=>Mat, DenseVector=>Vec}
   import breeze.numerics.{lgamma, log, exp, pow, sqrt}
+  import org.apache.commons.math3.special.Gamma.{gamma, logGamma}
+  val Rand = new org.apache.commons.math3.random.RandomDataGenerator()
+
+  def rgamma(shp: Double, rate: Double) = Rand.nextGamma(shp, 1.0/rate)
+  def rig(shp: Double, rate: Double) = 1.0 / rgamma(shp, rate)
 
   def gibbs[T](state:T, update:T=>Unit, assign:(T,Int)=>Unit,
                iterations:Int, burn:Int, printEvery:Int=0) {
@@ -101,5 +106,10 @@ object Mcmc {
 
 
   // TODO: Copy the rest from the c++ implementation
+  def rdir(a: Vec[Double]):Vec[Double] = {
+    val n = a.size
+    val x = Vec.tabulate(n){ i => rgamma(a(i), 1) }
+    x / x.sum
+  }
 }
 
