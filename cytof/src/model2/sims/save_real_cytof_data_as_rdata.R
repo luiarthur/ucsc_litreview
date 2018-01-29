@@ -22,4 +22,4 @@ I <- length(dat)
 J <- NCOL(dat[[1]])
 
 y <- lapply(as.list(1:I), function(i) transform_data(dat[[i]], cutoff[[i]]))
-save(y, OUT_RDATA)
+save(y, file=OUT_RDATA)
