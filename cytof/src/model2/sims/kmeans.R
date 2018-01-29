@@ -6,7 +6,7 @@ Y = do.call(rbind, y)
 Y = ifelse(is.na(Y), -3, Y)
 
 my.image(Y, col=blueToRed(), mn=-4, mx=4, xlab='markers', ylab='obs', addL=T)
-out = adhoc(Y, 10, 15, 8, lam=1, alg='Lloyd', iter.max=500)
+out = adhoc(Y, K_min=10, K_max=15, reps=4, lam=1, alg='Lloyd', iter.max=500)
 
 Z = lapply(out, function(o) o$Z)
 Z.est = estimate_Z(Z)
@@ -14,15 +14,30 @@ ind.est = estimate_Z(Z, ret=T)
 
 ### Image of Y by clusters ###
 layout(matrix(c(1,1,1,1,1,1,2,2,2), 3, 3, byrow = TRUE))
-my.image(unique(Y[order(out[[ind.est]]$km$clus),]>0,MARGIN=1))
-my.image(t(Z.est[, left_order(Z.est)]))
+#my.image(unique(Y[order(out[[ind.est]]$km$clus),]>0,MARGIN=1))
+my.image(Y[order(out[[ind.est]]$km$clus),],MARGIN=1, col=blueToRed(), mn=-2,mx=2,xlab='',:lab='obs')
+my.image(t(Z.est[, left_order(Z.est)]), xlab='markers', ylab='cell-types')
 par(mfrow=c(1,1))
 
-### PCA VERSION ###
-pY = prcomp(Y,scale=T)$x[,1:5]
-outPy = kmeans(pY, 7, iter=1000)
-plot(table(outPy$cluster) / sum(table(outPy$cluster)))
-my.image(Y[outPy$clus,], mn=-4, mx=4, col=blueToRed())
+#### PCA VERSION ###
+##pY = prcomp(Y,scale=T)
+##plot(cumsum(pY$sd^2 / sum(pY$sd^2)), type='b')
+#
+#pY = prcomp(Y,scale=T)$x[,1:5]
+#outPy = adhoc(pY, 10, 15, 8, lam=1, alg='Lloyd', iter.max=500)
+#pZ = lapply(outPy, function(o) o$Z)
+#pZ.est = estimate_Z(pZ)
+#ind.est = estimate_Z(pZ, ret=T)
+#
+#### Image of Y by clusters ###
+#layout(matrix(c(1,1,1,1,1,1,2,2,2), 3, 3, byrow = TRUE))
+#my.image(unique(pY[order(out[[ind.est]]$km$clus),]>0,MARGIN=1))
+#my.image(t(pZ.est[, left_order(pZ.est)]))
+#par(mfrow=c(1,1))
+#
+##outPy = kmeans(pY, 7, iter=1000)
+##plot(table(outPy$cluster) / sum(table(outPy$cluster)))
+##my.image(Y[outPy$cluster,], mn=-4, mx=4, col=blueToRed())
 
 ### Simdat $$$
 

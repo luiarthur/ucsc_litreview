@@ -2,8 +2,8 @@ library(cytof2)
 library(doMC)
 registerDoMC(as.numeric(system("nproc",intern=TRUE)))
 
-adhoc = function(Y, K_min=1, K_max=10, J=5, lam=1, ...) {
-  grid = expand.grid(K_min:K_max, 1:J)
+adhoc = function(Y, K_min=1, K_max=10, reps=5, lam=1, ...) {
+  grid = expand.grid(K_min:K_max, 1:reps)
   N = nrow(grid)
 
   out = foreach(i=1:N) %dopar% {
