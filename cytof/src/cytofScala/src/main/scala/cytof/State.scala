@@ -6,7 +6,7 @@ case class State(
   gams0: Mat[Double], mus: Vector[Mat[Double]], sig2: Vec[Double],
   psi: Vec[Double], tau2: Vec[Double],
   v: Vec[Double], H:Mat[Double], Z:Mat[Int], W: Mat[Double], lam: Vector[Vec[Int]],
-  impY: Vector[Mat[Double]], K:Int) {
+  impY: Vector[Mat[Double]], var K:Int) {
 
   def deepCopy() = {
     State( 
