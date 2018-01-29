@@ -11,9 +11,9 @@
     - [x] Remove: `update_theta_no_K`
     - [x] Add: `update_theta_depending_on_K`
 - [ ] Double check changes in `K.h`, `loglike.h`, and `theta.h`
-- [ ] Change: data simulation missing mechanism
-- [ ] Do some simulations with N=(1000,10000), prop_train=(.1,.3,.5,.9)
-- [ ] In `params.pdf`, fix `prob_of_missing` 
+- [x] Change: data simulation missing mechanism
+- [x] Do some simulations with N=(1000,10000), prop_train=(.1,.3,.5,.9)
+- [x] In `params.pdf`, fix `prob_of_missing` 
 - [ ] Write up changes
     - [ ] Note that I'm also updating lambda in theta3, because W changes
 
