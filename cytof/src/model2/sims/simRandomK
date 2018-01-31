@@ -28,7 +28,7 @@ N="10000"
 USE_SIMPLE_Z="0"
 PROP="0.5  0.7  0.3  0.9  0.1"
 NCORES=5
-OUTDIR='out/simRandomK/'
+OUTDIR='out/simRandomK_Realistic/'
 
 B=2000
 BURN=1000 #max time 12 hrs.
