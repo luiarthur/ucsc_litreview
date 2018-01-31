@@ -61,7 +61,7 @@ dat_lim = c(-10,10)
 #y_beta = c(-6,-5.5)
 #y_beta = c(-5,-2)
 
-y_beta = c(-8, c0 <- -3, -1)
+y_beta = c(-8, c0 <- -2, -1)
 #y_beta = c(-3, c0 <- -2, -1)
 bdat = get_beta_new(y=y_beta, p_tar=c(.1, .6,.01))
 
@@ -75,9 +75,10 @@ dat <- simdat(I=I, N=c(2,3,1)*DATA_SIZE, J=J, K=K,
               c0=bdat['c0'],
               Z=if (USE_SIMPLE_Z) genSimpleZ(J, K) else genZ(J,K),
               #Z=genZ(J, K, c(.4,.6)),
-              #psi_0=-5, psi_1=5,
-              psi_0=-3, psi_1=3,
-              tau2_0=.1, tau2_1=.1,
+              #psi_0=-3, psi_1=3,
+              #tau2_0=.1, tau2_1=.1,
+              psi_0=-2, psi_1=2,
+              tau2_0=.3, tau2_1=.3,
               gams_0=matrix(rnorm(I*J,1,.1),I,J),
               sig2=matrix(rnorm(I*J,1,.1),I,J),
               W=W)
@@ -175,7 +176,7 @@ prior = list(cs_v=4, cs_h=3, d_w=1,
              m_betaBar=bdat.prior['b0'], s2_betaBar=.0001, s2_beta0=.0001, #b0
              a_beta=bdat.prior['b1'] * 100, b_beta=100, # b1
              c0=c0, a_x=bdat.prior['x'] * 100, b_x=100, # x
-             K_min=1, K_max=10, a_K=2)
+             K_min=2, K_max=10, a_K=2)
 print(prior)
 
 pdf(fileDest('prior_prob_miss.pdf'))
