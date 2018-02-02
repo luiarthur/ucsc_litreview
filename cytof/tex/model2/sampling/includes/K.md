@@ -6,54 +6,63 @@ for using the IBP (a nonparametric distribution) as a prior for the latent
 feature matrix. So we now introduce an algorithm based on MCMC for sampling
 $K$. The idea is to iteratively
 
-1. sample $(\bm\theta, K)$ jointly using a small "training set" to learn a prior for $\btheta$.
-2. sample $(\bm\theta \mid K)$ based on the most recent $K$ using a large subset of the entire data (which we will call the "testing set").
+1. sample $(\bm\theta_1, K)$ jointly using a small "training set" to learn a prior for $\btheta$.
+2. sample $(\bm\theta_1 \mid K)$ based on the most recent $K$ using a large subset of the entire data (which we will call the "testing set").
 
-The algorithm will be expounded upon below. 
+Moreover, when working with the likelihood, we will marginalize over $\lambda$
+so as to avoid the need to impute its value in the "testing set". The algorithm
+will be expounded upon below. 
 
 ### Sampling $(\bm\theta, K \mid \y)$ using Small Training Set to Learn Prior for $\btheta$
 
 Let $\y^{TR}$ refer to a (predetermined) randomly selected subset of
-observations of the entire data. We will call this the training set.  This set
-should be small -- the number of rows in $\y^{TR}$ should be about 5% that of
-the entire data $\y$. To ensure that the sample is representative of the data,
-5% from each sample $i$ will be taken.  Let $\y^{TE}$ refer to the remaining
-observations. That is, $\y = \y^{TE} \cup \y^{TR}$. We will call $\y^{TE}$ the
-testing set.
+observations of the entire data. We will call this the training set.  The size
+of this training set should be large enough to contain a representative
+subsample of the data. Yet, it should not be excessively large as a larger
+training set will lead to greater computation time. The number of rows in
+$\y^{TR}$ could be about 50% that of the entire data $\y$. For example, to
+ensure that the sample is representative of the data, 50% from each sample $i$
+will be taken. Let $\y^{TE}$ refer to the remaining observations. That is, $\y
+= \y^{TE} \cup \y^{TR}$. We will call $\y^{TE}$ the testing set.
 
 Let the prior distribution for $K$ be $K \sim \Unif(1, K^{\max})$, where
 $K^{\max}$ is some integer **sufficient large** (trial and error, start with
-15?).  Also, let $p^\star(\bm\theta) = p(\bm\theta \mid \y^{TR}, K)$ be the
-posterior distribution of $\bm\theta$ given the training set and $K$.
-That is, we learn the prior distribution for $\btheta$ from a small training
-set.
+15?).  Also, let $p^\star(\bm\theta_1) = p(\bm\theta_1 \mid \y^{TR}, K)$ be the
+posterior distribution of $\bm\theta_1$ given the training set and $K$.  That is,
+we learn the prior distribution for $\btheta_1$ from a small training set.
 
-The joint posterior for $(\bm\theta, K)$ is then
+From empirical simulation studies, when the number of observations in the training
+set is not large enough and the initial value for $K$ is smaller than the true
+dimensions of $Z$, the MCMC is not recurrent and it may not be possible for $K$
+to move to the true dimensions of $Z$ or beyond. Hence, we recommend
+initializing $Z$ to have a reasonably large number of columns.
+
+The joint posterior for $(\bm\theta_1, K)$ is then
 
 \begin{align*}
-p(\theta,K \mid \y^{TE}) &\propto p(K)p^\star(\bm\theta)
-p(\y^{TE} \mid \bm\theta, K) \\
+p(\theta_1,K \mid \y^{TE}) &\propto p(K)p^\star(\bm\theta_1)
+p(\y^{TE} \mid \bm\theta_1, K) \\
 %%%
 &\propto p(K)
-p(\bm\theta \mid K, \y^{TR}) p(\y^{TE} \mid \bm\theta, K) \\
+p(\bm\theta_1 \mid K, \y^{TR}) p(\y^{TE} \mid \bm\theta_1, K) \\
 %%%
 &\propto p(K)
-p(\bm\theta\mid K) p(\y^{TR} \mid \bm\theta, K) p(\y^{TE} \mid \bm\theta, K) \\
-&\propto p(K, \bm\theta)
-p(\y^{TR} \mid \bm\theta, K) p(\y^{TE} \mid \bm\theta, K) \\
-&\propto p(K, \bm\theta)
-p(\y \mid \bm\theta, K) \\
+p(\bm\theta_1\mid K) p(\y^{TR} \mid \bm\theta_1, K) p(\y^{TE} \mid \bm\theta_1, K) \\
+&\propto p(K, \bm\theta_1)
+p(\y^{TR} \mid \bm\theta_1, K) p(\y^{TE} \mid \bm\theta_1, K) \\
+&\propto p(K, \bm\theta_1)
+p(\y \mid \bm\theta_1, K) \\
 \end{align*}
 
 Note that this is the same as the posterior distribution of 
-$(\bm\theta, K)$ given the entire data.
+$(\bm\theta_1, K)$ given the entire data.
 
 Simplifying the expression, we get
 
 $$
-p(\theta,K \mid \y^{TE})
+p(\theta_1,K \mid \y^{TE})
 \propto 
-p(\bm\theta \mid K, \y^{TR}) p(\y^{TE} \mid \bm\theta, K).
+p(\bm\theta_1 \mid K, \y^{TR}) p(\y^{TE} \mid \bm\theta_1, K).
 $$
 
 Note that $p(K)$ is missing from the expression as it is 

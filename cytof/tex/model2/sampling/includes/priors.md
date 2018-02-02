@@ -2,13 +2,38 @@ The parameters $\bm\theta \mid K$ are now explicitly written.
 
 $$
 \begin{split}
-\bm\theta = \bc{
-h_k, v_k, \mus_{0ij}, \mus_{1ij}, \psi_0, \psi_1, 
-\tau^2_0, \tau^2_1, W_{ik}, \lin, 
+\bm\theta_1 &= \bc{
+h_k, v_k,
+W_{ik}, Z_{jk}
+}_{i=1,j=1,k=1}^{i=I,j=J,k=K} \\
+\bm\theta_2 &= \bc{
+\mus_{0ij}, \mus_{1ij}, \psi_0, \psi_1, 
+\tau^2_0, \tau^2_1,
 \sigma^2_{ij}, \gamma_{0ij}, \gamma_{1ij}, \beta_{0ij}, \beta_{0j}, \beta_{1j},
-y_{inj}\colon m_{inj}=1
-}_{i=1,n=1,j=1,k=1}^{i=I,n=N_i,j=J,k=K}
+}_{i=1,j=1,k=1}^{i=I,j=J,k=K} \\
+\bm\theta_3 &= \bc{
+\lin, 
+\p{y_{inj}\colon m_{inj}=1},
+K
+}_{i=1,n=1,j=1,k=1}^{i=I,n=N_i,j=J,k=K} \\
+\bm\theta &= \bc{\bm\theta_1, \bm\theta_2, \bm\theta_3}
 \end{split}
+$$
+
+Note that $\bm\theta_1$ are parameters which dimensions depend on $K$.  The
+parameters in $\bm\theta_2$ do not explicitly depend on $K$.  And $\bm\theta_3$
+contains the remaining parameters, $K$, $\lin$ which takes on values between 1
+and $K$, and the missing values for $y_{inj}$ which are sensitive to $\lin$.
+
+$$
+%\begin{split}
+%\bm\theta = \bc{
+%h_k, v_k, \mus_{0ij}, \mus_{1ij}, \psi_0, \psi_1, 
+%\tau^2_0, \tau^2_1, W_{ik}, \lin, 
+%\sigma^2_{ij}, \gamma_{0ij}, \gamma_{1ij}, \beta_{0ij}, \beta_{0j}, \beta_{1j},
+%y_{inj}\colon m_{inj}=1
+%}_{i=1,n=1,j=1,k=1}^{i=I,n=N_i,j=J,k=K}
+%\end{split}
 $$
 
 \begin{align*}

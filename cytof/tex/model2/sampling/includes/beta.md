@@ -3,12 +3,13 @@ Define $f_{inj}$ to be
 \begin{align*}
 f_{inj} &:= P(m_{inj} = 1 \mid p_{inj}, y_{inj}) \\
 &=
-\bk{\frac{1}{1 + \exp(-\beta_{0ij} + \beta_{1j} y_{inj})}}^{m_{inj}}
-\bk{\frac{1}{1 + \exp( \beta_{0ij} - \beta_{1j} y_{inj})}}^{1-m_{inj}} \\
+\begin{cases}
+\bk{\frac{1}{1 + \exp\bc{-\beta_{0ij} + \beta_{1j} (y_{inj}-c_0)^2)}}}^{m_{inj}}
+\bk{\frac{1}{1 + \exp\bc{\beta_{0ij} - \beta_{1j} (y_{inj}-c_0)^2 }}}^{1-m_{inj}} & \text{if } y_{inj} < c_0\\
 \\
-f_{inj} &:=
-\bk{1 + \exp(-\beta_{0ij} + \beta_{1j} y_{inj})}^{-m_{inj}}
-\bk{1 + \exp( \beta_{0ij} - \beta_{1j} y_{inj})}^{m_{inj}-1} \\
+\bk{\frac{1}{1 + \exp\bc{-\beta_{0ij} + \beta_{1j} x_j\sqrt{y_{inj}-c_0})}}}^{m_{inj}}
+\bk{\frac{1}{1 + \exp\bc{\beta_{0ij} - \beta_{1j} x_j\sqrt{y_{inj}-c_0} }}}^{1-m_{inj}} & \text{otherwise}\\
+\end{cases}
 \end{align*}
 
 ### Full Conditional for $\beta_{1j}$

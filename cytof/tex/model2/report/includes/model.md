@@ -58,7 +58,11 @@ distribution.
 
 \begin{align}
   m_{inj} \mid p_{inj}, y_{inj} &\sim \Bern(p_{inj}) \nonumber \\
-  \logit(p_{inj}) &:= \beta_{0ij} - \beta_{1j}~y_{inj} \nonumber \\
+  %\logit(p_{inj}) &:= \beta_{0ij} - \beta_{1j}~y_{inj} \nonumber \\
+  \logit(p_{inj}) &:= \begin{cases}
+  \beta_{0ij} - \beta_{1j}(y_{inj}-c_0)^2, & \text{if } y_{inj} < c_0\nonumber \\
+  \beta_{0ij} - \beta_{1j}x_j\sqrt{y_{inj}-c_0}, & \text{otherwise} \nonumber \\
+  \end{cases}\\
   \nonumber \\
   y_{inj} \mid \mu_{inj}, \gamma_{inj}, \sigma^2_{ij}, \bm Z, \lin
   &\sim \N(\mu_{inj}, (\gamma_{inj}+1) \sigma^2_{ij}) \nonumber \\
