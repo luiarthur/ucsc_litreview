@@ -102,84 +102,99 @@ step. The proposal mechanism is as follows:
 
 
 2. Given $\tilde K$, we then propose 
-   $\tilde{\bm\theta} \mid \tilde K$ with the proposal 
+   $\tilde{\bm\theta_1} \mid \tilde K$ with the proposal 
    distribution
    being the prior. To clarify, the prior here refers to the
-   posterior distribution of $\bm\theta$ given the smaller
+   posterior distribution of $\bm\theta_1$ given the smaller
    training data. That is, 
-   $q_\theta(\bm\theta) = p(\bm\theta \mid K, \y^{TR})$.
-3. We accept the proposed draw $(\tilde K, \bm{\tilde\theta})$
+   $q_\theta(\bm\theta_1) = p(\bm\theta_1 \mid K, \y^{TR})$.
+3. We accept the proposed draw $(\tilde K, \bm{\tilde\theta_1})$
    with probability $\min\bc{1, \Lambda}$ where 
    \begin{align*}
    \Lambda & = 
    \frac{
-     p(\tilde K) p^\star(\tilde\btheta) p(\y^{TE} \mid \tilde\btheta, \tilde K)
+     p(\tilde K) p^\star(\tilde\btheta_1) p(\y^{TE} \mid \tilde\btheta_1, \tilde K)
    }{
-     p(K) p^\star(\btheta) p(\y^{TE} \mid \btheta, K)
+     p(K) p^\star(\btheta_1) p(\y^{TE} \mid \btheta_1, K)
    }
    \times
    \frac{ %%% PROPOSAL
-     q_K(K \mid \tilde K) q_\theta(\btheta \mid K)
+     q_K(K \mid \tilde K) q_\theta(\btheta_1 \mid K)
    }{
-     q_K(\tilde K \mid K) q_\theta(\tilde\btheta \mid \tilde K)
+     q_K(\tilde K \mid K) q_\theta(\tilde\btheta_1 \mid \tilde K)
    }
    \\
    \\
    & = 
    \frac{
-     p(\tilde K) p^\star(\tilde\btheta) p(\y^{TE} \mid \tilde\btheta, \tilde K)
+     p(\tilde K) p^\star(\tilde\btheta_1) p(\y^{TE} \mid \tilde\btheta_1, \tilde K)
    }{
-     p(K) p^\star(\btheta) p(\y^{TE} \mid \btheta, K)
+     p(K) p^\star(\btheta_1) p(\y^{TE} \mid \btheta_1, K)
    }
    \times
    \frac{ %%% PROPOSAL
-     q_K(K \mid \tilde K) p^\star(\btheta)
+     q_K(K \mid \tilde K) p^\star(\btheta_1)
    }{
-     q_K(\tilde K \mid K) p^\star(\tilde\btheta)
+     q_K(\tilde K \mid K) p^\star(\tilde\btheta_1)
    }
    \\
    \\
    & = 
    \frac{
-     p(\y^{TE} \mid \tilde\btheta, \tilde K)
+     p(\y^{TE} \mid \tilde\btheta_1, \tilde K)
      ~
      q_K(K \mid \tilde K)
    }{
-     p(\y^{TE} \mid \btheta, K)
+     p(\y^{TE} \mid \btheta_1, K)
      ~
      q_K(\tilde K \mid K)
    }.
    \end{align*}
 
-Note that sampling from $(\btheta \mid K, \y^{TR})$ can be done by sampling
-from the full conditional of each parameter in $\btheta$. Note that
+Note that sampling from $(\btheta_1 \mid K, \y^{TR})$ can be done by sampling
+from the full conditional of each parameter in $\btheta_1$. Note that
 the steps for sampling from the full conditional of each parameter
-in $\btheta$ given $K$ are already provided above. The only modification
+in $\btheta_1$ given $K$ are already provided above. The only modification
 needed is that a smaller subset of the data $\y^{TR}$ is used instead of the
 entire data $\y$.
 
+Some care needs to be taken in the computation of the likelihood in the above
+expression since $\y_{TE}$ contains parameters dependent on the number of
+observations, specifically $\lambda$ and the missing observations. This can be 
+remedied by marginalizing out $\lambda$, which can be done easily as $\lin$ is
+discrete and takes on values between 1 and $K$. The density with $\lambda$
+marginalized is 
+
+$$
+p(y_{inj} \mid \theta_1, K) = \sum_{k=1}^K W_{ik} \cdot
+\text{N}(y_{inj} \mid \mus_{Z_{jk}}, \sigma_{ij}^2(1+\gamma^*_{Z_{jk}})),
+%TODO: IMPUTING y??? Use Monte Carlo.
+$$
+
+where N($x \mid m, s^2$) denotes the density of the Normal distribution with
+mean $m$ and variance $s^2$.
+
 Since $K$ can be one of $\bc{1,...,K^{\max}}$. We need to keep $K^{\max}$
-separate MCMC chains for $\btheta$ (one for each $K$). Each time a sample from
-$\btheta \mid K, \y^{TR}$ is required for a particular $K$, only the 
+separate MCMC chains for $\btheta_1$ (one for each $K$). Each time a sample from
+$\btheta_1 \mid K, \y^{TR}$ is required for a particular $K$, only the 
 Markov chain corresponding to that $K$ is updated. In terms of computation, 
 note that in this way, the entire Markov chain need not be stored, but only
 the most recent element in the chain (the most recent set of parameters
-$\btheta$ for each $K$).
+$\btheta_1$ for each $K$).
 
 Finally, a small *burn-in* period may be necessary to obtain samples from 
-$p^\star(\btheta) = p(\btheta \mid K, \y^{TR})$ for each $K$. That is, at the
+$p^\star(\btheta_1) = p(\btheta_1 \mid K, \y^{TR})$ for each $K$. That is, at the
 **very start** of the algorithm, we should run $K$ MCMC chains (one for each
-$K$) for to sample from $p(\btheta \mid K, \y^{TR})$ for some number of 
+$K$) for to sample from $p(\btheta_1 \mid K, \y^{TR})$ for some number of 
 iterations (say 3000). This period acts as a burn-in to aid in collecting
 better samples from the distribution.
 
-### Sampling From $\btheta  \mid K, \y^{TE}$
+### Sampling From $\btheta_1  \mid K, \y^{TE}$
 
-Sampling from $\btheta \mid K, \y^{TE}$ can be done
-by sampling from the full conditional of each parameter in $\btheta$ given
-a large subset of the data $\y^{TE}$. Again, the steps for sampling from 
-the full conditional of each parameter in $\btheta$ given $K$ is provided
-previously. 
-This time, the only modification needed is that the entire data $\y$ is used.
+Sampling from $\btheta_1 \mid K, \y^{TE}$ can be done by sampling from the full
+conditional of each parameter in $\btheta_1$ given a large subset of the data
+$\y^{TE}$. Again, the steps for sampling from the full conditional of each
+parameter in $\btheta_1$ given $K$ is provided previously.  This time, the only
+modification needed is that the entire data $\y$ is used.
 
 
