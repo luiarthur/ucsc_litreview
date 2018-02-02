@@ -16,8 +16,10 @@
 - [x] In `params.pdf`, fix `prob_of_missing` 
 - [ ] Write up changes
     - [ ] Note that I'm also updating lambda in theta3, because W changes
-    - [ ] New prob of missing mechanism
+    - [x] New prob of missing mechanism
     - [ ] how to sample from full conditional of theta3
+    - [ ] Changes from Juhee in blue
+
 
 ## 13 Jan, 2017
 
