@@ -7,11 +7,14 @@ MAX_CORES=16
 
 ### PARAMETERS FOR MCMC ###
 DATA_DIR="dat/cytof_cb.RData"
-MCMC_K="1 10"
-OUTDIR="out/cb_randomK"
+MCMC_K="16"
+OUTDIR="out/cb_randomK_new"
 B=2000
-BURN="1200"
-THIN=5
+BURN="2000"
+THIN=1
+PROP="0.3"
+NCORES=16
+WARMUP=1000
 
 for burn in $BURN
 do
@@ -19,7 +22,7 @@ do
   do
     i=$(( i + 1 ))
     outdir="${OUTDIR}/cb_k${k}_B${B}_burn${burn}_thin${THIN}/"
-    cmd="Rscript realDat_cb_randomK.R $DATA_DIR $k $outdir $B $burn $THIN"
+    cmd="Rscript realDat_cb_randomK.R $DATA_DIR $k $outdir $B $burn $THIN $PROP $WARMUP $NCORES"
     sem -j $MAX_CORES $cmd
     echo "Simulation $i: $outdir"
   done
