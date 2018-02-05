@@ -17,7 +17,7 @@ THIN <- as.integer(args[6])
 PROP = as.numeric(args[7])
 WARMUP = as.integer(args[8])
 NCORES = as.integer(args[9])
-dat_lim = c(-5,5)
+dat_lim = c(-7,7)
 
 fileDest = function(name) paste0(OUTDIR, name)
 
@@ -59,7 +59,7 @@ dev.off()
 
 png(fileDest('rawDat%03d.png'))
 for (i in 1:I) {
-  my.image(y[[i]], mn=-5, mx=5, col=blueToRed(), addLegend=TRUE,
+  my.image(y[[i]], mn=dat_lim[1], mx=dat_lim[2], col=blueToRed(), addLegend=TRUE,
            main=paste0('y',i), xlab='j', ylab='n')
 }
 dev.off()
@@ -88,11 +88,14 @@ sim_time <- system.time(
 sink(fileDest('simtime.txt')); print(sim_time); sink()
 save(y, out, file=fileDest('sim_result.RData'))
 
-plot_cytof_posterior(out, y, outdir=OUTDIR, dat_lim=dat_lim)
+plot_cytof_posterior(out, y, outdir=OUTDIR, dat_lim=dat_lim, prior=prior)
 
 png(fileDest('Y%03dsortedByLambda.png'))
+Z = sapply(out, function(o) o$Z)
+idx = estimate_Z(Z, returnIndex=TRUE)
+lam_est = out[[idx]]$lam
 for (i in 1:I) {
-  lami_ord = order(last(out)$lam[[i]])
+  lami_ord = order(lam_est[[i]])
   my.image(y[[i]][lami_ord,], mn=dat_lim[1], mx=dat_lim[2],
            ylab='obs', xlab='markers', col=blueToRed(),addL=TRUE)
 }
