@@ -138,8 +138,9 @@ project.
 
 The dependent IBP (dIBP) is one extension of the IBP under the stick-breaking
 representation which allows prior information on the correlation between 
-items (rows) to be included in feature allocation models. The model is as
-follow:
+items (rows) to be included in feature allocation models. This correlation 
+(or dependency) is introduced into the model through a covariance matrix
+$\bm S$. Hence, the model is as follows:
 
 \begin{align}
 \begin{split}
@@ -156,6 +157,12 @@ standard Normal distribution function, and $\bm S$ is known and contains the
 covariance of the objects $j=1,...,J$.  Note that when $\bm S = \I$ then the
 dIBP reduces to the stick-breaking construction of the IBP. Hence, the
 "dependency" between objects is introduced to the model through $\bm S$.
+Recall also that since the stick-breaking representation of the IBP implicitly
+imposes an ordering of the columns so that features that are activated are more
+likely to occur in the left-most columns, the traditional IBP is not recovered
+in the sense that the pmf is recovered. But since the ordering of the features
+is not of major interest in application, the stick-breaking and dependent IBP
+behave like the IBP.
 
 ### Prior for $\alpha$ in Stick-breaking Construction for IBP
 
