@@ -162,7 +162,7 @@ imposes an ordering of the columns so that features that are activated are more
 likely to occur in the left-most columns, the traditional IBP is not recovered
 in the sense that the pmf is recovered. But since the ordering of the features
 is not of major interest in application, the stick-breaking and dependent IBP
-behave like the IBP.
+behave like the IBP for practical purposes.
 
 ### Prior for $\alpha$ in Stick-breaking Construction for IBP
 

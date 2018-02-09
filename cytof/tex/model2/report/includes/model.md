@@ -2,24 +2,25 @@ The model and prior specifications are presented in this section.  Note that
 the dIBP will be used in the prior specifications.  Some notation which will be
 used throughout this paper is first presented.
 
-## Notation
+## Sampling Model
 
-Let $I$ represent the number of samples.  Let $N_i$ represent the number of
-cells in sample $i$, where $i = 1,2,...,I$.  Let $J$ represent the number of
-markers.  Hence, the raw data $\tilde{y}_{inj}$ represent the raw data for
-sample $i$, cell $n$, and marker $j$. From a computation perspective, a
-suitable data structure for the data could be a list (of length $I$) of
-matrices of (variable) dimensions ($N_i \times J$).  Let $c_{ij}$ denote the
-"cutoff" values for sample $i$, marker $j$.  For a particular cell ($n$) in
-sample $i$, a marker expressions level above the cutoff value $c_{ij}$ for
-sample $i$ and marker $j$ indicates that marker $j$ is most likely expressed. A
-marker expression level below its corresponding cutoff value, indicates the
-marker is not expressed.  These cutoff values are provided by the CyTOF
-instrument to correct for background measurement noise picked up by the
-instrument, and are positively valued. Since the expression levels for a marker
-depends on the number of metals detected in a reading, and the amount of metal
-ions present can vary greatly by sample and marker, a different cutoff value is
-assumed for each sample and marker combination.
+Let $I$ represent the number of samples (number of patients, or number of
+chordal blood samples, etc.).  Let $N_i$ represent the number of cells in
+sample $i$, where $i = 1,2,...,I$.  Let $J$ represent the number of markers.
+Hence, the raw data $\tilde{y}_{inj}$ represent the raw data for sample $i$,
+cell $n$, and marker $j$. From a computation perspective, a suitable data
+structure for the data could be a list (of length $I$) of matrices of
+(variable) dimensions ($N_i \times J$).  Let $c_{ij}$ denote the "cutoff"
+values for sample $i$, marker $j$. For a particular cell ($n$) in sample $i$,
+a marker expressions level above the cutoff value $c_{ij}$ for sample $i$ and
+marker $j$ indicates that marker $j$ is most likely expressed. A marker
+expression level below its corresponding cutoff value, indicates the marker is
+not expressed.  These cutoff values are provided by the CyTOF instrument to
+correct for background measurement noise picked up by the instrument, and are
+positively valued. Since the expression levels for a marker depends on the
+number of metals detected in a reading, and the amount of metal ions present
+can vary greatly by sample and marker, a different cutoff value is assumed for
+each sample and marker combination.
 
 Let $\tilde{y}_{inj}$ be the expression level for sample $i$, cell $n$, marker
 $j$ as measured by the CyTOF instrument. Intuitively, expression levels should
@@ -51,9 +52,9 @@ that the data take on the same value as the cutoff.  Consequently, $y_{inj} >
 $y_{inj}$ for which $\tilde{y}_{inj} = 0$ are regarded as missing values, and are 
 treated as random variables to be imputed.
 
-## Model
 
-Based on the notation presented above, we are now ready to present the sampling 
+
+Based on the notation presented above, we now present the sampling
 distribution.
 
 \begin{align}
@@ -74,13 +75,22 @@ distribution.
 In the first line, we model the probability of missing as a function of the
 data.  Specifically, we want a higher probability of missingness to be
 associated with lower expression levels. We therefore model the probability of
-missing $p_{inj}$ with a logistic function of the data $y_inj$. An intercept
+missing $p_{inj}$ with a logistic function of the data $y_{inj}$. An intercept
 term for each sample and marker and a slope term for each marker are included.
 In addition, we constrain the slope terms to have only positive support to
 reflect that lower expression levels are more likely to be missing.
 
 I will now explain the other parameters in the model introduced in
-$(\ref{eq:model})$. Each observed expression level in sample $i$ for marker $j$
+$(\ref{eq:model})$. First recall that one of the objects of this study
+is to model and identify the predominant cell-types in blood samples being
+studied. We use $\lin$ to represent the (integer-valued) cell-type
+observation $n$ in sample $i$. These cell-types are imputed as they are not
+observed. The cell-types $\lin$ take on integer values but in practice will
+not exceed some predetermined value $K$, due to computational considerations.
+
+EXPLAIN Z
+
+Each observed expression level in sample $i$ for marker $j$
 is believed to be distributed Normally centered at some value $\mu^*_{1ij}$
 (which has positive support) if the marker is expressed, or $\mu^*_{0ij}$
 (which has negative support) if the marker is not expressed. Likewise, their

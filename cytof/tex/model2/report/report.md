@@ -97,7 +97,7 @@ include-before:
 ## Feature Allocation Models
 <include file="includes/new_ibp.md">
 
-# Model Description
+# Probability Model
 <include file="includes/model.md">
 
 # Simulation Study
