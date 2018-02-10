@@ -12,8 +12,8 @@ OUTDIR="out/cb_randomK_new"
 B=2000
 BURN="2000"
 THIN=1
-PROP="0.3"
-NCORES=16
+PROP="0.5 0.7 0.9"
+NCORES=32
 WARMUP=1000
 
 for burn in $BURN
@@ -22,7 +22,7 @@ do
   do
     i=$(( i + 1 ))
     outdir="${OUTDIR}/cb_k${k}_B${B}_burn${burn}_thin${THIN}/"
-    cmd="Rscript realDat_cb_randomK.R $DATA_DIR $k $outdir $B $burn $THIN $PROP $WARMUP $NCORES"
+    cmd="nice Rscript realDat_cb_randomK.R $DATA_DIR $k $outdir $B $burn $THIN $PROP $WARMUP $NCORES"
     sem -j $MAX_CORES $cmd
     echo "Simulation $i: $outdir"
   done
