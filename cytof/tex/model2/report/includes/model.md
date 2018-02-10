@@ -81,28 +81,19 @@ In addition, we constrain the slope terms to have only positive support to
 reflect that lower expression levels are more likely to be missing.
 
 I will now explain the other parameters in the model introduced in
-$(\ref{eq:model})$. First recall that one of the objects of this study
-is to model and identify the predominant cell-types in blood samples being
-studied. We use $\lin$ to represent the (integer-valued) cell-type
-observation $n$ in sample $i$. These cell-types are imputed as they are not
-observed. The cell-types $\lin$ take on integer values but in practice will
-not exceed some predetermined value $K$, due to computational considerations.
-
-EXPLAIN Z
-
-Each observed expression level in sample $i$ for marker $j$
-is believed to be distributed Normally centered at some value $\mu^*_{1ij}$
+$(\ref{eq:model})$.  Each observed expression level in sample $i$ for marker
+$j$ is believed to be distributed Normally centered at some value $\mu^*_{1ij}$
 (which has positive support) if the marker is expressed, or $\mu^*_{0ij}$
 (which has negative support) if the marker is not expressed. Likewise, their
 variances are $\sigma_{ij}$ if the marker is expressed, or
 $(1+\gamma^*_{0ij})\sigma^2_{ij}$ (for some positive $\gamma^*_{0ij}$) if the
-marker is not expressed. $\bm Z$ which is a $J\times K$ binary matrix
-is a latent binary matrix where $Z_{jk} = 1$ indicates that marker $j$ is
-active in some cell-type $k$. $\lambda_{in}$ is the cell-type for cell $n$ in
-sample $i$.  Note that the total possible number of cell-types is $2^J$, but as
-mentioned previously, we do not enumerate all cell-types but simply learn the 
-most prevalent cell-types. Therefore, $\lambda_{in}$ takes on only a finite
-number of (contiguous) positive integer values.
+marker is not expressed. $\bm Z$ which is a $J\times K$ binary matrix is a
+latent binary matrix where $Z_{jk} = 1$ indicates that marker $j$ is active in
+some cell-type $k$. $\lambda_{in}$ is the cell-type for cell $n$ in sample $i$.
+Note that the total possible number of cell-types is $2^J$, but as mentioned
+previously, we do not enumerate all cell-types but simply learn the most
+prevalent cell-types. Therefore, $\lambda_{in}$ takes on only a finite number
+of (contiguous) positive integer values.
 
 
 Let $\btheta$ represent all parameters (discussed in the next section).
