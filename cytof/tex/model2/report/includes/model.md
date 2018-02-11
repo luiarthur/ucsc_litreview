@@ -72,6 +72,18 @@ distribution.
   \label{eq:model}
 \end{align}
 
+<!-- TODO
+{\tt  $ \logit(p_{inj}) = \beta_{0ij} - \beta_{1j}~y_{inj}$ What does this mean? Explain.
+
+Your $Z$ has not been formally introduced yet.  Your $\lambda_{in}$ is not introduced yet. We augment the mixture model (which you haven't explained) by introducing the latent cell type indicator.  
+
+We discussed cell types earlier.  How are cell types related to the parameters in the sampling distribution?
+
+What does $\gamma_{inj}$ do?
+}
+
+-->
+
 In the first line, we model the probability of missing as a function of the
 data.  Specifically, we want a higher probability of missingness to be
 associated with lower expression levels. We therefore model the probability of
@@ -113,6 +125,17 @@ The resulting **likelihood** is as follows:
 The model is fully specified after priors are placed on all unknown parameters.
 
 ## Priors
+
+<!-- TODO
+- [ ] Please explain each of the priors e.g. what does each parameter mean? 
+    - what $\beta_{ij}$ means? Why do we choose the priors?
+    - Why Normal− for $\psi_0$?
+    - Why do we have $\mu^*_{0ij}$, not $\mu^*_{kij}$?
+    - Include texts and references when they are needed.
+- [ ] Instead of putting all in one gigantic equation, we may explain one by one.
+- [ ] Please use letters for fixed hyper-parameters.
+- [ ] We can explain how we calibrate the priors (how to specify the fixed hyper-parameters) in the Simulation section.
+-->
 
 The specific prior distributions (including hyper-parameters) are included here.
 
@@ -158,10 +181,9 @@ simulations, 2000 samples were gathered after a burn-in of 2000 iterations. The
 MCMC was thinned by a factor of 5. (i.e. only one of every 5 samples after the
 burn-in are kept.)
 
-[comment]: <> (% TODO
+<!-- TODO
 - [ ] Discuss the posterior computations. You already have some in your section 4.2. Please move them here and elaborate more.
 - [ ] We will make the number of cell types K random.
 - [ ] Discuss how we run MCMC with random K.
 - [ ] Include how to summarize the posterior MCMC samples (which you also explained later). How do we find the posterior estimates of Z, w and other parameters.
-%)
-
+-->

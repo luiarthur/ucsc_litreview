@@ -1,6 +1,6 @@
-[comment]: <> (% TODO
+<!-- TODO
 - [ ] Please explain this in a plain text rather than in "enumerate". Include specific true values used to simulate data.
-%)
+-->
 
 Data were generated to closely match the proposed model. The steps to simulate
 data is as follows:
