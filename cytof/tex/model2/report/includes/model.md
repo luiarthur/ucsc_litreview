@@ -152,3 +152,9 @@ p(\lin=k \mid \bm W_i) &= W_{ik} \\
 
 
 ## Posterior Computation
+Standard MCMC techniques like Gibbs sampling and the Metropolis method are used
+to sample from the posterior distribution of the parameters.
+In each of the simulations, 2000 samples were gathered after a burn-in of 2000 
+iterations. The MCMC was thinned by a factor of 5. (i.e. only one of every
+5 samples after the burn-in are kept.)
+

@@ -106,9 +106,6 @@ include-before:
 ## Data Generation
 <include file="includes/data_gen.md">
 
-## MCMC Settings
-<include file="includes/mcmc_settings.md">
-
 ## Simulation Study I
 <include file="includes/sim_simple.md">
 
