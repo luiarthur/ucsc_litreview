@@ -72,7 +72,7 @@ distribution.
   \label{eq:model}
 \end{align}
 
-<!-- TODO
+<!-- DONE
 {\tt  $ \logit(p_{inj}) = \beta_{0ij} - \beta_{1j}~y_{inj}$ What does this mean? Explain.
 
 Your $Z$ has not been formally introduced yet.  Your $\lambda_{in}$ is not introduced yet. We augment the mixture model (which you haven't explained) by introducing the latent cell type indicator.  
@@ -85,12 +85,23 @@ What does $\gamma_{inj}$ do?
 -->
 
 In the first line, we model the probability of missing as a function of the
-data.  Specifically, we want a higher probability of missingness to be
+data.  Specifically, we want a higher probability of missingness at an
+empirically determined value $c_0$, computed to be at the center of the
+observed negative values. We again empirically choose $x_j$ for each marker and
+strong priors for $\beta_{0ij}$ and $\beta_{1j}$ such that the probability of
+missing decreases as the expression levels $y_{inj}$ are away from $c_0$. 
+Outside the range of observed negative expression levels for marker $j$ in
+sample $i$, we desire a prior probability of missing to be near 0. This
+facilitates sampling imputed expression levels around the observed negative
+values. We use a logit link function to relate the probability of missing 
+to the parameters $\beta$ and  $x$ and the data $y$.
+<!--
 associated with lower expression levels. We therefore model the probability of
 missing $p_{inj}$ with a logistic function of the data $y_{inj}$. An intercept
 term for each sample and marker and a slope term for each marker are included.
 In addition, we constrain the slope terms to have only positive support to
 reflect that lower expression levels are more likely to be missing.
+-->
 
 I will now explain the other parameters in the model introduced in
 $(\ref{eq:model})$.  Each observed expression level in sample $i$ for marker
@@ -126,7 +137,7 @@ The model is fully specified after priors are placed on all unknown parameters.
 
 ## Priors
 
-<!-- TODO
+<!-- TODO (3)
 - [ ] Please explain each of the priors e.g. what does each parameter mean? 
     - what $\beta_{ij}$ means? Why do we choose the priors?
     - Why Normal− for $\psi_0$?
@@ -181,7 +192,7 @@ simulations, 2000 samples were gathered after a burn-in of 2000 iterations. The
 MCMC was thinned by a factor of 5. (i.e. only one of every 5 samples after the
 burn-in are kept.)
 
-<!-- TODO
+<!-- TODO (2)
 - [ ] Discuss the posterior computations. You already have some in your section 4.2. Please move them here and elaborate more.
 - [ ] We will make the number of cell types K random.
 - [ ] Discuss how we run MCMC with random K.

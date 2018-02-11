@@ -1,4 +1,4 @@
-<!-- TODO
+<!-- DONE
 Please explain this in text, not in "itemize".
 -->
 
@@ -7,12 +7,14 @@ performs for simulated data (where the true value of the parameters are known)
 which has sample sizes and distributions similar to a real data-set
 (CB CYTOF data).
 
-We simulate data so that
-
-- $N_i$ is on the order of 10000's
-- $\mu_{zij}^*$ is reasonably far away from 0
-- the latent feature matrix $Z$ is "simple" (columns are linearly independent)
-- the true number of latent features is 4
+We simulate data so that the number of observations ($N_i$) is on the order of
+10000's. We simulate the centers for each sample-marker $(i,j)$ pair so that 
+the centers $\mu_{zij}^*$ is reasonably far away from 0. When the centers are
+further from 0, the model can more easily find the true values of the
+parameters. In subsequent simulation studies, to learn the limitations of the
+model, the centers will be made nearer to 0. The latent feature matrix $Z$ is
+"simple" in this simulation study. That is the columns of $Z$ are linearly
+independent. The matrix $Z$ has four columns.
 
 The MCMC is run for a sufficiently long time, and the dimensions of $Z$ are fixed
 at 2,3,...,7. (i.e. six different models are run for different dimensions of $Z$.)
@@ -23,17 +25,19 @@ Figure \ref{fig:simpleDat} show some of the properties of the
 simulated data. The number of rows in each of the matrices is in the order of
 tens of thousands. Specifically, $N=(20000, 30000, 10000)$. Note that these
 are heatmaps of $y_{inj}$ (rather than $\tilde y_{inj}$). Red for positive
-values, blue for negative values, and white for missing values.
+values, blue for negative values, and white for missing values. The observations
+(rows) have been ordered according to their true (unobserved) cell-types.
 
 \beginmyfig
 ![](img/simple/rawDat001.png){ height=30% }
 ![](img/simple/rawDat001.png){ height=30% }
 ![](img/simple/rawDat001.png){ height=30% }
-\caption{Simulated Data. $Y_1$ (left), $Y_2$ (middle), $Y_3$ (right).}
+\caption{Simulated Data. $Y_1$ (left), $Y_2$ (middle), $Y_3$ (right). The
+observations have been sorted according to their cell types.}
 \label{fig:simpleDat}
 \endmyfig
 
-<!-- TODO
+<!-- DONE
 Figures 1. We rearranged Y according to their cell types. Please say it.
 Can we include missing values in the heatmap?
 -->
@@ -107,7 +111,7 @@ and 7 columns (right).}
 \label{fig:zpoint}
 \endmyfig
 
-<!-- TODO
+<!-- TODO (3)
 As we discussed, please remove "main titles" of the figures, make the texts
 on the axis bigger, make the texts on the axis informative (eg. the label
 for the y axis should be markers and 1.5 for k (cell types) does not make

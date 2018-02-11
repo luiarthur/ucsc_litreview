@@ -11,7 +11,7 @@ therefore, use a latent feature allocation model to learn the latent structure
 of predominant cell-types. Latent feature models have been successfully applied
 to various problems and will be reviewed in section 2.2.
 
-<!-- TODO
+<!-- TODO (2)
 I have the following suggestion for the Introduction section. I think you
 already have all needed components in your sections 1 & 2, but reorganizing
 the contents and having one Introduction section would make the paper
@@ -31,7 +31,7 @@ be better than the existing ones?
 • Whenever it is possible, please include references.
 -->
 
-<!-- TODO
+<!-- TODO (1)
 How do we define NK cell phenotypes? Why do we study NK cell phenotypes?
 How do we get 2 J different cell types (I think this depends on our definition
 of cell types)? Please explain how you define a cell type. This may be

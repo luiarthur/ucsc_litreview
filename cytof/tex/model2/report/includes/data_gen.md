@@ -1,7 +1,8 @@
-<!-- TODO
+<!-- DONE
 - [ ] Please explain this in a plain text rather than in "enumerate". Include specific true values used to simulate data.
 -->
 
+<!--
 Data were generated to closely match the proposed model. The steps to simulate
 data is as follows:
 
@@ -24,4 +25,49 @@ data is as follows:
 13. Draw $\tilde{y}_{inj} \sim \text{Normal}(\mu_{inj}, (1+\gamma_{inj})\sigma^2_{ij})$.
 14. Define $p_{inj} = (1+\exp\bc{-\beta_{0ij} + \beta_{1j} \tilde{y}_{inj}})^{-1}$.
 15. With probability $p_{inj}$, set $y_{inj}$ to be missing, and $\tilde{y}_{inj}$ otherwise.
+-->
+
+Data were generated to closely match the proposed model. The steps to simulate
+data is as follows.
+
+We first fix the number of samples $I$, number of markers $J$, and number of
+latent features$K$. We then fix $(\psi_0, \psi_1)$ which determine the mean
+expression levels, and $(\tau^2_0, \tau^2_1)$ which determine the spread of
+the expression levels. Note that $\psi_0$ should take on negative values while
+$(\tau^2_0, \tau^2_1, \psi_1)$ should take on positive values. For example, the
+parameters could be (-2, 1, 1, .1). Typically, if $-\psi_0 < \psi_1$ and
+$\tau^2_0 < \tau^2_1$, the simulated data **will not** resemble real data. So,
+we should choose $-\psi_0 > \psi_1$ and $\tau^2_0 > \tau^2_1$.
+
+Then, draw $\sigma^2_{ij}$ from an inverse gamma distribution. Smaller values
+of $\sigma_{ij}$ will yield datasets that are easier to learn from.
+Draw $\gamma^*_{0ij}$ from an inverse gamma distribution. This inflates the
+variance of the observations for which $Z_{j,\lambda_{in}} = 0$.
+
+<!-- TODO (prob of missing changes. not urgent)
+-->
+For simplicity, set $\beta_{0ij}$ to be some negative real value and
+$\beta_{1j}$ to be some positive real value. Note that by choosing, each of
+these values, we implicitly determine the probability that an observation will
+be treated as missing. Intuitively, $\beta_0$ determines the boundary for where
+observations transition from not-missing to missing. $\beta_1$ determines how
+narrow the boundary is.
+
+Fix $Z$ to be some $J \times K$ binary matrix.  Ensure that $Z$ does not
+contain columns that consist of only 0's.
+Fix $W$ to be an $I \times K$ probability matrix such that each row sums to 1.
+$W_{ik}$ is the probability that observation $y_{inj}$ takes on cell type $k$,
+which corresponds to column $k$ of $Z$.
+Then, set $\lambda_{in} = k$ with probability $W_{ik}$.
+
+Next, draw $\mu^*_{0ij}$ from a Truncated-Normal($\psi_0, \tau^2_0, -\infty,
+0$), and draw $\mu^*_{1ij}$ from a Truncated-Normal($\psi_1, \tau^2_1, 0,
+\infty$).
+Set $\mu_{inj} = \mu^*_{Z_{j,\lambda_{in}}ij}$.
+Set $\gamma_{inj} = \gamma^*_{0ij}$ if $Z_{j,\lambda_{in}} = 0$, and 0 otherwise.
+
+Finally, draw $\tilde{y}_{inj} \sim \text{Normal}(\mu_{inj},
+(1+\gamma_{inj})\sigma^2_{ij})$.  Define $p_{inj} = (1+\exp\bc{-\beta_{0ij} +
+\beta_{1j} \tilde{y}_{inj}})^{-1}$.  With probability $p_{inj}$, set $y_{inj}$
+to be missing, and $\tilde{y}_{inj}$ otherwise.
 
