@@ -19,6 +19,7 @@
     - [x] New prob of missing mechanism
     - [ ] how to sample from full conditional of theta3
     - [ ] Changes from Juhee in blue
+- [ ] Read `Natural_Killer_Cells_for_PeterThall_revised_references.pdf`
 
 
 ## 13 Jan, 2017
