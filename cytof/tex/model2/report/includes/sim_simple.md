@@ -1,3 +1,7 @@
+[comment]: <> (% TODO
+Please explain this in text, not in "itemize".
+%)
+
 A first simulation study was conducted to investigate how our model 
 performs for simulated data (where the true value of the parameters are known)
 which has sample sizes and distributions similar to a real data-set
@@ -29,6 +33,10 @@ values, blue for negative values, and white for missing values.
 \label{fig:simpleDat}
 \endmyfig
 
+[comment]: <> (% TODO
+Figures 1. We rearranged Y according to their cell types. Please say it.
+Can we include missing values in the heatmap?
+%)
 
 In real CYTOF data, markers that are not expressed are sometimes recorded as
 having negative expression levels due to the mechanics of the measurement
@@ -98,6 +106,14 @@ mis-specified as 2.
 and 7 columns (right).}
 \label{fig:zpoint}
 \endmyfig
+
+[comment]: <> (% TODO
+As we discussed, please remove "main titles" of the figures, make the texts
+on the axis bigger, make the texts on the axis informative (eg. the label
+for the y axis should be markers and 1.5 for k (cell types) does not make
+sense).
+%)
+
 
 Figure \ref{fig:zpoint} (middle) shows the point-estimate for $Z$ when the number of
 columns is fixed at 4 (the truth). In this case, the true $Z$ is learned.
