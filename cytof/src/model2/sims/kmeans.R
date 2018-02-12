@@ -15,7 +15,7 @@ ind.est = estimate_Z(Z, ret=T)
 ### Image of Y by clusters ###
 layout(matrix(c(1,1,1,1,1,1,2,2,2), 3, 3, byrow = TRUE))
 #my.image(unique(Y[order(out[[ind.est]]$km$clus),]>0,MARGIN=1))
-my.image(Y[order(out[[ind.est]]$km$clus),],MARGIN=1, col=blueToRed(), mn=-2,mx=2,xlab='',:lab='obs')
+my.image(Y[order(out[[ind.est]]$km$clus),], col=blueToRed(), mn=-2,mx=2,xlab='',ylab='obs')
 my.image(t(Z.est[, left_order(Z.est)]), xlab='markers', ylab='cell-types')
 par(mfrow=c(1,1))
 
