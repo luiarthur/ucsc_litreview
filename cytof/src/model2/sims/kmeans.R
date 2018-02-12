@@ -2,8 +2,16 @@ library(cytof2)
 source("adhoc.R")
 
 load("dat/cytof_cb.RData")
+y_orig = y
+for (i in 1:length(y)) {
+  for (j in 1:NCOL(y[[i]])) {
+    miss_idx = which(is.na(y[[i]][,j]))
+    neg_yj = which(y[[i]][,j] < 0)
+    y[[i]][miss_idx,j] = sample(y[[i]][neg_yj,j], size=length(miss_idx), replace=TRUE)
+  }
+}
 Y = do.call(rbind, y)
-Y = ifelse(is.na(Y), -3, Y)
+#Y = ifelse(is.na(Y), -3, Y)
 
 my.image(Y, col=blueToRed(), mn=-4, mx=4, xlab='markers', ylab='obs', addL=T)
 out = adhoc(Y, K_min=10, K_max=15, reps=4, lam=1, alg='Lloyd', iter.max=500)
