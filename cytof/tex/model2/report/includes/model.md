@@ -150,7 +150,6 @@ The model is fully specified after priors are placed on all unknown parameters.
 -->
 
 The specific prior distributions for all model parameters are included here.
-
 The first set of parameters relate to the missing-data mechanism. The
 parameters that appear in the link function are $\beta_{1j}$ and $\beta_{0ij}$.
 Their interpretation have already been explained in the previous section. An
@@ -177,6 +176,13 @@ $\sigma_{ij}^2$ and $\gamma_{0ij}$ by taking on extremely small values.
 \bar\beta_{0j} &\sim \N(m_{\bar\beta}, \text{var}=s^2_{\bar\beta}) \\
 \end{align*}
 
+The next group of parameters appear in the likelihood. They have also been
+discussed in the previous section. One important note here is that we use 
+truncated Normal distributions as prior distributions for $\mus_{0ij}$ and
+$\mus_{1ij}$. This is to account for the constraint that $\mus_{0ij}$ must
+take on negative values, and $\mus_{1ij}$ must take on positive values.
+The hyperparameters for $\mus_{0ij}$ and $\mus_{1ij}$ will be learned 
+using priors as well.
 \begin{align*}
 \gamma_{1ij}^* &:= 0 \\
 %\gamma_{0ij}^* &\sim \IG(6, 10) ~~~~ \text{(mean=2, var=1)} \\
@@ -185,6 +191,21 @@ $\sigma_{ij}^2$ and $\gamma_{0ij}$ by taking on extremely small values.
 \sigma^2_{ij} &\sim \IG(a_\sigma, b_\sigma) \\
 \mus_{0ij} \mid \psi_0, \tau^2_0 &\sim \N_-(\psi_0, \tau^2_0) \\
 \mus_{1ij} \mid \psi_1, \tau^2_1 &\sim \N_+(\psi_1, \tau^2_1) \\
+\end{align*}
+
+This group of hyperparameters specify the prior mean and variance
+for $\mus_{0ij}$ and $\mus_{1ij}$. Note that the prior means ($\psi$) take on a 
+truncated Normal priors again, which accounts for the constraint that
+$\mus_{0ij}$ must take on negative values, and $\mus_{1ij}$ must take on
+positive values. The prior variances $(\tau^2_0, \tau^2_1)$ for
+$(\mus_{0ij},\mus_{1ij})$ have inverse-gamma prior distributions. 
+We can choose reasonable hyperparameters for the priors empirically. 
+A bulk of the data are centered around 2 and -2. So, one choice of $m_0$ and
+$m_1$ could be (-2,2). The variance $\tau^2_z$ models the spread of the centers
+$\mus_{zij}$ across samples and markers (for $z=0,1$), which can be determined
+empirically, and used to determine $(a_\tau, b_\tau)$.
+
+\begin{align*}
 %\psi_{0} &\sim \N_-(-3, 4) \\
 %\psi_{1} &\sim \N_+(3, 4) \\
 \psi_{0} &\sim \N_-(m_0, s^2_0) \\
@@ -193,7 +214,11 @@ $\sigma_{ij}^2$ and $\gamma_{0ij}$ by taking on extremely small values.
 %\tau^2_{1} &\sim \IG(2, 1) \\
 \tau^2_{0} &\sim \IG(a_{\tau_0}, b_{\tau_0}) \\
 \tau^2_{1} &\sim \IG(a_{\tau_1}, b_{\tau_1}) \\
-\\
+\end{align*}
+
+
+
+\begin{align*}
 v_k \mid \alpha &\sim \Be(\alpha=1, 1) \\
 \pi_k &:= \prod_{l=1}^k v_l \\
 \h_k &\sim \N(\bm{0}, \bm G=\I_J) \\
