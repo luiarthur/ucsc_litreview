@@ -30,7 +30,7 @@ flexibility of the antiviral response. Many questions about NK cells remain to
 be answered. Understanding NK diversity through spectrometry has therefore been
 an important research area in the bio-sciences.
 
-<!-- TODO
+<!-- TODO (Compare existing methods)
 - very nice paragraph! but we need to explain the existing statistical methods
   for cytof data and why the existing methods are not enough for our purpose.
   Existing methods are in Katy's write-up of existing methods.

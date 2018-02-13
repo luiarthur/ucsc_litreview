@@ -9,9 +9,9 @@ markers is even moderately large.  Thirty-two markers are included in this
 analysis, and naively enumerating all possible markers is not feasible. We
 therefore, use a latent feature allocation model to learn the latent structure
 of predominant cell-types. Latent feature models have been successfully applied
-to various problems and will be reviewed in section 2.2.
+to various problems and will be reviewed in the following section.
 
-<!-- TODO
+<!-- TODO (Use Katy's writeup)
 I have the following suggestion for the Introduction section. I think you
 already have all needed components in your sections 1 & 2, but reorganizing
 the contents and having one Introduction section would make the paper
