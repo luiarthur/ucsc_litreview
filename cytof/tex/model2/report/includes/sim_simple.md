@@ -111,7 +111,7 @@ and 7 columns (right).}
 \label{fig:zpoint}
 \endmyfig
 
-<!-- TODO (3)
+<!-- TODO (Not Urgent)
 As we discussed, please remove "main titles" of the figures, make the texts
 on the axis bigger, make the texts on the axis informative (eg. the label
 for the y axis should be markers and 1.5 for k (cell types) does not make

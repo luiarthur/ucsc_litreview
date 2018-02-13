@@ -4,7 +4,7 @@ the CB CYTOF data. Parameters of greatest interest including $Z, \mu^*,$ and $W$
 are studied, and the studies are done for different but fixed values for the
 dimensions of the feature allocation model.
 
-<!-- TODO (2)
+<!-- TODO (Not Urgent)
 We may want to have just sections for simulation studies without subsections,
 that is, Section 4.1 for Simulation study 1 and Section 4.2 for Simulation
 study 2 in Section 4 Simulation Studies.
