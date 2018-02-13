@@ -31,7 +31,7 @@ be better than the existing ones?
 • Whenever it is possible, please include references.
 -->
 
-<!-- TODO (Priority High)
+<!-- TODO (Clarify)
 How do we define NK cell phenotypes? Why do we study NK cell phenotypes?
 How do we get 2 J different cell types (I think this depends on our definition
 of cell types)? Please explain how you define a cell type. This may be

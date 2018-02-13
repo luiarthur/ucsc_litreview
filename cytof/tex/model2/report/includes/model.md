@@ -64,7 +64,8 @@ distribution.
   \beta_{0ij} - \beta_{1j}(y_{inj}-c_0)^2, & \text{if } y_{inj} < c_0\nonumber \\
   \beta_{0ij} - \beta_{1j}x_j\sqrt{y_{inj}-c_0}, & \text{otherwise} \nonumber \\
   \end{cases}\\
-  \nonumber \\
+  \label{eq:link}
+  \\
   y_{inj} \mid \mu_{inj}, \gamma_{inj}, \sigma^2_{ij}, \bm Z, \lin
   &\sim \N(\mu_{inj}, (\gamma_{inj}+1) \sigma^2_{ij}) \nonumber \\
   \mu_{inj} &:= \mu^*_{Z_{j\lin}ij} \nonumber\\
@@ -135,7 +136,7 @@ The resulting **likelihood** is as follows:
 
 The model is fully specified after priors are placed on all unknown parameters.
 
-## Priors
+## Prior Distributions for Model Parameters
 
 <!-- TODO (Priority High)
 - [ ] Please explain each of the priors e.g. what does each parameter mean? 
@@ -148,7 +149,24 @@ The model is fully specified after priors are placed on all unknown parameters.
 - [ ] We can explain how we calibrate the priors (how to specify the fixed hyper-parameters) in the Simulation section.
 -->
 
-The specific prior distributions (including hyper-parameters) are included here.
+The specific prior distributions for all model parameters are included here.
+
+The first set of parameters relate to the missing-data mechanism. The
+parameters that appear in the link function are $\beta_{1j}$ and $\beta_{0ij}$.
+Their interpretation have already been explained in the previous section. An
+additional parameter $\bar\beta_{0j}$ is used to model the mean of the
+$\beta_{0ij}$. This modeling choice is a result markers yielding similar
+expression levels across samples and allows for borrowing of information across
+different samples to estimate $\beta_{0ij}$. $\beta_{1j}$ is modeled with a
+gamma distribution because marker expression levels are more likely to be
+recorded as missing when their values are extremely small, due to the
+measurement devices. The prior mean of $\bar\beta_{0j}$ is determined
+empirically from the data. One way to do this is to first compute the mean of
+the negative expression levels for markers across each sample, then solve for
+$\beta_{0ij}$ using the link function in (\ref{eq:link}). The prior variances
+$s_\beta^2$ and $s^2_{\bar\beta}$ should be small. Such strong priors will ensure
+the imputed missing expression values will not inflate parameters such as
+$\sigma_{ij}^2$ and $\gamma_{0ij}$ by taking on extremely small values.
 
 \begin{align*}
 %\beta_{1j} &\sim \G(90, 30) ~~~~ \text{(mean=3, var=0.1)} \\
@@ -156,8 +174,10 @@ The specific prior distributions (including hyper-parameters) are included here.
 %\beta_{0ij} \mid \bar\beta_{0j} &\sim \N(\bar\beta_{0j}, \text{var}=0.1) \\
 \beta_{0ij} \mid \bar\beta_{0j} &\sim \N(\bar\beta_{0j}, \text{var}=s^2_\beta) \\
 %\bar\beta_{0j} &\sim \N(-11, \text{var}=0.1) \\
-\bar\beta_{0j} &\sim \N(-11, \text{var}=s^2_{\bar\beta}) \\
-\\
+\bar\beta_{0j} &\sim \N(m_{\bar\beta}, \text{var}=s^2_{\bar\beta}) \\
+\end{align*}
+
+\begin{align*}
 \gamma_{1ij}^* &:= 0 \\
 %\gamma_{0ij}^* &\sim \IG(6, 10) ~~~~ \text{(mean=2, var=1)} \\
 \gamma_{0ij}^* &\sim \IG(a_\gamma, b_\gamma) ~~~~ \text{(mean=$b_\gamma / (a_\gamma-1)$)} \\
