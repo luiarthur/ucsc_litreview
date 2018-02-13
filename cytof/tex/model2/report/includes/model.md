@@ -137,7 +137,7 @@ The model is fully specified after priors are placed on all unknown parameters.
 
 ## Priors
 
-<!-- TODO (3)
+<!-- TODO (Priority High)
 - [ ] Please explain each of the priors e.g. what does each parameter mean? 
     - what $\beta_{ij}$ means? Why do we choose the priors?
     - Why Normal− for $\psi_0$?
@@ -192,7 +192,7 @@ simulations, 2000 samples were gathered after a burn-in of 2000 iterations. The
 MCMC was thinned by a factor of 5. (i.e. only one of every 5 samples after the
 burn-in are kept.)
 
-<!-- TODO (2)
+<!-- TODO (Priority High)
 - [ ] Discuss the posterior computations. You already have some in your section 4.2. Please move them here and elaborate more.
 - [ ] We will make the number of cell types K random.
 - [ ] Discuss how we run MCMC with random K.
