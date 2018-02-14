@@ -138,15 +138,15 @@ The model is fully specified after priors are placed on all unknown parameters.
 
 ## Prior Distributions for Model Parameters
 
-<!-- TODO (Priority High)
-- [ ] Please explain each of the priors e.g. what does each parameter mean? 
+<!-- DONE
+- [x] Please explain each of the priors e.g. what does each parameter mean? 
     - what $\beta_{ij}$ means? Why do we choose the priors?
     - Why Normal− for $\psi_0$?
     - Why do we have $\mu^*_{0ij}$, not $\mu^*_{kij}$?
     - Include texts and references when they are needed.
-- [ ] Instead of putting all in one gigantic equation, we may explain one by one.
-- [ ] Please use letters for fixed hyper-parameters.
-- [ ] We can explain how we calibrate the priors (how to specify the fixed hyper-parameters) in the Simulation section.
+- [x] Instead of putting all in one gigantic equation, we may explain one by one.
+- [x] Please use letters for fixed hyper-parameters.
+- [x] We can explain how we calibrate the priors (how to specify the fixed hyper-parameters) in the Simulation section.
 -->
 
 The specific prior distributions for all model parameters are included here.
@@ -216,7 +216,9 @@ empirically, and used to determine $(a_\tau, b_\tau)$.
 \tau^2_{1} &\sim \IG(a_{\tau_1}, b_{\tau_1}) \\
 \end{align*}
 
-
+The parameters $v$ and $H$ determine the latent binary feature matrix $Z$.  As
+discussed in the previous section, $Z$ is distributed as a dependent IBP with
+parameter $\alpha=1$.
 
 \begin{align*}
 v_k \mid \alpha &\sim \Be(\alpha=1, 1) \\
@@ -224,22 +226,83 @@ v_k \mid \alpha &\sim \Be(\alpha=1, 1) \\
 \h_k &\sim \N(\bm{0}, \bm G=\I_J) \\
 Z_{jk} \mid h_{jk}, v_{1,...,k} &:=
 \Ind{\pi_k > \Phi\p{\frac{h_{jk} - 0}{\sqrt{G_{jj}}}}} \\
-\\
+\end{align*}
+
+The cell-type indicator $\lambda_{in}$ is distributed as a categorical
+distribution. Given a probability vector $\bm W_i$, which sums to 1, 
+the probability that $\lambda_{in}$ takes on cell-type $k$ is $W_{ik}$.
+$\bm W_i$ is modeled with a Dirichlet distribution, with parameters 
+$1/K$ where $K$ (which may be random) is the length of $\bm W_i$.
+
+$$
+\begin{split}
 p(\lin=k \mid \bm W_i) &= W_{ik} \\
 \bm W_{i} &\sim \Dir(1/K, ..., 1/K) \\
-\end{align*}
+\end{split}
+$$
 
 
 ## Posterior Computation
 Standard MCMC techniques like Gibbs sampling and the Metropolis method are used
-to sample from the posterior distribution of the parameters.  In each of the
+to sample from the posterior distribution of the parameters. In each of the
 simulations, 2000 samples were gathered after a burn-in of 2000 iterations. The
 MCMC was thinned by a factor of 5. (i.e. only one of every 5 samples after the
 burn-in are kept.)
 
-<!-- TODO (Priority High)
-- [ ] Discuss the posterior computations. You already have some in your section 4.2. Please move them here and elaborate more.
-- [ ] We will make the number of cell types K random.
-- [ ] Discuss how we run MCMC with random K.
-- [ ] Include how to summarize the posterior MCMC samples (which you also explained later). How do we find the posterior estimates of Z, w and other parameters.
+Gibbs sampling is a way to sample from the full posterior of the parameters of
+a probabilistic model. It involves sequentially sampling from the full
+conditional distribution of each parameter iteratively. This procedure is
+continued until sufficient (independent) samples from the joint posterior are
+obtained. This may require some burn-in period as the Markov chain may take
+some time to "converge" to a region where it is sampling correctly from the 
+joint posterior.
+
+Most of the computation needed for sampling from the full conditionals of each
+parameter is straight-forward. Though, some care needs to be taken to sample
+$K$, which determines the dimensions and possible values for the parameters
+$\bm\theta_1=(Z, v, H, W, \lambda)$. So, we introduce an method for sampling
+$K$. The idea is to iteratively (1) sample $(\bm\theta_1, K)$ jointly using a
+small "training set" to learn a prior for $\btheta$, and (2) sample
+$(\bm\theta_1 \mid K)$ based on the most recent $K$ using a large subset of the
+entire data (which we will call the "testing set").
+
+Moreover, when working with the likelihood, we will marginalize over $\lambda$
+so as to avoid the need to impute its value in the "testing set". The details
+will be placed in the appendix. 
+
+Another item that needs special treatment is the summary of the posterior
+distribution of parameters that have variable dimensions ($\bm\theta_1$).
+Particularly, inference on $Z$ and $W$ are of greatest interest. We use
+a method based on sequentially-allocated latent structure
+optimization (SALSO) by @salso.
+
+In SALSO, a point estimate is for a binary feature matrix is obtained by
+finding a $\hat{Z}$ that minimizes the expression
+
+\begin{align}
+\text{argmin}_Z\sum_{r=1}^J\sum_{c=1}^J(A(Z)_{rc} - \bar{A}_{rc})^2
+\label{eq:salso}
+\end{align}
+
+where $A(Z)$ is the pairwise allocation matrix corresponding to a binary matrix
+$Z$, and $\hat A$ is the pairwise allocation matrix averaged over all posterior
+samples of $Z$. Thus in the current application, $A_{rc}$ is the number of
+times that marker $r$ and marker $c$ share a feature. We adapted the method
+by not using any optimization methods to compute $\hat Z$, but by simply
+selecting the $Z$ from the posterior samples of $Z$ that minimizes the
+expression in (\ref{eq:salso}). We can similarly get point estimates for $W$
+and $\lambda$.  Concretely, if we have $B$ samples from the full posterior and
+$Z^{(b)}$ denotes the sample for $Z$ taken at iteration $b \in \bc{1,...,B}$ of
+the MCMC, then if $Z^{(b)}$ is the point estimate for $Z$ computing using
+SALSO, we can use $(W^{(b)}, \lambda^{(b)})$ as point estimates for
+$(W,\lambda)$.
+
+
+
+
+<!-- DONE
+- [x] Discuss the posterior computations. You already have some in your section 4.2. Please move them here and elaborate more.
+- [x] We will make the number of cell types K random.
+- [x] Discuss how we run MCMC with random K.
+- [x] Include how to summarize the posterior MCMC samples (which you also explained later). How do we find the posterior estimates of Z, w and other parameters.
 -->
