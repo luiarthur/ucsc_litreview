@@ -23,10 +23,10 @@ mvrnorm <- function(m, S) {
 
 ### Multivariate metropolis with Normal proposal ###
 mh_mv <- function(x, ll, lp, step_size) {
-  cand <- mvrnorm(x, step_size)
+  J = length(x)
+  cand <- rnorm(J, x, step_size)
   acc <- ll(cand) + lp(cand) - ll(x) - lp(x)
   u <- runif(1)
-
   if(acc > log(u)) cand else x
 }
 
@@ -154,3 +154,5 @@ gibbs_auto <- function(init, update, B, burn, adapt=NULL, print_every=0) {
 
   tail(out, B)
 }
+
+sigmoid = function(x) 1 / (1 + exp(-x))

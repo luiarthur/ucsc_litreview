@@ -1,16 +1,50 @@
-source("mcmc.R")
+source("fit.R")
 library(rcommon)
+library(cytof2)
 
 
-N = 1000
-b = c(2, -2)
-y = rnorm(N, 0, 10)
-m = rbinom(N, 1, inv_logit(b[1] + b[2] * y))
+N = 100
+b_true = c(-3, -2)
+mu_true = 0
+sig2_true = 10
+y = rnorm(N, mu_true, sqrt(sig2_true))
+m = (sigmoid(b_true[1] + b_true[2] * y) > runif(N)) * 1
 y_dat = ifelse(m == 1, NA, y)
 #plot(y, y)
 hist(y, col=rgb(0,0,1,.3)); hist(y_dat, add=TRUE, col=rgb(1,0,0,.3))
 
-#xx = seq(min(x), max(x),l=100)
-#plot(xx, inv_logit(b[1] + b[2]*xx))
+xx = seq(min(y), max(y), l=100)
+plot(xx, sigmoid(b_true[1] + b_true[2]*xx), type='b')
+
+prior = default.prior
+prior$cs_b=c(1,1)*1
+
+ab = invgamma_ab(var(y_dat, na.rm=TRUE), .1)
+prior$a_sig=ab[1]
+prior$b_sig=ab[2]
+#init = list(b=c(2,-2), mu=0, sig2=1, y=y)
+init = list(b=c(0,0), mu=0, sig2=1, y=y)
+out = fit(y_dat, init=init, prior=prior, B=500, burn=2000)
+
+mu = sapply(out, function(o) o$mu)
+sig2 = sapply(out, function(o) o$sig2)
+yy = t(sapply(out, function(o) o$y))
+b = t(sapply(out, function(o) o$b))
+
+plotPosts(cbind(mu, sig2), cname=c(paste0('mu: ',mu_true),
+                                   paste0('sig2: ',sig2_true)))
+
+plotPosts(b)
+
+pp = apply(b, 1, function(bb) sigmoid(bb[1] + bb[2] * xx))
+
+bk <- hist(colMeans(yy), plot=FALSE)
+hist(y, border='transparent', col=rgb(0,0,0,.3), xlim=c(-10,10))
+hist(colMeans(yy)[which(m==0)], add=TRUE, col=rgb(1,0,0,.3), border='transparent', breaks=bk$br)
+hist(colMeans(yy)[which(m==1)], add=TRUE, col=rgb(0,1,0,.3), border='transparent', breaks=bk$br)
+lines(xx, max(bk$counts) * sigmoid(b_true[1] + b_true[2]*xx), lty=2)
+lines(xx, max(bk$counts) * rowMeans(pp), lty=2, col='blue')
 
 
+#plot(xx, sigmoid(b_true[1] + b_true[2]*xx), col='grey', ylim=0:1, pch=20)
+#lines(xx, rowMeans(pp))
