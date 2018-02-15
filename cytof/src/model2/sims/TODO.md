@@ -23,6 +23,8 @@
     - the write-up is useful
     - references 14 and 15 are useful
     - but no references to methods???
+- [ ] HMC
+- [ ] Think about results in: `impute.R`
 
 
 ## 13 Jan, 2017
