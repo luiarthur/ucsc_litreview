@@ -25,6 +25,7 @@
     - but no references to methods???
 - [ ] HMC
 - [ ] Think about results in: `impute.R`
+- [ ] Heavy-tailed distribution (like t, Laplace) instead of Normal?
 
 
 ## 13 Jan, 2017
