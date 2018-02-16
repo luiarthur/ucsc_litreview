@@ -7,7 +7,7 @@ langevinMC = function(curr, grad_log_fc, eps) {
 mala = function(curr, log_fc, grad_log_fc, eps) {
   logQ = function(x_to, x_from) {
     #-sum((x_to - x_from - eps * grad_log_fc(x_from))^2) / (4*eps)
-    -sum((x_from - x_to - eps * grad_log_fc(x_to))^2) / (4*eps)
+    -sum((x_from - x_to - eps * grad_log_fc(x_to))^2) / (4*eps[1])
   }
 
   cand = langevinMC(curr, grad_log_fc, eps)
@@ -21,3 +21,11 @@ mala = function(curr, log_fc, grad_log_fc, eps) {
     curr
   }
 }
+
+#################################################################################
+# TODO: Make a more general MALA, for anisotropic case (i.e. it varies much
+#       more quickly in some directions than others).  
+#
+# See Wikipedia: 
+# https://en.wikipedia.org/wiki/Metropolis-adjusted_Langevin_algorithm#cite_ref-1
+#################################################################################

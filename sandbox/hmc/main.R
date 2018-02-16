@@ -33,8 +33,8 @@ abline(v=c(mean(sig2), quantile(sig2, c(.025,.975))), lty=2)
 abline(v=sig2_true, lwd=2, col='red')
 
 ll = sapply(out, function(o) o$ll)
-plot(ll, type='b', ylim=range(ll_truth,ll))
 ll_truth = sum(dnorm(y, X%*%b_true, sig2_true, log=TRUE))
+plot(ll, type='b', ylim=range(ll_truth,ll))
 abline(h=ll_truth, lty=2)
 
 ### Predictions ###
