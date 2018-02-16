@@ -25,6 +25,7 @@
     - but no references to methods???
 - [x] HMC
 - [x] Langevin MC (consider this for cytof?)
+    - [ ] Metropolis-adjusted Langevin algorithm (MALA)
 - [ ] Think about results in: `impute.R`
 - [ ] Heavy-tailed distribution (like t, Laplace) instead of Normal?
 
