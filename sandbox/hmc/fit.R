@@ -13,7 +13,8 @@ gen.default.prior = function(X) {
 }
 
 fit = function(y, X, init=gen.default.init(X), prior=gen.default.prior(X),
-               add_intercept=TRUE, B=100, burn=0, print_every=0) {
+               add_intercept=TRUE, B=100, burn=0, print_every=0,
+               method=c('mala', 'mh', 'hmc', 'lmc')[1]) {
 
   N = NROW(X)
 
@@ -21,22 +22,24 @@ fit = function(y, X, init=gen.default.init(X), prior=gen.default.prior(X),
     lp = function(b) 0
     ll = function(b) sum(dnorm(y, X%*%b, state$sig2, log=TRUE))
 
-    # Metropolis
-    #state$b = mh_mv(state$b, ll, lp, prior$cs)
-
-    # HMC
-    #U = function(b) lp(b) + ll(b)
-    #grad_U = function(b) colSums(c(X%*%b-y) * X) / state$sig2
-    #state$b = hmc(U, grad_U, eps=prior$cs, L=prior$L, state$b)
-
-    # Langevin MC  **really good** Efficient
-    #grad_U = function(b) colSums(c(y-X%*%b) * X) / state$sig2
-    #state$b = langevinMC(state$b, grad_U, eps=prior$cs)
-
-    # MALA: FIXME? Stuck?
-    grad_log_fc = function(b) colSums(c(y-X%*%b) * X) / state$sig2
-    log_fc = function(b) ll(b) + lp(b)
-    state$b = mala(state$b, log_fc, grad_log_fc, eps=prior$cs)
+    if (method == 'mh') {
+      # Metropolis
+      state$b = mh_mv(state$b, ll, lp, prior$cs)
+    } else if (method == 'hmc') {
+      # HMC
+      U = function(b) lp(b) + ll(b)
+      grad_U = function(b) colSums(c(X%*%b-y) * X) / state$sig2
+      state$b = hmc(U, grad_U, eps=prior$cs, L=prior$L, state$b)
+    } else if (method == 'lmc') {
+      # Langevin MC  **really good** Efficient
+      grad_log_fc = function(b) colSums(c(y-X%*%b) * X) / state$sig2
+      state$b = langevinMC(state$b, grad_log_fc, eps=prior$cs)
+    } else {
+      # MALA: FIXME? Stuck?
+      grad_log_fc = function(b) colSums(c(y-X%*%b) * X) / state$sig2
+      log_fc = function(b) ll(b) + lp(b)
+      state$b = mala(state$b, log_fc, grad_log_fc, eps=prior$cs)
+    }
 
     state$ll = ll(state$b)
 
