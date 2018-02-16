@@ -6,7 +6,8 @@ langevinMC = function(curr, grad_log_fc, eps) {
 # Metropolis-adjusted Langevin algorithm
 mala = function(curr, log_fc, grad_log_fc, eps) {
   logQ = function(x_to, x_from) {
-    -sum((x_to - x_from - eps * grad_log_fc(x_from))^2) / (4*eps)
+    #-sum((x_to - x_from - eps * grad_log_fc(x_from))^2) / (4*eps)
+    -sum((x_from - x_to - eps * grad_log_fc(x_to))^2) / (4*eps)
   }
 
   cand = langevinMC(curr, grad_log_fc, eps)
