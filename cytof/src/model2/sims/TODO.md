@@ -23,7 +23,7 @@
     - the write-up is useful
     - references 14 and 15 are useful
     - but no references to methods???
-- [ ] HMC
+- [x] HMC
 - [ ] Think about results in: `impute.R`
 - [ ] Heavy-tailed distribution (like t, Laplace) instead of Normal?
 
