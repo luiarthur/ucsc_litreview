@@ -1,9 +1,10 @@
 source("hmc.R")
+source("langevinMC.R")
 source("../impute/mcmc.R")
 
 gen.default.init = function(X) {
   K = NCOL(X)
-  list(b=double(K), sig2=1)
+  list(b=double(K), sig2=1, ll=-Inf)
 }
 
 gen.default.prior = function(X) {
@@ -19,11 +20,20 @@ fit = function(y, X, init=gen.default.init(X), prior=gen.default.prior(X),
   update_b = function(state) {
     lp = function(b) 0
     ll = function(b) sum(dnorm(y, X%*%b, state$sig2, log=TRUE))
+
+    # Metropolis
     #state$b = mh_mv(state$b, ll, lp, prior$cs)
 
-    U = function(b) lp(b) + ll(b)
-    grad_U = function(b) colSums(c(X%*%b-y) * X) / state$sig2
-    state$b = hmc(U, grad_U, eps=prior$cs, L=prior$L, state$b)
+    # HMC
+    #U = function(b) lp(b) + ll(b)
+    #grad_U = function(b) colSums(c(X%*%b-y) * X) / state$sig2
+    #state$b = hmc(U, grad_U, eps=prior$cs, L=prior$L, state$b)
+
+    # Langevin MC  **really good** Efficient
+    grad_U = function(b) colSums(c(y-X%*%b) * X) / state$sig2
+    state$b = langevinMC(state$b, grad_U, eps=prior$cs)
+
+    state$ll = ll(state$b)
 
     state
   }

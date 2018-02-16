@@ -2,8 +2,8 @@ source("fit.R")
 library(rcommon)
 last = function(x) x[[length(x)]]
 
-K = 50
-N = 500
+K = 100
+N = 1000
 X = matrix(rnorm(N*K), N, K); X[,1] = 1
 b_true = rnorm(K)
 sig2_true = .01
@@ -28,3 +28,6 @@ plotPost(b[,1])
 
 sig2 = sapply(out, function(o) o$sig2)
 plotPost(sig2, main=paste0('sig2: ', sig2_true), trace=FALSE)
+
+ll = sapply(out, function(o) o$ll)
+plot(ll, type='b')
