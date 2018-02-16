@@ -31,7 +31,12 @@ fit = function(y, X, init=gen.default.init(X), prior=gen.default.prior(X),
 
     # Langevin MC  **really good** Efficient
     grad_U = function(b) colSums(c(y-X%*%b) * X) / state$sig2
-    state$b = langevinMC(state$b, grad_U, eps=prior$cs)
+    state$b = langevinMC(state$b, grad_U, eps=prior$cs[1])
+
+    # MALA ??? something wrong??? FIXME
+    #grad_log_fc = function(b) colSums(c(y-X%*%b) * X) / state$sig2
+    #log_fc = function(b) ll(b) + lp(b)
+    #state$b = mala(state$b, log_fc, grad_log_fc, eps=prior$cs[1])
 
     state$ll = ll(state$b)
 
