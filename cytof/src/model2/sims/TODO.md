@@ -24,6 +24,7 @@
     - references 14 and 15 are useful
     - but no references to methods???
 - [x] HMC
+- [x] Langevin MC (consider this for cytof?)
 - [ ] Think about results in: `impute.R`
 - [ ] Heavy-tailed distribution (like t, Laplace) instead of Normal?
 
