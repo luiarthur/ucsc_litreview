@@ -7,6 +7,7 @@ getOpts = function() {
     make_option(c("--data_size","-n"), type='integer'),
     make_option(c("--use_simple_z", "-z"), type='integer'),
     make_option(c("--outdir", "-o"), type='character'),
+    make_option("--random_K", type='integer', default=1),
     make_option("--B", type='integer'),
     make_option("--burn", type='integer'),
     make_option("--thin", type='integer', default=1),

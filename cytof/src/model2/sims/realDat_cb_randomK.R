@@ -17,6 +17,7 @@ THIN <- as.integer(args[6])
 PROP = as.numeric(args[7])
 WARMUP = as.integer(args[8])
 NCORES = as.integer(args[9])
+RANDOM_K = (PROP == 0)
 dat_lim = c(-7,7)
 
 fileDest = function(name) paste0(OUTDIR, name)
@@ -65,9 +66,14 @@ for (i in 1:I) {
 dev.off()
 
 #### End of Plotting Data ###
+init = NULL
+truth = NULL
 
-
-init = list(K=MCMC_K)
+if (RANDOM_K) {
+  init$K = MCMC_K
+} else {
+  truth$K = MCMC_K
+}
 #prior = list(cs_v=4, cs_h=3, d_w=1/MCMC_K, a_beta=200000, b_beta=10000,
 #             K_min=1, K_max=10, a_K=2)
 
@@ -82,7 +88,7 @@ print("Start MCMC")
 
 sim_time <- system.time(
   out <- cytof_fix_K_fit(y, init=init, prior=prior, B=B, burn=BURN, thin=THIN,
-                         warmup=WARMUP, thin_K=1, ncores=NCORES,
+                         warmup=WARMUP, thin_K=1, ncores=NCORES, truth=truth,
                          prop_for_training=PROP, print=1)
 )
 sink(fileDest('simtime.txt')); print(sim_time); sink()
