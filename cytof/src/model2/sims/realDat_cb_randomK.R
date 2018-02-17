@@ -17,7 +17,7 @@ THIN <- as.integer(args[6])
 PROP = as.numeric(args[7])
 WARMUP = as.integer(args[8])
 NCORES = as.integer(args[9])
-RANDOM_K = (PROP == 0)
+RANDOM_K = (PROP > 0)
 dat_lim = c(-7,7)
 
 fileDest = function(name) paste0(OUTDIR, name)
@@ -69,11 +69,6 @@ dev.off()
 init = NULL
 truth = NULL
 
-if (RANDOM_K) {
-  init$K = MCMC_K
-} else {
-  truth$K = MCMC_K
-}
 #prior = list(cs_v=4, cs_h=3, d_w=1/MCMC_K, a_beta=200000, b_beta=10000,
 #             K_min=1, K_max=10, a_K=2)
 
@@ -83,6 +78,16 @@ prior = list(cs_v=4, cs_h=3, d_w=1,
              a_beta=bdat.prior['b1'] * 100, b_beta=100, # b1
              c0=c0, a_x=bdat.prior['x'] * 100, b_x=100, # x
              K_min=1, K_max=16, a_K=2)
+
+if (RANDOM_K) {
+  init$K = MCMC_K
+} else {
+  truth$K = MCMC_K
+  truth$beta_all = TRUE
+  truth$beta_1 = rep(bdat.prior['b1'], J)
+  truth$beta_0 = matrix(bdat.prior['b0'], I, J)
+  truth$x =  rep(bdat.prior['x'], J)
+}
 
 print("Start MCMC")
 
