@@ -101,13 +101,47 @@ save(y, out, file=fileDest('sim_result.RData'))
 
 plot_cytof_posterior(out, y, outdir=OUTDIR, dat_lim=dat_lim, prior=prior)
 
+### Plot Y by lambda ###
 png(fileDest('Y%03dsortedByLambda.png'))
-Z = sapply(out, function(o) o$Z)
+Z = lapply(out, function(o) o$Z)
 idx = estimate_Z(Z, returnIndex=TRUE)
 lam_est = out[[idx]]$lam
+Z_est = out[[idx]]$Z
+W_est = out[[idx]]$W
+last_out = last(out)
+layout(matrix(c(1,1,1,1,1,1,2,2,2), 3, 3, byrow = TRUE))
+marker_names = colnames(y[[1]])
+thresh = .1
 for (i in 1:I) {
   lami_ord = order(lam_est[[i]])
-  my.image(y[[i]][lami_ord,], mn=dat_lim[1], mx=dat_lim[2],
-           ylab='obs', xlab='markers', col=blueToRed(),addL=TRUE)
+  #my.image(y[[i]][lami_ord,],
+  my.image(matrix(last_out$missing_y[[i]],ncol=J)[lami_ord,],
+           mn=dat_lim[1], mx=dat_lim[2],
+           ylab='obs', xlab='', col=blueToRed(), xaxt='n')#,addL=TRUE)
+  ### TODO #####
+  #  Add legend
+  ##############
+  axis(1, at=1:J, labels=marker_names, las=2, fg='grey')
+  cell_types = which(W_est[i,] > thresh)
+  my.image(t(Z_est[, cell_types]), xlab='markers', ylab='cell-types', axes=F)
+  axis(2, at=1:length(cell_types), label=cell_types, las=2, fg='grey')
+  axis(1, at=1:J, label=1:J, las=2, fg='grey')
+}
+par(mfrow=c(1,1))
+dev.off()
+
+### INSPECT MUS ###
+mus0 = lapply(out, function(o) matrix(c(o$mus[,,1]), ncol=J))
+mus1 = lapply(out, function(o) matrix(c(o$mus[,,2]), ncol=J))
+m0 = matApply(mus0, mean)
+m1 = matApply(mus1, mean)
+
+pdf(fileDest('mus_inspect.pdf'))
+for (i in 1:I) {
+  v = c(m0[i,], m1[i,])
+  plot(v, type='n', xlab='markers', ylab='mus', main=paste0('mus for sample: ', i))
+  abline(h=0, lty=2, col='grey')
+  text(1:length(v), v, label=rep(1:J,2), cex=.8)
 }
 dev.off()
+
