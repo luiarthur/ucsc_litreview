@@ -124,11 +124,25 @@ for (i in 1:I) {
   axis(1, at=1:J, labels=marker_names, las=2, fg='grey')
   cell_types = which(W_est[i,] > thresh)
   my.image(t(Z_est[, cell_types]), xlab='markers', ylab='cell-types', axes=F)
-  axis(2, at=1:length(cell_types), label=cell_types, las=2, fg='grey')
+  perc = paste0(round(W_est[i,cell_types],2) * 100, '%')
+  axis(2, at=1:length(cell_types), label=perc, las=2, fg='grey', cex.axis=.8)
   axis(1, at=1:J, label=1:J, las=2, fg='grey')
 }
 par(mfrow=c(1,1))
 dev.off()
+
+
+### Kmeans ###
+#yi = ifelse(is.na(y[[i]]), -3, y[[i]])
+#ks = 2:16
+#costs = double(length(ks))
+#for (k in ks) {
+#  print(k)
+#  km = kmeans(yi, k)
+#  costs[k-1] = km$tot.within
+#}
+#plot(costs, type='b')
+
 
 ### INSPECT MUS ###
 mus0 = lapply(out, function(o) matrix(c(o$mus[,,1]), ncol=J))
