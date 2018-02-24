@@ -78,9 +78,12 @@ prior = list(cs_v=4, cs_h=3, d_w=1,
              a_beta=bdat.prior['b1'] * 100, b_beta=100, # b1
              c0=c0, a_x=bdat.prior['x'] * 100, b_x=100, # x
              K_min=1, K_max=16, a_K=2,
-             # Want s0^2 + tau0^2 + sig^2 = 1.5^2
+             ### Want s0^2 + tau0^2 + sig^2 = 1.5^2
              # s0^2 = .5, sig2 ~ IG(mean=1,sd=.5), tau0^2 ~ IG(mean=.75,sd=.3)
-             s2_psi0=.5, a_sig=6,b_sig=5, a_tau0=8.25,b_tau0=5.44)
+             #s2_psi0=.5, a_sig=6,b_sig=5, a_tau0=8.25,b_tau0=5.44)
+             ### Want s0^2 + tau0^2 + sig^2 = .5^2 = .25
+             # s0^2 = .05, tau0^2 ~ IG(mean=.1,sd=.1), sig2 ~ IG(mean=.1,sd=.1)
+             s2_psi0=.05, a_tau0=3,b_tau0=.2, a_sig=3,b_sig=.2)
 
 if (RANDOM_K) {
   init$K = MCMC_K
