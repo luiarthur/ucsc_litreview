@@ -1,6 +1,12 @@
 # TODO
 
-## 18 Jan, 2017
+## 21 Feb, 2018
+- [x] Make function for plotting y[[i]], Z_est, and legend
+- [x] Make function for `mus_inspect`
+- [x] Prior spec: `s0^2 + tau0^2 + sig2 = 1.5^2`
+- [ ] Make scripts usable for grape cluster
+
+## 18 Jan, 2018
 
 - [x] Fix: `ll_marginal`
 - [x] Fix: `loglike_marginal`

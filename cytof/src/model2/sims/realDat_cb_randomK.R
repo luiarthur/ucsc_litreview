@@ -77,7 +77,10 @@ prior = list(cs_v=4, cs_h=3, d_w=1,
              m_betaBar=bdat.prior['b0'], s2_betaBar=.0001, s2_beta0=.0001, #b0
              a_beta=bdat.prior['b1'] * 100, b_beta=100, # b1
              c0=c0, a_x=bdat.prior['x'] * 100, b_x=100, # x
-             K_min=1, K_max=16, a_K=2)
+             K_min=1, K_max=16, a_K=2,
+             # Want s0^2 + tau0^2 + sig^2 = 1.5^2
+             # s0^2 = .5, sig2 ~ IG(mean=1,sd=.5), tau0^2 ~ IG(mean=.75,sd=.3)
+             s2_psi0=.5, a_sig=6,b_sig=5, a_tau0=8.25,b_tau0=5.44)
 
 if (RANDOM_K) {
   init$K = MCMC_K
@@ -103,32 +106,7 @@ plot_cytof_posterior(out, y, outdir=OUTDIR, dat_lim=dat_lim, prior=prior)
 
 ### Plot Y by lambda ###
 png(fileDest('Y%03dsortedByLambda.png'))
-Z = lapply(out, function(o) o$Z)
-idx = estimate_Z(Z, returnIndex=TRUE)
-lam_est = out[[idx]]$lam
-Z_est = out[[idx]]$Z
-W_est = out[[idx]]$W
-last_out = last(out)
-layout(matrix(c(1,1,1,1,1,1,2,2,2), 3, 3, byrow = TRUE))
-marker_names = colnames(y[[1]])
-thresh = .1
-for (i in 1:I) {
-  lami_ord = order(lam_est[[i]])
-  #my.image(y[[i]][lami_ord,],
-  my.image(matrix(last_out$missing_y[[i]],ncol=J)[lami_ord,],
-           mn=dat_lim[1], mx=dat_lim[2],
-           ylab='obs', xlab='', col=blueToRed(), xaxt='n')#,addL=TRUE)
-  ### TODO #####
-  #  Add legend
-  ##############
-  axis(1, at=1:J, labels=marker_names, las=2, fg='grey')
-  cell_types = which(W_est[i,] > thresh)
-  my.image(t(Z_est[, cell_types]), xlab='markers', ylab='cell-types', axes=F)
-  perc = paste0(round(W_est[i,cell_types],2) * 100, '%')
-  axis(2, at=1:length(cell_types), label=perc, las=2, fg='grey', cex.axis=.8)
-  axis(1, at=1:J, label=1:J, las=2, fg='grey')
-}
-par(mfrow=c(1,1))
+y_Z_inspect(out, y, dat_lim=dat_lim, i=0, th=.05, prop=.3, col=greys(8))
 dev.off()
 
 
@@ -145,17 +123,9 @@ dev.off()
 
 
 ### INSPECT MUS ###
-mus0 = lapply(out, function(o) matrix(c(o$mus[,,1]), ncol=J))
-mus1 = lapply(out, function(o) matrix(c(o$mus[,,2]), ncol=J))
-m0 = matApply(mus0, mean)
-m1 = matApply(mus1, mean)
-
 pdf(fileDest('mus_inspect.pdf'))
 for (i in 1:I) {
-  v = c(m0[i,], m1[i,])
-  plot(v, type='n', xlab='markers', ylab='mus', main=paste0('mus for sample: ', i))
-  abline(h=0, lty=2, col='grey')
-  text(1:length(v), v, label=rep(1:J,2), cex=.8)
+  mus_inspect(i, out, y)
 }
 dev.off()
 

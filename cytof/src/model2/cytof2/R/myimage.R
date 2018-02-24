@@ -8,19 +8,38 @@ blueToRed <- function(n=12) {
   rev(redToBlue(n))
 }
 
+color.bar.horiz <- function(colorVec, mn, mx=-mn, nticks=length(colorVec)-1, 
+                      ticks=seq(mn, mx, len=nticks), colGrids=10, title='',
+                      digits=1) {
+  #' @export
+  scale = (length(colorVec)-1) / (mx-mn)
 
-color.bar <- function(lut, min, max=-min, nticks=11, 
-                      ticks=seq(min, max, len=nticks), title='') {
+  plot(c(mn,mx), c(0,colGrids), type='n', bty='n', 
+       xaxt='n', xlab='', yaxt='n', ylab='', main=title,fg='grey')
+  axis(1, round(ticks,digits), las=1)
+  for (i in 1:(length(colorVec)-1)) {
+    x = (i-1)/scale + mn
+    rect(xl=x, yb=0, xr=x+1/scale, yt=colGrids,
+         col=colorVec[i], border=NA)
+  }
+}
+#M = rbind(matrix(1,1,10),matrix(2,4,10))
+#layout(M)
+#color.bar.horiz(blueToRed(), -3, 3)
+
+
+color.bar <- function(colorVec, mn, mx=-mn, nticks=length(colorVec)-1, 
+                      ticks=seq(mn, mx, len=nticks), title='', colGrids=10) {
   #' @export
 
-  scale = (length(lut)-1)/(max-min)
+  scale = (length(colorVec)-1)/(mx-mn)
 
-  plot(c(0,10), c(min,max), type='n', bty='n', 
+  plot(c(0,colGrids), c(mn,mx), type='n', bty='n', 
        xaxt='n', xlab='', yaxt='n', ylab='', main=title,fg='grey')
   axis(2, ticks, las=1)
-  for (i in 1:(length(lut)-1)) {
-    y = (i-1)/scale + min
-    rect(0,y,10,y+1/scale, col=lut[i], border=NA)
+  for (i in 1:(length(colorVec)-1)) {
+    y = (i-1)/scale + mn
+    rect(0,y,colGrids,y+1/scale, col=colorVec[i], border=NA)
   }
 }
 
