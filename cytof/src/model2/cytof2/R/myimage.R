@@ -28,7 +28,7 @@ color.bar.horiz <- function(colorVec, mn, mx=-mn, nticks=length(colorVec)-1,
 #color.bar.horiz(blueToRed(), -3, 3)
 
 
-color.bar <- function(colorVec, mn, mx=-mn, nticks=length(colorVec)-1, 
+color.bar <- function(colorVec, mn, mx=-mn, nticks=length(colorVec)-1, digits=1,
                       ticks=seq(mn, mx, len=nticks), title='', colGrids=10) {
   #' @export
 
@@ -36,7 +36,7 @@ color.bar <- function(colorVec, mn, mx=-mn, nticks=length(colorVec)-1,
 
   plot(c(0,colGrids), c(mn,mx), type='n', bty='n', 
        xaxt='n', xlab='', yaxt='n', ylab='', main=title,fg='grey')
-  axis(2, ticks, las=1)
+  axis(2, round(ticks,digits), las=1)
   for (i in 1:(length(colorVec)-1)) {
     y = (i-1)/scale + mn
     rect(0,y,colGrids,y+1/scale, col=colorVec[i], border=NA)
