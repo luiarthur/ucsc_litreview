@@ -1,5 +1,21 @@
 #!/bin/bash
-# Requires GNU Parallel: sem
+#!/bin/bash
+#PBS -S /bin/bash
+#PBS -N Cytof_cb
+#PBS -l nodes=1:ppn=16
+#PBS -l walltime=10:00:00:00
+#PBS -V
+
+### THIS SCRIPT REQUIRES GNU PARALLEL: sem ###
+
+### To use compute node on grape: qsub analyze_cb_randomK
+
+### Go to work directory at submission time if using a compute node on grape
+if [[ $HOSTNAME == *"grape"* || $HOSTNAME == *"compute"* ]]
+then
+  cd $PBS_O_WORKDIR
+fi
+
 
 ### PARAMETERS FOR PARALLEL JOB ###
 i=0
