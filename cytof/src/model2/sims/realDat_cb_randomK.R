@@ -108,7 +108,9 @@ sim_time <- system.time(
 sink(fileDest('simtime.txt')); print(sim_time); sink()
 save(y, out, file=fileDest('sim_result.RData'))
 
-plot_cytof_posterior(out, y, outdir=OUTDIR, dat_lim=dat_lim, prior=prior)
+#plot_cytof_posterior(out, y, outdir=OUTDIR, dat_lim=dat_lim, prior=prior)
+# FIXME: change this to previous line
+plot_cytof_posterior(out, y, outdir=OUTDIR, dat_lim=dat_lim, prior=prior, supress=c('tau2'))
 
 ### Plot Y by lambda ###
 png(fileDest('Y%03dsortedByLambda.png'))
