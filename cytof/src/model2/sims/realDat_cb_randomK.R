@@ -94,7 +94,7 @@ if (RANDOM_K) {
   truth$beta_0 = matrix(bdat.prior['b0'], I, J)
   truth$x =  rep(bdat.prior['x'], J)
   ### FIXME: Remove when done ###
-  truth$tau_0=.1
+  truth$tau_0=c(.1, .8)
   truth$sig2=matrix(.1,I,J)
 }
 
