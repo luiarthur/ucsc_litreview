@@ -13,6 +13,11 @@ sig2_true = .5
 y = rnorm(N, X%*%b_true, sqrt(sig2_true))
 #my.pairs(cbind(y,X))
 
+### This works fine ###
+#prior = gen.default.prior(X); prior$cs=rep(.001,K) / 10
+#out = fit(y, X, B=200, burn=10000, print=100, prior=prior, method='lmc')
+###
+
 prior = gen.default.prior(X); prior$cs=rep(.001,K)
 out = fit(y, X, B=200, burn=2000, print=100, prior=prior, method='lmc')
 
