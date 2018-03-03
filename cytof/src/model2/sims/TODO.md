@@ -1,5 +1,12 @@
 # TODO
 
+# 2 March, 2018
+- [ ] small `s0^2, s1^2`
+- [ ] fixed `tau0^2, tau1^2`, random `sig2, gam*`
+- [ ] random `tau0^2, tau1^2`, random `sig2, gam*`
+- [ ] remove index for `j` in beta.
+
+
 ## 21 Feb, 2018
 - [x] Make function for plotting y[[i]], Z_est, and legend
 - [x] Make function for `mus_inspect`
