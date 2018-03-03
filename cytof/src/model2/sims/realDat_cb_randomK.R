@@ -142,4 +142,4 @@ for (i in 1:I) {
 dev.off()
 
 #Rscript realDat_cb_randomK.R "dat/cytof_cb.RData" 10 "out/cb_fixedK_randTau/" 2000 10000 1 0 0 1 &
-#Rscript realDat_cb_randomK.R "dat/cytof_cb.RData" 10 "out/cb_fixedK_fixedTau" 2000 10000 1 0 0 1 &
+#Rscript realDat_cb_randomK.R "dat/cytof_cb.RData" 10 "out/cb_fixedK_fixedTau/" 2000 10000 1 0 0 1 &
