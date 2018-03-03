@@ -83,7 +83,11 @@ prior = list(cs_v=4, cs_h=3, d_w=1,
              #s2_psi0=.5, a_sig=6,b_sig=5, a_tau0=8.25,b_tau0=5.44)
              ### Want s0^2 + tau0^2 + sig^2 = .5^2 = .25
              # s0^2 = .05, tau0^2 ~ IG(mean=.1,sd=.1), sig2 ~ IG(mean=.1,sd=.1)
-             s2_psi0=.05, a_tau0=3,b_tau0=.2, a_sig=3,b_sig=.2)
+             #s2_psi0=.05, a_tau0=3,b_tau0=.2, a_sig=3,b_sig=.2)
+             ### empirical sig2 = .9
+             ### empirical gam* = 1.2
+             a_gam=146, b_gam=174,
+             s2_psi0=.05, a_tau0=3,b_tau0=.2, a_sig=8102,b_sig=7290)
 
 if (RANDOM_K) {
   init$K = MCMC_K
@@ -94,8 +98,8 @@ if (RANDOM_K) {
   truth$beta_0 = matrix(bdat.prior['b0'], I, J)
   truth$x =  rep(bdat.prior['x'], J)
   ### FIXME: Remove when done ###
-  truth$tau_0=c(.1, .8)
-  truth$sig2=matrix(.1,I,J)
+  #truth$tau_0=c(.1, .8)
+  #truth$sig2=matrix(.1,I,J)
 }
 
 print("Start MCMC")
@@ -108,9 +112,9 @@ sim_time <- system.time(
 sink(fileDest('simtime.txt')); print(sim_time); sink()
 save(y, out, file=fileDest('sim_result.RData'))
 
-#plot_cytof_posterior(out, y, outdir=OUTDIR, dat_lim=dat_lim, prior=prior)
+plot_cytof_posterior(out, y, outdir=OUTDIR, dat_lim=dat_lim, prior=prior)
 # FIXME: change this to previous line
-plot_cytof_posterior(out, y, outdir=OUTDIR, dat_lim=dat_lim, prior=prior, supress=c('tau2'))
+#plot_cytof_posterior(out, y, outdir=OUTDIR, dat_lim=dat_lim, prior=prior, supress=c('tau2'))
 
 ### Plot Y by lambda ###
 png(fileDest('Y%03dsortedByLambda.png'))
@@ -137,3 +141,5 @@ for (i in 1:I) {
 }
 dev.off()
 
+#Rscript realDat_cb_randomK.R "dat/cytof_cb.RData" 10 "out/cb_fixedK_randTau/" 2000 10000 1 0 0 1 &
+#Rscript realDat_cb_randomK.R "dat/cytof_cb.RData" 10 "out/cb_fixedK_fixedTau" 2000 10000 1 0 0 1 &
