@@ -85,9 +85,9 @@ prior = list(cs_v=4, cs_h=3, d_w=1,
              # s0^2 = .05, tau0^2 ~ IG(mean=.1,sd=.1), sig2 ~ IG(mean=.1,sd=.1)
              #s2_psi0=.05, a_tau0=3,b_tau0=.2, a_sig=3,b_sig=.2)
              ### empirical sig2 = .9
-             ### empirical gam* = 1.2
-             a_gam=146, b_gam=174,
-             s2_psi0=.05, a_tau0=3,b_tau0=.2, a_sig=8102,b_sig=7290)
+             ### empirical gam* = .36 (var(y[y<0]) = 1.22)
+             a_gam=15, b_gam=5,
+             s2_psi0=.05, a_tau0=3,b_tau0=.2, a_sig=83,b_sig=74)
 
 if (RANDOM_K) {
   init$K = MCMC_K
