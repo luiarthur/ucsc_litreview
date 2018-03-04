@@ -26,7 +26,7 @@ fileDest = function(name) paste0(OUTDIR, name)
 ### Read in CB Data 
 system(paste0('mkdir -p ', OUTDIR))
 load(DATA_DIR) # dat/cytof_cb.RData
-y = preimpute(y) ### TODO: Remove this?
+#y = preimpute(y) ### TODO: Remove this?
 system(paste0('cp realDat_cb_randomK.R ', fileDest('src.R')))
 
 ### Plotting Data ###
