@@ -1,5 +1,6 @@
 library(cytof2)
 library(rcommon)
+source("preimpute.R")
 set.seed(1)
 
 args = commandArgs(trailingOnly=TRUE)
@@ -25,6 +26,7 @@ fileDest = function(name) paste0(OUTDIR, name)
 ### Read in CB Data 
 system(paste0('mkdir -p ', OUTDIR))
 load(DATA_DIR) # dat/cytof_cb.RData
+y = preimpute(y) ### TODO: Remove this?
 system(paste0('cp realDat_cb_randomK.R ', fileDest('src.R')))
 
 ### Plotting Data ###
@@ -141,5 +143,6 @@ for (i in 1:I) {
 }
 dev.off()
 
+#Rscript realDat_cb_randomK.R "dat/cytof_cb.RData" 10 "out/cb_fixedK_randTau_preimpute/" 2000 10000 1 0 0 1 &
 #Rscript realDat_cb_randomK.R "dat/cytof_cb.RData" 10 "out/cb_fixedK_randTau/" 2000 10000 1 0 0 1 &
 #Rscript realDat_cb_randomK.R "dat/cytof_cb.RData" 10 "out/cb_fixedK_fixedTau/" 2000 10000 1 0 0 1 &
