@@ -144,7 +144,7 @@ for (i in 1:I) {
 }
 dev.off()
 
-#Rscript realDat_cb_randomK.R "dat/cytof_cb.RData" 20 "out/cb_fixedK_randTau/" 2000 10000 1 0 0 1 &
+#Rscript realDat_cb_randomK.R "dat/cytof_cb.RData" 20 "out/cb_fixedK20_randTau/" 2000 10000 1 0 0 1 &
 #Rscript realDat_cb_randomK.R "dat/cytof_cb.RData" 10 "out/cb_fixedK_randTau_small_cs/" 2000 20000 1 0 0 1 &
 #Rscript realDat_cb_randomK.R "dat/cytof_cb.RData" 10 "out/cb_fixedK_randTau_preimpute/" 2000 10000 1 0 0 1 &
 #Rscript realDat_cb_randomK.R "dat/cytof_cb.RData" 10 "out/cb_fixedK_randTau/" 2000 10000 1 0 0 1 &
