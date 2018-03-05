@@ -120,7 +120,7 @@ plot_cytof_posterior(out, y, outdir=OUTDIR, dat_lim=dat_lim, prior=prior)
 
 ### Plot Y by lambda ###
 png(fileDest('Y%03dsortedByLambda.png'))
-y_Z_inspect(out, y, dat_lim=dat_lim, i=0, th=.05, prop=.3, col=greys(8))
+y_Z_inspect(out, y, dat_lim=c(0,dat_lim[2]), i=0, th=.05, prop=.3, col=greys(8))
 dev.off()
 
 
