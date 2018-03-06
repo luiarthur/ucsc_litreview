@@ -97,18 +97,25 @@ double ll_fz(const State &state, const Data &y, int i, int n, int j, int zz) {
                   sqrt((1 + gam_inj) * state.sig2(i,j)), lg);
 }
 
-double loglike(const State &state, const Data &y, const Prior &prior) {
+double loglike(const State &state, const Data &y, const Prior &prior, bool normalize=false) {
   double ll = 0;
 
   const int I = get_I(y);
   const auto N = get_N(y);
   const int J = get_J(y);
+  double ll_inj;
 
   // TODO: Parallelize?
   for (int i=0; i<I; i++) {
     for (int j=0; j<J; j++) {
       for (int n=0; n<N[i]; n++) {
-        ll += ll_p(state, y, prior, i, n, j) + ll_f(state, y, i, n, j);
+        ll_inj = ll_p(state, y, prior, i, n, j) + ll_f(state, y, i, n, j);
+
+        if (normalize) {
+          ll += ll_inj / N[i];
+        } else {
+          ll += ll_inj;
+        }
       }
     }
   }
