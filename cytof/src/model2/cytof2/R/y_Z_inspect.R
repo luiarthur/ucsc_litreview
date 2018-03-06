@@ -5,7 +5,7 @@ greys = function(n=10) {
 
 y_Z_inspect = function(out, y, dat_lim, i=0, thresh=0.1, 
                        col=list(blueToRed(), greys(10))[[1]],
-                       prop_lower_panel=.3) {
+                       prop_lower_panel=.3, is.postpred=FALSE) {
   #' @export
   I = length(y)
   J = NCOL(y[[1]])
@@ -38,13 +38,19 @@ y_Z_inspect = function(out, y, dat_lim, i=0, thresh=0.1,
     layout(M)
     par(mar=c(5.1, 4, 2.1, 0))
 
-    lami_ord = order(lam_est[[i]])
 
     ### Add Legend  #####
     #color.bar.horiz(COL,mn,mx,nticks)
     #par(mar=c(5.1, 3, 1, 3)) # b, l, t, r
 
-    my.image(matrix(last_out$missing_y[[i]],ncol=J)[lami_ord,],
+    if (is.postpred) {
+      Yi = y[[i]]
+      lami_ord = 1:NROW(Yi)
+    } else {
+      Yi = matrix(last_out$missing_y[[i]], ncol=J)
+      lami_ord = order(lam_est[[i]])
+    }
+    my.image(Yi[lami_ord,],
              mn=dat_lim[1], mx=dat_lim[2],
              ylab='obs', xlab='', col=COL, xaxt='n')
     axis(1, at=1:J, labels=marker_names, las=2, fg='grey')
