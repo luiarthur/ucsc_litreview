@@ -13,7 +13,7 @@ for (i in 1:I) colnames(Y_pp[[i]]) = colnames(y[[i]])
 
 ### Plot Y by lambda ###
 png(fileDest('Y%03dpostpred.png'))
-yZ(Y_pp, pp$Z, pp$cell, dat_lim=c(0,3), i=i, th=.05, prop=.3, col=greys(8))
+yZ(Y_pp, pp$Z, pp$cell, dat_lim=c(0,3), i=0, th=.05, prop=.3, col=greys(8))
 dev.off()
 
 ### Plot Postpred
