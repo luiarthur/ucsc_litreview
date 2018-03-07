@@ -6,7 +6,7 @@ These things may help
 
 - [ ] small `tausq0, tausq1`
 - [ ] small `sig2, gam0*`
-- [ ] fixed mu* (-2, 2)
+- [ ] fixed `mu*` = (-2, 2)
 - [ ] large `alpha`
 - [ ] large `K`
 
