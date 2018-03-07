@@ -101,7 +101,7 @@ if (RANDOM_K) {
   truth$beta_0 = matrix(bdat.prior['b0'], I, J)
   truth$x =  rep(bdat.prior['x'], J)
   ### FIXME: Remove when done ###
-  #truth$tau_0=c(.1, .8)
+  #truth$tau2=c(.1, .8)
   #truth$sig2=matrix(.1,I,J)
 }
 
@@ -124,7 +124,24 @@ png(fileDest('Y%03dsortedByLambda.png'))
 y_Z_inspect(out, y, dat_lim=c(0,3), i=0, th=.05, prop=.3, col=greys(8))
 dev.off()
 
+### Post pred ###
+pp = postpred(out)
+Y_pp = pp$y
+for (i in 1:I) colnames(Y_pp[[i]]) = colnames(y[[i]])
 
+### Plot Y by lambda ###
+png(fileDest('Y%03dpostpred.png'))
+yZ(Y_pp, pp$Z, pp$cell, dat_lim=c(0,3), i=i, th=.05, prop=.3, col=greys(8))
+dev.off()
+
+### Plot Postpred
+pdf(fileDest('postpred.pdf'))
+par(mfrow=c(4,2))
+for (i in 1:I) for (j in 1:J) {
+  plot_dat(Y_pp, i, j, xlim=dat_lim, xlab=paste0('marker ',j))
+}
+par(mfrow=c(1,1))
+dev.off()
 ### Kmeans ###
 #yi = ifelse(is.na(y[[i]]), -3, y[[i]])
 #ks = 2:16

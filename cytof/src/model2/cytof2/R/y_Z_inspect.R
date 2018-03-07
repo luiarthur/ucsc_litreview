@@ -3,6 +3,7 @@ greys = function(n=10) {
   rev(grey(seq(0,1,len=n)))
 } 
 
+### TODO: build from yZ.R ###
 y_Z_inspect = function(out, y, dat_lim, i=0, thresh=0.1, 
                        col=list(blueToRed(), greys(10))[[1]],
                        prop_lower_panel=.3, is.postpred=FALSE) {

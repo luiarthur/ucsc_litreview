@@ -1,6 +1,6 @@
 plot_cytof_posterior <- function(mcmc, y, prior, outdir='', sim=NULL, supress=c(),
                                  show_all_Z=FALSE, quant=c(.025,.975),
-                                 dat_lim=c(-5,5)) {
+                                 dat_lim=c(-5,5), breaks="Sturges") {
   fileDest = function(name) paste0(outdir, name)
 
   compareWithData = !is.null(sim)
@@ -286,9 +286,9 @@ plot_cytof_posterior <- function(mcmc, y, prior, outdir='', sim=NULL, supress=c(
 
     par(mfrow=c(4,2))
     for (i in 1:I) for (j in 1:J) {
-      plot_dat(missing_y_mean, i, j, xlim=dat_lim, xlab=paste('marker',j),breaks=10)
+      plot_dat(missing_y_mean, i, j, xlim=dat_lim, xlab=paste('marker',j),breaks=breaks)
       if (compareWithData) {
-        hist(sim$y_no_missing[[i]][,j], border='grey', add=TRUE, breaks=10)
+        hist(sim$y_no_missing[[i]][,j], border='grey', add=TRUE, breaks=breaks)
       }
     }
     par(mfrow=c(1,1))
