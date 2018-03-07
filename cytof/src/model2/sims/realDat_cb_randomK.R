@@ -90,7 +90,10 @@ prior = list(cs_v=4, cs_h=3, d_w=1,
              ### empirical sig2 = .9
              ### empirical gam* = .36 (var(y[y<0]) = 1.22)
              a_gam=15, b_gam=5,
-             s2_psi0=.05, a_tau0=3,b_tau0=.2, a_sig=83,b_sig=74)
+             s2_psi0=.05, s2_psi1=.05, 
+             a_tau0=3,b_tau0=.2,
+             a_tau1=3,b_tau1=.2,
+             a_sig=83,b_sig=74)
 
 if (RANDOM_K) {
   init$K = MCMC_K
