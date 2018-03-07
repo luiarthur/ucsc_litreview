@@ -1,9 +1,20 @@
 # TODO
 
+# 7 March, 2018
+
+These things may help
+
+- [ ] small `tausq0, tausq1`
+- [ ] small `sig2, gam0*`
+- [ ] fixed mu* (-2, 2)
+- [ ] large `alpha`
+- [ ] large `K`
+
+
 # 2 March, 2018
-- [ ] small `s0^2, s1^2`
-- [ ] fixed `tau0^2, tau1^2`, random `sig2, gam*`
-- [ ] random `tau0^2, tau1^2`, random `sig2, gam*`
+- [x] small `s0^2, s1^2`
+- [x] fixed `tau0^2, tau1^2`, random `sig2, gam*`
+- [x] random `tau0^2, tau1^2`, random `sig2, gam*`
 - [ ] remove index for `j` in beta.
 
 
