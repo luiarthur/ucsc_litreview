@@ -11,13 +11,5 @@ preimpute = function(y, subsample_prop=0) {
     }
   }
 
-  if (0 < subsample_prop && subsample_prop < 1) {
-    lapply(y, function(yi) {
-      Ni = NROW(yi)
-      idx = sample(1:Ni, round(Ni * subsample_prop), replace=TRUE)
-      yi[idx,]
-    })
-  } else {
-    y
-  }
+  subsample(y, subsample_prop)
 }
