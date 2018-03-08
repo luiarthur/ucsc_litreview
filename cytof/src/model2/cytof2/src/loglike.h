@@ -105,6 +105,11 @@ double loglike(const State &state, const Data &y, const Prior &prior, bool norma
   const int J = get_J(y);
   double ll_inj;
 
+  int N_sum = 0;
+  for (int i=0; i<I; i++) {
+    N_sum += N[i];
+  }
+
   // TODO: Parallelize?
   for (int i=0; i<I; i++) {
     for (int j=0; j<J; j++) {
@@ -112,7 +117,7 @@ double loglike(const State &state, const Data &y, const Prior &prior, bool norma
         ll_inj = ll_p(state, y, prior, i, n, j) + ll_f(state, y, i, n, j);
 
         if (normalize) {
-          ll += ll_inj / N[i];
+          ll += ll_inj / N_sum;
         } else {
           ll += ll_inj;
         }
