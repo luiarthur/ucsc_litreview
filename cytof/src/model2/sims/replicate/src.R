@@ -4,7 +4,7 @@ set.seed(1)
 
 args = commandArgs(trailingOnly=TRUE)
 if (length(args) < 6) {
-  stop('usage: Rscript realDat_cb.R DATA_DIR MCMC_K OUTDIR B BURN THIN')
+  stop('usage: Rscript src.R DATA_DIR MCMC_K OUTDIR B BURN THIN')
 }
 
 ### GLOBAL VARS ###
@@ -30,9 +30,9 @@ load(DATA_DIR) # dat/cytof_cb.RData
 if (PREIMPUTE) {
   ### TODO: Don't preimpute at the end
   print("Preimputing Y")
-  y = preimpute(y)
+  y = preimpute(y, subsample_prop=.1)
 }
-system(paste0('cp realDat_cb_randomK.R ', fileDest('src.R')))
+system(paste0('cp src.R ', fileDest('src.R')))
 
 ### Plotting Data ###
 pdf(fileDest('data.pdf'))
@@ -80,8 +80,8 @@ truth = NULL
 #             K_min=1, K_max=10, a_K=2)
 
 bdat.prior = get_beta_new(y=c(-3, c0 <- -2, -1), p_tar=c(.1, .6, .01))
-prior = list(cs_v=4, cs_h=3, d_w=1,
-             #cs_v=.1, cs_h=.1, d_w=1,
+prior = list(#cs_v=4, cs_h=3, d_w=1,
+             cs_v=.1, cs_h=.1, d_w=1,
              m_betaBar=bdat.prior['b0'], s2_betaBar=.0001, s2_beta0=.0001, #b0
              a_beta=bdat.prior['b1'] * 100, b_beta=100, # b1
              c0=c0, a_x=bdat.prior['x'] * 100, b_x=100, # x
@@ -94,7 +94,9 @@ prior = list(cs_v=4, cs_h=3, d_w=1,
              #s2_psi0=.05, a_tau0=3,b_tau0=.2, a_sig=3,b_sig=.2)
              ### empirical sig2 = .9
              ### empirical gam* = .36 (var(y[y<0]) = 1.22)
-             #G=diag(J)*3,
+             psi0Bar=-1.77,
+             psi1Bar=1.57,
+             G=diag(J)*3,
              a_gam=15, b_gam=5,
              s2_psi0=.05, s2_psi1=.05, 
              a_tau0=3,b_tau0=.2,
@@ -180,11 +182,4 @@ dev.off()
 # - prior
 # - init
 
-#Rscript realDat_cb_randomK.R "dat/cytof_cb.RData" 20 "out/cb_fixedK20_alpha5_fixMuSigGam_largeG/" 2000 10000 1 0 0 1 1 &
 
-#Rscript realDat_cb_randomK.R "dat/cytof_cb.RData" 20 "out/cb_fixedK20_alpha2_randTau/" 2000 10000 1 0 0 1 0 &
-#Rscript realDat_cb_randomK.R "dat/cytof_cb.RData" 20 "out/cb_fixedK20_randTau/" 2000 10000 1 0 0 1 0 &
-#Rscript realDat_cb_randomK.R "dat/cytof_cb.RData" 10 "out/cb_fixedK_randTau_small_cs/" 2000 20000 1 0 0 1 0 &
-#Rscript realDat_cb_randomK.R "dat/cytof_cb.RData" 10 "out/cb_fixedK_randTau_preimpute/" 2000 10000 1 0 0 1 1 &
-#Rscript realDat_cb_randomK.R "dat/cytof_cb.RData" 10 "out/cb_fixedK_randTau/" 2000 10000 1 0 0 1 0 &
-#Rscript realDat_cb_randomK.R "dat/cytof_cb.RData" 10 "out/cb_fixedK_fixedTau/" 2000 10000 1 0 0 1 0 &

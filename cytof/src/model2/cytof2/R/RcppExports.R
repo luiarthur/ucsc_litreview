@@ -4,7 +4,7 @@
 #' Just a test
 #' @export
 missing_R <- function(y, i, n, j) {
-    .Call('_cytof2_missing_R', PACKAGE = 'cytof2', y, i, n, j)
+    .Call('cytof2_missing_R', PACKAGE = 'cytof2', y, i, n, j)
 }
 
 #' Cytof Model for fixed K
@@ -21,18 +21,18 @@ missing_R <- function(y, i, n, j) {
 #'
 #' @export
 cytof_fix_K_fit <- function(y, B, burn, warmup = 100L, thin = 1L, thin_K = 5L, compute_loglike_every = 1L, print_freq = 10L, ncores = 1L, show_timings = FALSE, prop_for_training = .05, shuffle_data = FALSE, prior_input = NULL, truth_input = NULL, init_input = NULL) {
-    .Call('_cytof2_cytof_fix_K_fit', PACKAGE = 'cytof2', y, B, burn, warmup, thin, thin_K, compute_loglike_every, print_freq, ncores, show_timings, prop_for_training, shuffle_data, prior_input, truth_input, init_input)
+    .Call('cytof2_cytof_fix_K_fit', PACKAGE = 'cytof2', y, B, burn, warmup, thin, thin_K, compute_loglike_every, print_freq, ncores, show_timings, prop_for_training, shuffle_data, prior_input, truth_input, init_input)
 }
 
 #' Shuffle matrix by rows
 #' @export
 shuffle_mat <- function(X) {
-    .Call('_cytof2_shuffle_mat', PACKAGE = 'cytof2', X)
+    .Call('cytof2_shuffle_mat', PACKAGE = 'cytof2', X)
 }
 
 #' My Unit Tests
 #' @export
 unit_tests <- function() {
-    invisible(.Call('_cytof2_unit_tests', PACKAGE = 'cytof2'))
+    invisible(.Call('cytof2_unit_tests', PACKAGE = 'cytof2'))
 }
 
