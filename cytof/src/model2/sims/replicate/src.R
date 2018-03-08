@@ -94,6 +94,7 @@ prior = list(#cs_v=4, cs_h=3, d_w=1,
              #s2_psi0=.05, a_tau0=3,b_tau0=.2, a_sig=3,b_sig=.2)
              ### empirical sig2 = .9
              ### empirical gam* = .36 (var(y[y<0]) = 1.22)
+             alpha=5,
              psi0Bar=-1.77,
              psi1Bar=1.57,
              G=diag(J)*3,
