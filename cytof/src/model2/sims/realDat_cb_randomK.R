@@ -181,7 +181,7 @@ dev.off()
 # - prior
 # - init
 
-#Rscript realDat_cb_randomK.R "dat/cytof_cb.RData" 20 "out/cb_fixedK20_alpha5_fixMuSigGam_largeG/" 2000 10000 1 0 0 1 0 &
+#Rscript realDat_cb_randomK.R "dat/cytof_cb.RData" 20 "out/cb_fixedK20_alpha5_fixMuSigGam_largeG/" 2000 10000 1 0 0 1 1 &
 
 #Rscript realDat_cb_randomK.R "dat/cytof_cb.RData" 20 "out/cb_fixedK20_alpha2_randTau/" 2000 10000 1 0 0 1 0 &
 #Rscript realDat_cb_randomK.R "dat/cytof_cb.RData" 20 "out/cb_fixedK20_randTau/" 2000 10000 1 0 0 1 0 &
