@@ -7,7 +7,8 @@
 cytof_fix_K_fit(y, B, burn, warmup = 100L, thin = 1L, thin_K = 5L,
   compute_loglike_every = 1L, print_freq = 10L, ncores = 1L,
   show_timings = FALSE, prop_for_training = 0.05, shuffle_data = FALSE,
-  prior_input = NULL, truth_input = NULL, init_input = NULL)
+  normalize_loglike = FALSE, prior_input = NULL, truth_input = NULL,
+  init_input = NULL)
 }
 \arguments{
 \item{y}{A list of matrices, y[[i]] having dimensions N[i] x J, where N[i] is the number of cells in sample i, J is the number of markers, and i=1,..,I is the sample size with I being the total number of samples.}

@@ -21,8 +21,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // cytof_fix_K_fit
-std::vector<List> cytof_fix_K_fit(const std::vector<arma::mat>& y, int B, int burn, int warmup, int thin, int thin_K, int compute_loglike_every, int print_freq, int ncores, bool show_timings, double prop_for_training, bool shuffle_data, Nullable<List> prior_input, Nullable<List> truth_input, Nullable<List> init_input);
-RcppExport SEXP cytof2_cytof_fix_K_fit(SEXP ySEXP, SEXP BSEXP, SEXP burnSEXP, SEXP warmupSEXP, SEXP thinSEXP, SEXP thin_KSEXP, SEXP compute_loglike_everySEXP, SEXP print_freqSEXP, SEXP ncoresSEXP, SEXP show_timingsSEXP, SEXP prop_for_trainingSEXP, SEXP shuffle_dataSEXP, SEXP prior_inputSEXP, SEXP truth_inputSEXP, SEXP init_inputSEXP) {
+std::vector<List> cytof_fix_K_fit(const std::vector<arma::mat>& y, int B, int burn, int warmup, int thin, int thin_K, int compute_loglike_every, int print_freq, int ncores, bool show_timings, double prop_for_training, bool shuffle_data, bool normalize_loglike, Nullable<List> prior_input, Nullable<List> truth_input, Nullable<List> init_input);
+RcppExport SEXP cytof2_cytof_fix_K_fit(SEXP ySEXP, SEXP BSEXP, SEXP burnSEXP, SEXP warmupSEXP, SEXP thinSEXP, SEXP thin_KSEXP, SEXP compute_loglike_everySEXP, SEXP print_freqSEXP, SEXP ncoresSEXP, SEXP show_timingsSEXP, SEXP prop_for_trainingSEXP, SEXP shuffle_dataSEXP, SEXP normalize_loglikeSEXP, SEXP prior_inputSEXP, SEXP truth_inputSEXP, SEXP init_inputSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -38,10 +38,11 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< bool >::type show_timings(show_timingsSEXP);
     Rcpp::traits::input_parameter< double >::type prop_for_training(prop_for_trainingSEXP);
     Rcpp::traits::input_parameter< bool >::type shuffle_data(shuffle_dataSEXP);
+    Rcpp::traits::input_parameter< bool >::type normalize_loglike(normalize_loglikeSEXP);
     Rcpp::traits::input_parameter< Nullable<List> >::type prior_input(prior_inputSEXP);
     Rcpp::traits::input_parameter< Nullable<List> >::type truth_input(truth_inputSEXP);
     Rcpp::traits::input_parameter< Nullable<List> >::type init_input(init_inputSEXP);
-    rcpp_result_gen = Rcpp::wrap(cytof_fix_K_fit(y, B, burn, warmup, thin, thin_K, compute_loglike_every, print_freq, ncores, show_timings, prop_for_training, shuffle_data, prior_input, truth_input, init_input));
+    rcpp_result_gen = Rcpp::wrap(cytof_fix_K_fit(y, B, burn, warmup, thin, thin_K, compute_loglike_every, print_freq, ncores, show_timings, prop_for_training, shuffle_data, normalize_loglike, prior_input, truth_input, init_input));
     return rcpp_result_gen;
 END_RCPP
 }

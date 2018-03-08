@@ -49,6 +49,7 @@ std::vector<List> cytof_fix_K_fit(
   int thin=1, int thin_K=5,
   int compute_loglike_every=1, int print_freq=10, int ncores=1,
   bool show_timings=false, double prop_for_training=.05, bool shuffle_data=false,
+  bool normalize_loglike=false,
   Nullable<List> prior_input = R_NilValue,
   Nullable<List> truth_input = R_NilValue,
   Nullable<List> init_input = R_NilValue) {
@@ -105,7 +106,7 @@ std::vector<List> cytof_fix_K_fit(
   auto ass = [&](const State &state, int ii) {
     if (ii - burn >= 0) {
       if ( (ii-burn+1) % compute_loglike_every == 0 || ii == burn ) {
-        ll = loglike(state, y, prior);
+        ll = loglike(state, y, prior, normalize_loglike);
       }
 
       for (int s=0; s<I; s++) {

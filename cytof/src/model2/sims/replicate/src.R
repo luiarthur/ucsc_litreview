@@ -30,7 +30,7 @@ load(DATA_DIR) # dat/cytof_cb.RData
 if (PREIMPUTE) {
   ### TODO: Don't preimpute at the end
   print("Preimputing Y")
-  y = preimpute(y, subsample_prop=.1)
+  y = preimpute(y, subsample_prop=.05)
 }
 system(paste0('cp src.R ', fileDest('src.R')))
 
@@ -126,7 +126,7 @@ print("Start MCMC")
 sim_time <- system.time(
   out <- cytof_fix_K_fit(y, init=init, prior=prior, B=B, burn=BURN, thin=THIN,
                          warmup=WARMUP, thin_K=1, ncores=NCORES, truth=truth,
-                         prop_for_training=PROP, print=1)
+                         prop_for_training=PROP, print=1, normalize_loglike=TRUE)
 )
 sink(fileDest('simtime.txt')); print(sim_time); sink()
 save(y, out, file=fileDest('sim_result.RData'))

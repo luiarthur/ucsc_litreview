@@ -20,8 +20,8 @@ missing_R <- function(y, i, n, j) {
 #' @param init_input A list containing the initial values of the parameters. When set to NULL (default), default initial values are used.
 #'
 #' @export
-cytof_fix_K_fit <- function(y, B, burn, warmup = 100L, thin = 1L, thin_K = 5L, compute_loglike_every = 1L, print_freq = 10L, ncores = 1L, show_timings = FALSE, prop_for_training = .05, shuffle_data = FALSE, prior_input = NULL, truth_input = NULL, init_input = NULL) {
-    .Call('cytof2_cytof_fix_K_fit', PACKAGE = 'cytof2', y, B, burn, warmup, thin, thin_K, compute_loglike_every, print_freq, ncores, show_timings, prop_for_training, shuffle_data, prior_input, truth_input, init_input)
+cytof_fix_K_fit <- function(y, B, burn, warmup = 100L, thin = 1L, thin_K = 5L, compute_loglike_every = 1L, print_freq = 10L, ncores = 1L, show_timings = FALSE, prop_for_training = .05, shuffle_data = FALSE, normalize_loglike = FALSE, prior_input = NULL, truth_input = NULL, init_input = NULL) {
+    .Call('cytof2_cytof_fix_K_fit', PACKAGE = 'cytof2', y, B, burn, warmup, thin, thin_K, compute_loglike_every, print_freq, ncores, show_timings, prop_for_training, shuffle_data, normalize_loglike, prior_input, truth_input, init_input)
 }
 
 #' Shuffle matrix by rows
