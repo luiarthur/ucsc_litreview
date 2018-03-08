@@ -5,11 +5,13 @@
 These things may help
 
 - [ ] small `tausq0, tausq1`
-- [ ] small `sig2, gam0*`
+- [ ] small `sig2, gam0*` = (.8, .87)
 - [ ] fixed `mu*` = (-1.77, 1.57)
-- [ ] large `alpha`
+- [ ] large `alpha = 5`
 - [ ] large `K`
 - [ ] `G = cI`
+- [ ] pre-impute Y
+- [ ] use CDF for missing Y
 
 Read cluster papers
 
