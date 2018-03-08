@@ -18,6 +18,8 @@ THIN <- as.integer(args[6])
 PROP = as.numeric(args[7])
 WARMUP = as.integer(args[8])
 NCORES = as.integer(args[9])
+PREIMPUTE = as.integer(args[10])
+
 RANDOM_K = (PROP > 0)
 dat_lim = c(-7,7)
 
@@ -26,7 +28,7 @@ fileDest = function(name) paste0(OUTDIR, name)
 ### Read in CB Data 
 system(paste0('mkdir -p ', OUTDIR))
 load(DATA_DIR) # dat/cytof_cb.RData
-#y = preimpute(y) ### TODO: Remove this?
+if (preimpute) y = preimpute(y) ### TODO: Don't preimpute at the end
 system(paste0('cp realDat_cb_randomK.R ', fileDest('src.R')))
 
 ### Plotting Data ###
@@ -89,6 +91,7 @@ prior = list(cs_v=4, cs_h=3, d_w=1,
              #s2_psi0=.05, a_tau0=3,b_tau0=.2, a_sig=3,b_sig=.2)
              ### empirical sig2 = .9
              ### empirical gam* = .36 (var(y[y<0]) = 1.22)
+             #G=diag(J)*3,
              a_gam=15, b_gam=5,
              s2_psi0=.05, s2_psi1=.05, 
              a_tau0=3,b_tau0=.2,
@@ -104,6 +107,11 @@ if (RANDOM_K) {
   truth$beta_0 = matrix(bdat.prior['b0'], I, J)
   truth$x =  rep(bdat.prior['x'], J)
   ### FIXME: Remove when done ###
+
+  #truth$mus = array(unlist(list(matrix(-1.77,I,J),matrix(1.57,I,J))), dim=c(I,J,2))
+  #truth$sig2 = matrix(.8, I, J)
+  #truth$gams_0 = matrix(.87, I, J)
+
   #truth$tau2=c(.1, .8)
   #truth$sig2=matrix(.1,I,J)
 }
@@ -164,9 +172,16 @@ for (i in 1:I) {
 }
 dev.off()
 
-#Rscript realDat_cb_randomK.R "dat/cytof_cb.RData" 20 "out/cb_fixedK20_alpha2_randTau/" 2000 10000 1 0 0 1 &
-#Rscript realDat_cb_randomK.R "dat/cytof_cb.RData" 20 "out/cb_fixedK20_randTau/" 2000 10000 1 0 0 1 &
-#Rscript realDat_cb_randomK.R "dat/cytof_cb.RData" 10 "out/cb_fixedK_randTau_small_cs/" 2000 20000 1 0 0 1 &
-#Rscript realDat_cb_randomK.R "dat/cytof_cb.RData" 10 "out/cb_fixedK_randTau_preimpute/" 2000 10000 1 0 0 1 &
-#Rscript realDat_cb_randomK.R "dat/cytof_cb.RData" 10 "out/cb_fixedK_randTau/" 2000 10000 1 0 0 1 &
-#Rscript realDat_cb_randomK.R "dat/cytof_cb.RData" 10 "out/cb_fixedK_fixedTau/" 2000 10000 1 0 0 1 &
+### ALWAYS CHECK: 
+# - true
+# - prior
+# - init
+
+#Rscript realDat_cb_randomK.R "dat/cytof_cb.RData" 20 "out/cb_fixedK20_alpha5_fixMuSigGam_largeG/" 2000 10000 1 0 0 1 0 &
+
+#Rscript realDat_cb_randomK.R "dat/cytof_cb.RData" 20 "out/cb_fixedK20_alpha2_randTau/" 2000 10000 1 0 0 1 0 &
+#Rscript realDat_cb_randomK.R "dat/cytof_cb.RData" 20 "out/cb_fixedK20_randTau/" 2000 10000 1 0 0 1 0 &
+#Rscript realDat_cb_randomK.R "dat/cytof_cb.RData" 10 "out/cb_fixedK_randTau_small_cs/" 2000 20000 1 0 0 1 0 &
+#Rscript realDat_cb_randomK.R "dat/cytof_cb.RData" 10 "out/cb_fixedK_randTau_preimpute/" 2000 10000 1 0 0 1 1 &
+#Rscript realDat_cb_randomK.R "dat/cytof_cb.RData" 10 "out/cb_fixedK_randTau/" 2000 10000 1 0 0 1 0 &
+#Rscript realDat_cb_randomK.R "dat/cytof_cb.RData" 10 "out/cb_fixedK_fixedTau/" 2000 10000 1 0 0 1 0 &
