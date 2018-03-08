@@ -11,5 +11,5 @@ preimpute = function(y, subsample_prop=0) {
     }
   }
 
-  subsample(y, subsample_prop)
+  resample(y, subsample_prop)
 }
