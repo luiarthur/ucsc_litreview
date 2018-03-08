@@ -9,6 +9,9 @@ These things may help
 - [ ] fixed `mu*` = (-1.77, 1.57)
 - [ ] large `alpha`
 - [ ] large `K`
+- [ ] `G = cI`
+
+Read cluster papers
 
 
 # 2 March, 2018
