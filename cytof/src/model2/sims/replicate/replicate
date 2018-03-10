@@ -1,4 +1,4 @@
 #!/bin/bash
 
-Rscript src.R "../dat/cytof_cb.RData" 20 "../out/cb_fixedK20_alpha5_fixMuSigGam_largeG/" 2000 50000 1 0 0 1 1 &
+Rscript src.R "../dat/cytof_cb.RData" 20 "../out/cb_fixedK20_alpha5_fixMuSigGam_largeG/" 2000 20000 1 0 0 1 1 &
 #Rscript src.R "../dat/cytof_cb.RData" 20 "../out/cb_fixedK20_alpha5_fixMuSigGam_largeG/" 2000 2000 1 0 0 1 1 &

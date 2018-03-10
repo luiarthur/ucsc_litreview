@@ -1,3 +1,7 @@
+double dlt(double x, double m, double s, int lg) {
+  return R::dt(x-m, s, lg)
+}
+
 double y_final(const State &state, const Data &y, int i, int n, int j) {
   return missing(y,i,n,j) ? state.missing_y[i](n,j) : y[i](n,j);
 }
@@ -50,8 +54,10 @@ double ll_p_given_beta(const State &state, const Data &y, const Prior &prior,
 
 double ll_f(const State &state, const Data &y, int i, int n, int j) {
   const int lg = 1; // log the density
-  return R::dnorm(y_final(state, y, i, n, j), mu(state, i, n, j),
-                  sqrt((1 + gam(state, i, n, j)) * state.sig2(i,j)), lg);
+  //return R::dnorm(y_final(state, y, i, n, j), mu(state, i, n, j),
+  //                sqrt((1 + gam(state, i, n, j)) * state.sig2(i,j)), lg);
+  return dlt(y_final(state, y, i, n, j), mu(state, i, n, j),
+             sqrt((1 + gam(state, i, n, j)) * state.sig2(i,j)), lg);
 }
 
 double ll_marginal(const State &state, const Data & y, int i, int n, int j) {
@@ -65,9 +71,12 @@ double ll_marginal(const State &state, const Data & y, int i, int n, int j) {
 
   for (int k=0; k<K; k++) {
     g = state.Z(j,k) == 0 ? state.gams_0(i,j) : 0;
-    fm += state.W(i,k) * R::dnorm(y[i](n,j),
-                                  state.mus(i,j,state.Z(j,k)),
-                                  sqrt(state.sig2(i,j) * (1 + g)), lg);
+    //fm += state.W(i,k) * R::dnorm(y[i](n,j),
+    //                              state.mus(i,j,state.Z(j,k)),
+    //                              sqrt(state.sig2(i,j) * (1 + g)), lg);
+    fm += state.W(i,k) * dlt(y[i](n,j),
+                             state.mus(i,j,state.Z(j,k)),
+                             sqrt(state.sig2(i,j) * (1 + g)), lg);
   }
 
   return log(fm);
@@ -93,8 +102,10 @@ double rand_marginal(const State &state, int i, int n, int j) {
 double ll_fz(const State &state, const Data &y, int i, int n, int j, int zz) {
   const double gam_inj = (zz == 0) ? state.gams_0(i,j) : 0;
   const int lg = 1; // log the density
-  return R::dnorm(y_final(state, y, i, n, j), state.mus(i, j, zz),
-                  sqrt((1 + gam_inj) * state.sig2(i,j)), lg);
+  //return R::dnorm(y_final(state, y, i, n, j), state.mus(i, j, zz),
+  //                sqrt((1 + gam_inj) * state.sig2(i,j)), lg);
+  return dlt(y_final(state, y, i, n, j), state.mus(i, j, zz),
+             sqrt((1 + gam_inj) * state.sig2(i,j)), lg);
 }
 
 double loglike(const State &state, const Data &y, const Prior &prior, bool normalize=false) {
