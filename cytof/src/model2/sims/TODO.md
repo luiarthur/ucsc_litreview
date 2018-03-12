@@ -4,10 +4,11 @@
 
 These things may help
 
-- [ ] fix `mu*0, tau0^2, gam0*` to be small, but random `mu*1, tau1^2`
-    - I think the problem is when the distribution of `y_ij` has near-0 mean,
-      the mixture that is learned is very vague; for example, in cases where
-      `mu0*` may be approximately 0, and `mu1*` may be large. 
+- [ ] fix (or strongly inform) `mu*0, tau0^2, gam0*` to be small, 
+      but random `mu*1, tau1^2`
+        - I think the problem is when the distribution of `y_ij` has near-0
+          mean, the mixture that is learned is very vague; for example, in
+          cases where `mu0*` may be approximately 0, and `mu1*` may be large. 
 - [ ] small `tausq0, tausq1`
 - [ ] small `sig2, gam0*` = (.8, .87)
 - [ ] fixed `mu*` = (-1.77, 1.57)
