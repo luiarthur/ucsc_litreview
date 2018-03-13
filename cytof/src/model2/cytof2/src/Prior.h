@@ -61,6 +61,9 @@ void precompute_H_stats(Prior &prior) {
 
 template<typename T>
 T getOrInit(const List &ls, const char* param, T init) {
+  if (ls.containsElementNamed(param)) {
+    Rcout << param << " was set by user." << std::endl;
+  }
   return ls.containsElementNamed(param) ? as<T>(ls[param]) : init;
 }
 
