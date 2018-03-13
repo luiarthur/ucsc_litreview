@@ -9,6 +9,11 @@ These things may help
         - I think the problem is when the distribution of `y_ij` has near-0
           mean, the mixture that is learned is very vague; for example, in
           cases where `mu0*` may be approximately 0, and `mu1*` may be large. 
+        - `mu*0=-1.77; sig2(1+gam0^2)+tau0^2+s0^2=.01^2 = .0001`
+        - `tau0^2 ~ IG(mean=.002, sd=.001)`
+        - `s0^2 = .00005`
+        - `sig2 ~ IG(mean=.9, sd=.1)`
+        - `gam0^2 ~ IG(mean=.36, sd=.1)`
 - [ ] small `tausq0, tausq1`
 - [ ] small `sig2, gam0*` = (.8, .87)
 - [ ] fixed `mu*` = (-1.77, 1.57)

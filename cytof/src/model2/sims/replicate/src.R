@@ -97,11 +97,11 @@ prior = list(#cs_v=4, cs_h=3, d_w=1,
              alpha=5,
              psi0Bar=-1.77,
              psi1Bar=1.57,
+             s2_psi0=.0001, s2_psi1=.05, 
+             a_tau0=6,b_tau0=.01,
+             a_tau1=3,b_tau1=.2,
              G=diag(J)*3,
              a_gam=15, b_gam=5,
-             s2_psi0=.05, s2_psi1=.05, 
-             a_tau0=3,b_tau0=.2,
-             a_tau1=3,b_tau1=.2,
              a_sig=83,b_sig=74)
 
 if (RANDOM_K) {
