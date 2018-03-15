@@ -179,6 +179,13 @@ for (i in 1:I) {
 }
 dev.off()
 
+### H Trace ###
+pdf(fileDest('H_11_trace.pdf'))
+h11 = sapply(out, function(o) o$H[1,1])
+plotPost(h11)
+dev.off()
+
+
 ### ALWAYS CHECK: 
 # - true
 # - prior
