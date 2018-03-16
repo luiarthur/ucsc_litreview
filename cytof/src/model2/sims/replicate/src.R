@@ -101,7 +101,7 @@ prior = list(#cs_v=4, cs_h=3, d_w=1,
              #a_tau0=6,b_tau0=.01,
              a_tau0=100,b_tau0=.01,
              a_tau1=3,b_tau1=.2,
-             G=diag(J)*3,
+             G=diag(J),#diag(J)*3,
              a_gam=15, b_gam=5,
              a_sig=83,b_sig=74)
 
