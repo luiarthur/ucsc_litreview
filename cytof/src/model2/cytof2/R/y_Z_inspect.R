@@ -48,7 +48,7 @@ y_Z_inspect = function(out, y, dat_lim, i=0, thresh=0.1,
       Yi = y[[i]]
       lami_ord = 1:NROW(Yi)
     } else {
-      Yi = matrix(last_out$missing_y[[i]], ncol=J)
+      Yi = matrix(last_out$missing_y_mean[[i]], ncol=J)
       lami_ord = order(lam_est[[i]])
     }
     my.image(Yi[lami_ord,],

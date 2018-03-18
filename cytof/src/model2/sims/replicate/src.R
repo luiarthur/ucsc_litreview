@@ -186,6 +186,18 @@ plotPost(h11)
 dev.off()
 
 
+### Plot missing_y (last in MCMC) ###
+pdf(fileDest('missing_y_last.pdf'))
+missing_y_last = lapply(last(out)$missing_y_last, matrix, ncol=J)
+
+par(mfrow=c(4,2))
+for (i in 1:I) for (j in 1:J) {
+  plot_dat(missing_y_last, i, j, xlim=dat_lim, xlab=paste('marker',j))
+}
+par(mfrow=c(1,1))
+dev.off()
+
+
 ### ALWAYS CHECK: 
 # - true
 # - prior

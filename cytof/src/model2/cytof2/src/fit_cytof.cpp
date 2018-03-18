@@ -138,6 +138,7 @@ std::vector<List> cytof_fix_K_fit(
         missing_y_mean[s] = missing_y_sum[s] / B;
       }
       out[B-1]["missing_y_mean"] = missing_y_mean;
+      out[B-1]["missing_y_last"] = state.missing_y;
       //out[B-1]["idx_of_missing"] = idx_of_missing; // REMOVE IN PRODUCTION.
     }
   };
