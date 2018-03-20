@@ -265,7 +265,9 @@ plot_cytof_posterior <- function(mcmc, y, prior, outdir='', sim=NULL, supress=c(
     } else {
       paste0('tau2_',0:1)
     }
-    plotPosts(tau2, cnames=tit)
+    if ( all(apply(tau2,2,function(x) length(unique(x))) > 1) ) {
+      plotPosts(tau2, cnames=tit)
+    }
   }
 
   ### psi
@@ -276,7 +278,9 @@ plot_cytof_posterior <- function(mcmc, y, prior, outdir='', sim=NULL, supress=c(
     } else {
       paste0('psi',0:1)
     }
-    plotPosts(psi, cnames=tit)
+    if ( all(apply(psi,2,function(x) length(unique(x))) > 1) ) {
+      plotPosts(psi, cnames=tit)
+    }
   }
 
   ### missing_y

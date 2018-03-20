@@ -32,6 +32,7 @@ if (PREIMPUTE) {
   print("Preimputing Y")
   y = preimpute(y, subsample_prop=.05)
 }
+#y = resample(y, .05)
 system(paste0('cp src.R ', fileDest('src.R')))
 
 ### Plotting Data ###
@@ -115,6 +116,9 @@ if (RANDOM_K) {
   truth$x =  rep(bdat.prior['x'], J)
   ### FIXME: Remove when done ###
 
+  truth$psi_0 = -1.77
+  truth$tau2_0 = .01
+
   #truth$mus = array(unlist(list(matrix(-1.77,I,J),matrix(1.57,I,J))), dim=c(I,J,2))
   #truth$sig2 = matrix(.8, I, J)
   #truth$gams_0 = matrix(.87, I, J)
@@ -197,6 +201,16 @@ for (i in 1:I) for (j in 1:J) {
 par(mfrow=c(1,1))
 dev.off()
 
+
+pdf(fileDest('psi1,pdf'))
+psi1 = sapply(out, function(o) o$psi[2])
+plotPost(psi1, main='psi_1')
+dev.off()
+
+pdf(fileDest('tau2_1,pdf'))
+tau2_1 = sapply(out, function(o) o$tau2[2])
+plotPost(tau2_1, main='tau2_1')
+dev.off()
 
 ### ALWAYS CHECK: 
 # - true

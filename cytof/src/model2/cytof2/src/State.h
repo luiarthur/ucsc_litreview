@@ -105,11 +105,15 @@ State gen_init_obj(const Nullable<List> &init_input,
   init_tau2(0) = 1;
   init_tau2(1) = 1;
   state.tau2 = getInitOrFix(init, truth, "tau2", init_tau2);
+  state.tau2(0) = getInitOrFix(init, truth, "tau2_0", state.tau2(0));
+  state.tau2(1) = getInitOrFix(init, truth, "tau2_1", state.tau2(1));
 
   arma::vec init_psi(2);
   init_psi(0) = -1;
   init_psi(1) = 1;
   state.psi = getInitOrFix(init, truth, "psi", init_psi);
+  state.psi(0) = getInitOrFix(init, truth, "psi_0", state.psi(0));
+  state.psi(1) = getInitOrFix(init, truth, "psi_1", state.psi(1));
 
   type_lam init_lam = type_lam(I);
   for (int i=0; i<I; i++) {
