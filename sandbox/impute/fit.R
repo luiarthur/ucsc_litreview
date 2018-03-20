@@ -58,6 +58,7 @@ fit = function(y, prior=default.prior,
     state = update_mu(state)
     state = update_sig2(state)
     state = update_b(state)
+    state$ll = sum(dnorm(state$y, state$mu, state$sig2, log=TRUE))
     state
   }
 
