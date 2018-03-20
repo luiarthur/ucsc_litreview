@@ -17,14 +17,14 @@ xx = seq(min(y), max(y), l=100)
 plot(xx, sigmoid(b_true[1] + b_true[2]*xx), type='b')
 
 prior = default.prior
-prior$cs_b=c(1,1)*.1
+prior$cs_b=c(1,1)*1
 
 ab = invgamma_ab(var(y_dat, na.rm=TRUE), .1)
 prior$a_sig=ab[1]
 prior$b_sig=ab[2]
 #init = list(b=c(2,-2), mu=0, sig2=1, y=y)
 init = list(b=c(0,0), mu=0, sig2=1, y=y)
-out = fit(y_dat, init=init, prior=prior, B=500, burn=2000)
+out = fit(y_dat, init=init, prior=prior, B=500, burn=5000)
 
 mu = sapply(out, function(o) o$mu)
 sig2 = sapply(out, function(o) o$sig2)
@@ -44,7 +44,7 @@ plotPosts(b)
 
 pp = apply(b, 1, function(bb) sigmoid(bb[1] + bb[2] * xx))
 
-#bk <- hist(colMeans(yy), plot=FALSE)
+bk <- hist(colMeans(yy), plot=FALSE)
 hist(y, border='transparent', col=rgb(0,0,0,.3), xlim=c(-10,10))
 hist(colMeans(yy)[which(m==0)], add=TRUE, col=rgb(1,0,0,.3), border='transparent')
 hist(colMeans(yy)[which(m==1)], add=TRUE, col=rgb(0,1,0,.3), border='transparent')
