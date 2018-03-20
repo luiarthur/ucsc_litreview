@@ -202,12 +202,12 @@ par(mfrow=c(1,1))
 dev.off()
 
 
-pdf(fileDest('psi1,pdf'))
+pdf(fileDest('psi1.pdf'))
 psi1 = sapply(out, function(o) o$psi[2])
 plotPost(psi1, main='psi_1')
 dev.off()
 
-pdf(fileDest('tau2_1,pdf'))
+pdf(fileDest('tau2_1.pdf'))
 tau2_1 = sapply(out, function(o) o$tau2[2])
 plotPost(tau2_1, main='tau2_1')
 dev.off()
