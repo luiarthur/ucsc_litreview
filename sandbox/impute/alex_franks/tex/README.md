@@ -74,7 +74,10 @@ $\theta_R$ which does not depend on $Y$.
 P(Y, R \mid \theta) &\propto \prod_{i=1}^N f(Y_i\mid R_i=1,\theta_{Y|R=1})
 \cdot \frac{f(R_i \mid Y_i, \theta_{R|Y})}{f(R_i =1\mid Y_i, \theta_{R|Y})}
 \end{align*}
-with normalizing constant $\prod_{i=1}^N f(R_i =1\mid Y_i, \theta_{R|Y, Y|R=1})$.
+with normalizing constant $\prod_{i=1}^N f(R_i =1\mid Y_i, \theta_{R|Y,
+Y|R=1})$.  Alex notes that the advantage of this representation is that it only
+involves the observed data density and the missingness mechanism, but not the 
+complete data density.
 
 # Notes
 
