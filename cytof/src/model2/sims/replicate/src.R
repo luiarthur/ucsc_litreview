@@ -32,7 +32,7 @@ if (PREIMPUTE) {
   print("Preimputing Y")
   y = preimpute(y, subsample_prop=.05)
 }
-#y = resample(y, .05)
+y = resample(y, .05)
 system(paste0('cp src.R ', fileDest('src.R')))
 
 ### Plotting Data ###

@@ -1,4 +1,4 @@
-source("fit.R")
+source("fit.R", chdir=T)
 library(rcommon)
 library(cytof2)
 

@@ -1,4 +1,4 @@
-source("mcmc.R")
+source("../mcmc/mcmc.R")
 default.prior = list(cs_b=c(1,1), m0=0, s2=10, a_sig=2, b_sig=1, cs_y=1)
 
 fit = function(y, prior=default.prior,
