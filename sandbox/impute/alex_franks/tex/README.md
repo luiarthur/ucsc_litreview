@@ -70,7 +70,11 @@ $\theta_R$ which does not depend on $Y$.
 
 
 # Tukey's Representation
-TODO... refer to the paper
+\begin{align*}
+P(Y, R \mid \theta) &\propto \prod_{i=1}^N f(Y_i\mid R_i=1,\theta_{Y|R=1})
+\cdot \frac{f(R_i \mid Y_i, \theta_{R|Y})}{f(R_i =1\mid Y_i, \theta_{R|Y})}
+\end{align*}
+with normalizing constant $\prod_{i=1}^N f(R_i =1\mid Y_i, \theta_{R|Y, Y|R=1})$.
 
 # Notes
 
