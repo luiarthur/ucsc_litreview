@@ -1,6 +1,6 @@
 source("hmc.R")
 source("langevinMC.R")
-source("../impute/mcmc.R")
+source("../impute/mcmc/mcmc.R")
 
 gen.default.init = function(X) {
   K = NCOL(X)
