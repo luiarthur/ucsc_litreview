@@ -20,11 +20,11 @@
       - [MCMC and Variational Inference - Bridging the Gap ][4]
       - [Mixed Membership Stochastic Blockmodels][5]
       - [Stick-breaking construction of IBP][6]
-      - [Variational inference for IBP ][6]
+      - [Variational inference for IBP ][7]
       - [Dependent IBP][8]
       - For variational inference, code in Scala
 - if not doing variational inference, use C++
-
+- just store quantiles for memory efficiency?
 
 
 [1]: https://arxiv.org/pdf/1206.1901.pdf
