@@ -4,9 +4,10 @@
 - [ ] full conditionals
 - [ ] feasibility of Tukey's representation for missing mechanism
 - [ ] gradients
-      - [ ] Langevin Monte Carlo
-            - [ ] https://www.ics.uci.edu/~welling/publications/papers/stoclangevin_v6.pdf
-            - [ ] mini-batches?
+      - [ ] Langevin Dynamics Monte Carlo
+            - [ ] https://arxiv.org/pdf/1206.1901.pdf
+            - [ ] mini-batches -> Stochastic gradient Langevin Dynamics
+                - [ ] https://www.ics.uci.edu/~welling/publications/papers/stoclangevin_v6.pdf
                 - [ ] for the cluster labels `lambda_{i,n}`, we could simply 
                       choose to update only some of the `lambda_{i,n}` at
                       each iteration, similarly for `y_{i,n,j}`.
