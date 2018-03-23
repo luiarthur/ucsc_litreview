@@ -1,7 +1,8 @@
 #!/bin/bash
 
+Rscript src.R "../dat/cytof_cb.RData" 20 "../out/cb_fixedK20_alpha5_fixTau0Psi0SigGam_GisCor_smallCs/" 2000 10000 1 0 0 1 0 &
 #Rscript src.R "../dat/cytof_cb.RData" 20 "../out/cb_fixedK20_alpha5_fixTau0Psi0SigGam_GisI_bigCs/" 2000 10000 1 0 0 1 0 &
-Rscript src.R "../dat/cytof_cb.RData" 20 "../out/cb_fixedK20_alpha5_fixTau0Psi0SigGam_GisI_smallCs/" 2000 10000 1 0 0 1 0 &
+#Rscript src.R "../dat/cytof_cb.RData" 20 "../out/cb_fixedK20_alpha5_fixTau0Psi0SigGam_GisI_smallCs/" 2000 10000 1 0 0 1 0 &
 #Rscript src.R "../dat/cytof_cb.RData" 20 "../out/cb_fixedK20_alpha5_fixTau0Psi0SigGam_GisI_smallCs/" 2000 2000 1 0 0 1 0 &
 #Rscript src.R "../dat/cytof_cb.RData" 20 "../out/cb_fixedK20_alpha5_fixSigGam_GisI_smallCs/" 2000 2000 1 0 0 1 0 &
 #Rscript src.R "../dat/cytof_cb.RData" 20 "../out/cb_fixedK20_alpha5_fixSigGam_largeG_largeCs/" 2000 2000 1 0 0 1 1 &

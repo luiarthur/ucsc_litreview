@@ -32,6 +32,7 @@ if (PREIMPUTE) {
   print("Preimputing Y")
   y = preimpute(y, subsample_prop=.05)
 }
+G = cor(do.call(rbind, preimpute(y)))
 y = resample(y, .05)
 system(paste0('cp src.R ', fileDest('src.R')))
 
@@ -81,7 +82,9 @@ truth = NULL
 #             K_min=1, K_max=10, a_K=2)
 
 bdat.prior = get_beta_new(y=c(-3, c0 <- -2, -1), p_tar=c(.1, .6, .01))
+print(G)
 prior = list(#cs_v=4, cs_h=3, d_w=1,
+             G=G,
              cs_v=.1, cs_h=.1, d_w=1,
              m_betaBar=bdat.prior['b0'], s2_betaBar=.0001, s2_beta0=.0001, #b0
              a_beta=bdat.prior['b1'] * 100, b_beta=100, # b1
