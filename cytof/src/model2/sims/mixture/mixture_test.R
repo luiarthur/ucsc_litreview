@@ -11,7 +11,9 @@ yij = sample(yij, 1000)
 
 hist(yij)
 
-out = mixture_fit(yij, K=5, print_every=10, burn=1000, B=500)
+st = system.time(out <- mixture_fit(yij, K=5, print_every=10, burn=1000, B=500))
+print(st)
+
 ll = sapply(out, function(o) o$ll)
 plot(ll, type='l')
 

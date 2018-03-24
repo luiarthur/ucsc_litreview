@@ -51,16 +51,14 @@ mixture_fit = function(y, K=10, B=2000, burn=2000, print_every=0,
 
   update_group = function(state) {
     #update_group_yi = function(yi) {
-    #  p = sapply(1:K, function(k) 
-    #             state$w[k] * dnorm(yi, state$mu[k], sqrt(state$sig2[k])))
+    #  p = state$w * dnorm(yi, state$mu, sqrt(state$sig2))
     #  sample(1:K, 1, prob=p)
     #}
     #sapply(y, update_group_yi)
 
-    compute_group_k = function(k) {
-      p = state$w[k] * dnorm(y, state$mu[k], sqrt(state$sig2[k]))
-    }
-    p = sapply(1:K, compute_group_k)
+    p = sapply(1:K, function(k) {
+      state$w[k] * dnorm(y, state$mu[k], sqrt(state$sig2[k]))
+    })
     apply(p, 1, function(p_vec) sample(1:K, 1, prob=p_vec))
   }
 
