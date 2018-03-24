@@ -32,7 +32,7 @@ mixture_fit = function(y, K=10, B=2000, burn=2000, print_every=0,
       n_k = length(y_k)
       sig2_k = state$sig2[k]
       new_var =  1 / (1 / prior$mu_var + n_k / sig2_k)
-      new_mean = (prior$mu_mean / prior$mu_var + sum(y_k) * sig2_k) * new_var
+      new_mean = (prior$mu_mean / prior$mu_var + sum(y_k) / sig2_k) * new_var
       rnorm(1, new_mean, sqrt(new_var))
     }
 
@@ -61,7 +61,7 @@ mixture_fit = function(y, K=10, B=2000, burn=2000, print_every=0,
       p = state$w[k] * dnorm(y, state$mu[k], sqrt(state$sig2[k]))
     }
     p = sapply(1:K, compute_group_k)
-    apply(p, 1, sample, 1:K, 1)
+    apply(p, 1, function(p_vec) sample(1:K, 1, prob=p_vec))
   }
 
 

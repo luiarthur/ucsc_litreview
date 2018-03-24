@@ -1,3 +1,4 @@
 # TODO
 
-- Something is wrong with sampling group!
+- looks good.
+- try Langevin? SGD?
