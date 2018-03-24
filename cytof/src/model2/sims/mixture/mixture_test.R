@@ -21,6 +21,8 @@ mu = t(sapply(out, function(o) o$mu))
 plotPosts(mu[,1:5])
 #plotPosts(mu[,6:10])
 colMeans(mu)
+ci_mu = apply(mu, 2, quantile, c(.025,.975))
+plot(colMeans(mu), ylim=range(ci_mu)); add.errbar(t(ci_mu)); abline(h=0, lty=2)
 
 sig2 = t(sapply(out, function(o) o$sig2))
 plotPosts(sig2[,1:5])
