@@ -60,7 +60,7 @@ header-includes:
 \begin{align*}
 \bm{y}_{in} \mid \bm{\mu}_{in}, \sigma^2_{in} &\sim \N(\bm{\mu}_{in}, \sigma^2_{in}\bm{I}_J) \\
 \bm \mu_{in}, \sigma^2_{in} \mid F &\sim F \\
-F \mid \alpha &\sim \text{DP}\p{\alpha, G_0=\N(\bm{0}, \sigma^2_{in}R) \times \text{IG}(a_\sigma, b_\sigma)} \\
+F \mid \alpha &\sim \text{DP}\p{\alpha, G_0=\N(\bm\mu_{in} \mid \bm{0}, \sigma^2_{in}R) \times \text{IG}(\sigma^2_{in} \mid a_\sigma, b_\sigma)} \\
 \alpha &\sim \text{Gamma}(a_\alpha, b_\alpha)
 ~~~(\text{use auxiliary variable as in Escobar West, 1995})\\
 \\
@@ -68,12 +68,12 @@ F \mid \alpha &\sim \text{DP}\p{\alpha, G_0=\N(\bm{0}, \sigma^2_{in}R) \times \t
 ~~~(\text{$J\times 1$ binary vector}) \\
 \bm Z &:= \text{unique}\p{\bc{\tilde{\bm z}_{in}}}_{\forall(i,n)}
 ~~~ (\text{$J\times K$ binary feature matrix})\\
-W_{ik} &:= \text{proportion of instances that column $Z_k$ is in} \bc{\tilde{\bm z}_{in}}_{\forall(i,n)}
+W_{ik} &:= \text{proportion of instances that column $Z_k$ is in} \bc{\tilde{\bm z}_{in}}_{n \in 1,...,N_i}
 \end{align*}
 
 ## Notes on storage in MCMC
 
-- At each iteration of MCMC, store only unique ($\mu_{in}, \sigma^2{in}$) pairs and the corresponding $(i,n)$ indices.
+- At each iteration of MCMC, store only unique ($\bm\mu_{in}, \sigma^2_{in}$) pairs and the corresponding $(i,n)$ indices.
 - $\bm Z$, $\bm W$, and the cluster labels can be recovered post-MCMC.
 
 
