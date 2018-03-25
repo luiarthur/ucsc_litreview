@@ -1,0 +1,16 @@
+#!/bin/bash
+
+# -s        =>  create standalone file (in this case report.tex latex file)
+# --toc     =>  create table of contents
+# --natbib  =>  use the natbib package in latex
+# -o        =>  output file name
+
+pandoc mixture.md -s -o mixture.tex
+
+pdflatex mixture.tex
+#bibtex mixture.aux
+#pdflatex mixture.tex
+#pdflatex mixture.tex
+rm -f *.{log,aux,nav,out,snm,toc,blg,bbl}
+rm -f mixture.tex
+

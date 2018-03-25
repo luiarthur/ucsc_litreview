@@ -90,7 +90,7 @@ family or mixtures of exponential family.
 
 ---
 
-**Link to Alex's paper**: https://arxiv.org/pdf/1603.06045v1.pdf
+**Link to Alex's paper**: https://arxiv.org/pdf/1603.06045.pdf
 
 <!--
 # Models
