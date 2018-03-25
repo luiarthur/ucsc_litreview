@@ -73,7 +73,7 @@ W_{ik} &:= \text{proportion of instances that column $Z_k$ is in} \bc{\tilde{\bm
 
 ## Notes on storage in MCMC
 
-- At each iteration of MCMC, store only unique ($\bm\mu_{in}, \sigma^2_{in}$) pairs and the corresponding $(i,n)$ indices.
+- At each iteration of MCMC, store only unique ($\bm\mu_{in}, \sigma^2_{in}$) pairs and the corresponding $(i,n)$ indices. Also store the cluster labels between MCMC iterations for efficiency in updating cluster labels.
 - $\bm Z$, $\bm W$, and the cluster labels can be recovered post-MCMC.
 
 
