@@ -5,7 +5,7 @@ source('mixture_fit.R')
 
 load("../dat/cytof_cb.RData")
 
-yij = y[[1]][,27]
+yij = y[[1]][,1]
 yij = Filter(function(x) !is.na(x), yij)
 yij = sample(yij, 2000)
 #yij = rgamma(1000, 4, 6)
@@ -31,12 +31,14 @@ abline(h=0, lwd=3)
 
 sig2 = t(sapply(out, function(o) o$sig2))
 plotPosts(sig2[,1:min(5,K)])
+boxplot(sig2)
 #plotPosts(sig2[,1:6])
 
 w = t(sapply(out, function(o) o$w))
 colMeans(w)
 ci_w = apply(w, 2, quantile, c(.025, .975))
 which(apply(ci_w, 2, function(ci) ci[1] > .01))
+boxplot(w)
 
 #sapply(out, function(o) c(table(o$g)) / length(yij))
 
