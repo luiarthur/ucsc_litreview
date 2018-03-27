@@ -17,7 +17,7 @@ stan_dat = list(N=NROW(YY), K=K, y=YY, J=J, R=diag(J))
 
 ### Model
 out <- stan(file='cytof_DP_test.stan', data=stan_dat,
-            iter=2000, chain=1, model_name="gaussian_mixture")
+            iter=200, chain=1, model_name="gaussian_mixture")
 
 
 print(out)
@@ -26,10 +26,17 @@ plot(out)
 eo = extract(out)
 plotPosts(eo$mu[,1:5,1])
 
+w_mean = colMeans(eo$w)
 j = 32
-for (k in 1:32) {
+for (j in 1:32) {
   boxplot(eo$mu[,,j], main=paste0('mu for marker ',j))
+  points(w_mean, col='blue', pch=20)
+  Sys.sleep(.1)
 }
 boxplot(eo$sig2)
 
 plot(eo$lp, type='l')
+
+B = dim(eo$mu)[1]
+Zs = sapply(1:B, function(i) unique((eo$mu[i,,] > 0) * 1, MARGIN=1))
+my.image(Zs[[34]])

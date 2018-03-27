@@ -7,7 +7,7 @@ data{
 }
 
 parameters {
-  ordered[J] mu[K]; 
+  vector[J] mu[K]; 
   real<lower=0> sig2[K];
   simplex[K] w;
 }
