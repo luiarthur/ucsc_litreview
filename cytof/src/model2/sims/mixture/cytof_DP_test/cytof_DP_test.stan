@@ -7,7 +7,7 @@ data{
 }
 
 parameters {
-  vector[J] mu[K]; 
+  ordered[J] mu[K]; 
   real<lower=0> sig2[K];
   simplex[K] w;
 }
@@ -25,8 +25,9 @@ model {
   // Likelihood:
   for (i in 1:N) {
     for (k in 1:K) {
+      loglike[k] = log(w[k]);
       for (j in 1:J) {
-        loglike[k] = log(w[k]) + normal_lpdf(y[i,j] | mu[k][j], sqrt(sig2[k]));
+        loglike[k] = loglike[k] + normal_lpdf(y[i,j] | mu[k][j], sqrt(sig2[k]));
       }
     }
     target += log_sum_exp(loglike);
