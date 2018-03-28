@@ -87,8 +87,11 @@ header-includes:
 ## Full Conditional for $\bm\mu^*$
 <include file="includes/mus.md">
 
-## Full Conditional for $\bm{\sigma^2}$
+## Full Conditional for $\bm{{\sigma^2}}^*$
 <include file="includes/sig2.md">
+
+## Full Conditional for $\bm\eta$
+<include file="includes/eta.md">
 
 ## Full Conditional for $\bm\gamma$
 <include file="includes/gamma.md">
@@ -117,8 +120,10 @@ header-includes:
 ## Full Conditional for $\bm \beta$
 <include file="includes/beta.md">
 
+<!--
 ## Full Conditional for $K$
 <include file="includes/K.md">
+-->
 
 <!-- comments -->
 

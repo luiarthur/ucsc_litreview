@@ -7,8 +7,13 @@
   \\
   y_{inj} \mid \mu_{inj}, \sigma^2_{inj}, \bm Z, \lin, \gamma_{inj}
   &\sim \N(\mu_{inj}, \sigma^2_{inj}) \\
-  \mu_{inj} &:= \mu^*_{Z_{j\lin},\gamma_{inj}} \\
-  \sigma^2_{inj} &:= {\sigma^{2}}^*_{i,Z_{j\lin},\gamma_{inj}}\\
+  %
+  %\mu_{inj} &:= \mu^*_{Z_{j\lin},\gamma_{inj}} \\
+  %\sigma^2_{inj} &:= {\sigma^{2}}^*_{i,Z_{j\lin},\gamma_{inj}}\\
+  \mu_{inj} &:= \mu^*_{z,l} \\
+  \sigma^2_{inj} &:= {\sigma^{2}}^*_{i,z,l}\\
+  z &:= Z_{j,\lin} \in\bc{0,1}, \text{~~where~}\lin \in \bc{1,...,K}\\
+  l &:= \gamma_{inj} \in \bc{1,...,L^z} \\
 \end{align*}
 
 Let $\btheta$ represent all parameters (discussed in the next section).
@@ -22,7 +27,7 @@ The resulting **likelihood** is as follows:
 &= \prod_{i,n,j} p(m_{inj} \mid y_{inj}, \btheta) p(y_{inj} \mid \btheta) \\
 &= \prod_{i,n,j} \bc{
   p_{inj}^{m_{inj}} (1-p_{inj})^{1-m_{inj}} \times 
-   \frac{1}{\sqrt{2\pi(\gamma_{inj}+1)\sigma^2_{ij}}} \exp\bc{-\frac{(y_{inj}-\mu_{inj})^2}{2(\gamma_{inj}+1)\sigma^2_{ij}}}
+   \frac{1}{\sqrt{2\pi\sigma^2_{inj}}} \exp\bc{-\frac{(y_{inj}-\mu_{inj})^2}{2\sigma^2_{inj}}}
 }
 \end{align*}
 
