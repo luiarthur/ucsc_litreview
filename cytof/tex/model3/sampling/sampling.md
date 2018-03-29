@@ -123,9 +123,11 @@ To speed up computation,
 ## Full Conditional for $\bm W$
 <include file="includes/W.md">
 
+<!--TODO-->
 ## Posterior Estimate for $Z$, $W$, and $\lambda$
 <include file="includes/post_est.md">
 
+<!--TODO-->
 ## Full Conditional for Missing $\bm \y$
 <include file="includes/y_missing.md">
 
