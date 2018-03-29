@@ -35,14 +35,14 @@ Let $\bm\theta$ be ... **TODO**
 \beta_{1i} &\sim \G(a_{\beta_1}, b_{\beta_1}) ~~~~
 \text{(with mean $a_{\beta_1}/b_{\beta_1}$, determined empirically)} \\
 \\
-\sigma^2_{0il} &\sim \IG(a_\sigma, s_i), ~~~ l \in \bc{1,...,L^0} \\
-\sigma^2_{1il} &\sim \IG(a_\sigma, s_i), ~~~ l \in \bc{1,...,L^1} \\
-s_i &\sim \G(a_s, b_s), ~~~ i \in \bc{1,...,I} \\
 \mus_{0l} \mid \psi_0, \tau^2_0 &\sim \N_-(\psi_0, \tau^2_0), ~~~ l \in \bc{1,...,L^0} \\
 \mus_{1l} \mid \psi_1, \tau^2_1 &\sim \N_+(\psi_1, \tau^2_1), ~~~ l \in \bc{1,...,L^1} \\
+\sigma^2_{0il} \mid s_i &\sim \IG(a_\sigma, s_i), ~~~ l \in \bc{1,...,L^0} \\
+\sigma^2_{1il} \mid s_i &\sim \IG(a_\sigma, s_i), ~~~ l \in \bc{1,...,L^1} \\
+s_i &\sim \G(a_s, b_s), ~~~ i \in \bc{1,...,I} \\
 \\
 p(\gamma_{inj} = l) \mid \bm\eta^{Z_{inj}}_{i,j} &\propto \eta^{Z_{inj}}_{ijl},
-~~~ l \in \bc{1,...,L^Z_{inj}}  \\
+~~~ l \in \bc{1,...,L^{Z_{inj}}}  \\
 \bm\eta^0_{ij} &\sim \Dir_{L^0}(a_{\eta^0}) \\
 \bm\eta^1_{ij} &\sim \Dir_{L^1}(a_{\eta^1}) \\
 \\
@@ -60,4 +60,5 @@ Note that $X ~ \N_-(m,s^2)$ denotes that $X$ is distributed Normally with
 mean $m$ and variance $s^2$, truncated to take on only *negative* values.
 Similarly, $X ~ \N_+(m,s^2)$ denotes that $X$ is distributed Normally with
 mean $m$ and variance $s^2$, truncated to take on only *positive* values.
-
+The Gamma distribution with parameters $(a,b)$ has mean $a/b$.
+The inverse-Gamma distribution with parameters $(a,b)$ has mean $b / (a-1)$.

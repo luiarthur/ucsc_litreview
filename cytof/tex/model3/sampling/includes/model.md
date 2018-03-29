@@ -22,13 +22,21 @@ Let $\m$ represent all $m_{inj} ~ \forall(i,n,j)$.
 
 The resulting **likelihood** is as follows:
 
-\begin{align*}
-\mathcal{L} = p(\y, \m \mid \btheta) &= p(\m \mid \y) p(\y \mid \btheta) \\
-&= \prod_{i,n,j} p(m_{inj} \mid y_{inj}, \btheta) p(y_{inj} \mid \btheta) \\
+\begin{align}
+\mathcal{L} = p(\y, \m \mid \btheta) &= p(\m \mid \y) p(\y \mid \btheta) \nonumber\\
+&= \prod_{i,n,j} p(m_{inj} \mid y_{inj}, \btheta) p(y_{inj} \mid \btheta) \nonumber\\
 &= \prod_{i,n,j} \bc{
   p_{inj}^{m_{inj}} (1-p_{inj})^{1-m_{inj}} \times 
-   \frac{1}{\sqrt{2\pi\sigma^2_{inj}}} \exp\bc{-\frac{(y_{inj}-\mu_{inj})^2}{2\sigma^2_{inj}}}
+   \frac{1}{\sqrt{2\pi\sigma^2_{inj}}} \exp\bc{-\frac{(y_{inj}-\mu_{inj})^2}{2\sigma^2_{inj}}}.
 }
-\end{align*}
+\end{align}
 
 The model is fully specified after priors are placed on all unknown parameters.
+
+The marginal density for $y_{i,n,j}$ after integrating out $\lambda$
+and $\gamma$ is
+
+\begin{align}
+y_{inj} \mid \theta = \sum_{k=1}^K W_{ik} \sum_{l=1}^{L^{Z_{jk}}}
+\eta^{Z_{jk}}_{ijl} \cdot \N(y_{inj} \mid \mu^*_{Z_{jk}}, {\sigma^2}^*_{i,Z_{jk},l}).
+\end{align}

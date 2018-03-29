@@ -58,6 +58,7 @@ header-includes:
     - \def\y{\bm{y}}
     - \newcommand\m{\bm{m}}
     - \def\mus{\mu^*}
+    - \def\sss{{\sigma^2}^*}
     - \input{includes/mhSpiel.tex}
     - \newcommand{\Ind}[1]{\mathbbm{1}\bc{#1}}
     - \def\rest{\text{rest}}
@@ -84,41 +85,49 @@ header-includes:
 
 # Full Conditionals
 
+## Full Conditional for $\bm \beta$
+<include file="includes/beta.md">
+
 ## Full Conditional for $\bm\mu^*$
 <include file="includes/mus.md">
 
 ## Full Conditional for $\bm{{\sigma^2}}^*$
 <include file="includes/sig2.md">
 
-## Full Conditional for $\bm\eta$
-<include file="includes/eta.md">
+## Full Conditional for $s_i$
+<include file="includes/si.md">
 
 ## Full Conditional for $\bm\gamma$
 <include file="includes/gamma.md">
 
-## Full Conditional for $\bm\psi$
-<include file="includes/psi.md">
+## Full Conditional for $\bm\eta$
+<include file="includes/eta.md">
 
-## Full Conditional for $\bm\tau^2$
-<include file="includes/tau2.md">
+<!--
+To speed up computation, 
+- update v jointly using Langevin MC
+- update H jointly using Langevin MC
+-->
+## Full Conditional for $\bm v$
+<include file="includes/v.md">
 
-## Full Conditional for $\bm W$
-<include file="includes/W.md">
-
-## Full Conditional for $\bm \lambda$
-<include file="includes/lam.md">
-
-## Full Conditional for Missing $\bm \y$
-<include file="includes/y_missing.md">
+## Full Conditional for $\alpha$
+<include file="includes/alpha.md">
 
 ## Full Conditional for $\bm H$
 <include file="includes/h.md">
 
-## Full Conditional for $\bm v$
-<include file="includes/v.md">
+## Full Conditional for $\bm \lambda$
+<include file="includes/lam.md">
 
-## Full Conditional for $\bm \beta$
-<include file="includes/beta.md">
+## Full Conditional for $\bm W$
+<include file="includes/W.md">
+
+## Posterior Estimate for $Z$, $W$, and $\lambda$
+<include file="includes/post_est.md">
+
+## Full Conditional for Missing $\bm \y$
+<include file="includes/y_missing.md">
 
 <!--
 ## Full Conditional for $K$

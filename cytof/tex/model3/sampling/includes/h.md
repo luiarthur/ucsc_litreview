@@ -28,12 +28,16 @@ p(h_{jk} \mid \y, \rest)  &\propto p(h_{jk}) \prod_{(i,n) \in S} p(y_{inj} \mid 
 %
 &\propto
 \exp\bc{\frac{-(h_{jk} - m_j)^2}{2S_j^2}}
-\prod_{(i,n)\in S} \bc{\exp\bc{\frac{-(y_{inj}-\mu_{inj})^2}{2(1+\gamma_{inj})\sigma^2_{ij}}} (1+\gamma_{inj})^{-1/2}}
+ \prod_{j=1}^J \prod_{(i,n)\in S}
+\sum_{l=1}^{L^{Z_{jk}}} \eta^{Z_{jk}}_{ijl} \cdot
+\N(y_{inj} \mid \mus_{Z_{jk}l}, \sss_{Z_{jk}il})
 \end{align*}
 
-Note that $\forall (i,n) \in S$, $\mu_{inj} = \mus_{Z_{jk}ij}$ and 
-$\gamma_{inj} = \gamma^*_{Z_{jk}ij}$. Note also that both $\mus_{Z_{jk}ij}$ and 
-$\gamma^*_{Z_{jk}ij}$ are functions of $h_{jk}$, and should be computed
-accordingly. 
-
 \mhSpiel{h_{jk}}
+
+Note also that $\mus_{Z_{jk}l}$ and $\sss_{Z_{jk}il}$ are functions of $h_{jk}$,
+and should be computed accordingly. Moreover, we will only recompute the
+likelihood (in the metropolis acceptance ratio) when $Z_{jk}$ becomes
+different.
+
+
