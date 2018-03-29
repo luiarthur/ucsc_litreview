@@ -1,8 +1,8 @@
 Define $f_{inj}$ to be
 
-\begin{align*}
-f_{inj} &:= P(m_{inj} = 1 \mid p_{inj}, y_{inj}) \\
-&= p_{inj}^{m_{inj}} (1-p_{inj})^{1 - m_{inj}} \\
+\begin{align}
+f_{inj} &:= P(m_{inj} \mid p_{inj}, y_{inj}) \nonumber \\
+&= p_{inj}^{m_{inj}} (1-p_{inj})^{1 - m_{inj}} \nonumber\\
 &=
 \begin{cases}
 \bk{1 + \exp\bc{-\beta_{0i} + \beta_{1i} (y_{inj}-c)^2)}}^{-m_{inj}}
@@ -11,7 +11,8 @@ f_{inj} &:= P(m_{inj} = 1 \mid p_{inj}, y_{inj}) \\
 \bk{1 + \exp\bc{-\beta_{0i} + \beta_{1i} (y_{inj}-c))}}^{-m_{inj}}
 \bk{1 + \exp\bc{\beta_{0i} - \beta_{1i} (y_{inj}-c) }}^{m_{inj}-1} & \text{otherwise}\\
 \end{cases}
-\end{align*}
+\label{eq:finj}
+\end{align}
 
 ### Full Conditional for $\beta_{0i}$
 Recall that $\beta_{0i} \sim \N(m_{\beta_0},s^2_{\beta_0})$.
