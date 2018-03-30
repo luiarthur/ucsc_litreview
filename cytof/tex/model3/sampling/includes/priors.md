@@ -27,6 +27,7 @@ contains the remaining parameters, $K$, $\lin$ which takes on values between 1
 and $K$, and the missing values for $y_{inj}$ which are sensitive to $\lin$.
 -->
 
+<!--
 Let $\bm\theta$ be ... **TODO**
 
 \begin{align*}
@@ -62,3 +63,65 @@ Similarly, $X ~ \N_+(m,s^2)$ denotes that $X$ is distributed Normally with
 mean $m$ and variance $s^2$, truncated to take on only *positive* values.
 The Gamma distribution with parameters $(a,b)$ has mean $a/b$.
 The inverse-Gamma distribution with parameters $(a,b)$ has mean $b / (a-1)$.
+-->
+
+Let $\bm\theta$ be ... **TODO**
+
+For $i=1, \ldots, I$,
+
+\begin{align*}
+\beta_{0i} &\iid \N(m_{\beta_0}, s^2_{\beta_0}) ~~~
+\text{(hyper-parameters determined empirically)}, \\
+\beta_{1i} &\iid \G(a_{\beta_1}, b_{\beta_1}) ~~~~
+\text{(with mean $a_{\beta_1}/b_{\beta_1}$, determined empirically)}. 
+\end{align*}
+
+The Gamma distribution with parameters $(a,b)$ has mean $a/b$. The
+inverse-Gamma distribution with parameters $(a,b)$ has mean $b / (a-1)$.  For
+the mixture locations of the likelihood,
+
+\begin{align*}
+\mus_{0\ell} \mid \psi_0, \tau^2_0 &\iid \N_-(\psi_0, \tau^2_0), ~~~ \ell \in \bc{1,...,L^0}, \\
+\mus_{1\ell} \mid \psi_1, \tau^2_1 &\iid \N_+(\psi_1, \tau^2_1), ~~~ \ell \in \bc{1,...,L^1}. 
+\end{align*}
+
+Note that $X ~ \N_-(m,s^2)$ denotes that $X$ is distributed Normally
+with mean $m$ and variance $s^2$, truncated to take on only
+**negative** values. Similarly, $X ~ \N_+(m,s^2)$ denotes that
+$X$ is distributed Normally with mean $m$ and variance $s^2$,
+truncated to take on only **positive** values.
+
+For $i=1, \ldots, I$,
+
+\begin{align*}
+\sigma^2_{0i\ell} \mid s_i &\ind \IG(a_\sigma, s_i), ~~~ \ell \in \bc{1,...,L^0}, \\
+\sigma^2_{1i\ell} \mid s_i &\ind \IG(a_\sigma, s_i), ~~~ \ell \in \bc{1,...,L^1}, \\
+s_i &\iid \G(a_s, b_s), ~~~ i \in \bc{1,...,I}.
+\end{align*}
+
+For $i=1, \ldots, I$, $n=1, \ldots, N_i$ and $j=1, \ldots, J$,
+
+\begin{align*}
+p(\gamma_{inj} = \ell \mid \bm\eta^{Z_{j \lambda_{in}}}_{i,j}) &= \eta^{Z_{j \lambda_{in}}}_{ijl},
+~~~ \ell \in \bc{1,...,L^{Z_{j \lambda_{in}}}}  \\
+\bm\eta^0_{ij} &\iid \Dir_{L^0}(a_{\eta^0}) \\
+\bm\eta^1_{ij} &\iid \Dir_{L^1}(a_{\eta^1}) 
+\end{align*}
+
+For $J\times K$ binary matrix $\Z$,
+\begin{align*}
+v_k \mid \alpha &\iid \Be(\alpha/K, 1),~ k=1, \ldots, K, \\
+\alpha &\sim \G(a_\alpha, b_\alpha) \\
+\h_k &\iid \N_J(\bm{0}, \bm G) \\
+Z_{jk} \mid h_{jk}, v_k &:=
+\Ind{\Phi(h_{jk} \mid 0, \Gamma_{jj}) < v_k} 
+\end{align*}
+
+For latent cell phenotypes,
+
+\begin{align*}
+&p(\lin=k \mid \bm W_i) = W_{ik} \\
+&\bm W_{i} \iid \Dir_K(d).
+\end{align*}
+ 
+

@@ -1,0 +1,6 @@
+#!/bin/bash
+
+ddmmmyy=`date +%d%b%Y`
+#echo $ddmmmyy
+
+mv sampling.tex juhee/sampling_${ddmmmyy}.tex

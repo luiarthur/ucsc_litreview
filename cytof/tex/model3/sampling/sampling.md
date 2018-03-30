@@ -74,7 +74,7 @@ header-includes:
 <include file="includes/notation.md">
 
 \newpage
-# Model
+# Sampling Model
 <include file="includes/model.md">
 
 # Priors

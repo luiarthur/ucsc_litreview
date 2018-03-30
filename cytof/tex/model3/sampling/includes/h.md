@@ -19,8 +19,7 @@ and the notation $\h_{-j,k}$ refers to the vector $h_k$ excluding the
 $j^{th}$ element. Likewise, $\bm G_{-j,k}$ refers to the $k^{th}$ column 
 of the matrix $\bm G$ excluding the $j^{th}$ row.
 
-Note that if $\bm G = \I_J$, then $m_j=0$ and $S_j^2 = 1$.
-
+Note that if $\bm G = \I_J$, then $m_j=0$ and $S_j^2 = 1$. 
 Let $S = \bc{(i,n)\colon \lin=k}$.
 
 \begin{align*}
@@ -29,15 +28,15 @@ p(h_{jk} \mid \y, \rest)  &\propto p(h_{jk}) \prod_{(i,n) \in S} p(y_{inj} \mid 
 &\propto
 \exp\bc{\frac{-(h_{jk} - m_j)^2}{2S_j^2}}
  \prod_{j=1}^J \prod_{(i,n)\in S}
-\sum_{l=1}^{L^{Z_{jk}}} \eta^{Z_{jk}}_{ijl} \cdot
-\N(y_{inj} \mid \mus_{Z_{jk}l}, \sss_{Z_{jk}il})
+\sum_{\ell=1}^{L^{Z_{jk}}} \eta^{Z_{jk}}_{ij\ell} \cdot
+\N(y_{inj} \mid \mus_{Z_{jk}\ell}, \sss_{Z_{jk}i\ell})
 \end{align*}
 
 \mhSpiel{h_{jk}}
 
-Note also that $\mus_{Z_{jk}l}$ and $\sss_{Z_{jk}il}$ are functions of $h_{jk}$,
-and should be computed accordingly. Moreover, we will only recompute the
-likelihood (in the metropolis acceptance ratio) when $Z_{jk}$ becomes
+Note also that $\mus_{Z_{jk}\ell}$ and $\sss_{Z_{jk}i\ell}$ are functions of
+$h_{jk}$, and should be computed accordingly. Moreover, we will only recompute
+the likelihood (in the metropolis acceptance ratio) when $Z_{jk}$ becomes
 different.
 
 

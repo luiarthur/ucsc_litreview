@@ -10,5 +10,5 @@ f_{inj} \\
 
 \mhSpiel{y_{inj}}
 
-Note that $f_{inj}$ is a function of $y_{inj}$ (equation \ref{eq:finj}) and
-should be computed accordingly.
+Note that $f_{inj}$ is a function of $y_{inj}$ <!--(equation \ref{eq:finj})-->
+and should be computed accordingly.

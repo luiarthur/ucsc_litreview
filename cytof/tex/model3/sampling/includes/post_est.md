@@ -7,15 +7,23 @@ Suppose we obtain $B$ samples from the posterior distribution of $\theta$.
 Let $\theta^{(b)}$ denote sample $b$ in that sample for $b \in \bc{1,...,B}$.
 
 Then, for each posterior sample of $Z$ and $W_i$ (i.e. $Z^{(b)}$ and
-$W_i^{(b)}$) let $A_i^{(b)}$ be a $J\times J$ adjacency-matrix where
-$A^{(b)}_{i_{j,j'}} = \sum_{k=1}^K W_{i,k}  \cdot \mathbf{1}(Z_{j,k} ==
-Z_{j',k} == 1)$. Then, compute the mean adjacency-matrix as $\bar A_i =
-\sum_{b=1}^B A_i^{(b)} / B$. The posterior estimate for $Z_i$ is then $\hat Z_i
-= Z_i^{(\text{argmin}_b (A_i^{(b)} - \bar A_i)^2)}$.  The posterior estimate
-for $W_i$ is, similarly,  $\hat W_i = W_i^{(\text{argmin}_b (A_i^{(b)} - \bar
-A_i)^2)}$. Finally, the posterior estimate for $\lambda$ is $\hat \lambda_i =
-\lambda_i^{(\text{argmin}_b (A_i^{(b)} - \bar A_i)^2)}$.
+$W_i^{(b)}$) let $A_i^{(b)}$ be a $J\times J$ adjacency-matrix;
 
+$$
+A^{(b)}_{i,j,j'} = \sum_{k=1}^K W^{(b)}_{i,k} \Ind{Z^{(b)}_{j,k} = 1}
+\Ind{Z^{(b)}_{j',k} = 1}.
+$$
+
+Then, compute the mean adjacency-matrix as $\bar A_i =
+\sum_{b=1}^B A_i^{(b)} / B$. The posterior estimate for $\bm Z_i$ is then 
+
+$$
+\hat{\bm Z}_i = \text{argmin}_{\bm Z} \sum_{j,j'} (A_{i,j,j'}^{(b)} - \bar A_{i,j,j'})^2).
+$$
+
+We search for such $\hat \Z_i$ using the Monte Carlo method. Suppose $\hat{\bm
+Z}_i = \bm Z^{(b)}$.  We then let $\widehat{\bm W}_i = \bm W_i^{(b)}$, and 
+$\hat{\bm \lambda}_i = \bm \lambda_i^{(b)}$.
 
 <!-- Uncertainty? TODO 
 But I think one way we can quantify uncertainty would be to compute (Z_i^\alpha, W_i^\alpha) where \alpha \in (0,1) are like "quantiles". i.e.
