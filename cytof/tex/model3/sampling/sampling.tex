@@ -1,0 +1,768 @@
+\documentclass[12pt]{article}
+%{{{1
+%\usepackage{lmodern}
+\usepackage{amssymb,amsmath}
+\usepackage{ifxetex,ifluatex}
+\usepackage{fixltx2e} % provides \textsubscript
+\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+  \usepackage[T1]{fontenc}
+  \usepackage[utf8]{inputenc}
+\else % if luatex or xelatex
+  \ifxetex
+    \usepackage{mathspec}
+  \else
+    \usepackage{fontspec}
+  \fi
+  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+\fi
+% use upquote if available, for straight quotes in verbatim environments
+\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+% use microtype if available
+\IfFileExists{microtype.sty}{%
+\usepackage{microtype}
+\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+}{}
+\usepackage[margin=1in]{geometry}
+\usepackage[unicode=true]{hyperref}
+\hypersetup{
+            pdftitle={Sampling Scheme for CyTOF Model3},
+            pdfauthor={Arthur Lui},
+            pdfborder={0 0 0},
+            breaklinks=true}
+\urlstyle{same}  % don't use monospace font for urls
+\usepackage{natbib}
+\bibliographystyle{plainnat}
+\IfFileExists{parskip.sty}{%
+\usepackage{parskip}
+}{% else
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{6pt plus 2pt minus 1pt}
+}
+\setlength{\emergencystretch}{3em}  % prevent overfull lines
+\providecommand{\tightlist}{%
+  \setlength{\itemsep}{0pt}\setlength{\parskip}{0pt}}
+\setcounter{secnumdepth}{5}
+% Redefines (sub)paragraphs to behave more like sections
+\ifx\paragraph\undefined\else
+\let\oldparagraph\paragraph
+\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+\fi
+\ifx\subparagraph\undefined\else
+\let\oldsubparagraph\subparagraph
+\renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
+\fi
+\usepackage{bm}
+\usepackage{bbm}
+\usepackage{graphicx}
+\newcommand{\norm}[1]{\left\lVert#1\right\rVert}
+\newcommand{\p}[1]{\left(#1\right)}
+\newcommand{\bk}[1]{\left[#1\right]}
+\newcommand{\bc}[1]{ \left\{#1\right\} }
+\newcommand{\abs}[1]{ \left|#1\right| }
+\newcommand{\mat}{ \begin{pmatrix} }
+\newcommand{\tam}{ \end{pmatrix} }
+\newcommand{\suml}{ \sum_{i=1}^n }
+\newcommand{\prodl}{ \prod_{i=1}^n }
+\newcommand{\ds}{ \displaystyle }
+\newcommand{\df}[2]{ \frac{d#1}{d#2} }
+\newcommand{\ddf}[2]{ \frac{d^2#1}{d{#2}^2} }
+\newcommand{\pd}[2]{ \frac{\partial#1}{\partial#2} }
+\newcommand{\pdd}[2]{\frac{\partial^2#1}{\partial{#2}^2} }
+\newcommand{\N}{ \mathcal{N} }
+\newcommand{\E}{ \text{E} }
+\def\given{~\bigg|~}
+\usepackage{float}
+\def\beginmyfig{\begin{figure}[H]\center}
+\def\endmyfig{\end{figure}}
+\newcommand{\iid}{\overset{iid}{\sim}}
+\newcommand{\ind}{\overset{ind}{\sim}}
+\newcommand{\I}{\mathrm{\mathbf{I}}}
+\allowdisplaybreaks
+\def\M{\mathcal{M}}
+\def\logit{\text{logit}}
+\def\Bern{\text{Bernoulli}}
+\def\N{\text{Normal}}
+\def\G{\text{Gamma}}
+\def\IG{\text{Inverse-Gamma}}
+\def\Dir{\text{Dirichlet}}
+\def\Be{\text{Beta}}
+\def\lin{\lambda_{in}}
+\def\btheta{\bm{\theta}}
+\def\y{\bm{y}}
+\newcommand\m{\bm{m}}
+\def\mus{\mu^*}
+\def\sss{{\sigma^2}^*}
+\input{includes/mhSpiel.tex}
+\newcommand{\Ind}[1]{\mathbbm{1}\bc{#1}}
+\def\rest{\text{rest}}
+\def\bang{\boldsymbol{\cdot}}
+\def\h{\bm{h}}
+\def\Z{\bm{Z}}
+\def\W{\bm{W}}
+\def\Unif{\text{Unif}}
+
+\title{Sampling Scheme for CyTOF Model3}
+\author{Arthur Lui}
+\date{\today}
+
+
+
+%%% Begin: Juhee
+\newcommand{\indep}{\stackrel{indep}{\sim}}
+
+\usepackage[dvipsnames,usenames]{color}
+\newcommand{\ech}{\color{Black}\rm}
+\newcommand{\hh}{\color{Mahogany}\it}
+
+\usepackage{setspace}
+%%% End: Juhee
+%}}}1
+
+
+\begin{document}
+\onehalfspacing
+
+\maketitle
+
+\section{Notation}\label{notation}
+
+Samples are taken from $I$ subjects, $i = 1,2,...,I$. Sample $i$ consists of
+$N_i$ cells, and for each cell, expression levels of $J$ markers are measured.
+Let a $J$-dimensional vector $\y_{in}=(y_{in1}, \ldots, y_{inJ})^\prime$, $i=1,
+\ldots, I$ and $n=1, \ldots, N_i$ denote the measurements of expression levels
+of $J$ markers for cell $n$ in sample $i$ where element $\tilde{y}_{inj} \in
+\mathbb{R}^+$ represents the raw measurement of an expression level of marker
+$j$ of cell $n$ in sample $i$. Let $c_{ij}$ denote the ``cutoff'' values
+for sample $i$, marker $j$.
+%{\tt explain ``cutoff values'' in one sentence.}
+The cutoff values are obtained as part of the CyTOF analysis. Each marker and
+sample comes with a cutoff value. Beyond the cutoff, ``positive'' expression
+for a marker starts. In practice, some noise is detected from the environment
+when the samples are measured. Hence, a set of cutoffs are recorded for each
+marker for each sample as well. But this variation should be small.
+%
+We consider the logarithm transformation after
+scaling $\tilde{y}_{inj}$ by $c_{ij}$, $$
+y_{inj}=\log\p{\frac{\tilde{y}_{inj}}{c_{ij}}} \in \mathbb{R}.  $$ For some
+$(i, n, j)$, $\tilde{y}_{inj}$ is missing.
+%{\tt explain why missing in a sentence}
+%Muftuoglu, Muharrem:
+%That's what we expect and see based on how the software works when it converts
+%data to fcs files. Negative events pile up at zero. 
+%When the cell do not express a given marker and crosstalk into that channel is
+%minimal we could see those zero values . 
+Expression levels are recorded as missing when the markers are not expressed
+and background signals for the marker are minimal. 
+%
+To account for missing data, we introduce a binary indicator, $$
+m_{inj} = \begin{cases}
+  0, & \text{if $\tilde{y}_{inj}$ is observed,} \\
+  1, & \text{if $\tilde{y}_{inj}$ is missing.}
+\end{cases}
+$$ That is, $m_{inj}=1$ indicates that the expression level of marker
+$j$ of cell $n$ in sample $i$ is not observed. 
+
+\section{Sampling Model}\label{sampling-model}
+
+We first assume $K$ latent cell phenotypes and a cell takes one of the
+phenotypes. Each phenotype is defined based on a combination of expression or
+no expression of $J$ markers in a cell. We let a $J \times K$ binary matrix
+$\Z$ characterize the latent phenotypes, a column for a phenotype, where values
+0 and 1 of $z_{jk}$ represent no expression and expression of marker $j$ in
+cell phenotype $k$.  We introduce latent indicators for latent cell phenotypes
+of cell $n$ in sample $i$, $\lambda_{in}$, $i=1, \ldots, I$ and $n=1, \ldots,
+N_i$. $\lambda_{in} \in \{1, \ldots, K\}$ denotes the phenotype of cell $n$.
+% in sample $i$ defined by column $k$ of . Element $z_{j, k} \in \{0, 1\}$
+% indicates if marker $j$ is expressed in cell phenotype $k$. Event $z_{j,k}=0$
+% represents that marker $j$ is not expressed, and $z_{j,k}=1$ for expression. 
+Given $z_{j, \lambda_{i,n}}$, we assume a mixture of normals for $y_{inj}$,
+%
+\begin{align*}
+y_{inj} \mid \mu^*, \sigma^{2 *}_{i} \ind
+\begin{cases}
+\sum_{\ell=1}^{L^0} \eta^0_{ij\ell} \N(\mu^\star_{0\ell}, \sigma^{2 \star}_{0i\ell}), &\mbox{if $z_{j,k}=0$},\\
+\sum_{\ell=1}^{L^1} \eta^1_{ij\ell} \N(\mu^\star_{1\ell}, \sigma^{2 \star}_{1i\ell}), &\mbox{if $z_{j,k}=1$},\\
+\end{cases}
+\end{align*}
+%
+where $L^0$ and $L^1$ are fixed, $0 < \eta^0_{ij\ell} < 1$ with
+$\sum_{\ell} \eta^0_{ij\ell}=1$ and $0 < \eta^1_{ij\ell} < 1$ with
+$\sum_{\ell} \eta^1_{ij\ell}=1$. Given $\lambda_{in}=k$ we define
+$\gamma_{inj}$; for $i=1, \ldots, I$, $n=1, \ldots, N_i$ and
+$j=1, \ldots, J$,
+%
+\begin{eqnarray*}
+p(\gamma_{inj} = \ell)=\eta^{z_{jk}}_{in\ell}, \mbox{ where }~ \ell \in \{1,\ldots, L^{z_{jk}}\}.
+\end{eqnarray*}
+%
+Given $\lambda_{in}=k$ and $\gamma_{inj}=\ell$, we assume a normal
+distribution for $y_{inj}$; for $i=1, \ldots, I$,
+$n=1, \ldots, N_i$ and $j=1, \ldots, J$,
+%
+\begin{align*}
+  y_{inj} \mid \mu_{inj}, \sigma^2_{inj}  &\ind \N(\mu_{inj}, \sigma^2_{inj}),
+\end{align*}
+%
+where $\mu_{inj} = \mu^\star_{z_{j,k},\ell}$ and
+$\sigma^2_{inj} = {\sigma^{2}}^\star_{iz_{j,k}\ell}$. Given
+$y_{inj}$, we assume a Bernoulli distribution for $m_{inj}$; for
+$i=1, \ldots, I$, $n=1, \ldots, N_i$ and $j=1, \ldots, J$,
+%
+\begin{align*}
+  m_{inj} \mid p_{inj} &\ind \Bern(p_{inj}) \\
+  \logit(p_{inj}) &:= \begin{cases}
+  \beta_{0i} - \beta_{1i}(y_{inj}-c_0)^2, & \text{if } y_{inj} < c_0\nonumber, \\
+  \beta_{0i} - \beta_{1i}c_1\p{y_{inj}-c_0}, & \text{otherwise}, \nonumber \\
+  \end{cases}
+\end{align*}
+where $c_0$ and $c_1$ are fixed.
+
+Let $\btheta$ represent all parameters (discussed in the next
+section). Let $\y$ represent all $y_{inj} ~ \forall(i,n,j)$. Let
+$\m$ represent all $m_{inj} ~ \forall(i,n,j)$. The resulting \textbf{likelihood} is as follows:
+\begin{align}
+\mathcal{L} = p(\y, \m \mid \btheta) &= p(\m \mid \y) p(\y \mid \btheta) \nonumber\\
+&= \prod_{i,n,j} p(m_{inj} \mid y_{inj}, \btheta) p(y_{inj} \mid \btheta) \nonumber\\
+&= \prod_{i,n,j} \bc{
+  p_{inj}^{m_{inj}} (1-p_{inj})^{1-m_{inj}} \times 
+   \frac{1}{\sqrt{2\pi\sigma^2_{inj}}} \exp\bc{-\frac{(y_{inj}-\mu_{inj})^2}{2\sigma^2_{inj}}}
+}.
+\end{align}
+The model is fully specified after priors are placed on all unknown
+parameters. The marginal density for $y_{i,n,j}$ after integrating out
+$\lambda$ and $\gamma$ is
+
+\begin{align}
+p(y_{inj} \mid \theta) = \sum_{k=1}^K W_{ik} \sum_{\ell=1}^{L^{Z_{jk}}}
+\eta^{Z_{jk}}_{ij\ell} \cdot \N(y_{inj} \mid \mu^*_{Z_{jk}, \ell}, {\sigma^2}^*_{i,Z_{jk},\ell}).
+\end{align}
+
+\section{Priors}\label{priors}
+
+Let $\bm\theta$ be \ldots{} \textbf{TODO}
+
+{\bf Latent Phenotype} for $J\times K$ binary matrix $\Z$,
+\begin{align*}
+v_k \mid \alpha &\iid \Be(\alpha/K, 1),~ k=1, \ldots, K, \\
+\alpha &\sim \G(a_\alpha, b_\alpha) \\
+\h_k &\iid \N_J(\bm{0}, \bm G) \\
+Z_{jk} \mid h_{jk}, v_k &:=
+\Ind{\Phi(h_{jk} \mid 0, \Gamma_{jj}) < v_k} 
+\end{align*}
+%{\tt explain here about IBP and the relationship between ours and IBP}.
+Our main inferential objective is to obtain a binary matrix $\Z$ which contains
+the latent phenotypes present in the samples. The number of phenotypes is not
+known beforehand. A suitable prior for the latent phenotypes is an Indian
+buffet process (IBP), a distribution over binary matrices of infinite
+dimensions. When $K$ is taken to the limit and $\bm G$ is the identity matrix,
+the representation yields the traditional IBP. Our model additionally accounts
+for the correlation between markers through $\bm G$.
+
+We represent a sample as an admixture of heterogeneous cells having $K$ different latent cell phenotypes characterized by $\Z$. A $K-$dimensional vector $\W_i$ denotes the proportion of a mixture for sample $i$ and we assume
+\begin{align*}
+&\W_{i} \iid \Dir_K(d, \ldots, d),\\
+&p(\lin=k \mid \bm \W_i) = W_{ik}.
+\end{align*}
+Recall that the likelihood for $y_{inj}$ is a mixture of normals with means $\eta_{0\ell}$, $\ell=1, \ldots, L^0$ and $\eta_{1\ell}$, $\ell=1, \ldots, L^1$ conditional on $z_{j \lambda_{in}}=0$ and 1, respectively. Given that maker $j$ is expressed in phenotype $k$, $z_{jk}=1$, cells taking phenotype $k$ may have a positive mean for the observed expression level of the marker.  Similarly, for $z_{jk}=0$ the mean of $y_{inj}$ for cells taking phenotype $k$ may take a negative value.  We thus assume
+\begin{align*}
+\mus_{0\ell} \mid \psi_0, \tau^2_0 &\iid \N_-(\psi_0, \tau^2_0), ~~~ \ell \in \bc{1,...,L^0}, \\
+\mus_{1\ell} \mid \psi_1, \tau^2_1 &\iid \N_+(\psi_1, \tau^2_1), ~~~ \ell \in \bc{1,...,L^1}. 
+\end{align*}
+Note that $X ~ \N_-(m,s^2)$ denotes that $X$ is distributed Normally
+with mean $m$ and variance $s^2$, truncated to take on only
+\textbf{negative} values. Similarly, $X ~ \N_+(m,s^2)$ denotes that
+$X$ is distributed Normally with mean $m$ and variance $s^2$,
+truncated to take on only \textbf{positive} values.
+
+For $i=1, \ldots, I$,
+%
+\begin{align*}
+\sigma^2_{0i\ell} \mid s_i &\ind \IG(a_\sigma, s_i), ~~~ \ell \in \bc{1,...,L^0}, \\
+\sigma^2_{1i\ell} \mid s_i &\ind \IG(a_\sigma, s_i), ~~~ \ell \in \bc{1,...,L^1}, \\
+s_i &\iid \G(a_s, b_s), ~~~ i \in \bc{1,...,I}.
+\end{align*}
+
+For $i=1, \ldots, I$, $n=1, \ldots, N_i$ and $j=1, \ldots, J$,
+%
+\begin{align*}
+p(\gamma_{inj} = \ell \mid \bm\eta^{Z_{j \lambda_{in}}}_{i,j}) &= \eta^{Z_{j \lambda_{in}}}_{ijl},
+~~~ \ell \in \bc{1,...,L^{Z_{j \lambda_{in}}}},  \\
+\bm\eta^0_{ij} &\iid \Dir_{L^0}(a_{\eta^0}, \ldots, a_{\eta^0}), \\
+\bm\eta^1_{ij} &\iid \Dir_{L^1}(a_{\eta^1}, \ldots, a_{\eta^1}). 
+\end{align*}
+
+
+For $i=1, \ldots, I$,
+%
+\begin{align*}
+\beta_{0i} &\iid \N(m_{\beta_0}, s^2_{\beta_0}) ~~~
+\text{(hyper-parameters determined empirically)}, \\
+\beta_{1i} &\iid \G(a_{\beta_1}, b_{\beta_1}) ~~~~
+\text{(with mean $a_{\beta_1}/b_{\beta_1}$, determined empirically)}. 
+\end{align*}
+%
+The Gamma distribution with parameters $(a,b)$ has mean $a/b$. The
+inverse-Gamma distribution with parameters $(a,b)$ has mean
+$b / (a-1)$. For the mixture locations of the likelihood,
+%
+
+
+\section{Sampling via MCMC}\label{sampling-via-mcmc}
+
+Sampling can be done via Gibbs sampling by repeatedly updating each
+parameter one at a time until convergence. Parameter updates are made by
+sampling from it full conditional distribution. Where this cannot be
+done conveniently, a metropolis step will be necessary.
+
+To sample from a distribution which is otherwise difficult to sample
+from, the Metropolis-Hastings algorithm can be used. This is
+particularly useful when sampling from a full conditional distribution
+of one of many parameters in an MCMC based sampling scheme (such as a
+Gibbs sampler). Say $B$ samples from a distribution with density
+$p(\theta)$ is desired, one can do the following:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  Provide an initial value for the sampler, e.g. $\theta^{(0)}$.
+\item
+  Repeat the following steps for $i = 1,...,B$.
+\item
+  Sample a new value $\tilde\theta$ for $\theta^{(i)}$ from a
+  proposal distribution $Q(\cdot \mid \theta^{(i-1)})$.
+
+  \begin{itemize}
+  \tightlist
+  \item
+    Let $q(\tilde\theta \mid \theta)$ be the density of the proposal
+    distribution.
+  \end{itemize}
+\item
+  Compute the ``acceptance ratio'' to be $$
+     \rho=
+     \min\bc{1, \frac{p(\tilde\theta)}{p(\theta^{(i-1)})} \Big/ 
+            \frac{q(\tilde\theta\mid\theta^{(i-1)})}
+                 {q(\theta^{(i-1)}\mid\tilde\theta)}
+        }
+     $$
+\item
+  Set $$
+     \theta^{(i)} := 
+     \begin{cases}
+     \tilde\theta &\text{with probability } \rho \\
+     \theta^{(i-1)} &\text{with probability } 1-\rho.
+     \end{cases}
+     $$
+\end{enumerate}
+
+Note that in the case of a symmetric proposal distribution, the
+acceptance ratio simplifies further to be
+$\frac{p(\tilde\theta)}{p(\theta^{(i-1)})}$.
+
+The proposal distribution should be chosen to have the same support as
+the parameter. Transforming parameters to have infinite support can,
+therefore, be convenient as a Normal proposal distribution can be used.
+Moreover, as previously mentioned, the use of symmetric proposal
+distributions (such as the Normal distribution) can simplify the
+computation of the acceptance ratio.
+
+Some common parameter transformations are therefore presented here:
+
+\begin{enumerate}
+\def\labelenumi{\arabic{enumi}.}
+\tightlist
+\item
+  For parameters bounded between $(0,1)$, a logit-transformation may
+  be used. Specifically, if a random variable $X$ with density
+  $f_X(x)$ has support in the unit interval, then
+  $Y=\logit(X)=\log\p{\frac{p}{1-p}}$ will have density
+  $f_Y(y) = f_X\p{\frac{1}{1+\exp(-y)}}\frac{e^{-y}}{(1+e^{-y})^{2}}$.
+\item
+  For parameters with support $(0,\infty)$, a log-transformation may
+  be used. Specifically, if a random variable $X$ with density
+  $f_X(x)$ has positive support, then $Y = \log(X)$ has pdf
+  $f_Y(y) = f_X(e^y) e^y$.
+\end{enumerate}
+
+\section{Full Conditionals}\label{full-conditionals}
+
+\subsection{\texorpdfstring{Full Conditional for
+$\bm \beta$}{Full Conditional for \textbackslash{}bm \textbackslash{}beta}}\label{full-conditional-for-bm-beta}
+
+Define $f_{inj}$ to be
+%
+\begin{align*}
+f_{inj} &:= P(m_{inj} \mid p_{inj}, y_{inj}) \\
+&= p_{inj}^{m_{inj}} (1-p_{inj})^{1 - m_{inj}} \\
+&= \left(\frac{1}{1+e^{-x_{inj}}} \right)^{m_{inj}}\left(\frac{1}{1+e^{x_{inj}}} \right)^{1-m_{inj}},
+\end{align*}
+%
+where
+\begin{align*}
+  x_{inj} &:= \begin{cases}
+  \beta_{0i} - \beta_{1i}(y_{inj}-c_0)^2, & \text{if } y_{inj} < c_0\nonumber \\
+  \beta_{0i} - \beta_{1i}c_1\p{y_{inj}-c_0}, & \text{otherwise}, \nonumber \\
+  \end{cases}\\
+\end{align*}
+where $c_0$ and $c_1$ are fixed.
+
+\subsubsection{\texorpdfstring{Full Conditional for
+$\beta_{0i}$}{Full Conditional for \textbackslash{}beta\_\{0i\}}}\label{full-conditional-for-beta_0i}
+
+Recall that $\beta_{0i} \iid \N(m_{\beta_0},s^2_{\beta_0})$.
+\begin{align*}
+p(\beta_{0i} \mid \y, \rest) &\propto
+p(\beta_{0i}) \times \prod_{n=1}^{N_i} \prod_{j=1}^J f_{inj} \\
+%
+&\propto \exp\bc{\frac{-(\beta_{0i}-m_{\beta_0})^2}{2s^2_{\beta_0}}} \prod_{n=1}^{N_i} \prod_{j=1}^J f_{inj} \\
+\end{align*}
+
+\mhSpiel{\beta_{0i}}
+
+\subsubsection{\texorpdfstring{Full Conditional for
+$\beta_{1i}$}{Full Conditional for \textbackslash{}beta\_\{1i\}}}\label{full-conditional-for-beta_1i}
+
+Recall that $\beta_{1i}\ind \G(a_{\beta_1}, b_{\beta_1})$.
+%
+\begin{align*}
+p(\beta_{1i} \mid \y, \rest) &\propto
+p(\beta_{1i}) \times 
+\prod_{n=1}^{N_i} \prod_{j=1}^J f_{inj} \\
+%
+&\propto \beta_{1i}^{a_{\beta_1}-1}\exp\bc{-b_{\beta_1}\beta_{1i}} 
+\prod_{n=1}^{N_i} \prod_{j=1}^J f_{inj} \\
+\end{align*}
+%
+\mhLogSpiel{\beta_{1i}}{\xi}
+
+\subsection{\texorpdfstring{Full Conditional for Missing
+$\bm \y$}{Full Conditional for Missing \textbackslash{}bm \textbackslash{}y}}\label{full-conditional-for-missing-bm-y}
+%
+\begin{align*}
+p(y_{inj} \mid m_{inj}, \rest) &\propto
+p(y_{inj} \mid \rest) ~
+p(m_{inj} \mid y_{inj}, \rest) \\
+%
+&\propto
+f_{inj} 
+\sum_{\ell=1}^{L^{Z_{jk}}} \eta^{Z_{jk}}_{ij\ell} \cdot \N(y_{inj} \mid \mu^*_{Z_{jk}, \ell}, {\sigma^2}^*_{i,Z_{jk},\ell}).
+\end{align*}
+%
+\mhSpiel{y_{inj}}
+%
+Note that $f_{inj}$ is a function of $y_{inj}$ and should be
+computed accordingly.
+
+\subsection{\texorpdfstring{Full Conditional for
+$\bm\mu^\star$}{Full Conditional for \textbackslash{}bm\textbackslash{}mu\^{}\star}}\label{full-conditional-for-bmmu}
+
+For $\mus_{0\ell}$g, let
+$S_{0i\ell} = \bc{(i,n,j) : \p{Z_{j,\lin} = 0 ~\cap~ \gamma_{inj} = \ell}}$g
+and $|S_{0i\ell}|$ the cardinality of $S_{0i\ell}$.
+%
+\newcommand\musZeroPostvarDenom{
+  \frac{1}{\tau^2_0} + \sum_{i=1}^I\frac{|S_{0i\ell}|}{{\sigma^2}^\star_{0i\ell}}
+}
+\newcommand\musZeroPostMeanNum{
+  \frac{\psi_0}{\tau^2_0} + 
+  \sum_{i=1}^I \sum_{S_{0i\ell}}  
+  \frac{y_{inj}}{{\sigma^2}^*_{0i\ell}}
+}
+%
+\begin{align*}
+p(\mus_{0\ell} \mid \y, \rest) &\propto 
+p(\mus_{0\ell} \mid \psi_0, \tau^2_0) \times p(\y \mid \mus_{0\ell},\rest) \\
+%
+&\propto
+\Ind{\mus_{0\ell}<0} \exp\bc{\frac{-(\mus_{0\ell} - \psi_0)^2}{2\tau^2_{0}}}
+\prod_{i=1}^I\prod_{(i,n,j)\in S_{0i\ell}} \exp\bc{\frac{-(y_{inj} - \mus_{0\ell})^2}{2{\sigma^2}^\star_{i0\ell}}} \\
+%
+&\propto
+\exp\bc{
+  -\frac{(\mus_{0\ell})^2}{2}\p{\musZeroPostvarDenom} + 
+  \mus_{0\ell}\p{\musZeroPostMeanNum}
+} \\ 
+& ~~~ \times \Ind{\mus_{0i\ell}<0} \\
+\end{align*}
+%
+$$
+\renewcommand\musZeroPostvarDenom{
+  1 + \tau^2_0\sum_{i=1}^I(|S_{0i\ell}|/{\sigma^2}^\star_{0i\ell})
+}
+\renewcommand\musZeroPostMeanNum{
+  \psi_0 + \tau^2_0 \sum_{i=1}^I\sum_{S_{0i\ell}} (y_{inj} / {\sigma^2}^\star_{0i\ell})
+}
+\therefore \mus_{0l} \mid \y, \rest \ind \N_-\p{
+  \frac{\musZeroPostMeanNum}{\musZeroPostvarDenom},
+  \frac{\tau^2_0}{\musZeroPostvarDenom}
+}
+$$
+Similarly for $\mus_{1\ell}$g, let
+$S_{1i\ell} = \bc{(i,n,j) : \p{Z_{j,\lin} = 1 ~\cap~ \gamma_{inj} = \ell}}$g
+and $|S_{1i\ell}|$ the cardinality of $S_{1i\ell}$.
+$$
+\newcommand\musOnePostvarDenom{
+  1 + \tau^2_1 \sum_{i=1}^I (|S_{1i\ell}|/{\sigma^2}^\star_{1i\ell})
+}
+\newcommand\musOnePostMeanNum{
+  \psi_1 + \tau^2_1 \sum_{i=1}^I \sum_{S_{1i\ell}} (y_{inj} / {\sigma^2}^\star_{1i\ell})
+}
+\therefore \mus_{1l} \mid \y, \rest \ind \N_+\p{
+  \frac{\musOnePostMeanNum}{\musOnePostvarDenom},
+  \frac{\tau^2_1}{\musOnePostvarDenom}
+}
+$$
+
+\subsection{\texorpdfstring{Full Conditional for
+$\bm{{\sigma^2}}^*$}{Full Conditional for \textbackslash{}bm\{\{\textbackslash{}sigma\^{}2\}\}\^{}*}}\label{full-conditional-for-bmsigma2}
+
+Let
+$S_{0i\ell} = \bc{(i, n,j): Z_{j,\lin} = 0 ~\cap~ \gamma_{inj}=\ell}$,
+$i=1, \ldots, I$.
+\begin{align*}
+p(\sss_{0i\ell} \mid \y, \rest) &\propto p(\sss_{0i\ell} \mid s_i) \times p(\y \mid \sss_{0i\ell}, \rest) \\
+&\propto (\sss_{0i\ell})^{-a_\sigma-1} \exp\bc{-\frac{s_i}{\sss_{0i\ell}}} 
+\prod_{(i,n,j)\in S_{0i\ell}} \bc{
+  \frac{1}{\sqrt{2\sss_{0i\ell}}}
+  \exp\bc{\frac{-(y_{inj}-\mus_{0\ell})^2}{2\sss_{0i\ell}}}
+} \\
+&\propto (\sss_{0i\ell})^{-(a_\sigma + \frac{\abs{S_{0i\ell}}}{2})-1}
+\exp\bc{\p{\frac{1}{\sss_{0i\ell}}}\p{s_i + \sum_{(i,n,j)\in S_{0i\ell}}
+\frac{(y_{inj}-\mus_{0\ell})^2}{2}
+}}.
+\end{align*}
+%
+$$
+\therefore \sss_{0i\ell} \mid \y, \rest \ind
+\IG\p{a_\sigma + \frac{\abs{S_{0i\ell}}}{2}, ~~ s_i + \sum_{(i,n,j)\in S_{0i\ell}}
+\frac{(y_{inj}-\mus_{0\ell})^2}{2}
+}.
+$$
+%
+Similarly, let
+$S_{1i\ell} = \bc{(i, n,j): Z_{j,\lin} = 1 ~\cap~ \gamma_{inj}=\ell}$.
+Then, the full conditional for $\sss_{1i\ell}$ is $$
+\therefore \sss_{1i\ell} \mid \y, \rest \ind
+\IG\p{a_\sigma + \frac{\abs{S_{1i\ell}}}{2}, ~~ s_i + \sum_{(i,n,j)\in S_{1i\ell}}
+\frac{(y_{inj}-\mus_{1\ell})^2}{2}
+}.
+$$
+
+\subsection{\texorpdfstring{Full Conditional for
+$s_i$}{Full Conditional for s\_i}}\label{full-conditional-for-s_i}
+%
+\begin{align*}
+p(s_i \mid \y, \rest) &\propto p(s_i) \times \prod_{z=0}^1 \prod_{\ell=1}^{L^z} p(\sss_{zi\ell} \mid s_i)\\
+&\propto s_i^{a_s-1} \exp\bc{-b_s s_i} \times \prod_{z=0}^1  \prod_{\ell=1}^{L^z} s_i^{a_\sigma} \exp\bc{-s_i / \sss_{zi\ell}} \\
+&\propto s_i^{a_s + (L^0 + L^1)a_\sigma - 1} \exp\bc{-s_i \p{b_s + \sum_{z=0}^1 \sum_{\ell=1}^{L^z} 1 / \sss_{zi\ell}}}.
+\end{align*}
+%
+$$
+\therefore s_i \mid \y, \rest \sim 
+\G\p{a_s + (L^0 + L^1)a_\sigma, ~~ b_s + \sum_{z=0}^1 \sum_{\ell=1}^{L^z} \frac{1}{\sss_{zi\ell}} }.
+$$
+%
+\subsection{\texorpdfstring{Full Conditional for
+$\bm\gamma$}{Full Conditional for \textbackslash{}bm\textbackslash{}gamma}}\label{full-conditional-for-bmgamma}
+
+The prior for $\gamma_{inj}$ is
+$p(\gamma_{inj} = \ell \mid Z_{j\lin}=z, \eta^z_{ij\ell}) = \eta^z_{ij\ell}$,
+where $\ell \in \bc{1,...,L^z}$.
+%
+\begin{align*}
+p(\gamma_{inj}=\ell \mid \y, Z_{j\lin}=z, \rest) &\propto p(\gamma_{inj}=\ell) \times p(y_{inj} \mid \gamma_{inj}=\ell, \rest) \\
+&\propto p(\gamma_{inj}=\ell) \times p(y_{inj} \mid \mus_{z\ell}, \sss_{zi\ell}, \rest) \\
+%
+&\propto \eta^z_{ij\ell} \times \N(y_{inj} \mid \mus_{z\ell}, \sss_{zi\ell}) \\
+&\propto \eta^z_{ij\ell} \times (\sss_{zi\ell})^{-1/2}
+\exp\bc{-\frac{(y_{inj} - \mus_{z\ell})^2}{2\sss_{zi\ell}}} \\
+\end{align*}
+%
+The normalizing constant is obtained by summing the last expression over
+$\ell = 1,...,L^z$. Moreover, since $\ell$ is discrete, a Gibbs
+update can be done on $\gamma_{inj}$.
+
+\subsection{\texorpdfstring{Full Conditional for
+$\bm\eta$}{Full Conditional for \textbackslash{}bm\textbackslash{}eta}}\label{full-conditional-for-bmeta}
+
+The prior for $\bm\eta^z_{ij}$ is
+$\bm \eta^z_{ij} \sim \Dir_{L^z}(a_{\eta^z})$, for $z\in\bc{0,1}$.
+So the full conditional for $\bm\eta^z_{ij}$ is:
+%
+\begin{align*}
+p(\bm \eta^z_{ij} \mid \rest) \propto&~~ p(\bm{\eta}^z_{ij}) \times \prod_{n=1}^{N_i} p(\gamma_{inj} \mid \bm \eta^z_{ij})\\
+\propto&~~ p(\bm \eta^z_{ij}) \times \prod_{n=1}^{N_i}\prod_{\ell=1}^{L^z} \p{\eta^z_{ij\ell}}^{\Ind{ \gamma_{inj}=\ell ~\cap~ Z_{j\lin}=z}}\\
+%
+\propto&~~ \prod_{\ell=1}^{L^z} \p{\eta^z_{ij\ell}}^{a_{\eta^z}-1} \times 
+\prod_{n=1}^{N_i}\prod_{\ell=1}^{L^z} \p{\eta^z_{ij\ell}}^{\Ind{ \gamma_{inj}=\ell ~\cap~ Z_{j\lin}=z}}\\
+\propto&~~ \prod_{\ell=1}^{L^z} \p{\eta^z_{ij\ell}}^{\p{a_{\eta^z} + \sum_{n=1}^{N_i} \Ind{ \gamma_{inj}=\ell ~\cap~ Z_{j\lin}=z}} - 1}\\
+%
+\end{align*}
+%
+Therefore, $$
+\bm{\eta}^z_{ij} \mid \y,\rest ~\sim~ \Dir_{L^z}\p{a^*_1,...,a^*_{L^z}}
+$$ where
+$a^*_\ell = a_{\eta^z}+\sum_{n=1}^{N_i}\Ind{\gamma_{inj}=\ell ~\cap~ Z_{j\lin}=z}$.
+Consequently, the full conditional for $\bm{\eta}^z_{ij}$ can be
+sampled from directly from a Dirichlet distribution of the form above.
+
+\subsection{\texorpdfstring{Full Conditional for
+$\bm v$}{Full Conditional for \textbackslash{}bm v}}\label{full-conditional-for-bm-v}
+
+The prior distribution for $v_k$ are
+$v_k \mid \alpha \ind \Be(\alpha/K, 1)$, for $k = 1,...,K$. So,
+$p(v_k \mid \alpha) = \alpha v_k^{\alpha/K-1}$.
+%
+Let $S = \bc{(i,n)\colon \lin = k}$.
+%
+\begin{align*}
+p(v_k \mid \y, \rest) &\propto p(v_k) \prod_{j=1}^J\prod_{(i,n)\in S} p(\y \mid v_k, \rest) \\
+&\propto (v_k)^{\alpha/K-1} \prod_{j=1}^J \prod_{(i,n)\in S}
+\sum_{\ell=1}^{L^{Z_{jk}}} \eta^{Z_{jk}}_{ij\ell} \cdot
+\N(y_{inj} \mid \mus_{Z_{jk}\ell}, \sss_{Z_{jk}i\ell})
+\end{align*}
+%
+\mhLogitSpiel{v_k}{\xi}
+%
+Note also that $\mus_{Z_{jk}\ell}$ and $\sss_{Z_{jk}i\ell}$ are
+functions of $v_k$, and should be computed accordingly. Moreover, we
+will only recompute the likelihood (in the metropolis acceptance ratio)
+when $Z_{jk}$ becomes different.
+
+\subsection{\texorpdfstring{Full Conditional for
+$\alpha$}{Full Conditional for \textbackslash{}alpha}}\label{full-conditional-for-alpha}
+
+\begin{align*}
+p(\alpha \mid \y, \rest) &\propto p(\alpha) \times \prod_{k=1}^K p(v_k \mid \alpha) \\
+&\propto \alpha^{a_\alpha - 1} \exp\bc{-b_\alpha \alpha} \times \prod_{k=1}^K 
+\alpha~v_k^{\alpha/K} \\
+&\propto \alpha^{a_\alpha + K -1} \exp\bc{-\alpha\p{b_\alpha + 
+\frac{\sum_{k=1}^K \log v_k}{K}}}
+\end{align*}
+%
+$$
+\therefore \alpha \mid \y, \rest \sim 
+\G\p{a_\alpha + K,~ b_\alpha + \frac{\sum_{k=1}^K \log v_k}{K}}
+$$
+
+\subsection{\texorpdfstring{Full Conditional for
+$\bm H$}{Full Conditional for \textbackslash{}bm H}}\label{full-conditional-for-bm-h}
+
+The prior for $\h_k$ is $\h_k \sim \N_J(0, \Gamma)$. We can
+analytically compute the conditional distribution
+$h_{j,k} \mid \h_{-j,k}$, which is
+%
+$$
+h_{jk}  \mid \h_{-j,k} \sim \N(m_j, S^2_j),
+$$
+%
+where
+%
+$$
+\begin{cases}
+m_j &= \bm G_{j,-j} \bm G_{-j,-j}^{-1}(\h_{-j,k})\\
+S_j^2 &= \bm G_{j,j} - \bm G_{j,-j}\bm G_{-j,-j}^{-1}\bm G_{-j,j}\\
+\end{cases}
+$$
+%
+and the notation $\h_{-j,k}$ refers to the vector $h_k$ excluding
+the $j^{th}$ element. Likewise, $\bm G_{-j,k}$ refers to the
+$k^{th}$ column of the matrix $\bm G$ excluding the $j^{th}$ row.
+
+Note that if $\bm G = \I_J$, then $m_j=0$ and $S_j^2 = 1$. Let
+$S = \bc{(i,n)\colon \lin=k}$.
+
+\begin{align*}
+p(h_{jk} \mid \y, \rest)  &\propto p(h_{jk}) \prod_{(i,n) \in S} p(y_{inj} \mid h_{jk}, \rest) \\
+%
+&\propto
+\exp\bc{\frac{-(h_{jk} - m_j)^2}{2S_j^2}}
+ \prod_{j=1}^J \prod_{(i,n)\in S}
+\sum_{\ell=1}^{L^{Z_{jk}}} \eta^{Z_{jk}}_{ij\ell} \cdot
+\N(y_{inj} \mid \mus_{Z_{jk}\ell}, \sss_{Z_{jk}i\ell})
+\end{align*}
+
+\mhSpiel{h_{jk}}
+
+Note also that $\mus_{Z_{jk}\ell}$ and $\sss_{Z_{jk}i\ell}$ are
+functions of $h_{jk}$, and should be computed accordingly. Moreover,
+we will only recompute the likelihood (in the metropolis acceptance
+ratio) when $Z_{jk}$ becomes different.
+
+\subsection{\texorpdfstring{Full Conditional for
+$\bm \lambda$}{Full Conditional for \textbackslash{}bm \textbackslash{}lambda}}\label{full-conditional-for-bm-lambda}
+
+The prior for $\lin$ is $p(\lin = k \mid \bm W_i) = W_{ik}$.
+%
+\begin{align*}
+p(\lin=k\mid \y,\rest) &\propto p(\lin=k) ~ p(\y \mid \lin=k, \rest) \\
+&\propto W_{ik}
+\prod_{j=1}^J 
+\p{
+  \sum_{\ell=1}^{L^{Z_{jk}}} \eta^{Z_{jk}}_{ij\ell} \cdot
+  \N(y_{inj} \mid 
+  \mus_{Z_{jk}\ell}, \sss_{Z_{jk}i\ell}).
+}
+\end{align*}
+%
+The normalizing constant is obtained by summing the last expression over
+$k = 1,...,K$. Moreover, since $k$ is discrete, a Gibbs update can
+be done on $\lin$.
+
+\subsection{\texorpdfstring{Full Conditional for
+$\bm W$}{Full Conditional for \textbackslash{}bm W}}\label{full-conditional-for-bm-w}
+
+The prior for $\bm{W}_i$ is $\bm W_i \sim \Dir(d, \cdots, d)$. So
+the full conditional for $\bm{W}_i$ is:
+%
+\begin{align*}
+p(\bm W_i \mid \rest) \propto&~~ p(\bm{W}_i) \times \prod_{n=1}^{N_i} p(\lin \mid \bm{W}_i)\\
+\propto&~~ p(\bm{W}_i) \times \prod_{n=1}^{N_i}\prod_{k=1}^K W_{ik}^{\Ind{\lin=k}}\\
+\propto&~~ \prod_{k=1}^K W_{ik}^{d-1} \times \prod_{n=1}^{N_i}\prod_{k=1}^K W_{ik}^{\Ind{\lin=k}}\\
+\propto&~~ \prod_{k=1}^K W_{ik}^{\p{d + \sum_{n=1}^{N_i}\Ind{\lin=k}}-1}.
+%
+\end{align*}
+%
+Therefore, $$
+\bm{W}_i \mid \y,\rest ~\sim~ \Dir\p{d+\sum_{n=1}^{N_i}\Ind{\lambda_{i,n}=1},...,d+\sum_{n=1}^{N_i}\Ind{\lambda_{i,n}=K}}. 
+$$
+
+Consequently, the full conditional for $\bm{W}_i$ can be sampled from
+directly from a Dirichlet distribution of the form above.
+
+\subsection{\texorpdfstring{Posterior Estimate for $Z$, $W$, and
+$\lambda$}{Posterior Estimate for Z, W, and \textbackslash{}lambda}}\label{posterior-estimate-for-z-w-and-lambda}
+
+Obtaining posterior estimates and quantifying uncertainty for $Z$,
+$W$, and $\lambda$ can be a challenge since they depend directly on
+$K$ and are susceptible to label-switching. Therefore, we describe a
+way to select point-estimates for $Z$, $W$, and $\lambda$ from
+their posterior samples.
+
+Suppose we obtain $B$ samples from the posterior distribution of
+$\theta$. Let $\theta^{(b)}$ denote sample $b$ in that sample for
+$b \in \bc{1,...,B}$. Then, for each posterior sample of $Z$ and $W_i$ (i.e. $Z^{(b)}$
+and $W_i^{(b)}$) let $A_i^{(b)}$ be a $J\times J$
+adjacency-matrix;
+$$
+A^{(b)}_{i,j,j'} = \sum_{k=1}^K W^{(b)}_{i,k} \Ind{Z^{(b)}_{j,k} = 1}
+\Ind{Z^{(b)}_{j',k} = 1}.
+$$
+%
+Then, compute the mean adjacency-matrix as
+$\bar A_i = \sum_{b=1}^B A_i^{(b)} / B$. The posterior estimate for
+$\bm Z_i$ is then
+%
+$$
+\hat{\bm Z}_i = \text{argmin}_{\bm Z} \sum_{j,j'} (A_{i,j,j'}^{(b)} - \bar A_{i,j,j'})^2).
+$$
+%
+We search for such $\hat \Z_i$ using the Monte Carlo method. Suppose
+$\hat{\bm Z}_i = \bm Z^{(b)}$. We then let
+$\widehat{\bm W}_i = \bm W_i^{(b)}$, and
+$\hat{\bm \lambda}_i = \bm \lambda_i^{(b)}$.
+
+%\bibliography{../../bib/litreview.bib}
+
+\end{document}
