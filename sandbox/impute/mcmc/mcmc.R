@@ -156,3 +156,10 @@ gibbs_auto <- function(init, update, B, burn, adapt=NULL, print_every=0) {
 }
 
 sigmoid = function(x) 1 / (1 + exp(-x))
+
+rdir = function(a) {
+  n = length(a)
+  x = rgamma(n, a, 1)
+  sum_x = sum(x)
+  x / sum_x
+}
