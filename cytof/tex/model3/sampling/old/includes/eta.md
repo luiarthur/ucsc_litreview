@@ -3,11 +3,11 @@ $z\in\bc{0,1}$. So the full conditional for $\bm\eta^z_{ij}$ is:
 
 \begin{align*}
 p(\bm \eta^z_{ij} \mid \rest) \propto&~~ p(\bm{\eta}^z_{ij}) \times \prod_{n=1}^{N_i} p(\gamma_{inj} \mid \bm \eta^z_{ij})\\
-\propto&~~ p(\bm \eta^z_{ij}) \times \prod_{n=1}^{N_i}\prod_{\ell=1}^{L^z} \p{\eta^z_{ij\ell}}^{\Ind{ \gamma_{inj}=\ell ~\cap~ Z_{j\lin=z}}}\\
+\propto&~~ p(\bm \eta^z_{ij}) \times \prod_{n=1}^{N_i}\prod_{\ell=1}^{L^z} \p{\eta^z_{ij\ell}}^{\Ind{ \gamma_{inj}=\ell ~\cap~ Z_{j\lin}=z}}\\
 %
 \propto&~~ \prod_{\ell=1}^{L^z} \p{\eta^z_{ij\ell}}^{a_{\eta^z}-1} \times 
-\prod_{n=1}^{N_i}\prod_{\ell=1}^{L^z} \p{\eta^z_{ij\ell}}^{\Ind{ \gamma_{inj}=\ell ~\cap~ Z_{j\lin=z}}}\\
-\propto&~~ \prod_{\ell=1}^{L^z} \p{\eta^z_{ij\ell}}^{\p{a_{\eta^z} + \sum_{n=1}^{N_i} \Ind{ \gamma_{inj}=\ell ~\cap~ Z_{j\lin=z}}} - 1}\\
+\prod_{n=1}^{N_i}\prod_{\ell=1}^{L^z} \p{\eta^z_{ij\ell}}^{\Ind{ \gamma_{inj}=\ell ~\cap~ Z_{j\lin}=z}}\\
+\propto&~~ \prod_{\ell=1}^{L^z} \p{\eta^z_{ij\ell}}^{\p{a_{\eta^z} + \sum_{n=1}^{N_i} \Ind{ \gamma_{inj}=\ell ~\cap~ Z_{j\lin}=z}} - 1}\\
 %
 \end{align*}
 

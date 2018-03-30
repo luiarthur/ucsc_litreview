@@ -4,6 +4,7 @@ author: Arthur Lui
 date: "\\today"
 geometry: margin=1in
 fontsize: 12pt
+linestretch: 1.5
 
 # Uncomment if using natbib:
 bibliography: ../../bib/litreview.bib
