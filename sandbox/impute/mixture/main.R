@@ -4,9 +4,9 @@ source('mixture.R')
 set.seed(2)
 
 N = 350
-mu_true = c(-3,3,5)
-sig2_true = c(1,.3,.6)
-w_true = c(.3,.5,.2)
+mu_true = c(-5,-2, 3,5)
+sig2_true = c(.1, .1 ,.3,.6)
+w_true = c(.15, .15 ,.5,.2)
 b_true = c(-3, -2)
 
 y_true = rnorm(N,
@@ -66,20 +66,27 @@ boxplot(w)
 
 #sapply(out, function(o) c(table(o$g)) / length(yij))
 
+### Posterior of one missing y observations
+y_post = sapply(out, function(o) o$y)
+miss_idx = which(is.na(y))
+plotPost(y_post[miss_idx[21], ])
+
+
+### Posterior Predictivice
 pp = postpred(out)
-hist(pp, col=rgb(0,0,1,.5), border='transparent', prob=TRUE)
+
+par(mfrow=c(2,1))
+hist(pp, col=rgb(0,0,1,.5), border='transparent', prob=TRUE, ylim=c(0, .5),
+     main='Postpred (blue) and True y (grey)')
 hist(y_true, add=TRUE, col=rgb(0,0,0,.5), border='transparent', prob=TRUE)
 abline(v=0, lwd=3)
 abline(v=colMeans(mu), lty=2)
 
-
-hist(pp, col=rgb(0,0,1,.5), border='transparent', prob=TRUE)
+hist(pp, col=rgb(0,0,1,.5), border='transparent', prob=TRUE, ylim=c(0,.5),
+     main='Postpred (blue) and observed y (red)')
 hist(y, add=TRUE, col=rgb(1,0,0,.5), border='transparent', prob=TRUE)
 abline(v=0, lwd=3)
 abline(v=colMeans(mu), lty=2)
+par(mfrow=c(1,1))
 
-
-y_post = sapply(out, function(o) o$y)
-miss_idx = which(is.na(y))
-plotPost(y_post[miss_idx[21], ])
 
