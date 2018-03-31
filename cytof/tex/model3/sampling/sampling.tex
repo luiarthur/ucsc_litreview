@@ -260,7 +260,7 @@ for the correlation between markers through $\bm G$.
 
 We represent a sample as an admixture of heterogeneous cells having $K$ different latent cell phenotypes characterized by $\Z$. A $K-$dimensional vector $\W_i$ denotes the proportion of a mixture for sample $i$ and we assume
 \begin{align*}
-&\W_{i} \iid \Dir_K(d, \ldots, d),\\
+&\W_{i} \iid \Dir_K(d/K, \ldots, d/K),\\
 &p(\lin=k \mid \bm \W_i) = W_{ik}.
 \end{align*}
 Recall that the likelihood for $y_{inj}$ is a mixture of normals with means $\eta_{0\ell}$, $\ell=1, \ldots, L^0$ and $\eta_{1\ell}$, $\ell=1, \ldots, L^1$ conditional on $z_{j \lambda_{in}}=0$ and 1, respectively. Given that maker $j$ is expressed in phenotype $k$, $z_{jk}=1$, cells taking phenotype $k$ may have a positive mean for the observed expression level of the marker.  Similarly, for $z_{jk}=0$ the mean of $y_{inj}$ for cells taking phenotype $k$ may take a negative value.  We thus assume
@@ -287,8 +287,8 @@ For $i=1, \ldots, I$, $n=1, \ldots, N_i$ and $j=1, \ldots, J$,
 \begin{align*}
 p(\gamma_{inj} = \ell \mid \bm\eta^{Z_{j \lambda_{in}}}_{i,j}) &= \eta^{Z_{j \lambda_{in}}}_{ijl},
 ~~~ \ell \in \bc{1,...,L^{Z_{j \lambda_{in}}}},  \\
-\bm\eta^0_{ij} &\iid \Dir_{L^0}(a_{\eta^0}, \ldots, a_{\eta^0}), \\
-\bm\eta^1_{ij} &\iid \Dir_{L^1}(a_{\eta^1}, \ldots, a_{\eta^1}). 
+\bm\eta^0_{ij} &\iid \Dir_{L^0}(a_{\eta^0}/L^0, \ldots, a_{\eta^0}/L^0), \\
+\bm\eta^1_{ij} &\iid \Dir_{L^1}(a_{\eta^1}/L^1, \ldots, a_{\eta^1}/L^1). 
 \end{align*}
 
 
@@ -587,23 +587,23 @@ update can be done on $\gamma_{inj}$.
 $\bm\eta$}{Full Conditional for \textbackslash{}bm\textbackslash{}eta}}\label{full-conditional-for-bmeta}
 
 The prior for $\bm\eta^z_{ij}$ is
-$\bm \eta^z_{ij} \sim \Dir_{L^z}(a_{\eta^z})$, for $z\in\bc{0,1}$.
+$\bm \eta^z_{ij} \sim \Dir_{L^z}(a_{\eta^z} / L^z)$, for $z\in\bc{0,1}$.
 So the full conditional for $\bm\eta^z_{ij}$ is:
 %
 \begin{align*}
 p(\bm \eta^z_{ij} \mid \rest) \propto&~~ p(\bm{\eta}^z_{ij}) \times \prod_{n=1}^{N_i} p(\gamma_{inj} \mid \bm \eta^z_{ij})\\
 \propto&~~ p(\bm \eta^z_{ij}) \times \prod_{n=1}^{N_i}\prod_{\ell=1}^{L^z} \p{\eta^z_{ij\ell}}^{\Ind{ \gamma_{inj}=\ell ~\cap~ Z_{j\lin}=z}}\\
 %
-\propto&~~ \prod_{\ell=1}^{L^z} \p{\eta^z_{ij\ell}}^{a_{\eta^z}-1} \times 
+\propto&~~ \prod_{\ell=1}^{L^z} \p{\eta^z_{ij\ell}}^{a_{\eta^z}/L^z-1} \times 
 \prod_{n=1}^{N_i}\prod_{\ell=1}^{L^z} \p{\eta^z_{ij\ell}}^{\Ind{ \gamma_{inj}=\ell ~\cap~ Z_{j\lin}=z}}\\
-\propto&~~ \prod_{\ell=1}^{L^z} \p{\eta^z_{ij\ell}}^{\p{a_{\eta^z} + \sum_{n=1}^{N_i} \Ind{ \gamma_{inj}=\ell ~\cap~ Z_{j\lin}=z}} - 1}\\
+\propto&~~ \prod_{\ell=1}^{L^z} \p{\eta^z_{ij\ell}}^{\p{a_{\eta^z}/L^z + \sum_{n=1}^{N_i} \Ind{ \gamma_{inj}=\ell ~\cap~ Z_{j\lin}=z}} - 1}\\
 %
 \end{align*}
 %
 Therefore, $$
 \bm{\eta}^z_{ij} \mid \y,\rest ~\sim~ \Dir_{L^z}\p{a^*_1,...,a^*_{L^z}}
 $$ where
-$a^*_\ell = a_{\eta^z}+\sum_{n=1}^{N_i}\Ind{\gamma_{inj}=\ell ~\cap~ Z_{j\lin}=z}$.
+$a^*_\ell = a_{\eta^z}/L^z+\sum_{n=1}^{N_i}\Ind{\gamma_{inj}=\ell ~\cap~ Z_{j\lin}=z}$.
 Consequently, the full conditional for $\bm{\eta}^z_{ij}$ can be
 sampled from directly from a Dirichlet distribution of the form above.
 
@@ -713,19 +713,19 @@ be done on $\lin$.
 \subsection{\texorpdfstring{Full Conditional for
 $\bm W$}{Full Conditional for \textbackslash{}bm W}}\label{full-conditional-for-bm-w}
 
-The prior for $\bm{W}_i$ is $\bm W_i \sim \Dir(d, \cdots, d)$. So
+The prior for $\bm{W}_i$ is $\bm W_i \sim \Dir(d/K, \cdots, d/K)$. So
 the full conditional for $\bm{W}_i$ is:
 %
 \begin{align*}
 p(\bm W_i \mid \rest) \propto&~~ p(\bm{W}_i) \times \prod_{n=1}^{N_i} p(\lin \mid \bm{W}_i)\\
 \propto&~~ p(\bm{W}_i) \times \prod_{n=1}^{N_i}\prod_{k=1}^K W_{ik}^{\Ind{\lin=k}}\\
-\propto&~~ \prod_{k=1}^K W_{ik}^{d-1} \times \prod_{n=1}^{N_i}\prod_{k=1}^K W_{ik}^{\Ind{\lin=k}}\\
-\propto&~~ \prod_{k=1}^K W_{ik}^{\p{d + \sum_{n=1}^{N_i}\Ind{\lin=k}}-1}.
+\propto&~~ \prod_{k=1}^K W_{ik}^{d/K-1} \times \prod_{n=1}^{N_i}\prod_{k=1}^K W_{ik}^{\Ind{\lin=k}}\\
+\propto&~~ \prod_{k=1}^K W_{ik}^{\p{d/K + \sum_{n=1}^{N_i}\Ind{\lin=k}}-1}.
 %
 \end{align*}
 %
 Therefore, $$
-\bm{W}_i \mid \y,\rest ~\sim~ \Dir\p{d+\sum_{n=1}^{N_i}\Ind{\lambda_{i,n}=1},...,d+\sum_{n=1}^{N_i}\Ind{\lambda_{i,n}=K}}. 
+\bm{W}_i \mid \y,\rest ~\sim~ \Dir\p{d/K+\sum_{n=1}^{N_i}\Ind{\lambda_{i,n}=1},...,d/K+\sum_{n=1}^{N_i}\Ind{\lambda_{i,n}=K}}. 
 $$
 
 Consequently, the full conditional for $\bm{W}_i$ can be sampled from
