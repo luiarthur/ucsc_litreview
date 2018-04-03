@@ -1,16 +1,14 @@
-Package: cytof2
+Package: cytof3
 Type: Package
-Title: CYTOF Model 2
-Version: 0.2
-Date: 2017-11-17
+Title: CyTOF Model
+Version: 0.3
+Date: 2018-04-03
 Author: Arthur Lui
 Maintainer: Arthur Lui <luiarthur@ucsc.edu>
-Description: Fits a bayesian model to CYTOF data.
+Description: Fits a bayesian model to CyTOF data.
 License: GPL (>= 2)
-Depends: RcppTN
-Remotes: luiarthur/rcommon.git
 Imports:
-  Rcpp (>= 0.12.00),
+  Rcpp (>= 0.12.10),
   rcommon,
   gtools,
   foreach,

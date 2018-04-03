@@ -1,0 +1,3 @@
+useDynLib(cytof3)
+importFrom(Rcpp, evalCpp)
+exportPattern("^[[:alpha:]]+")
