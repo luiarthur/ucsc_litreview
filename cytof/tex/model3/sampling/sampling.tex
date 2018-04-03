@@ -212,7 +212,7 @@ $i=1, \ldots, I$, $n=1, \ldots, N_i$ and $j=1, \ldots, J$,
   m_{inj} \mid p_{inj} &\ind \Bern(p_{inj}) \\
   \logit(p_{inj}) &:= \begin{cases}
   \beta_{0i} - \beta_{1i}(y_{inj}-c_0)^2, & \text{if } y_{inj} < c_0\nonumber, \\
-  \beta_{0i} - \beta_{1i}c_1\p{y_{inj}-c_0}, & \text{otherwise}, \nonumber \\
+  \beta_{0i} - \beta_{1i}c_1\sqrt{y_{inj}-c_0}, & \text{otherwise}, \nonumber \\
   \end{cases}
 \end{align*}
 where $c_0$ and $c_1$ are fixed.
@@ -402,13 +402,25 @@ where
 \begin{align*}
   x_{inj} &:= \begin{cases}
   \beta_{0i} - \beta_{1i}(y_{inj}-c_0)^2, & \text{if } y_{inj} < c_0\nonumber \\
-  \beta_{0i} - \beta_{1i}c_1\p{y_{inj}-c_0}, & \text{otherwise}, \nonumber \\
+  \beta_{0i} - \beta_{1i}c_1\sqrt{y_{inj}-c_0}, & \text{otherwise}, \nonumber \\
   \end{cases}\\
 \end{align*}
 where $c_0$ and $c_1$ are fixed.
 
 %TODO
-%To help in specifying priors for $\beta_0i$, $\beta_1i$, and $c_1$, it is useful to define 
+%For convenience in specifying priors for $\beta_0i$, $\beta_1i$, and $c_1$ in the missing
+%mechanism, we predetermine 
+
+\textbf{Write a little about the following...} \\
+Predetermine $c_\text{low}$, $c_\text{high}$, $p_\text{low}$, $p_\text{high}$, and
+$p_0$, which will determine the shape of the missing mechanism. Then
+
+\begin{align*}
+  \beta_0 &:= \logit(p_0) \\
+  \beta_1 &:= \frac{\beta_0 - \logit(p_\text{low})}{(y_\text{low} - c_0)^2} \\
+  c_1 &:= \frac{\beta_0 - \logit(p_\text{high})}{\beta_1 ~ \sqrt{y_\text{high} - c_0} }. \\
+\end{align*}
+
 
 \subsubsection{\texorpdfstring{Full Conditional for
 $\beta_{0i}$}{Full Conditional for \textbackslash{}beta\_\{0i\}}}\label{full-conditional-for-beta_0i}
