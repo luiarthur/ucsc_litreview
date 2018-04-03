@@ -1,4 +1,6 @@
-#pragma Once
+#ifndef MCMC_H
+#define MCMC_H
+
 // Reference for distributions in R
 //http://dirk.eddelbuettel.com/code/rcpp/html/Rmath_8h_source.html#l00051
 
@@ -268,3 +270,5 @@ arma::mat shuffle_mat(arma::mat X) { //Tested. Good.
   std::random_shuffle(idx.begin(), idx.end());
   return X.rows(idx);
 }
+
+#endif

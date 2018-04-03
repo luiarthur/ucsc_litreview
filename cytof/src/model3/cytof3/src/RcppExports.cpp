@@ -6,6 +6,26 @@
 
 using namespace Rcpp;
 
+// cytof3_unit_tests_cpp
+void cytof3_unit_tests_cpp();
+RcppExport SEXP _cytof3_cytof3_unit_tests_cpp() {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    cytof3_unit_tests_cpp();
+    return R_NilValue;
+END_RCPP
+}
+// test_gen_data_obj
+Rcpp::List test_gen_data_obj(const std::vector<arma::mat>& y);
+RcppExport SEXP _cytof3_test_gen_data_obj(SEXP ySEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< const std::vector<arma::mat>& >::type y(ySEXP);
+    rcpp_result_gen = Rcpp::wrap(test_gen_data_obj(y));
+    return rcpp_result_gen;
+END_RCPP
+}
 // cytof_fix_K_fit
 std::vector<List> cytof_fix_K_fit(const std::vector<arma::mat>& y, int B, int burn, int warmup, int thin, int thin_K, int compute_loglike_every, int print_freq, int ncores, bool show_timings, double prop_for_training, bool shuffle_data, bool normalize_loglike, Nullable<List> prior_input, Nullable<List> truth_input, Nullable<List> init_input);
 RcppExport SEXP _cytof3_cytof_fix_K_fit(SEXP ySEXP, SEXP BSEXP, SEXP burnSEXP, SEXP warmupSEXP, SEXP thinSEXP, SEXP thin_KSEXP, SEXP compute_loglike_everySEXP, SEXP print_freqSEXP, SEXP ncoresSEXP, SEXP show_timingsSEXP, SEXP prop_for_trainingSEXP, SEXP shuffle_dataSEXP, SEXP normalize_loglikeSEXP, SEXP prior_inputSEXP, SEXP truth_inputSEXP, SEXP init_inputSEXP) {
@@ -45,6 +65,8 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
+    {"_cytof3_cytof3_unit_tests_cpp", (DL_FUNC) &_cytof3_cytof3_unit_tests_cpp, 0},
+    {"_cytof3_test_gen_data_obj", (DL_FUNC) &_cytof3_test_gen_data_obj, 1},
     {"_cytof3_cytof_fix_K_fit", (DL_FUNC) &_cytof3_cytof_fix_K_fit, 16},
     {"_cytof3_shuffle_mat", (DL_FUNC) &_cytof3_shuffle_mat, 1},
     {NULL, NULL, 0}
