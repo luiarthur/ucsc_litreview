@@ -14,6 +14,10 @@ arma::mat shuffle_mat(arma::mat X) { //Tested. Good.
 }
 
 // Not safe. FIXME: Limit type to numerics only?
+// see:
+//   https://blog.rmf.io/cxx11/almost-static-if
+//   https://stackoverflow.com/questions/14294267/class-template-for-numeric-types
+//
 // Sums over elements of std-vector. Should work for vector<int> and vector<double>
 template <typename T>
 T vsum(std::vector<T> v) {
