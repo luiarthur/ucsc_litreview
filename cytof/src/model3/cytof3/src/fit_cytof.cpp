@@ -2,6 +2,7 @@
 #include "Data.h"
 #include "Prior.h"
 #include "State.h"
+#include "Fixed.h"
 
 //' Cytof Model for fixed K
 //' @export

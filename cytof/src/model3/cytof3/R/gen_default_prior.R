@@ -1,8 +1,7 @@
-#' Generate default prior
-#' @example 
-#' prior = gen_default_prior(J=32, K=10, L0=10, L1=10)
-#' @export
 gen_default_prior = function(J, K=10, L0=10, L1=10) {
+  #' Generate default prior
+  #' @example prior = gen_default_prior(J=32, K=10, L0=10, L1=10)
+  #' @export
   list(
     K=K,
     c0 = -2, c = 6.7,
