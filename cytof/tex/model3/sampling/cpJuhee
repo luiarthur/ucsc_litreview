@@ -13,3 +13,4 @@ ddmmmyy=`date +%d%b%Y`
 VERSION_NUMBER=$1
 
 cp sampling.tex juhee/sampling_v${VERSION_NUMBER}_${ddmmmyy}.tex
+cp sampling.pdf juhee/sampling_v${VERSION_NUMBER}_${ddmmmyy}.pdf

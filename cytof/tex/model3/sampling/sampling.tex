@@ -247,7 +247,7 @@ v_k \mid \alpha &\iid \Be(\alpha/K, 1),~ k=1, \ldots, K, \\
 \alpha &\sim \G(a_\alpha, b_\alpha) \\
 \h_k &\iid \N_J(\bm{0}, \bm G) \\
 Z_{jk} \mid h_{jk}, v_k &:=
-\Ind{\Phi(h_{jk} \mid 0, \Gamma_{jj}) < v_k} 
+\Ind{\Phi(h_{jk} \mid 0, \bm G_{jj}) < v_k} 
 \end{align*}
 %{\tt explain here about IBP and the relationship between ours and IBP}.
 Our main inferential objective is to obtain a binary matrix $\Z$ which contains
@@ -664,7 +664,7 @@ $$
 \subsection{\texorpdfstring{Full Conditional for
 $\bm H$}{Full Conditional for \textbackslash{}bm H}}\label{full-conditional-for-bm-h}
 
-The prior for $\h_k$ is $\h_k \sim \N_J(0, \Gamma)$. We can
+The prior for $\h_k$ is $\h_k \sim \N_J(0, \bm G)$. We can
 analytically compute the conditional distribution
 $h_{j,k} \mid \h_{-j,k}$, which is
 %
