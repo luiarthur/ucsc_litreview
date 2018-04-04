@@ -21,4 +21,6 @@ cytof3_unit_tests_R = function(){
   stopifnot(data$I == length(y))
   stopifnot(data$J == J)
   #stopifnot(data$idx)
+
+  print("All tests passed")
 }

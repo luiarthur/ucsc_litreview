@@ -6,13 +6,16 @@
 
 using namespace Rcpp;
 
-// cytof3_unit_tests_cpp
-void cytof3_unit_tests_cpp();
-RcppExport SEXP _cytof3_cytof3_unit_tests_cpp() {
+// bigmat_to_listmat
+Rcpp::List bigmat_to_listmat(arma::mat Y, arma::Col<int> N);
+RcppExport SEXP _cytof3_bigmat_to_listmat(SEXP YSEXP, SEXP NSEXP) {
 BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    cytof3_unit_tests_cpp();
-    return R_NilValue;
+    Rcpp::traits::input_parameter< arma::mat >::type Y(YSEXP);
+    Rcpp::traits::input_parameter< arma::Col<int> >::type N(NSEXP);
+    rcpp_result_gen = Rcpp::wrap(bigmat_to_listmat(Y, N));
+    return rcpp_result_gen;
 END_RCPP
 }
 // test_gen_data_obj
@@ -24,6 +27,15 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const std::vector<arma::mat>& >::type y(ySEXP);
     rcpp_result_gen = Rcpp::wrap(test_gen_data_obj(y));
     return rcpp_result_gen;
+END_RCPP
+}
+// cytof3_unit_tests_cpp
+void cytof3_unit_tests_cpp();
+RcppExport SEXP _cytof3_cytof3_unit_tests_cpp() {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    cytof3_unit_tests_cpp();
+    return R_NilValue;
 END_RCPP
 }
 // cytof_fix_K_fit
@@ -65,8 +77,9 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_cytof3_cytof3_unit_tests_cpp", (DL_FUNC) &_cytof3_cytof3_unit_tests_cpp, 0},
+    {"_cytof3_bigmat_to_listmat", (DL_FUNC) &_cytof3_bigmat_to_listmat, 2},
     {"_cytof3_test_gen_data_obj", (DL_FUNC) &_cytof3_test_gen_data_obj, 1},
+    {"_cytof3_cytof3_unit_tests_cpp", (DL_FUNC) &_cytof3_cytof3_unit_tests_cpp, 0},
     {"_cytof3_cytof_fix_K_fit", (DL_FUNC) &_cytof3_cytof_fix_K_fit, 16},
     {"_cytof3_shuffle_mat", (DL_FUNC) &_cytof3_shuffle_mat, 1},
     {NULL, NULL, 0}
