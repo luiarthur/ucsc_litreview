@@ -13,8 +13,8 @@ cytof3_unit_tests_cpp <- function() {
 
 #' Cytof Model for fixed K
 #' @export
-cytof_fix_K_fit <- function(y, B, burn, warmup = 100L, thin = 1L, thin_K = 5L, compute_loglike_every = 1L, print_freq = 10L, ncores = 1L, show_timings = FALSE, prop_for_training = .05, shuffle_data = FALSE, normalize_loglike = FALSE, prior_input = NULL, truth_input = NULL, init_input = NULL) {
-    .Call('_cytof3_cytof_fix_K_fit', PACKAGE = 'cytof3', y, B, burn, warmup, thin, thin_K, compute_loglike_every, print_freq, ncores, show_timings, prop_for_training, shuffle_data, normalize_loglike, prior_input, truth_input, init_input)
+fit_cytof_cpp <- function(y, B, burn, prior_ls, fixed_ls, init_ls, warmup = 100L, thin = 1L, thin_K = 5L, compute_loglike_every = 1L, print_freq = 10L, ncores = 1L, show_timings = FALSE, prop_for_training = .05, shuffle_data = FALSE, normalize_loglike = FALSE) {
+    .Call('_cytof3_fit_cytof_cpp', PACKAGE = 'cytof3', y, B, burn, prior_ls, fixed_ls, init_ls, warmup, thin, thin_K, compute_loglike_every, print_freq, ncores, show_timings, prop_for_training, shuffle_data, normalize_loglike)
 }
 
 #' Shuffle matrix by rows

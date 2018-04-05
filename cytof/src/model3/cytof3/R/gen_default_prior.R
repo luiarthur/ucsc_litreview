@@ -2,21 +2,32 @@ gen_default_prior = function(J, K=10, L0=10, L1=10) {
   #' Generate default prior
   #' @example prior = gen_default_prior(J=32, K=10, L0=10, L1=10)
   #' @export
+  #' TODO
+  #'   CHECK: a_sig, a_s, b_s
+  #'   Think of good priors for: alpha (a_alpha, b_alpha)
   list(
-    K=K,
-    c0 = -2, c = 6.7,
-    m_beta0 = 4.6, s2_beta0=.01, cs_beta0 = 1,
-    a_beta1 = 288, b_beta1 = 170, cs_beta1 = 1,
-    psi_0 = -2,  psi_1 = 2,
-    tau2_0 = .1, tau2_1 = 1,
-    a_sig = 3, # TODO: Check this
-    a_s = 3, b_s = 3, # TODO: Check this
-    a_eta0 = 1 / L0,
-    a_eta1 = 1 / L1,
-    a_alpha = 3, # TODO: Think of good  priors
-    b_alpha = 2, # TODO: Think of good priors
-    cs_h = 1,
-    G = diag(J),
-    d_W = 1/K
-  ) 
+    c0 = -2, #double
+    c1 = 6.7, #double
+    m_beta0 = 4.6, #double
+    s2_beta0 = .01, #double
+    cs_beta0 = 1, #double
+    a_beta1 = 288, #double
+    b_beta1 = 170, #double
+    cs_beta1 = 1, #double
+    psi_0 = -2, #double
+    psi_1 = 2, #double
+    tau2_0 = .1, #double
+    tau2_1 = 1, #double
+    a_sig = 3, #double
+    a_s = 3, #double
+    b_s = 3, #double
+    a_eta0 = 1 / L0, #double
+    a_eta1 = 1 / L1, #double
+    a_alpha = 3, #double
+    b_alpha = 2, #double
+    cs_h = 1, #double
+    G = diag(J), #arma::mat
+    d_W = 1/K, #double
+    K = K #int
+  )
 }
