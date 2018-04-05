@@ -5,7 +5,8 @@
 
 struct Prior {
   // missing mechnism. constants
-  double c0, c1;
+  double c0
+  double c1;
   // beta_0 ~ N(m_beta0, s2_beta0). metropolis.
   double m_beta0;
   double s2_beta0;
