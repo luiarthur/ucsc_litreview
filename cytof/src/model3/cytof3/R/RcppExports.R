@@ -17,10 +17,6 @@ cytof_fix_K_fit <- function(y, B, burn, warmup = 100L, thin = 1L, thin_K = 5L, c
     .Call('_cytof3_cytof_fix_K_fit', PACKAGE = 'cytof3', y, B, burn, warmup, thin, thin_K, compute_loglike_every, print_freq, ncores, show_timings, prop_for_training, shuffle_data, normalize_loglike, prior_input, truth_input, init_input)
 }
 
-testThis <- function(ls) {
-    invisible(.Call('_cytof3_testThis', PACKAGE = 'cytof3', ls))
-}
-
 #' Shuffle matrix by rows
 #' @export
 shuffle_mat <- function(X) {

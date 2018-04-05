@@ -52,16 +52,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// testThis
-void testThis(Rcpp::List ls);
-RcppExport SEXP _cytof3_testThis(SEXP lsSEXP) {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< Rcpp::List >::type ls(lsSEXP);
-    testThis(ls);
-    return R_NilValue;
-END_RCPP
-}
 // shuffle_mat
 arma::mat shuffle_mat(arma::mat X);
 RcppExport SEXP _cytof3_shuffle_mat(SEXP XSEXP) {
@@ -78,7 +68,6 @@ static const R_CallMethodDef CallEntries[] = {
     {"_cytof3_test_gen_data_obj", (DL_FUNC) &_cytof3_test_gen_data_obj, 1},
     {"_cytof3_cytof3_unit_tests_cpp", (DL_FUNC) &_cytof3_cytof3_unit_tests_cpp, 0},
     {"_cytof3_cytof_fix_K_fit", (DL_FUNC) &_cytof3_cytof_fix_K_fit, 16},
-    {"_cytof3_testThis", (DL_FUNC) &_cytof3_testThis, 1},
     {"_cytof3_shuffle_mat", (DL_FUNC) &_cytof3_shuffle_mat, 1},
     {NULL, NULL, 0}
 };
