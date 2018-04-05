@@ -1,0 +1,11 @@
+setClass(
+  Class="Bla",
+  slots=representation(
+    eta="matrix",
+    mus="vector"
+  ),
+  prototype=list(
+    eta=matrix(0,3,4),
+    mus=double(10)
+  )
+)
