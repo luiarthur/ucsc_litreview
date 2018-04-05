@@ -6,7 +6,7 @@
 
 struct Data {
   const std::vector<arma::mat> y; // Data. I x (N[i] x J)
-  const std::vector<int> N; // vector of size I. Represents size of each y[i].
+  const Rcpp::IntegerVector N; // vector of size I. Represents size of each y[i].
   const int N_sum; // sum of N
   const int J; // Number of markers
   const int I; // Number of samples
@@ -20,7 +20,7 @@ Data gen_data_obj(const std::vector<arma::mat> &y) {
   const int I = y.size();
   const int J = y[0].n_cols;
   
-  std::vector<int> N(I);
+  Rcpp::IntegerVector N(I);
   std::vector<arma::Mat<int>> M(I);
   double y_inj;
   
@@ -35,7 +35,7 @@ Data gen_data_obj(const std::vector<arma::mat> &y) {
     }
   }
   
-  const int N_sum = vsum(N);
+  const int N_sum = std::accumulate(N.begin(), N.end(), 0);
   
   return Data{y, N, N_sum, J, I, M};
 }
