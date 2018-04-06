@@ -6,15 +6,6 @@
 
 using namespace Rcpp;
 
-// cytof3_unit_tests_cpp
-void cytof3_unit_tests_cpp();
-RcppExport SEXP _cytof3_cytof3_unit_tests_cpp() {
-BEGIN_RCPP
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    cytof3_unit_tests_cpp();
-    return R_NilValue;
-END_RCPP
-}
 // test_gen_data_obj
 Rcpp::List test_gen_data_obj(const std::vector<arma::mat>& y);
 RcppExport SEXP _cytof3_test_gen_data_obj(SEXP ySEXP) {
@@ -24,6 +15,15 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< const std::vector<arma::mat>& >::type y(ySEXP);
     rcpp_result_gen = Rcpp::wrap(test_gen_data_obj(y));
     return rcpp_result_gen;
+END_RCPP
+}
+// cytof3_unit_tests_cpp
+void cytof3_unit_tests_cpp();
+RcppExport SEXP _cytof3_cytof3_unit_tests_cpp() {
+BEGIN_RCPP
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    cytof3_unit_tests_cpp();
+    return R_NilValue;
 END_RCPP
 }
 // fit_cytof_cpp
@@ -51,21 +51,6 @@ BEGIN_RCPP
     return rcpp_result_gen;
 END_RCPP
 }
-// pm
-double pm(double y, double b0, double b1, double c0, double c1);
-RcppExport SEXP _cytof3_pm(SEXP ySEXP, SEXP b0SEXP, SEXP b1SEXP, SEXP c0SEXP, SEXP c1SEXP) {
-BEGIN_RCPP
-    Rcpp::RObject rcpp_result_gen;
-    Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< double >::type y(ySEXP);
-    Rcpp::traits::input_parameter< double >::type b0(b0SEXP);
-    Rcpp::traits::input_parameter< double >::type b1(b1SEXP);
-    Rcpp::traits::input_parameter< double >::type c0(c0SEXP);
-    Rcpp::traits::input_parameter< double >::type c1(c1SEXP);
-    rcpp_result_gen = Rcpp::wrap(pm(y, b0, b1, c0, c1));
-    return rcpp_result_gen;
-END_RCPP
-}
 // shuffle_mat
 arma::mat shuffle_mat(arma::mat X);
 RcppExport SEXP _cytof3_shuffle_mat(SEXP XSEXP) {
@@ -79,10 +64,9 @@ END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_cytof3_cytof3_unit_tests_cpp", (DL_FUNC) &_cytof3_cytof3_unit_tests_cpp, 0},
     {"_cytof3_test_gen_data_obj", (DL_FUNC) &_cytof3_test_gen_data_obj, 1},
+    {"_cytof3_cytof3_unit_tests_cpp", (DL_FUNC) &_cytof3_cytof3_unit_tests_cpp, 0},
     {"_cytof3_fit_cytof_cpp", (DL_FUNC) &_cytof3_fit_cytof_cpp, 15},
-    {"_cytof3_pm", (DL_FUNC) &_cytof3_pm, 5},
     {"_cytof3_shuffle_mat", (DL_FUNC) &_cytof3_shuffle_mat, 1},
     {NULL, NULL, 0}
 };
