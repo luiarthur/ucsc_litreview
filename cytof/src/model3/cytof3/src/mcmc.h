@@ -47,7 +47,7 @@ namespace mcmc {
    return log((p - a) / (b - p));
   }
   
-  double inv_logit(double x, double a=0, double b=1) {
+  double sigmoid(double x, double a=0, double b=1) {
    const double u = exp(-x);
    return (b + a * u) / (1 + u);
   }
@@ -56,7 +56,7 @@ namespace mcmc {
    return log((p - a) / (b - p));
   }
   
-  arma::vec inv_logit_vec(arma::vec x, double a=0, double b=1) {
+  arma::vec sigmoid_vec(arma::vec x, double a=0, double b=1) {
    const arma::vec u = exp(-x);
    return (b + a * u) / (1 + u);
   }
@@ -189,7 +189,7 @@ namespace mcmc {
   }
   
   double lp_logit_beta(double logit_u, double a, double b) {
-   const double u = inv_logit(logit_u);
+   const double u = sigmoid(logit_u);
    const int lg = 1; // log the density
    return R::dbeta(u, a, b, lg) + R::dlogis(logit_u, 0, 1, lg);
   }

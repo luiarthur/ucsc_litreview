@@ -3,7 +3,9 @@
 #include "Prior_addon.h"
 #include "State_addon.h"
 #include "Fixed_addon.h"
-#include "updates_includes.h"
+
+#include "missing_mechanism.h"
+#include "update_beta.h"
 
 using namespace Rcpp;
 
