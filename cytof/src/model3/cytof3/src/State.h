@@ -4,22 +4,22 @@
 #include <RcppArmadillo.h>
 
 struct State {
-  arma::vec beta_0; // I
-  arma::vec beta_1; // I
+  Rcpp::NumericVector beta_0; // I
+  Rcpp::NumericVector beta_1; // I
   std::vector<Rcpp::NumericMatrix> missing_y; // I x (N[i] x J)
-  arma::vec mus_0; // L0
-  arma::vec mus_1; // L1
-  arma::mat sig2_0; // I x L0
-  arma::mat sig2_1; // I x L1
-  arma::vec s; // I
+  Rcpp::NumericVector mus_0; // L0
+  Rcpp::NumericVector mus_1; // L1
+  Rcpp::NumericMatrix sig2_0; // I x L0
+  Rcpp::NumericMatrix sig2_1; // I x L1
+  Rcpp::NumericVector s; // I
   std::vector<Rcpp::IntegerMatrix> gam; // I x (N[i] x J)
   arma::cube eta_0; // I x J x L0
   arma::cube eta_1; // I x J x L1
-  arma::vec v; // K
+  Rcpp::NumericVector v; // K
   double alpha;
-  arma::mat H; // J x K
+  Rcpp::NumericMatrix H; // J x K
   std::vector<Rcpp::IntegerVector> lam; // I x N[i]
-  arma::mat W; // I x K
+  Rcpp::NumericMatrix W; // I x K
 };
 
 

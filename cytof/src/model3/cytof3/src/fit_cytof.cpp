@@ -3,6 +3,7 @@
 #include "Prior_addon.h"
 #include "State_addon.h"
 #include "Fixed_addon.h"
+#include "util.h"
 
 #include "missing_mechanism.h"
 #include "update_beta.h"

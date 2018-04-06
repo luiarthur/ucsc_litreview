@@ -13,6 +13,7 @@ arma::mat shuffle_mat(arma::mat X) { //Tested. Good.
  return X.rows(idx);
 }
 
+/*
 // Not safe. FIXME: Limit type to numerics only?
 // see:
 //   https://blog.rmf.io/cxx11/almost-static-if
@@ -43,5 +44,6 @@ Rcpp::List vmatrix_to_lmatrix(const std::vector<arma::Mat<T>> &vm) {
   
   return out;
 }
+*/
 
 #endif

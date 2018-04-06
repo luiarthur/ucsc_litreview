@@ -7,12 +7,12 @@
 using namespace Rcpp;
 
 // test_gen_data_obj
-Rcpp::List test_gen_data_obj(const std::vector<arma::mat>& y);
+Rcpp::List test_gen_data_obj(const std::vector<Rcpp::NumericMatrix>& y);
 RcppExport SEXP _cytof3_test_gen_data_obj(SEXP ySEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
-    Rcpp::traits::input_parameter< const std::vector<arma::mat>& >::type y(ySEXP);
+    Rcpp::traits::input_parameter< const std::vector<Rcpp::NumericMatrix>& >::type y(ySEXP);
     rcpp_result_gen = Rcpp::wrap(test_gen_data_obj(y));
     return rcpp_result_gen;
 END_RCPP
