@@ -63,14 +63,11 @@ BEGIN_RCPP
 END_RCPP
 }
 
-RcppExport SEXP _rcpp_module_boot_mod_bar();
-
 static const R_CallMethodDef CallEntries[] = {
     {"_cytof3_test_gen_data_obj", (DL_FUNC) &_cytof3_test_gen_data_obj, 1},
     {"_cytof3_cytof3_unit_tests_cpp", (DL_FUNC) &_cytof3_cytof3_unit_tests_cpp, 0},
     {"_cytof3_fit_cytof_cpp", (DL_FUNC) &_cytof3_fit_cytof_cpp, 15},
     {"_cytof3_shuffle_mat", (DL_FUNC) &_cytof3_shuffle_mat, 1},
-    {"_rcpp_module_boot_mod_bar", (DL_FUNC) &_rcpp_module_boot_mod_bar, 0},
     {NULL, NULL, 0}
 };
 

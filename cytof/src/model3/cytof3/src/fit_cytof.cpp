@@ -18,9 +18,9 @@ std::vector<List> fit_cytof_cpp(
     bool show_timings=false, double prop_for_training=.05, bool shuffle_data=false,
     bool normalize_loglike=false) {
   
-    const Prior prior = gen_prior_obj(prior_ls);
-    const Fixed fixed= gen_fixed_obj(fixed_ls);
-    State init= gen_state_obj(init_ls);
+    Prior prior;
+    Fixed fixed;
+    State init;
     
     auto update = [&](State &state) {
     };
