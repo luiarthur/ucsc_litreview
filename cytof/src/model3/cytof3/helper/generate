@@ -7,3 +7,5 @@ for f in $FILES
 do
   ./struct_expand.py ${SRC_DIR}/${f}
 done
+
+./gen_updates_includes

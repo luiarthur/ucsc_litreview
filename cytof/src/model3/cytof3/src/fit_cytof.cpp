@@ -3,6 +3,7 @@
 #include "Prior_addon.h"
 #include "State_addon.h"
 #include "Fixed_addon.h"
+#include "updates_includes.h"
 
 using namespace Rcpp;
 

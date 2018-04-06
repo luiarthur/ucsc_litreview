@@ -4,7 +4,7 @@
 \alias{prob_miss}
 \title{Compute probability of missing using missing mechanism}
 \usage{
-prob_miss(y, c0, c1, b0, b1)
+prob_miss(y, b0, b1, c0, c1)
 }
 \arguments{
 \item{y, }{c0, b0, b1, c1}
