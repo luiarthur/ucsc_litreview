@@ -18,6 +18,7 @@ struct State {
   Rcpp::NumericVector v; // K
   double alpha;
   Rcpp::NumericMatrix H; // J x K
+  Rcpp::IntegerMatrix Z;
   std::vector<Rcpp::IntegerVector> lam; // I x N[i]
   Rcpp::NumericMatrix W; // I x K
 };

@@ -22,6 +22,7 @@ gen_default_init = function(y, prior, K=10, L0=10, L1=10) {
     v         = rep(1/K, K),
     alpha     = 1.0,
     H         = matrix(0, J, K),
+    Z         = matrix(sample(0:1, J*K, replace=TRUE), J, K),
     lam       = lapply(N, function(Ni) double(Ni)),
     W         = matrix(1/K, I, K)
   ) 
