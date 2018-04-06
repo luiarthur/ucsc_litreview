@@ -1,9 +1,9 @@
-#ifndef FIXED_H
-#define FIXED_H
+#ifndef LOCKED_H
+#define LOCKED_H
 
 #include <Rcpp.h>
 
-struct Fixed {
+struct Locked {
   bool beta_0 = false;
   bool beta_1 = false;
   bool missing_y = false;

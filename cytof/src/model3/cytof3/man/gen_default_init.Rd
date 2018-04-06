@@ -14,3 +14,6 @@ gen_default_init(y, prior, K = 10, L0 = 10, L1 = 10)
 \description{
 Generate default init
 }
+\examples{
+init = gen_default_init(y, prior, K=10, L0=10, L1=10)
+}

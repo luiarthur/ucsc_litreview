@@ -1,10 +1,11 @@
 gen_default_prior = function(J, K=10, L0=10, L1=10) {
   #' Generate default prior
-  #' @example prior = gen_default_prior(J=32, K=10, L0=10, L1=10)
+  #' @examples prior = gen_default_prior(J=32, K=10, L0=10, L1=10)
   #' @export
-  #' TODO
-  #'   CHECK: a_sig, a_s, b_s
-  #'   Think of good priors for: alpha (a_alpha, b_alpha)
+  #' @note
+  #' TODO:\cr
+  #' - CHECK: a_sig, a_s, b_s. \cr
+  #' - Think of good priors for: alpha (a_alpha, b_alpha) \cr
   list(
     c0 = -2, #double
     c1 = 6.7, #double

@@ -9,3 +9,11 @@ gen_default_prior(J, K = 10, L0 = 10, L1 = 10)
 \description{
 Generate default prior
 }
+\note{
+TODO:\cr
+- CHECK: a_sig, a_s, b_s. \cr
+- Think of good priors for: alpha (a_alpha, b_alpha) \cr
+}
+\examples{
+prior = gen_default_prior(J=32, K=10, L0=10, L1=10)
+}

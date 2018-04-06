@@ -12,19 +12,10 @@ rm -f ${MODEL_NAME}/src/*.{so,o}
 time R CMD INSTALL --no-multiarch ${MODEL_NAME}
 echo
 
-### Run Cpp Unit Tests ###
-R -q -e "library(${MODEL_NAME}); system.time(${MODEL_NAME}::cytof3_unit_tests_R())"
-R -q -e "library(${MODEL_NAME}); system.time(${MODEL_NAME}::cytof3_unit_tests_cpp())"
-
-
-### OLD ########################
-#rm -f cytof2_*
-#R CMD REMOVE cytof2
-
-### Generate .tar.gz
-#R CMD build cytof2 
-
-#R CMD INSTALL cytof2*.tar.gz
 
 ### Run Cpp Unit Tests ###
-#R -q -e "library(cytof2); system.time(cytof2::unit_tests())"
+while getopts ":t" opt
+do
+  R -q -e "library(${MODEL_NAME}); system.time(${MODEL_NAME}::cytof3_unit_tests_R())"
+  R -q -e "library(${MODEL_NAME}); system.time(${MODEL_NAME}::cytof3_unit_tests_cpp())"
+done
