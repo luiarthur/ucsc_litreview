@@ -2,13 +2,15 @@
 % Please edit documentation in R/RcppExports.R
 \name{fit_cytof_cpp}
 \alias{fit_cytof_cpp}
-\title{Cytof Model for fixed K}
+\title{Cytof Model for fixed K
+TODO: add descriptions for params}
 \usage{
-fit_cytof_cpp(y, B, burn, prior_ls, fixed_ls, init_ls, warmup = 100L,
-  thin = 1L, thin_K = 5L, compute_loglike_every = 1L, print_freq = 10L,
+fit_cytof_cpp(y, B, burn, prior_ls, fixed_ls, init_ls, thin = 1L,
+  thin_some = 5L, compute_loglike_every = 1L, print_freq = 10L,
   ncores = 1L, show_timings = FALSE, prop_for_training = 0.05,
   shuffle_data = FALSE, normalize_loglike = FALSE)
 }
 \description{
 Cytof Model for fixed K
+TODO: add descriptions for params
 }

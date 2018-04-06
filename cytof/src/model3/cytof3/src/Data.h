@@ -40,6 +40,9 @@ Data gen_data_obj(const std::vector<arma::mat> &y) {
   return Data{y, N, N_sum, J, I, M};
 }
 
+// 'A test function for generating a data object from a list of matrices (y)
+// '@param y: List of matrices of same dimensions.
+// '@export
 // [[Rcpp::export]]
 Rcpp::List test_gen_data_obj(const std::vector<arma::mat> &y) {
   Data data = gen_data_obj(y);

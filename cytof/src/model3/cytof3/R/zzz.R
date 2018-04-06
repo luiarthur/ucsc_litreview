@@ -9,4 +9,5 @@
 # importFrom(Rcpp, evalCpp)
 # exportPattern("^[[:alpha:]]+")
 ####################################
-NULL
+#NULL
+Rcpp::loadModule("Cytof_Module", TRUE)

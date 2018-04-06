@@ -11,38 +11,38 @@
 #include <math.h>          // isnan
 #include <omp.h>           // shared memory multicore parallelism
 
-
 using namespace Rcpp;
 
 // Enable C++11 via this plugin (Rcpp 0.10.3 or later)
 // [[Rcpp::plugins(cpp11)]]
 
+
 namespace mcmc {
   // Generic Gibbs Sampler
   template <typename S>
   void gibbs(S state,
-           std::function<void(S&)> update, // function to update state
-           std::function<void(const S&, int)> assign_to_out, // function to assign to out and perhaps do adaptive mcmc
-           int B, int burn, int print_freq) {
+          std::function<void(S&)> update, // function to update state
+          std::function<void(const S&, int)> assign_to_out, // function to assign to out and perhaps do adaptive mcmc
+          int B, int burn, int print_freq) {
   
-   assign_to_out(state, 0);
-  
-   for (int i=1; i<B+burn; i++) {
+    assign_to_out(state, 0);
+    
+    for (int i=1; i<B+burn; i++) {
      update(state);
      assign_to_out(state, i);
-  
+    
      // Don't checkUserInterrupt if the sampler is super fast.
      Rcpp::checkUserInterrupt();
-  
+    
      if (print_freq > 0 && (i+1) % print_freq == 0) {
        //Rcout << "\rProgress:  " << i+1 << "/" << B+burn << "\t";
        Rcout << "\tProgress:  " << i+1 << "/" << B+burn << "\t";
      }
-   }
-  
-   if (print_freq > 0) { Rcout << std::endl; }
+    }
+    
+    if (print_freq > 0) { Rcout << std::endl; }
   }
-  
+
   double logit(double p, double a=0, double b=1) {
    return log((p - a) / (b - p));
   }
