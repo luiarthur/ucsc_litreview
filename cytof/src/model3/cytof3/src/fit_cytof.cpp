@@ -8,7 +8,7 @@
 #include "missing_mechanism.h"
 #include "update_beta.h"
 #include "update_missing_y.h"
-// #include "update_mus.h"
+#include "update_mus.h"
 // #include "update_sig2.h"
 // #include "update_s.h"
 // #include "update_gam.h"

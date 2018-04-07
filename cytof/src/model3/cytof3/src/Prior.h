@@ -17,6 +17,8 @@ struct Prior {
   double a_beta1;
   double b_beta1;
   double cs_beta1;
+  // missing_y
+  double cs_y;
   // psi. Gibbs.
   double psi_0; double psi_1;
   // tau. Gibbs.

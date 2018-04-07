@@ -23,5 +23,12 @@ struct State {
   Rcpp::NumericMatrix W; // I x K
 };
 
+int get_L0(const State &state) {
+  return state.mus_0.size();
+}
+
+int get_L1(const State &state) {
+  return state.mus_1.size();
+}
 
 #endif

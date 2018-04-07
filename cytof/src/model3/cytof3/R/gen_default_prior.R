@@ -15,6 +15,7 @@ gen_default_prior = function(J, K=10, L0=10, L1=10) {
     a_beta1 = 288, #double
     b_beta1 = 170, #double
     cs_beta1 = 1, #double
+    cs_y = 1, #double
     psi_0 = -2, #double
     psi_1 = 2, #double
     tau2_0 = .1, #double
