@@ -31,4 +31,20 @@ int get_L1(const State &state) {
   return state.mus_1.size();
 }
 
+Rcpp::NumericVector get_mus_z(const State &state, int z) {
+  return (z == 0 ? state.mus_0 : state.mus_1);
+}
+
+Rcpp::NumericMatrix get_sig2_z(const State &state, int z) {
+  return (z == 0 ? state.sig2_0 : state.sig2_1);
+}
+
+arma::cube get_eta_z(const State &state, int z) {
+  return (z == 0 ? state.eta_0 : state.eta_1);
+}
+
+int get_Lz(const State &state, int z){
+  return (z == 0 ? get_L0(state) : get_L1(state));
+}
+
 #endif

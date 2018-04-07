@@ -45,4 +45,12 @@ struct Prior {
   int K;
 };
 
+double get_psi_z(const Prior &prior, int z) {
+  return (z == 0 ? prior.psi_0 : prior.psi_1);
+}
+
+double get_tau2_z(const Prior &prior, int z) {
+  return (z == 0 ? prior.tau2_0 : prior.tau2_1);
+}
+
 #endif
