@@ -25,6 +25,7 @@
       - For variational inference, code in Scala
 - if not doing variational inference, use C++
 - just store quantiles for memory efficiency?
+- Maybe try MCMC in Scala with `ND4J` for matrices? (`ND4J` supports nd-arrays)
 
 
 [1]: https://arxiv.org/pdf/1206.1901.pdf

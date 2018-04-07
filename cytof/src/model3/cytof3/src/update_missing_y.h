@@ -8,7 +8,7 @@
 #include "Locked.h"
 #include "missing_mechanism.h"
 
-void update_missing_yinj(State &state, const Data &data, const Prior &prior, const Locked &locked, int i, int n, int j){
+void update_missing_yinj(State &state, const Data &data, const Prior &prior, int i, int n, int j){
   auto log_fc = [&](double y_inj) {
     double fc = 0;
     int z = state.Z(j, state.lam[i](n));
@@ -47,7 +47,7 @@ void update_missing_y(State &state, const Data &data, const Prior &prior, const 
       for (int j=0; j < data.J; j++) {
         for (int n=0; n < data.N[i]; n++) {
           if (data.M[i](n, j) == 1) { // 1 ->  y_inj is missing
-            update_missing_yinj(state, data, prior, locked, i, n, j);
+            update_missing_yinj(state, data, prior, i, n, j);
           }
         }
       }
