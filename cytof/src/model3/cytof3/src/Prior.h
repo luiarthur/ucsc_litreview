@@ -53,4 +53,8 @@ double get_tau2_z(const Prior &prior, int z) {
   return (z == 0 ? prior.tau2_0 : prior.tau2_1);
 }
 
+double get_a_eta_z(const Prior &prior, int z) {
+  return (z == 0 ? prior.a_eta0 : prior.a_eta1);
+}
+
 #endif

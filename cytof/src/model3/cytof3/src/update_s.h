@@ -15,7 +15,7 @@ void update_si(State &state, const Data &data, const Prior &prior, const Locked 
   for (int z=0; z<2; z++) {
     Lz = get_Lz(state, z);
     for (int l=0; l<Lz; l++) {
-      x += 1 / get_sig2_z(state, z)(i, l);
+      x += 1 / get_sig2_z(state, z)->at(i, l);
     }
   }
 

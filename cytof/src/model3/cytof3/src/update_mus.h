@@ -22,7 +22,7 @@ void update_muszl(State &state, const Data &data, const Prior &prior, const SS_m
   double stat_var = 0;
   double stat_mean = 0;
   for (int i=0; i<data.I; i++) {
-    stat_var += ss_mus.S_card[z](i,l) / get_sig2_z(state, z)(i,l);
+    stat_var += ss_mus.S_card[z](i,l) / get_sig2_z(state, z)->at(i,l);
     stat_mean += ss_mus.S_sum[z](i,l);
   } 
 
@@ -60,7 +60,7 @@ void update_mus(State &state, const Data &data, const Prior &prior, const Locked
       for (int n=0; n<Ni; n++) {
         z = state.Z(j, state.lam[i](n));
         ss_mus.S_card[z](i,l)++;
-        ss_mus.S_sum[z](i,l) += state.missing_y[i](n,j) / get_sig2_z(state,z)(i,l);
+        ss_mus.S_sum[z](i,l) += state.missing_y[i](n,j) / get_sig2_z(state,z)->at(i,l);
       }
     }
   } 
