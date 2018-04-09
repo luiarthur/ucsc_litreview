@@ -14,9 +14,9 @@
 #include "update_gam.h"
 #include "update_eta.h"
 // #include "update_v.h"
-// #include "update_alpha.h"
-// #include "update_H.h"
-// #include "update_lam.h"
+#include "update_alpha.h"
+#include "update_H.h"
+#include "update_lam.h"
 #include "update_W.h"
 // #include "update_theta.h"
 

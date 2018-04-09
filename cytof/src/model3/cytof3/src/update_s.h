@@ -19,10 +19,10 @@ void update_si(State &state, const Data &data, const Prior &prior, const Locked 
     }
   }
 
-  double a_new = prior.a_s + (get_L0(state) + get_L1(state)) * prior.a_sig;
-  double b_new = prior.b_s + x;
+  const double a_new = prior.a_s + (get_L0(state) + get_L1(state)) * prior.a_sig;
+  const double b_new = prior.b_s + x; // b_new = rate
 
-  state.s(i) = R::rgamma(a_new, b_new);
+  state.s(i) = R::rgamma(a_new, 1/b_new); // R::rgamma(shape, scale)
 }
 
 

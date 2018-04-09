@@ -34,6 +34,7 @@ void update_gam(State &state, const Data &data, const Prior &prior, const Locked
   int Ni;
 
   if (!locked.gam) for (int i=0; i < I; i++) {
+    Ni = data.N[i];
     for (int j=0; j < J; j++) {
       for (int n=0; n < Ni; n++) {
         update_gam_inj(state, data, prior, i, n, j);
