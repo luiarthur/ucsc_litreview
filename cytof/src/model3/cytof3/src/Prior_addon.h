@@ -24,6 +24,7 @@ Prior gen_prior_obj(const Rcpp::List &prior_ls) {
   prior.b_s = Rcpp::as<double>(prior_ls["b_s"]);
   prior.a_eta0 = Rcpp::as<double>(prior_ls["a_eta0"]);
   prior.a_eta1 = Rcpp::as<double>(prior_ls["a_eta1"]);
+  prior.cs_v = Rcpp::as<double>(prior_ls["cs_v"]);
   prior.a_alpha = Rcpp::as<double>(prior_ls["a_alpha"]);
   prior.b_alpha = Rcpp::as<double>(prior_ls["b_alpha"]);
   prior.cs_h = Rcpp::as<double>(prior_ls["cs_h"]);

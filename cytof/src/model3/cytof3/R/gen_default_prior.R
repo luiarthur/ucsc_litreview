@@ -25,6 +25,7 @@ gen_default_prior = function(J, K=10, L0=10, L1=10) {
     b_s = 3, #double
     a_eta0 = 1 / L0, #double
     a_eta1 = 1 / L1, #double
+    cs_v = 1, #double
     a_alpha = 3, #double
     b_alpha = 2, #double
     cs_h = 1, #double

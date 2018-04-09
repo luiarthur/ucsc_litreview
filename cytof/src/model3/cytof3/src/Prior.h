@@ -30,6 +30,8 @@ struct Prior {
   // eta. Gibbs.
   double a_eta0;
   double a_eta1;
+  // v. metropolis
+  double cs_v;
   // alpha. Gibbs.
   double a_alpha;
   double b_alpha;

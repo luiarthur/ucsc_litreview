@@ -52,12 +52,12 @@ namespace mcmc {
     return (b + a * u) / (1 + u);
   }
   
-  arma::vec logit_vec(arma::vec p, double a=0, double b=1) {
+  Rcpp::NumericVector logit_vec(Rcpp::NumericVector p, double a=0, double b=1) {
     return log((p - a) / (b - p));
   }
   
-  arma::vec sigmoid_vec(arma::vec x, double a=0, double b=1) {
-    const arma::vec u = exp(-x);
+  Rcpp::NumericVector sigmoid_vec(Rcpp::NumericVector x, double a=0, double b=1) {
+    const Rcpp::NumericVector u = exp(-x);
     return (b + a * u) / (1 + u);
   }
   
@@ -150,7 +150,7 @@ namespace mcmc {
   // Random normals with some means and variances
   template <typename T>
   T rnorms(T mu, T sd) {
-    const int N = T(mu.size());
+    const int N = mu.size();
     T out(N);
     for (int i=0; i < N; i++) {
       out(i) = R::rnorm(mu(i), sd(i));

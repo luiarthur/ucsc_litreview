@@ -17,7 +17,7 @@ struct State {
   arma::cube eta_1; // I x J x L1
   Rcpp::NumericVector v; // K
   double alpha;
-  Rcpp::NumericMatrix H; // J x K
+  arma::mat H; // J x K
   Rcpp::IntegerMatrix Z;
   std::vector<Rcpp::IntegerVector> lam; // I x N[i]
   Rcpp::NumericMatrix W; // I x K

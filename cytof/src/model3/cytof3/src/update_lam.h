@@ -6,29 +6,19 @@
 #include "Data.h"
 #include "Prior.h"
 #include "Locked.h"
+#include "dmixture.h"
 
 void update_lam_in(State &state, const Data &data, const Prior &prior, int i, int n){
   const int J = data.J;
   const int K = prior.K;
-  const int lg = 0; // no log
-  int Lz;
   int z_jk;
   double log_p[K];
-  double mix_den;
 
   for (int k=0; k<K; k++) {
     log_p[k] = log(state.W(i, k));
     for (int j=0; j<J; j++) {
       z_jk = state.Z(j,k);
-      Lz = get_Lz(state, z_jk);
-      mix_den = 0;
-      for (int l=0; l<Lz; l++) {
-        mix_den += get_eta_z(state,z_jk)->at(i,j,l) * 
-          R::dnorm(data.y[i](n, j), 
-                   get_mus_z(state, Lz)->at(l),
-                   get_sig2_z(state, Lz)->at(i,l), lg);
-      }
-      log_p[k] += log(mix_den);
+      log_p[k] += log( dmixture(state, data, prior, z_jk, i, n, j) );
     }
   }
 

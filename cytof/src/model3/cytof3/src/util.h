@@ -13,6 +13,12 @@ arma::mat shuffle_mat(arma::mat X) { //Tested. Good.
  return X.rows(idx);
 }
 
+// Return the uvec indices with a single index removed
+arma::uvec minus_idx(int vec_length, int idx_to_exclude){
+  const auto indices = arma::regspace<arma::vec>(0, vec_length-1);
+  return arma::find(indices != idx_to_exclude);
+}
+
 /*
 // Not safe. FIXME: Limit type to numerics only?
 // see:
