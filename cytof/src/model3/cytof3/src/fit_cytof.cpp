@@ -25,14 +25,18 @@ std::vector<List> fit_cytof_cpp(
     const Locked locked= gen_locked_obj(locked_ls);
     State init= gen_state_obj(init_ls);
     
+    // TODO: ll?
+
     auto update = [&](State &state) {
+      //TODO
     };
     
+    std::vector<List> out(B);
     auto assign_to_out = [&](const State &state, int i) {
+      //TODO
     };
     
     mcmc::gibbs<State>(init, update, assign_to_out, B, burn, print_freq);
     
-    std::vector<List> out(B);
     return out;  
 }  
