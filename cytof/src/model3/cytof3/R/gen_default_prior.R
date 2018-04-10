@@ -1,11 +1,24 @@
-gen_default_prior = function(J, K=10, L0=10, L1=10) {
+gen_default_prior = function(y, K=10, L0=10, L1=10) {
   #' Generate default prior
+  #' @param y   List of matrices with same number of columns
+  #' @param K   Maximum number of cell-types
+  #' @param L0  number of mixture components for unexpressed markers
+  #' @param L1  number of mixture components for expressed markers
   #' @examples prior = gen_default_prior(J=32, K=10, L0=10, L1=10)
   #' @export
   #' @note
   #' TODO:\cr
   #' - CHECK: a_sig, a_s, b_s. \cr
   #' - Think of good priors for: alpha (a_alpha, b_alpha) \cr
+
+  ### Make sure that all y[[i]] have same number of columns
+  stopifnot(length(unique(sapply(y, NCOL))) == 1)
+
+
+  J = NCOL(y[[1]])
+  N = lapply(y, NROW)
+  I = length(N)
+
   list(
     c0 = -2, #double
     c1 = 6.7, #double
@@ -31,6 +44,13 @@ gen_default_prior = function(J, K=10, L0=10, L1=10) {
     cs_h = 1, #double
     G = diag(J), #arma::mat
     d_W = 1/K, #double
-    K = K #int
+    K = K, #int
+    ### Not in struct Prior
+    K         = K,
+    L0        = L0,
+    L1        = L1,
+    J         = J,
+    N         = N,
+    I         = I
   )
 }

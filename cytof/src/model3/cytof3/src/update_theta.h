@@ -22,16 +22,16 @@
 #include "update_lam.h" // gibbs
 #include "update_W.h" // gibbs
 
-void update_theta(State &state, const Data &data, const Prior &prior, const Locked &locked) {
-  update_beta(state, data, prior, locked);
-  update_missing_y(state, data, prior, locked);
+void update_theta(State &state, const Data &data, const Prior &prior, const Locked &locked, int thin_some=1) {
+  update_beta(state, data, prior, locked); // metropolis
+  update_missing_y(state, data, prior, locked); // metropolis
   update_mus(state, data, prior, locked);
   update_sig2(state, data, prior, locked);
   update_s(state, data, prior, locked);
   update_gam(state, data, prior, locked);
   update_eta(state, data, prior, locked);
-  update_v(state, data, prior, locked);
-  update_H(state, data, prior, locked);
+  update_v(state, data, prior, locked); // metropolis
+  update_H(state, data, prior, locked); // metropolis
   update_lam(state, data, prior, locked);
   update_W(state, data, prior, locked);
 }

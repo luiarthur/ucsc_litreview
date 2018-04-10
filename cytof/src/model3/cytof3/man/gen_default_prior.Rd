@@ -4,7 +4,16 @@
 \alias{gen_default_prior}
 \title{Generate default prior}
 \usage{
-gen_default_prior(J, K = 10, L0 = 10, L1 = 10)
+gen_default_prior(y, K = 10, L0 = 10, L1 = 10)
+}
+\arguments{
+\item{y}{List of matrices with same number of columns}
+
+\item{K}{Maximum number of cell-types}
+
+\item{L0}{number of mixture components for unexpressed markers}
+
+\item{L1}{number of mixture components for expressed markers}
 }
 \description{
 Generate default prior

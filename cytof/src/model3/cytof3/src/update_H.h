@@ -7,11 +7,12 @@
 #include "Prior.h"
 #include "Locked.h"
 #include "update_Z.h"
-#include "util.h"
+#include "util.h" // minus_idx
+#include "dmixture.h"
 
 
 // TODO: profile this function. Optimize if bottleneck.
-void compute_m_S_for_hjk(const State &state, const Data &data, const Prior &prior, double &m_j, double &S2_j, const int j, const int k) {
+void compute_m_S2_for_hjk(const State &state, const Data &data, const Prior &prior, double &m_j, double &S2_j, const int j, const int k) {
   const int J = data.J;
   const auto minus_j = minus_idx(J, j);
   arma::uvec at_k(1); at_k(0) = k;
@@ -24,8 +25,33 @@ void compute_m_S_for_hjk(const State &state, const Data &data, const Prior &prio
 
 void update_Hjk(State &state, const Data &data, const Prior &prior, int j, int k) {
   double m_j; double S2_j;
-  compute_m_S_for_hjk(state, data, prior, m_j, S2_j, j, k);
-  // TODO: Core implementation
+  compute_m_S2_for_hjk(state, data, prior, m_j, S2_j, j, k);
+
+  const int J = data.J;
+  const int I = data.I;
+  const int K = prior.K;
+
+  // TODO: Profile and make more efficient? Joint updates?
+  auto log_fc = [&](double h_jk) {
+    const double lp = -pow(h_jk - m_j, 2) / (2 * S2_j);
+    double ll = 0;
+    int Ni;
+    int z_jk;
+
+    for (int i=0; i<I; i++) {
+      Ni = data.N(i);
+      for (int n=0; n<Ni; n++) {
+        if (state.lam[i](n) == k) {
+          z_jk = compute_zjk(h_jk, prior.G(j,j), state.v(k));
+          ll += dmixture(state, data, prior, z_jk, i, n, j);
+        }
+      }
+    }
+
+    return lp + ll;
+  };
+
+  state.H(j, k) = mcmc::mh(state.H(j,k), log_fc, prior.cs_h);
 }
 
 void update_H(State &state, const Data &data, const Prior &prior, const Locked &locked) {
@@ -37,6 +63,7 @@ void update_H(State &state, const Data &data, const Prior &prior, const Locked &
       for (int k=0; k<K; k++) {
         update_Hjk(state, data, prior, j, k);
       }
+      update_Z(state, data, prior, locked);
     }
   }
 }

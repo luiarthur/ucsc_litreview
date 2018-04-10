@@ -7,9 +7,6 @@
 #include <RcppArmadillo.h> // linear algebra
 #include <RcppTN.h>        // truncated normal header files
 #include <functional>      // std::function
-#include <algorithm>       // std::max(a,b) returns the larger of a and b
-#include <math.h>          // isnan
-#include <omp.h>           // shared memory multicore parallelism
 
 using namespace Rcpp;
 

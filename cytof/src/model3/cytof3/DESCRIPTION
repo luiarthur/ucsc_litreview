@@ -7,13 +7,14 @@ Author: Arthur Lui
 Maintainer: Arthur Lui <luiarthur@ucsc.edu>
 Description: Fits a bayesian model to CyTOF data.
 License: GPL (>= 2)
+Depends: RcppTN
+Remotes: luiarthur/rcommon.git
 Imports:
   Rcpp (>= 0.12.10),
   rcommon,
   gtools,
   foreach,
   doMC
-Remotes: luiarthur/rcommon
 LinkingTo: Rcpp, RcppArmadillo, RcppTN
 X-CRAN-Comment: Libraries listed in `LinkingTo` are header files to be included into the Cpp source code. Libraries listed in `Imports` are libraries that are imported and used in R code.  Libraries in `Remotes` are libraries to be installed from github, or other external repos (other than CRAN). Libraries in `Depends` are attached. Look up the difference between `Imports` and `Depends`.
 RoxygenNote: 6.0.1
