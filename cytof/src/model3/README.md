@@ -26,6 +26,7 @@
 - if not doing variational inference, use C++
 - just store quantiles for memory efficiency?
 - Maybe try MCMC in Scala with `ND4J` for matrices? (`ND4J` supports nd-arrays)
+- Adaptive MCMC
 
 
 [1]: https://arxiv.org/pdf/1206.1901.pdf
@@ -38,3 +39,4 @@
 [8]: http://proceedings.mlr.press/v9/williamson10a/williamson10a.pdf
 [9]: https://arxiv.org/pdf/1209.4360.pdf
 [10]: https://arxiv.org/pdf/1310.5438.pdf
+[11]: http://probability.ca/jeff/ftpdir/adaptex.pdf
