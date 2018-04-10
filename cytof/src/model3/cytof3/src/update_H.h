@@ -17,10 +17,10 @@ void compute_m_S2_for_hjk(const State &state, const Data &data, const Prior &pri
   const auto minus_j = minus_idx(J, j);
   arma::uvec at_k(1); at_k(0) = k;
   arma::uvec at_j(1); at_j(0) = j;
-  const auto C = prior.G(at_j, minus_j) * prior.G(minus_j, minus_j).i();
+  const arma::mat C = prior.G(at_j, minus_j) * prior.G(minus_j, minus_j).i();
 
   m_j = arma::as_scalar( C * state.H(minus_j, at_k) );
-  S2_j = arma::as_scalar( prior.G(j,j) - C * prior.G(minus_j, at_j) );
+  S2_j = prior.G(j,j) - arma::as_scalar( C * prior.G(minus_j, at_j) );
 }
 
 void update_Hjk(State &state, const Data &data, const Prior &prior, int j, int k) {
@@ -59,11 +59,11 @@ void update_H(State &state, const Data &data, const Prior &prior, const Locked &
   const int K = prior.K;
 
   if (!locked.H && !locked.Z) {
-    for (int j=0; j<J; j++) {
-      for (int k=0; k<K; k++) {
+    for (int k=0; k<K; k++) {
+      for (int j=0; j<J; j++) {
         update_Hjk(state, data, prior, j, k);
+        state.Z(j,k) = compute_zjk(state.H(j,k), prior.G(j,j), state.v(k));
       }
-      update_Z(state, data, prior, locked);
     }
   }
 }

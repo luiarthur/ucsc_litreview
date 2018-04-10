@@ -80,6 +80,7 @@ std::vector<List> fit_cytof_cpp(
       out[i - burn] = List::create(
         //Named("beta_0") = state.beta_0,
         //Named("beta_1") = state.beta_1,
+        Named("Z") = state.Z,
         Named("alpha") = state.alpha
         //Named("ll") = ll
       );
