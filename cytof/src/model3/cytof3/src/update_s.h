@@ -28,8 +28,8 @@ void update_si(State &state, const Data &data, const Prior &prior, const Locked 
 
 void update_s(State &state, const Data &data, const Prior &prior, const Locked &locked) {
   const int I = data.I;
-  if (!locked.s) for (int i=0; i<data.I; i++) {
-    update_s(state, data, prior, locked);
+  if (!locked.s) for (int i=0; i<I; i++) {
+    update_si(state, data, prior, locked, i);
   }
 }
 

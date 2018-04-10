@@ -42,6 +42,7 @@ std::vector<List> fit_cytof_cpp(
   State init= gen_state_obj(init_ls);
   const int I = data.I;
   const int J = data.J;
+
   
   // update function
   auto update = [&](State &state) {
@@ -49,9 +50,6 @@ std::vector<List> fit_cytof_cpp(
       update_theta(state, data, prior, locked, thin_some);
     }
   };
-
-  // loglike
-  double ll;
 
   // accumulater for sum of missing y's
   std::vector<Rcpp::NumericMatrix> missing_y_sum(I);
@@ -66,6 +64,8 @@ std::vector<List> fit_cytof_cpp(
   auto assign_to_out = [&](const State &state, int i) {
     // only do the following after burn-in
     if (i - burn >= 0) {
+      // loglike
+      double ll;
       // update loglike
       if ( (i-burn+1) % compute_loglike_every == 0 || i == burn ) {
         ll = compute_loglike(state, data, prior, normalize_loglike);
@@ -80,6 +80,7 @@ std::vector<List> fit_cytof_cpp(
       out[i - burn] = List::create(
         //Named("beta_0") = state.beta_0,
         //Named("beta_1") = state.beta_1,
+        Named("alpha") = state.alpha
         //Named("ll") = ll
       );
     }
@@ -95,8 +96,8 @@ std::vector<List> fit_cytof_cpp(
     }
   };
 
-  
   omp_set_num_threads(ncores);
+
   mcmc::gibbs<State>(init, update, assign_to_out, B, burn, print_freq);
   
   return out;  

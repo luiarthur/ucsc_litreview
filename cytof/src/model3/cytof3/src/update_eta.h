@@ -11,7 +11,8 @@
 void update_eta_zij(State &state, const Data &data, const Prior &prior, int z, int i, int j){
   const int Ni = data.N(i);
   const int Lz = get_Lz(state, z);
-  arma::rowvec a_new(Lz, get_a_eta_z(prior, z));
+  arma::rowvec a_new(Lz);
+  a_new.fill(get_a_eta_z(prior, z));
 
   for (int n=0; n<Ni; n++) {
     if (state.Z(j, state.lam[i](n)) == z) {

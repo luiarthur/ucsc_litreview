@@ -26,13 +26,15 @@ void update_lam_in(State &state, const Data &data, const Prior &prior, int i, in
 }
 
 void update_lam(State &state, const Data &data, const Prior &prior, const Locked &locked){
-  const int I = data.I;
-  int Ni;
+  if (!locked.lam) {
+    const int I = data.I;
+    int Ni;
 
-  for (int i=0; i<I; i++){
-    Ni = data.N[i];
-    for (int n=0; n<Ni; n++){
-      update_lam_in(state, data, prior, i, n);
+    for (int i=0; i<I; i++){
+      Ni = data.N[i];
+      for (int n=0; n<Ni; n++){
+        update_lam_in(state, data, prior, i, n);
+      }
     }
   }
 }

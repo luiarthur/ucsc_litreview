@@ -21,11 +21,7 @@ void update_gam_inj(State &state, const Data &data, const Prior &prior, int i, i
                          get_sig2_z(state, z)->at(i,l), lg);
   }
 
-  if (z==0) {
-    state.eta_0(i,n,j) = mcmc::wsample_index_log_prob(log_p, Lz);
-  } else {
-    state.eta_1(i,n,j) = mcmc::wsample_index_log_prob(log_p, Lz);
-  }
+  state.gam[i](n,j) = mcmc::wsample_index_log_prob(log_p, Lz);
 }
 
 void update_gam(State &state, const Data &data, const Prior &prior, const Locked &locked){
