@@ -6,23 +6,23 @@
 State gen_state_obj(const Rcpp::List &state_ls) {
   State state;
 
-  state.beta_0 = Rcpp::as<Rcpp::NumericVector>(state_ls["beta_0"]);
-  state.beta_1 = Rcpp::as<Rcpp::NumericVector>(state_ls["beta_1"]);
+  state.beta_0 = Rcpp::as<Rcpp::NumericVector>(state_ls["beta_0"]) + 0;
+  state.beta_1 = Rcpp::as<Rcpp::NumericVector>(state_ls["beta_1"]) + 0;
   state.missing_y = Rcpp::as<std::vector<Rcpp::NumericMatrix>>(state_ls["missing_y"]);
-  state.mus_0 = Rcpp::as<Rcpp::NumericVector>(state_ls["mus_0"]);
-  state.mus_1 = Rcpp::as<Rcpp::NumericVector>(state_ls["mus_1"]);
-  state.sig2_0 = Rcpp::as<Rcpp::NumericMatrix>(state_ls["sig2_0"]);
-  state.sig2_1 = Rcpp::as<Rcpp::NumericMatrix>(state_ls["sig2_1"]);
-  state.s = Rcpp::as<Rcpp::NumericVector>(state_ls["s"]);
+  state.mus_0 = Rcpp::as<Rcpp::NumericVector>(state_ls["mus_0"]) + 0;
+  state.mus_1 = Rcpp::as<Rcpp::NumericVector>(state_ls["mus_1"]) + 0;
+  state.sig2_0 = Rcpp::as<Rcpp::NumericMatrix>(state_ls["sig2_0"]) + 0;
+  state.sig2_1 = Rcpp::as<Rcpp::NumericMatrix>(state_ls["sig2_1"]) + 0;
+  state.s = Rcpp::as<Rcpp::NumericVector>(state_ls["s"]) + 0;
   state.gam = Rcpp::as<std::vector<Rcpp::IntegerMatrix>>(state_ls["gam"]);
-  state.eta_0 = Rcpp::as<arma::cube>(state_ls["eta_0"]);
-  state.eta_1 = Rcpp::as<arma::cube>(state_ls["eta_1"]);
-  state.v = Rcpp::as<Rcpp::NumericVector>(state_ls["v"]);
-  state.alpha = Rcpp::as<double>(state_ls["alpha"]);
-  state.H = Rcpp::as<arma::mat>(state_ls["H"]);
-  state.Z = Rcpp::as<Rcpp::IntegerMatrix>(state_ls["Z"]);
+  state.eta_0 = Rcpp::as<arma::cube>(state_ls["eta_0"]) + 0;
+  state.eta_1 = Rcpp::as<arma::cube>(state_ls["eta_1"]) + 0;
+  state.v = Rcpp::as<Rcpp::NumericVector>(state_ls["v"]) + 0;
+  state.alpha = Rcpp::as<double>(state_ls["alpha"]) + 0;
+  state.H = Rcpp::as<arma::mat>(state_ls["H"]) + 0;
+  state.Z = Rcpp::as<Rcpp::IntegerMatrix>(state_ls["Z"]) + 0;
   state.lam = Rcpp::as<std::vector<Rcpp::IntegerVector>>(state_ls["lam"]);
-  state.W = Rcpp::as<Rcpp::NumericMatrix>(state_ls["W"]);
+  state.W = Rcpp::as<Rcpp::NumericMatrix>(state_ls["W"]) + 0;
 
   return state;
 }

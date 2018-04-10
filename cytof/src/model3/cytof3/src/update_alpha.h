@@ -17,7 +17,15 @@ void update_alpha(State &state, const Data &data, const Prior &prior, const Lock
     }
 
     const double shape_new = prior.a_alpha + K;
-    const double rate_new = prior.b_alpha + sum_log_v / K;
+    const double rate_new = prior.b_alpha - sum_log_v / K;
+
+    if (!(shape_new > 0 && rate_new > 0)) {
+      Rcout << "Error in update_alpha! shape_new or rate_new <= 0." << std::endl;
+      Rcout << K << std::endl;
+      Rcout << prior.a_alpha << std::endl;
+      Rcout << prior.b_alpha << std::endl;
+      Rcout << sum_log_v << std::endl;
+    }
 
     state.alpha = R::rgamma(shape_new, 1/rate_new); // R::rgamma(shape, scale)
   }

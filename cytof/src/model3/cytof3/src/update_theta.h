@@ -39,12 +39,13 @@ void update_theta(State &state, const Data &data, const Prior &prior, const Lock
   update_eta(state, data, prior, locked);
   //Rcpp::Rcout << 8 << std::endl;
   update_v(state, data, prior, locked); // metropolis
-  update_alpha(state, data, prior, locked);
   //Rcpp::Rcout << 9 << std::endl;
-  update_H(state, data, prior, locked); // metropolis
+  update_alpha(state, data, prior, locked);
   //Rcpp::Rcout << 10 << std::endl;
-  update_lam(state, data, prior, locked);
+  update_H(state, data, prior, locked); // metropolis
   //Rcpp::Rcout << 11 << std::endl;
+  update_lam(state, data, prior, locked);
+  //Rcpp::Rcout << 12 << std::endl;
   update_W(state, data, prior, locked);
 }
 

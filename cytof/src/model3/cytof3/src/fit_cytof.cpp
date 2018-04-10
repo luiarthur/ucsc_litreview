@@ -39,7 +39,7 @@ std::vector<List> fit_cytof_cpp(
   const Prior prior = gen_prior_obj(prior_ls);
   const Locked locked= gen_locked_obj(locked_ls);
   const Data data = gen_data_obj(y);
-  State init= gen_state_obj(init_ls);
+  State init = gen_state_obj(init_ls);
   const int I = data.I;
   const int J = data.J;
 
@@ -60,12 +60,13 @@ std::vector<List> fit_cytof_cpp(
   // output 
   std::vector<List> out(B);
 
+  // loglike
+  double ll = 0;
+
   // assign function
   auto assign_to_out = [&](const State &state, int i) {
     // only do the following after burn-in
     if (i - burn >= 0) {
-      // loglike
-      double ll;
       // update loglike
       if ( (i-burn+1) % compute_loglike_every == 0 || i == burn ) {
         ll = compute_loglike(state, data, prior, normalize_loglike);
@@ -78,11 +79,24 @@ std::vector<List> fit_cytof_cpp(
 
       // TODO: profile the speed of these operations
       out[i - burn] = List::create(
-        //Named("beta_0") = state.beta_0,
-        //Named("beta_1") = state.beta_1,
-        Named("Z") = state.Z,
-        Named("alpha") = state.alpha
-        //Named("ll") = ll
+        Named("beta_0") = state.beta_0 + 0,
+        Named("beta_1") = state.beta_1 + 0,
+        //Named("missing_y") = state.missing_y, // too costly
+        Named("mus_0") = state.mus_0 + 0,
+        Named("mus_1") = state.mus_1 + 0,
+        Named("sig2_0") = state.sig2_0 + 0,
+        Named("sig2_1") = state.sig2_1 + 0,
+        Named("s") = state.s + 0,
+        Named("gam") = state.gam,
+        Named("eta_0") = state.eta_0 + 0,
+        Named("eta_1") = state.eta_1 + 0,
+        Named("v") = state.v + 0,
+        Named("alpha") = state.alpha + 0,
+        Named("H") = state.H + 0,
+        Named("Z") = state.Z + 0,
+        Named("lam") = state.lam,
+        Named("W") = state.W + 0,
+        Named("ll") = ll + 0
       );
     }
 

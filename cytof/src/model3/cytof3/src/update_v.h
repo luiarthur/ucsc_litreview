@@ -18,7 +18,9 @@ void update_v_jointly(State &state, const Data &data, const Prior &prior, const 
     const Rcpp::NumericVector v = mcmc::sigmoid_vec(logit_v);
     const Rcpp::NumericVector log_v = log(v);
     const double sum_log_v = Rcpp::sum(log_v);
-    const double lp = state.alpha / K * sum_log_v;
+    //const double lp = state.alpha / K * sum_log_v;
+    const double lp = (state.alpha / K - 1) * sum_log_v;
+
     int z;
     int Ni;
     int k;
@@ -38,6 +40,8 @@ void update_v_jointly(State &state, const Data &data, const Prior &prior, const 
     return ll + lp;
   };
 
+  /** Method 1: */
+  /**
   Rcpp::NumericVector cs(K, prior.cs_v);
   const auto logit_v_cand = mcmc::rnorms(mcmc::logit_vec(state.v), cs);
   const auto v_cand = mcmc::sigmoid_vec(logit_v_cand);
@@ -54,6 +58,17 @@ void update_v_jointly(State &state, const Data &data, const Prior &prior, const 
       state.v = mcmc::sigmoid_vec(logit_v_cand);
       update_Z(state, data, prior, locked);
     }
+  }
+  **/
+
+  /** Method 2: */
+  const Rcpp::NumericVector cs(K, prior.cs_v);
+  const Rcpp::NumericVector curr_logit_v = mcmc::logit_vec(state.v);
+  const Rcpp::NumericVector cand_logit_v = mcmc::rnorms(curr_logit_v, cs);
+  const double u = R::runif(0,1);
+  if (log_fc(cand_logit_v) - log_fc(curr_logit_v) > log(u)) {
+    state.v = mcmc::sigmoid_vec(cand_logit_v);
+    update_Z(state, data, prior, locked);
   }
 }
 
