@@ -39,7 +39,7 @@ std::vector<List> fit_cytof_cpp(
   const Prior prior = gen_prior_obj(prior_ls);
   const Locked locked= gen_locked_obj(locked_ls);
   const Data data = gen_data_obj(y);
-  State init = gen_state_obj(init_ls);
+  const State init = gen_state_obj(init_ls);
   const int I = data.I;
   const int J = data.J;
 

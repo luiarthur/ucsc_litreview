@@ -16,24 +16,32 @@ gen_default_init = function(prior) {
     yi[idx] = 0
     yi
   })
+   
+  lam_init = lapply(N, function(Ni) sample(0:(K-1), Ni, replace=TRUE))
+
+  L_min = min(c(L0, L1))
+  gam_init = lapply(N, function(Ni) {
+    matrix(sample(0:(L_min-1), Ni*J, replace=TRUE), nrow=Ni, ncol=J)
+  })
+
 
   list(
-    beta_0    = rep(prior$m_beta0),
-    beta_1    = rep(prior$a_beta1 / prior$b_beta1),
+    beta_0    = rep(prior$m_beta0, I),
+    beta_1    = rep(prior$a_beta1 / prior$b_beta1, I),
     missing_y = y_init,
     mus_0     = rep(prior$psi_0, L0),
     mus_1     = rep(prior$psi_1, L1),
     sig2_0    = matrix(1, I, L0),
     sig2_1    = matrix(1, I, L1),
     s         = rep(prior$a_s / prior$b_s, I),
-    gam       = lapply(N, function(Ni) matrix(0, nrow=Ni, ncol=J)),
+    gam       = gam_init,
     eta_0     = array(1 / L0, c(I,J,L0)),
     eta_1     = array(1 / L1, c(I,J,L1)),
     v         = rep(1/K, K),
     alpha     = 1.0,
     H         = matrix(0, J, K),
     Z         = matrix(sample(0:1, J*K, replace=TRUE), J, K),
-    lam       = lapply(N, function(Ni) double(Ni)),
+    lam       = lam_init,
     W         = matrix(1/K, I, K)
   ) 
 }

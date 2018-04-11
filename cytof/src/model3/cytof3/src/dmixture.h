@@ -15,7 +15,7 @@ double dmixture(const State &state, const Data &data, const Prior &prior,
 
   for (int l=0; l<Lz; l++) {
     mix_den += get_eta_z(state, z)->at(i,j,l) * 
-      R::dnorm(data.y[i](n, j), 
+      R::dnorm(state.missing_y[i](n, j), 
                get_mus_z(state, z)->at(l),
                sqrt(get_sig2_z(state, z)->at(i,l)), lg);
   }

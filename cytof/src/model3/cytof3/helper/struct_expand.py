@@ -183,7 +183,9 @@ def struct_expand(c_struct_path):
 
 ### MAIN ###
 out = struct_expand(STRUCT_FILE_FULLPATH)
-writeFile(ADDON_FILE_FULLPATH, out['rlist_to_struct_h'])
+#writeFile(ADDON_FILE_FULLPATH, out['rlist_to_struct_h'])
+print out['rlist_to_struct_h']
+
 
 ### TEST ###
 #print out['rlist_to_struct_h']
