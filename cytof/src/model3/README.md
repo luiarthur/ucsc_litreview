@@ -1,5 +1,26 @@
 # Model 3
 
+## Timeline
+
+Goal: Advancement by week of **4 June, 2018**.
+
+- [ ] Project I (due **4 May, 2018**)
+    - [ ] Implement smart initial values
+    - [ ] Adaptive MCMC
+    - [ ] written report
+        - [ ] intro
+        - [ ] model description
+        - [ ] simulation study
+        - [ ] real data
+            - [ ] CB
+            - [ ] PB (healthy people in control)
+- [ ] Project II (due **25 May, 2018**)
+    - [ ] Repeat the above for Repulsive IBP
+- [ ] Outline for Advancement Presentation (due **1 June, 2018**)
+    - [ ] Project I
+    - [ ] Project II (promising results)
+    - [ ] Project III (outline)
+
 ## To do
 - full conditionals
 - feasibility of Tukey's representation for missing mechanism
@@ -26,7 +47,8 @@
 - if not doing variational inference, use C++
 - just store quantiles for memory efficiency?
 - Maybe try MCMC in Scala with `ND4J` for matrices? (`ND4J` supports nd-arrays)
-- Adaptive MCMC
+- [Adaptive MCMC][11]
+- [Repulsive Mixtures][12]
 
 
 [1]: https://arxiv.org/pdf/1206.1901.pdf
@@ -40,3 +62,4 @@
 [9]: https://arxiv.org/pdf/1209.4360.pdf
 [10]: https://arxiv.org/pdf/1310.5438.pdf
 [11]: http://probability.ca/jeff/ftpdir/adaptex.pdf
+[12]: https://arxiv.org/pdf/1204.5243.pdf
