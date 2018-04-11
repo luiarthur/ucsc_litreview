@@ -10,34 +10,27 @@
 
 void update_missing_yinj(State &state, const Data &data, const Prior &prior, int i, int n, int j){
   auto log_fc = [&](double y_inj) {
+    const int lg = 0; // no log
+    const int z = state.Z(j, state.lam[i](n));
+    const int Lz = get_Lz(state, z);
     double fc = 0;
-    int z = state.Z(j, state.lam[i](n));
-    int lg = 0; // no log
+    double eta;
+    double normal_dens;
 
-    arma::cube *eta;
-    NumericVector *mus;
-    NumericMatrix *sig2;
-
-    if (z==0) {
-      eta = &state.eta_0;
-      mus = &state.mus_0;
-      sig2 = &state.sig2_0;
-    } else {
-      eta = &state.eta_1;
-      mus = &state.mus_1;
-      sig2 = &state.sig2_1;
+    for (int l=0; l < Lz; l++) {
+      eta = get_eta_z(state,z)->at(i,j,l);
+      normal_dens = R::dnorm(y_inj,
+                             get_mus_z(state,z)->at(l),
+                             sqrt(get_sig2_z(state,z)->at(i,l)), lg);
+      fc += eta * normal_dens;
     }
 
-    for (int l=0; l < mus->size(); l++) {
-      fc += eta->at(i,j,l) * R::dnorm(y_inj, mus->at(l), sqrt(sig2->at(i,l)), lg);
-    }
-
-    fc *= f_inj(y_inj, data.M[i](n,j), state.beta_0[i], state.beta_1[i], prior.c0, prior.c1);
+    fc *= prob_miss(y_inj, state.beta_0(i), state.beta_1(i), prior.c0, prior.c1);
 
     return log(fc);
   };
 
-  state.missing_y[i](n,j) = mcmc::mh(state.missing_y[i](n,j), log_fc, prior.cs_beta0);
+  state.missing_y[i](n,j) = mcmc::mh(state.missing_y[i](n,j), log_fc, prior.cs_y);
 }
 
 

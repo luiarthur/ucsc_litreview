@@ -19,6 +19,16 @@ arma::uvec minus_idx(int vec_length, int idx_to_exclude){
   return arma::find(indices != idx_to_exclude);
 }
 
+template <typename T>
+std::vector<T> cpVecT(std::vector<T> x) {
+  const int N = x.size();
+  std::vector<T> out(N);
+  for (int n=0; n<N; n++) {
+    out[n] = x[n] + 0;
+  }
+  return out;
+}
+
 /*
 // Not safe. FIXME: Limit type to numerics only?
 // see:

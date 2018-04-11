@@ -47,14 +47,14 @@ std::vector<List> fit_cytof_cpp(
   // update function
   auto update = [&](State &state) {
     for (int t=0; t<thin; t++) {
-      update_theta(state, data, prior, locked, thin_some);
+      update_theta(state, data, prior, locked, show_timings, thin_some);
     }
   };
 
   // accumulater for sum of missing y's
-  std::vector<Rcpp::NumericMatrix> missing_y_sum(I);
+  std::vector<Rcpp::NumericMatrix> missing_y_mean(I);
   for (int i=0; i<I; i++) {
-    missing_y_sum[i] = Rcpp::NumericMatrix(data.N[i], J);
+    missing_y_mean[i] = Rcpp::NumericMatrix(data.N[i], J);
   }
   
   // output 
@@ -74,27 +74,27 @@ std::vector<List> fit_cytof_cpp(
 
       // update missing_y_sum
       for (int s=0; s<I; s++) {
-        missing_y_sum[s] += state.missing_y[s];
+        missing_y_mean[s] += state.missing_y[s] / B;
       }
 
       // TODO: profile the speed of these operations
       out[i - burn] = List::create(
         Named("beta_0") = state.beta_0 + 0,
         Named("beta_1") = state.beta_1 + 0,
-        //Named("missing_y") = state.missing_y, // too costly
+        //Named("missing_y") = cpVecT<Rcpp::NumericMatrix>(state.missing_y), // remove in production
         Named("mus_0") = state.mus_0 + 0,
         Named("mus_1") = state.mus_1 + 0,
         Named("sig2_0") = state.sig2_0 + 0,
         Named("sig2_1") = state.sig2_1 + 0,
         Named("s") = state.s + 0,
-        Named("gam") = state.gam,
+        //Named("gam") = cpVecT<Rcpp::IntegerMatrix>(state.gam), // remove in production
         Named("eta_0") = state.eta_0 + 0,
         Named("eta_1") = state.eta_1 + 0,
         Named("v") = state.v + 0,
         Named("alpha") = state.alpha + 0,
         Named("H") = state.H + 0,
         Named("Z") = state.Z + 0,
-        Named("lam") = state.lam,
+        Named("lam") = cpVecT<Rcpp::IntegerVector>(state.lam),
         Named("W") = state.W + 0,
         Named("ll") = ll + 0
       );
@@ -102,16 +102,12 @@ std::vector<List> fit_cytof_cpp(
 
     // Append `missing_y_mean` and `missing_y_last` to last iteration of MCMC
     if (i == B + burn - 1) {
-      auto missing_y_mean = init.missing_y;
-      for (int s=0; s<I; s++) {
-        missing_y_mean[s] = missing_y_sum[s] / B;
-      }
       out[B-1]["missing_y_mean"] = missing_y_mean;
       out[B-1]["missing_y_last"] = state.missing_y;
     }
   };
 
-  omp_set_num_threads(ncores);
+  //omp_set_num_threads(ncores);
 
   mcmc::gibbs<State>(init, update, assign_to_out, B, burn, print_freq);
   

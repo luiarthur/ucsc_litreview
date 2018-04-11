@@ -22,31 +22,31 @@
 #include "update_lam.h" // gibbs
 #include "update_W.h" // gibbs
 
-void update_theta(State &state, const Data &data, const Prior &prior, const Locked &locked, int thin_some=1) {
-  //Rcpp::Rcout << 1 << std::endl;
-  update_beta(state, data, prior, locked); // metropolis
-  //Rcpp::Rcout << 2 << std::endl;
-  update_missing_y(state, data, prior, locked); // metropolis
-  //Rcpp::Rcout << 3 << std::endl;
-  update_mus(state, data, prior, locked);
-  //Rcpp::Rcout << 4 << std::endl;
-  update_sig2(state, data, prior, locked);
-  //Rcpp::Rcout << 5 << std::endl;
-  update_s(state, data, prior, locked);
-  //Rcpp::Rcout << 6 << std::endl;
-  update_gam(state, data, prior, locked);
-  //Rcpp::Rcout << 7 << std::endl;
-  update_eta(state, data, prior, locked);
-  //Rcpp::Rcout << 8 << std::endl;
-  update_v(state, data, prior, locked); // metropolis
-  //Rcpp::Rcout << 9 << std::endl;
-  update_alpha(state, data, prior, locked);
-  //Rcpp::Rcout << 10 << std::endl;
-  update_H(state, data, prior, locked); // metropolis
-  //Rcpp::Rcout << 11 << std::endl;
-  update_lam(state, data, prior, locked);
-  //Rcpp::Rcout << 12 << std::endl;
-  update_W(state, data, prior, locked);
+#include "my_timer.h" // TIME_CODE
+
+void update_theta(State &state, const Data &data, const Prior &prior, const Locked &locked, bool show_timings=false, int thin_some=1) {
+  INIT_TIMER;
+  if (show_timings) Rcout << std::endl;
+
+  // metropolis
+  TIME_CODE(show_timings, "beta", update_beta(state, data, prior, locked));
+  TIME_CODE(show_timings, "y", update_missing_y(state, data, prior, locked));
+
+  // gibbs
+  TIME_CODE(show_timings, "mus", update_mus(state, data, prior, locked));
+  TIME_CODE(show_timings, "sig2", update_sig2(state, data, prior, locked));
+  TIME_CODE(show_timings, "s",   update_s(state, data, prior, locked));
+  TIME_CODE(show_timings, "gam", update_gam(state, data, prior, locked));
+  TIME_CODE(show_timings, "eta", update_eta(state, data, prior, locked));
+
+  // metropolis
+  TIME_CODE(show_timings, "v", update_v(state, data, prior, locked));
+  TIME_CODE(show_timings, "H", update_H(state, data, prior, locked));
+
+  // gibbs
+  TIME_CODE(show_timings, "alpha", update_alpha(state, data, prior, locked));
+  TIME_CODE(show_timings, "lam", update_lam(state, data, prior, locked));
+  TIME_CODE(show_timings, "W", update_W(state, data, prior, locked));
 }
 
 #endif
