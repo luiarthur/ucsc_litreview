@@ -47,6 +47,7 @@ void update_sig2(State &state, const Data &data, const Prior &prior, const Locke
     for (int j=0; j<J; j++) {
       for (int n=0; n<Ni; n++) {
         z = state.Z(j, state.lam[i](n));
+        l = state.gam[i](n, j);
         ss_sig2.a_new[z](i,l) += 0.5; // increase cardinality by 1/2
         ss_sig2.b_new[z](i,l) += pow(state.missing_y[i](n,j) - get_mus_z(state,z)->at(l), 2) / 2;
       }

@@ -7,24 +7,14 @@
 #include "Prior.h"
 #include "Locked.h"
 #include "missing_mechanism.h"
+#include "dmixture.h"
 
 void update_missing_yinj(State &state, const Data &data, const Prior &prior, int i, int n, int j){
+  const int z = state.Z(j, state.lam[i](n));
+
   auto log_fc = [&](double y_inj) {
-    const int lg = 0; // no log
-    const int z = state.Z(j, state.lam[i](n));
-    const int Lz = get_Lz(state, z);
     double fc = 0;
-    double eta;
-    double normal_dens;
-
-    for (int l=0; l < Lz; l++) {
-      eta = get_eta_z(state,z)->at(i,j,l);
-      normal_dens = R::dnorm(y_inj,
-                             get_mus_z(state,z)->at(l),
-                             sqrt(get_sig2_z(state,z)->at(i,l)), lg);
-      fc += eta * normal_dens;
-    }
-
+    fc = dmixture(state, data, prior, z, i, n, j);
     fc *= prob_miss(y_inj, state.beta_0(i), state.beta_1(i), prior.c0, prior.c1);
 
     return log(fc);

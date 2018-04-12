@@ -14,8 +14,8 @@ prior = gen_default_prior(y, K=10, L0=10, L1=10)
 prior$c0 = mmp['c0']
 prior$c1 = mmp['c1']
 prior$m_beta0 = mmp['b0']; prior$s2_beta0 = 1
-#prior$cs_beta0 = 1
-#prior$cs_beta1 = 1
+prior$cs_beta0 = .1
+prior$cs_beta1 = .1
 b1_ab = gamma_params(mmp['b1'], .01)
 prior$a_beta1 = b1_ab[1]; prior$b_beta1 = b1_ab[2]
 yy = seq(-7,3,l=50)
@@ -31,27 +31,21 @@ init = gen_default_init(prior)
 init$mus_0 = seq(-5,-.5, l=prior$L0)
 init$mus_1 = seq(.5, 5, l=prior$L1)
 locked = gen_default_locked(init)
-locked$beta_1 = TRUE
-#locked$mus_0 = TRUE
-#locked$mus_1 = TRUE
-#for (n in names(locked)) locked[n] = TRUE
-#locked$mus_0 = F
-#locked$mus_1 = F
+#locked$beta_0 = TRUE
+#locked$beta_1 = TRUE
+
+### kmeans
+preimpute_y = preimpute(y)
+Y = do.call(rbind, preimpute_y)
+Z_est_kmeans = kmeans(Y, centers=10)
+my.image(unique(Z_est_kmeans$centers > 0))
 
 system.time(
-  out <- fit_cytof_cpp(y, B=200, burn=100, prior=prior, locked=locked, init=init, print_freq=1, show_timings=FALSE)
+  out <- fit_cytof_cpp(y, B=200, burn=1000, prior=prior, locked=locked, init=init, print_freq=1, show_timings=FALSE)
 )
 
+
 ### Expensive order: H, lam, v, gam, y, beta, mus, sig2, eta, W, alpha, s.
-
-out[[3]]$beta_0
-out[[3]]$beta_1
-out[[100]]$v
-out[[100]]$H
-out[[100]]$mus_0
-out[[100]]$lam
-out[[100]]$W
-
 
 beta_0 = t(sapply(out, function(o) o$beta_0))
 beta_1 = t(sapply(out, function(o) o$beta_1))
@@ -62,6 +56,9 @@ beta_1 = t(sapply(out, function(o) o$beta_1))
 alpha = sapply(out, function(o) o$alpha)
 mus_0 = sapply(out, function(o) o$mus_0)
 mus_1 = sapply(out, function(o) o$mus_1)
+v = sapply(out, function(o) o$v)
+plot(rowMeans(v))
+
 plotPost(alpha)
 
 mus = rbind(mus_0, mus_1)
@@ -89,6 +86,7 @@ out[[54]]$lam[[1]]
 
 
 ### post miss mech
+#plotPosts(beta_0)
 B = length(out)
 mm_post = sapply(1:B, function(b) prob_miss(yy, beta_0[b,1], beta_1[b,1], prior$c0, prior$c1))
 plot(yy,bb[,1], type='n'); abline(v=0)
@@ -107,14 +105,16 @@ ord = order(out[[B]]$lam[[1]])
 my.image(out[[B]]$missing_y_mean[[1]][ord,], col=blueToRed(), mn=-4,mx=4)
 
 
-hist(out[[B]]$missing_y_mean[[1]][,2], freq=T, col=rgb(0,0,1,.4), border='transparent')
-hist(out[[B]]$missing_y_last[[1]][,2], freq=T, col=rgb(0,1,0,.4), border='transparent', add=T)
-hist(y[[1]][,2], freq=T,add=T, col=rgb(0,0,0,.3), border='transparent')
+### PP 
+W_est = out[[B]]$W; Z_est = out[[B]]$Z
+
+i = 2; j= 8
+hist(out[[B]]$missing_y_mean[[i]][,j], freq=T, col=rgb(0,0,1,.4), border='transparent')
+hist(out[[B]]$missing_y_last[[i]][,j], freq=T, col=rgb(0,1,0,.4), border='transparent', add=T)
+hist(y[[i]][,j], freq=T,add=T, col=rgb(0,0,0,.3), border='transparent')
 abline(v=0, lwd=3)
 
-### PP 
-i = 2; j= 8
-W_est = out[[B]]$W; Z_est = out[[B]]$Z
+
 o = out[[B]]
 yij = sapply(out, function(o) {
   k = sample(1:prior$K, 1, prob=W_est[i,])

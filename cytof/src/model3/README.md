@@ -5,21 +5,21 @@
 Goal: Advancement by week of **4 June, 2018**.
 
 - [ ] Project I (due **4 May, 2018**)
-    - [ ] Implement smart initial values
-        - [ ] pre-impute` y`
+    - [ ] Implement smart initial values (due by **12 April, 2018**)
+        - [ ] pre-impute `y`
         - [ ] pre-compute other parameters using ad-hoc methods like kmeans, etc.
-    - [ ] Adaptive MCMC
+    - [ ] Adaptive MCMC  (due by **18 April, 2018**)
     - [ ] written report
         - [ ] intro
         - [ ] model description
-        - [ ] simulation study
-        - [ ] real data
+        - [ ] simulation study (due **18 April, 2018**)
+        - [ ] real data (due **25 April, 2018**)
             - [ ] CB
             - [ ] PB (healthy people in control)
-- [ ] Project II (due **25 May, 2018**)
+- [ ] Project II (due **18 May, 2018**)
     - [ ] Repeat the above for Repulsive IBP
-- [ ] Outline for Advancement Presentation (due **1 June, 2018**)
-    - [ ] Project I
+- [ ] Outline for Advancement Presentation (due **25 May, 2018**)
+    - [ ] Project I (complete)
     - [ ] Project II (promising results)
     - [ ] Project III (outline)
 

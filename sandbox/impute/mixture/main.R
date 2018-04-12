@@ -71,6 +71,19 @@ y_post = sapply(out, function(o) o$y)
 miss_idx = which(is.na(y))
 plotPost(y_post[miss_idx[21], ])
 
+### Plot Missing Mechanism Prior (red) and posterior (blue) ###
+plot(yy, pm, type='l', lwd=2); abline(v=0); #abline(v=c(-4,-2), h=c(.1,.9), lty=2)
+for (i in 1:10) {
+  bb = rnorm(2, prior$b_mean, sqrt(prior$b_var))
+  pm = sigmoid(bb[1] + bb[2] * yy)
+  lines(yy, pm, col=rgb(1,0,0,.5))
+}
+post_pm = sapply(out, function(o) {
+  b = o$b
+  sigmoid(b[1] + b[2] * yy)
+})
+pm_ci = apply(post_pm, 1, quantile, c(.025,.975))
+color.btwn(yy, pm_ci[1,], pm_ci[2,], from=-10, to=10, col.area=rgb(0,0,1,.4))
 
 ### Posterior Predictivice
 pp = postpred(out)
