@@ -7,15 +7,15 @@ y = resample(y_orig, prop=.01)
 #y = y_orig
 
 ### Missing Mechanism params ###
-mmp = miss_mech_params(y=c(-4, -2.5, -1.5), p=c(.1, .99, .01))
+mmp = miss_mech_params(y=c(-4, -2.5, -1.0), p=c(.1, .99, .01))
 
 ### TODO: add def for miss-mech in gen_default prior ###
 prior = gen_default_prior(y, K=10, L0=10, L1=10)
 prior$c0 = mmp['c0']
 prior$c1 = mmp['c1']
-prior$m_beta0 = mmp['b0']; prior$s2_beta0 = .01
-prior$cs_beta0 = .1
-prior$cs_beta1 = .1
+prior$m_beta0 = mmp['b0']; prior$s2_beta0 = 1
+#prior$cs_beta0 = 1
+#prior$cs_beta1 = 1
 b1_ab = gamma_params(mmp['b1'], .01)
 prior$a_beta1 = b1_ab[1]; prior$b_beta1 = b1_ab[2]
 yy = seq(-7,3,l=50)
@@ -28,16 +28,18 @@ set.seed(1)
 init0 = gen_default_init(prior)
 set.seed(1)
 init = gen_default_init(prior)
-#init$mus_0 = seq(-3,-1, l=10)
-#init$mus_1 = seq(.1, 6, l=10)
+init$mus_0 = seq(-5,-.5, l=prior$L0)
+init$mus_1 = seq(.5, 5, l=prior$L1)
 locked = gen_default_locked(init)
-#locked$beta_1 = TRUE
+locked$beta_1 = TRUE
+#locked$mus_0 = TRUE
+#locked$mus_1 = TRUE
 #for (n in names(locked)) locked[n] = TRUE
 #locked$mus_0 = F
 #locked$mus_1 = F
 
 system.time(
-  out <- fit_cytof_cpp(y, B=200, burn=2000, prior=prior, locked=locked, init=init, print_freq=1, show_timings=FALSE)
+  out <- fit_cytof_cpp(y, B=200, burn=100, prior=prior, locked=locked, init=init, print_freq=1, show_timings=FALSE)
 )
 
 ### Expensive order: H, lam, v, gam, y, beta, mus, sig2, eta, W, alpha, s.
@@ -54,7 +56,7 @@ out[[100]]$W
 beta_0 = t(sapply(out, function(o) o$beta_0))
 beta_1 = t(sapply(out, function(o) o$beta_1))
 
-plotPosts(beta_0)
+#plotPosts(beta_0)
 #plotPosts(beta_1)
 
 alpha = sapply(out, function(o) o$alpha)
@@ -67,6 +69,9 @@ ci_mus = apply(mus, 1, quantile, c(.025,.975))
 plot(rowMeans(mus), col=rgb(0,0,1,.5), pch=20, cex=1.5, ylim=range(ci_mus))
 abline(h=0, lty=2, col='grey')
 add.errbar(t(ci_mus), col='grey')
+
+sig2_0 = sapply(out, function(o) o$sig2_0)
+plot(rowMeans(sig2_0))
 
 N = prior$N
 K = prior$K
@@ -85,9 +90,11 @@ out[[54]]$lam[[1]]
 
 ### post miss mech
 B = length(out)
-mm_post = sapply(1:B, function(b) prob_miss(yy,beta_0[b,1], beta_1[b,1], prior$c0, prior$c1))
-plot(yy, mm_post[,1], type='n'); abline(v=c(prior$c0, 0), col='grey')
-for (i in 1:NCOL(mm_post)) lines(yy,mm_post[,i], col='red')
+mm_post = sapply(1:B, function(b) prob_miss(yy, beta_0[b,1], beta_1[b,1], prior$c0, prior$c1))
+plot(yy,bb[,1], type='n'); abline(v=0)
+for (i in 1:NCOL(bb)) lines(yy, bb[,i], col='grey')
+#plot(yy, mm_post[,1], type='n', ylim=0:1); abline(v=c(prior$c0, 0), col='grey')
+for (i in 1:NCOL(mm_post)) lines(yy,mm_post[,i], col='blue')
 #for (i in 1:100) {
 #  Sys.sleep(.1)
 #  plot(yy,mm_post[,i], col='red', type='l', lwd=4, main=i)
@@ -99,14 +106,16 @@ my.image(y[[1]], col=blueToRed(), mn=-4, mx=4)
 ord = order(out[[B]]$lam[[1]])
 my.image(out[[B]]$missing_y_mean[[1]][ord,], col=blueToRed(), mn=-4,mx=4)
 
+
 hist(out[[B]]$missing_y_mean[[1]][,2], freq=T, col=rgb(0,0,1,.4), border='transparent')
 hist(out[[B]]$missing_y_last[[1]][,2], freq=T, col=rgb(0,1,0,.4), border='transparent', add=T)
 hist(y[[1]][,2], freq=T,add=T, col=rgb(0,0,0,.3), border='transparent')
 abline(v=0, lwd=3)
 
 ### PP 
-i = 2; j= 7
+i = 2; j= 8
 W_est = out[[B]]$W; Z_est = out[[B]]$Z
+o = out[[B]]
 yij = sapply(out, function(o) {
   k = sample(1:prior$K, 1, prob=W_est[i,])
   z_jk = Z_est[j,k]

@@ -16,7 +16,7 @@ void update_gam_inj(State &state, const Data &data, const Prior &prior, int i, i
 
   for (int l=0; l<Lz; l++) {
     log_p[l] = log(get_eta_z(state,z)->at(i,n,j));
-    log_p[l] += R::dnorm(data.y[i](n,j), 
+    log_p[l] += R::dnorm(state.missing_y[i](n,j), 
                          get_mus_z(state, z)->at(l), 
                          get_sig2_z(state, z)->at(i,l), lg);
   }

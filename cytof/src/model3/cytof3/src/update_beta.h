@@ -11,8 +11,8 @@
 void update_beta0i(State &state, const Data &data, const Prior &prior, int i){
   auto log_fc = [&](double b0i) {
     const double lp = -pow(b0i - prior.m_beta0, 2) / (2 * prior.s2_beta0);
-    int J = data.J;
-    int Ni = data.N(i);
+    const int J = data.J;
+    const int Ni = data.N(i);
     
     double ll = 0;
     for (int j=0; j < J; j++) {
@@ -32,8 +32,8 @@ void update_beta0i(State &state, const Data &data, const Prior &prior, int i){
 void update_beta1i(State &state, const Data &data, const Prior &prior, int i){
   auto log_fc = [&](double log_b1i) {
     const double lp = mcmc::lp_log_gamma(log_b1i, prior.a_beta1, prior.b_beta1);
-    int J = data.J;
-    int Ni = data.N(i);
+    const int J = data.J;
+    const int Ni = data.N(i);
     const double b1i = exp(log_b1i);
     
     double ll = 0;
