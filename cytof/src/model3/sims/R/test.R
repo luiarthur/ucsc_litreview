@@ -44,6 +44,9 @@ system.time(
   out <- fit_cytof_cpp(y, B=200, burn=1000, prior=prior, locked=locked, init=init, print_freq=1, show_timings=FALSE)
 )
 
+### loglike 
+ll = sapply(out, function(o) o$ll)
+plot(ll)
 
 ### Expensive order: H, lam, v, gam, y, beta, mus, sig2, eta, W, alpha, s.
 
