@@ -10,7 +10,7 @@ y = resample(y_orig, prop=.01)
 mmp = miss_mech_params(y=c(-4, -2.5, -1.0), p=c(.1, .99, .01))
 
 ### TODO: add def for miss-mech in gen_default prior ###
-prior = gen_default_prior(y, K=10, L0=10, L1=10)
+prior = gen_default_prior(y, K=10, L0=11, L1=12)
 prior$c0 = mmp['c0']
 prior$c1 = mmp['c1']
 prior$m_beta0 = mmp['b0']; prior$s2_beta0 = 1
@@ -20,6 +20,8 @@ prior$cs_beta1 = .1
 # Are these good priors?
 prior$tau2_0 = 2
 prior$tau2_1 = 2
+prior$cs_v = .1 # I think this should be better
+prior$cs_h = .1 # I think this should be better
 
 b1_ab = gamma_params(mmp['b1'], .01)
 prior$a_beta1 = b1_ab[1]; prior$b_beta1 = b1_ab[2]
@@ -36,10 +38,12 @@ init = gen_default_init(prior)
 init$mus_0 = seq(-5,-.5, l=prior$L0)
 init$mus_1 = seq(.5, 5, l=prior$L1)
 init$sig2_0 = matrix(.5, prior$I, prior$L0) # TODO: Did this work?
+init$sig2_1 = matrix(.5, prior$I, prior$L1) # TODO: Did this work?
 locked = gen_default_locked(init)
 locked$beta_0 = TRUE # TODO: Can I make this random?
 locked$beta_1 = TRUE # TODO: Can I make this random?
-locked$sig2_0 = TRUE # TODO: Can I make this random?
+#locked$sig2_0 = TRUE # TODO: Can I make this random?
+#locked$mus_0 = TRUE  # TODO: Can I make this random?
 
 ### kmeans
 preimpute_y = preimpute(y)
@@ -49,8 +53,10 @@ Z_est_kmeans = kmeans(Y, centers=10)
 my.image(unique(Z_est_kmeans$centers > 0))
 
 system.time(
-  out <- fit_cytof_cpp(y, B=200, burn=100, prior=prior, locked=locked, init=init, print_freq=1, show_timings=FALSE, normalize_loglike=TRUE)
+  out <- fit_cytof_cpp(y, B=500, burn=2000, prior=prior, locked=locked, init=init, print_freq=1, show_timings=FALSE, normalize_loglike=TRUE)
 )
+
+B = length(out)
 
 ### loglike 
 ll = sapply(out, function(o) o$ll)
@@ -95,9 +101,10 @@ add.errbar(t(ci_s), col='grey')
 N = prior$N
 K = prior$K
 
-my.image(t(out[[100]]$Z)[out[[100]]$W[1,]>.1,])
+### Z ###
+my.image(t(out[[B]]$Z)[out[[100]]$W[1,]>.05,])
 
-table(out[[100]]$lam[[1]])
+table(out[[B]]$lam[[1]])
 
 
 ### Force a copy by doing this:
@@ -108,7 +115,6 @@ table(out[[100]]$lam[[1]])
 
 ### post miss mech
 #plotPosts(beta_0)
-B = length(out)
 mm_post = sapply(1:B, function(b) prob_miss(yy, beta_0[b,1], beta_1[b,1], prior$c0, prior$c1))
 plot(yy,bb[,1], type='n'); abline(v=0)
 for (i in 1:NCOL(bb)) lines(yy, bb[,i], col='grey')
@@ -154,10 +160,10 @@ yij = sapply(out, function(o) {
   l = sample(1:Lz, 1, prob=eta_z)
   rnorm(1, mus_z[l], sqrt(sig2_z[l]))
 })
-hist(out[[B]]$missing_y_mean[[i]][,j], prob=TRUE, col=rgb(0,0,1,.4), border='transparent', xlim=c(-10,10)); abline(v=0, lwd=2)
-hist(yij, add=TRUE, prob=TRUE, col=rgb(0,0,0,.4), border='transparent')
+hist(out[[B]]$missing_y_mean[[i]][,j], prob=TRUE, col=rgb(0,0,1,.4), border='transparent', xlim=c(-8,8)); abline(v=0, lwd=2)
+hist(yij, add=TRUE, prob=TRUE, col=rgb(0,0,0,.7), border='transparent')
 
 for (b in 1:B) {
-  my.image(out[[b]]$Z, main=b)
+  my.image(t(out[[b]]$Z), main=b)
   Sys.sleep(.1)
 }

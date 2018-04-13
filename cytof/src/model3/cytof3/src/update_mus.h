@@ -66,10 +66,10 @@ void update_mus(State &state, const Data &data, const Prior &prior, const Locked
     }
   } 
 
-  if(!locked.mus_0) for(l=0; l < get_Lz(state,0); l++) {
+  if(!locked.mus_0) for(l=0; l < get_L0(state); l++) {
     update_muszl(state, data, prior, ss_mus, 0, l);
   }
-  if(!locked.mus_1) for(l=0; l < get_Lz(state,1); l++) {
+  if(!locked.mus_1) for(l=0; l < get_L1(state); l++) {
     update_muszl(state, data, prior, ss_mus, 1, l);
   }
 }
