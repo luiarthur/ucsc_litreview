@@ -5,7 +5,7 @@
 Goal: Advancement by week of **4 June, 2018**.
 
 - [ ] Project I (due **4 May, 2018**)
-    - [ ] Implement smart initial values (due by **12 April, 2018**)
+    - [ ] Implement smart initial values (due by **13 April, 2018**)
         - [ ] pre-impute `y`
         - [ ] pre-compute other parameters using ad-hoc methods like kmeans, etc.
     - [ ] Adaptive MCMC  (due by **18 April, 2018**)

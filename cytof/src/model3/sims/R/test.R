@@ -16,6 +16,11 @@ prior$c1 = mmp['c1']
 prior$m_beta0 = mmp['b0']; prior$s2_beta0 = 1
 prior$cs_beta0 = .1
 prior$cs_beta1 = .1
+
+# Are these good priors?
+prior$tau2_0 = 2
+prior$tau2_1 = 2
+
 b1_ab = gamma_params(mmp['b1'], .01)
 prior$a_beta1 = b1_ab[1]; prior$b_beta1 = b1_ab[2]
 yy = seq(-7,3,l=50)
@@ -30,23 +35,26 @@ set.seed(1)
 init = gen_default_init(prior)
 init$mus_0 = seq(-5,-.5, l=prior$L0)
 init$mus_1 = seq(.5, 5, l=prior$L1)
+init$sig2_0 = matrix(.5, prior$I, prior$L0) # TODO: Did this work?
 locked = gen_default_locked(init)
-#locked$beta_0 = TRUE
-#locked$beta_1 = TRUE
+locked$beta_0 = TRUE # TODO: Can I make this random?
+locked$beta_1 = TRUE # TODO: Can I make this random?
+locked$sig2_0 = TRUE # TODO: Can I make this random?
 
 ### kmeans
 preimpute_y = preimpute(y)
+init$missing_y = preimpute_y
 Y = do.call(rbind, preimpute_y)
 Z_est_kmeans = kmeans(Y, centers=10)
 my.image(unique(Z_est_kmeans$centers > 0))
 
 system.time(
-  out <- fit_cytof_cpp(y, B=200, burn=1000, prior=prior, locked=locked, init=init, print_freq=1, show_timings=FALSE)
+  out <- fit_cytof_cpp(y, B=200, burn=100, prior=prior, locked=locked, init=init, print_freq=1, show_timings=FALSE, normalize_loglike=TRUE)
 )
 
 ### loglike 
 ll = sapply(out, function(o) o$ll)
-plot(ll)
+plot(ll, type='l')
 
 ### Expensive order: H, lam, v, gam, y, beta, mus, sig2, eta, W, alpha, s.
 
@@ -64,22 +72,32 @@ plot(rowMeans(v))
 
 plotPost(alpha)
 
+
 mus = rbind(mus_0, mus_1)
+#plotPosts(t(mus[1:4,]))
 ci_mus = apply(mus, 1, quantile, c(.025,.975))
 plot(rowMeans(mus), col=rgb(0,0,1,.5), pch=20, cex=1.5, ylim=range(ci_mus))
 abline(h=0, lty=2, col='grey')
 add.errbar(t(ci_mus), col='grey')
 
 sig2_0 = sapply(out, function(o) o$sig2_0)
-plot(rowMeans(sig2_0))
+ci_sig2_0 = apply(sig2_0, 1, quantile, c(.025,.975))
+plot(rowMeans(sig2_0), col=rgb(0,0,1,.5), pch=20, cex=1.5, ylim=range(ci_sig2_0))
+abline(h=0, lty=2, col='grey')
+add.errbar(t(ci_sig2_0), col='grey')
+
+s = sapply(out, function(o) o$s)
+ci_s = apply(s, 1, quantile, c(.025,.975))
+plot(rowMeans(s), col=rgb(0,0,1,.5), pch=20, cex=1.5, ylim=range(ci_s))
+abline(h=0, lty=2, col='grey')
+add.errbar(t(ci_s), col='grey')
 
 N = prior$N
 K = prior$K
-lam_init = lapply(N, function(Ni) sample(0:(K-1), Ni, replace=TRUE))
 
 my.image(t(out[[100]]$Z)[out[[100]]$W[1,]>.1,])
 
-out[[54]]$lam[[1]]
+table(out[[100]]$lam[[1]])
 
 
 ### Force a copy by doing this:
@@ -107,11 +125,17 @@ my.image(y[[1]], col=blueToRed(), mn=-4, mx=4)
 ord = order(out[[B]]$lam[[1]])
 my.image(out[[B]]$missing_y_mean[[1]][ord,], col=blueToRed(), mn=-4,mx=4)
 
+### Check missing values mean. Should be < 0.
+missing_y_mean = out[[B]]$missing_y_mean[[1]]
+idx_miss = which(is.na(y[[1]]), arr.ind=TRUE)
+missing_y_mean[idx_miss]
+#y[[1]][idx_miss]
+
 
 ### PP 
 W_est = out[[B]]$W; Z_est = out[[B]]$Z
 
-i = 2; j= 8
+i = 3; j= 7
 hist(out[[B]]$missing_y_mean[[i]][,j], freq=T, col=rgb(0,0,1,.4), border='transparent')
 hist(out[[B]]$missing_y_last[[i]][,j], freq=T, col=rgb(0,1,0,.4), border='transparent', add=T)
 hist(y[[i]][,j], freq=T,add=T, col=rgb(0,0,0,.3), border='transparent')
@@ -120,6 +144,7 @@ abline(v=0, lwd=3)
 
 o = out[[B]]
 yij = sapply(out, function(o) {
+  #k = sample(1:prior$K, 1000, prob=W_est[i,], replace=TRUE)
   k = sample(1:prior$K, 1, prob=W_est[i,])
   z_jk = Z_est[j,k]
   eta_z = if (z_jk == 0) o$eta_0[i,j,] else o$eta_1[i,j,]
@@ -129,5 +154,10 @@ yij = sapply(out, function(o) {
   l = sample(1:Lz, 1, prob=eta_z)
   rnorm(1, mus_z[l], sqrt(sig2_z[l]))
 })
-hist(out[[B]]$missing_y_mean[[i]][,j], prob=TRUE, col=rgb(0,0,1,.4), border='transparent')
+hist(out[[B]]$missing_y_mean[[i]][,j], prob=TRUE, col=rgb(0,0,1,.4), border='transparent', xlim=c(-10,10)); abline(v=0, lwd=2)
 hist(yij, add=TRUE, prob=TRUE, col=rgb(0,0,0,.4), border='transparent')
+
+for (b in 1:B) {
+  my.image(out[[b]]$Z, main=b)
+  Sys.sleep(.1)
+}
