@@ -45,7 +45,7 @@ locked = gen_default_locked(init)
 locked$beta_0 = TRUE # TODO: Can I make this random?
 locked$beta_1 = TRUE # TODO: Can I make this random?
 #locked$sig2_0 = TRUE # TODO: Can I make this random?
-#locked$mus_0 = TRUE  # TODO: Can I make this random?
+locked$mus_0 = TRUE  # TODO: Can I make this random?
 
 ### kmeans
 preimpute_y = preimpute(y)
@@ -55,7 +55,7 @@ Z_est_kmeans = kmeans(Y, centers=10)
 my.image(unique(Z_est_kmeans$centers > 0))
 
 system.time(
-  out <- fit_cytof_cpp(y, B=200, burn=1000, prior=prior, locked=locked, init=init, print_freq=1, show_timings=FALSE, normalize_loglike=TRUE)
+  out <- fit_cytof_cpp(y, B=200, burn=100, prior=prior, locked=locked, init=init, print_freq=1, show_timings=FALSE, normalize_loglike=TRUE)
 )
 
 B = length(out)
@@ -143,7 +143,7 @@ missing_y_mean[idx_miss]
 ### PP 
 W_est = out[[B]]$W; Z_est = out[[B]]$Z
 
-i = 1; j= 7
+i = 2; j= 1
 hist(out[[B]]$missing_y_mean[[i]][,j], freq=T, col=rgb(0,0,1,.4), border='transparent')
 hist(out[[B]]$missing_y[[i]][,j], freq=T, col=rgb(0,1,0,.4), border='transparent', add=T)
 hist(y[[i]][,j], freq=T,add=T, col=rgb(0,0,0,.3), border='transparent')
@@ -152,9 +152,10 @@ abline(v=0, lwd=3)
 
 o = out[[B]]
 yij = sapply(out, function(o) {
-  #k = sample(1:prior$K, 1000, prob=W_est[i,], replace=TRUE)
   k = sample(1:prior$K, 1, prob=W_est[i,])
+  #k = sample(1:prior$K, 1000, prob=W_est[i,], replace=TRUE)
   z_jk = Z_est[j,k]
+  #mean(z_jk)
   eta_z = if (z_jk == 0) o$eta_0[i,j,] else o$eta_1[i,j,]
   mus_z = if (z_jk == 0) o$mus_0 else o$mus_1
   sig2_z = if (z_jk == 0) o$sig2_0[i,] else o$sig2_1[i,]
