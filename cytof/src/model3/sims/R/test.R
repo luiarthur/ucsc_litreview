@@ -135,7 +135,7 @@ missing_y_mean[idx_miss]
 ### PP 
 W_est = out[[B]]$W; Z_est = out[[B]]$Z
 
-i = 3; j= 7
+i = 2; j= 8
 hist(out[[B]]$missing_y_mean[[i]][,j], freq=T, col=rgb(0,0,1,.4), border='transparent')
 hist(out[[B]]$missing_y_last[[i]][,j], freq=T, col=rgb(0,1,0,.4), border='transparent', add=T)
 hist(y[[i]][,j], freq=T,add=T, col=rgb(0,0,0,.3), border='transparent')
