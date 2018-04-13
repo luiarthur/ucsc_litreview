@@ -39,6 +39,8 @@ init$mus_0 = seq(-5,-.5, l=prior$L0)
 init$mus_1 = seq(.5, 5, l=prior$L1)
 init$sig2_0 = matrix(.5, prior$I, prior$L0) # TODO: Did this work?
 init$sig2_1 = matrix(.5, prior$I, prior$L1) # TODO: Did this work?
+init$Z = matrix(1, prior$J, prior$K)
+init$H = matrix(-2, prior$J, prior$K)
 locked = gen_default_locked(init)
 locked$beta_0 = TRUE # TODO: Can I make this random?
 locked$beta_1 = TRUE # TODO: Can I make this random?
@@ -53,7 +55,7 @@ Z_est_kmeans = kmeans(Y, centers=10)
 my.image(unique(Z_est_kmeans$centers > 0))
 
 system.time(
-  out <- fit_cytof_cpp(y, B=500, burn=2000, prior=prior, locked=locked, init=init, print_freq=1, show_timings=FALSE, normalize_loglike=TRUE)
+  out <- fit_cytof_cpp(y, B=200, burn=1000, prior=prior, locked=locked, init=init, print_freq=1, show_timings=FALSE, normalize_loglike=TRUE)
 )
 
 B = length(out)
@@ -102,7 +104,7 @@ N = prior$N
 K = prior$K
 
 ### Z ###
-my.image(t(out[[B]]$Z)[out[[100]]$W[1,]>.05,])
+my.image(t(out[[B]]$Z)[out[[B]]$W[1,]>.05,])
 
 table(out[[B]]$lam[[1]])
 
@@ -141,9 +143,9 @@ missing_y_mean[idx_miss]
 ### PP 
 W_est = out[[B]]$W; Z_est = out[[B]]$Z
 
-i = 2; j= 8
+i = 1; j= 7
 hist(out[[B]]$missing_y_mean[[i]][,j], freq=T, col=rgb(0,0,1,.4), border='transparent')
-hist(out[[B]]$missing_y_last[[i]][,j], freq=T, col=rgb(0,1,0,.4), border='transparent', add=T)
+hist(out[[B]]$missing_y[[i]][,j], freq=T, col=rgb(0,1,0,.4), border='transparent', add=T)
 hist(y[[i]][,j], freq=T,add=T, col=rgb(0,0,0,.3), border='transparent')
 abline(v=0, lwd=3)
 

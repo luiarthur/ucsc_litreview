@@ -101,9 +101,12 @@ std::vector<List> fit_cytof_cpp(
     }
 
     // Append `missing_y_mean` and `missing_y_last` to last iteration of MCMC
+    // Append gam to last iteration of MCMC
+    // Now, this can serve as init to future MCMC
     if (i == B + burn - 1) {
       out[B-1]["missing_y_mean"] = missing_y_mean;
-      out[B-1]["missing_y_last"] = state.missing_y;
+      out[B-1]["missing_y"] = state.missing_y;
+      out[B-1]["gam"] = state.gam;
     }
   };
 
