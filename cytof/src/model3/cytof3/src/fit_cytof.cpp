@@ -7,6 +7,7 @@
 #include "util.h"
 #include "update_theta.h"
 #include "compute_loglike.h"
+#include "update_all_jointly.h"
 
 #include <omp.h>           // shared memory multicore parallelism
 
@@ -26,6 +27,7 @@ using namespace Rcpp;
 //' @param thin_some  (int). Thinning amount for some parameters.
 //' @param compute_loglike_every  (int). Frequency of computing loglike.
 //' @param normalize_loglike  (bool). Whether the log-likelihood should be normalized.
+//' @param joint_update_freq(int). Frequency of proposing from prior (0 -> don't do it). NOT READY!
 //' @export
 // [[Rcpp::export]]
 std::vector<List> fit_cytof_cpp(
@@ -33,6 +35,7 @@ std::vector<List> fit_cytof_cpp(
   List prior_ls, List locked_ls, List init_ls,
   int thin=1, int thin_some=1,
   int compute_loglike_every=1, int print_freq=10, int ncores=1,
+  int joint_update_freq=0,
   bool show_timings=false, 
   bool normalize_loglike=false) {
 
@@ -43,12 +46,21 @@ std::vector<List> fit_cytof_cpp(
   const int I = data.I;
   const int J = data.J;
 
+  int iter=1;
   
   // update function
   auto update = [&](State &state) {
     for (int t=0; t<thin; t++) {
       update_theta(state, data, prior, locked, show_timings, thin_some);
     }
+
+    // Do giant propose from prior every so often
+    if (joint_update_freq > 0 && iter % joint_update_freq == 0) {
+      Rcout << "Doing it" << std::endl;
+      INIT_TIMER;
+      TIME_CODE(show_timings, "update_all_jointly", update_all_jointly(state, data, prior, locked));
+    }
+    iter++;
   };
 
   // accumulater for sum of missing y's
@@ -72,7 +84,7 @@ std::vector<List> fit_cytof_cpp(
         ll = compute_loglike(state, data, prior, normalize_loglike);
       }
 
-      // update missing_y_sum
+      // update missing_y_mean
       for (int s=0; s<I; s++) {
         missing_y_mean[s] += state.missing_y[s] / B;
       }

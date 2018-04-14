@@ -1,6 +1,8 @@
 library(rcommon)
 library(cytof3)
 
+source("plot_mus.R")
+
 #saveRDS(y, '../data/cytof_cb.rds')
 y_orig = readRDS('../data/cytof_cb.rds')
 y = resample(y_orig, prop=.01)
@@ -18,10 +20,13 @@ prior$cs_beta0 = .1
 prior$cs_beta1 = .1
 
 # Are these good priors?
-prior$tau2_0 = 2
-prior$tau2_1 = 2
+prior$psi_0 = -2
+prior$psi_1 = 2
+prior$tau2_0 = .5^2
+prior$tau2_1 = 1
 prior$cs_v = .1 # I think this should be better
 prior$cs_h = .1 # I think this should be better
+prior$a_sig=3; prior$a_s=.4; prior$b_s=2
 
 b1_ab = gamma_params(mmp['b1'], .01)
 prior$a_beta1 = b1_ab[1]; prior$b_beta1 = b1_ab[2]
@@ -35,17 +40,20 @@ set.seed(1)
 init0 = gen_default_init(prior)
 set.seed(1)
 init = gen_default_init(prior)
-init$mus_0 = seq(-5,-.5, l=prior$L0)
-init$mus_1 = seq(.5, 5, l=prior$L1)
-init$sig2_0 = matrix(.5, prior$I, prior$L0) # TODO: Did this work?
-init$sig2_1 = matrix(.5, prior$I, prior$L1) # TODO: Did this work?
+init$mus_0 = seq(-5,-1, l=prior$L0)
+init$mus_1 = seq(1, 5, l=prior$L1)
+init$sig2_0 = matrix(.25, prior$I, prior$L0) # TODO: Did this work?
+init$sig2_1 = matrix(.25, prior$I, prior$L1) # TODO: Did this work?
 init$Z = matrix(1, prior$J, prior$K)
 init$H = matrix(-2, prior$J, prior$K)
 locked = gen_default_locked(init)
 locked$beta_0 = TRUE # TODO: Can I make this random?
 locked$beta_1 = TRUE # TODO: Can I make this random?
 #locked$sig2_0 = TRUE # TODO: Can I make this random?
-locked$mus_0 = TRUE  # TODO: Can I make this random?
+#locked$sig2_1 = TRUE # TODO: Can I make this random?
+
+#locked$mus_0 = TRUE  # TODO: Can I make this random?
+#locked$mus_1 = TRUE  # TODO: Can I make this random?
 
 ### kmeans
 preimpute_y = preimpute(y)
@@ -55,7 +63,7 @@ Z_est_kmeans = kmeans(Y, centers=10)
 my.image(unique(Z_est_kmeans$centers > 0))
 
 system.time(
-  out <- fit_cytof_cpp(y, B=200, burn=100, prior=prior, locked=locked, init=init, print_freq=1, show_timings=FALSE, normalize_loglike=TRUE)
+  out <- fit_cytof_cpp(y, B=200, burn=100, prior=prior, locked=locked, init=init, print_freq=1, show_timings=FALSE, normalize_loglike=TRUE, joint_update_freq=0)
 )
 
 B = length(out)
@@ -83,10 +91,7 @@ plotPost(alpha)
 
 mus = rbind(mus_0, mus_1)
 #plotPosts(t(mus[1:4,]))
-ci_mus = apply(mus, 1, quantile, c(.025,.975))
-plot(rowMeans(mus), col=rgb(0,0,1,.5), pch=20, cex=1.5, ylim=range(ci_mus))
-abline(h=0, lty=2, col='grey')
-add.errbar(t(ci_mus), col='grey')
+plot_mus(out)
 
 sig2_0 = sapply(out, function(o) o$sig2_0)
 ci_sig2_0 = apply(sig2_0, 1, quantile, c(.025,.975))
@@ -104,7 +109,7 @@ N = prior$N
 K = prior$K
 
 ### Z ###
-my.image(t(out[[B]]$Z)[out[[B]]$W[1,]>.05,])
+my.image(t(out[[B]]$Z)[out[[B]]$W[1,]>.1,])
 
 table(out[[B]]$lam[[1]])
 
@@ -143,13 +148,15 @@ missing_y_mean[idx_miss]
 ### PP 
 W_est = out[[B]]$W; Z_est = out[[B]]$Z
 
-i = 2; j= 1
-hist(out[[B]]$missing_y_mean[[i]][,j], freq=T, col=rgb(0,0,1,.4), border='transparent')
-hist(out[[B]]$missing_y[[i]][,j], freq=T, col=rgb(0,1,0,.4), border='transparent', add=T)
-hist(y[[i]][,j], freq=T,add=T, col=rgb(0,0,0,.3), border='transparent')
+i = 1; j= 7
+hist(out[[B]]$missing_y_mean[[i]][,j], freq=T, col=rgb(0,0,1,.4), border='transparent', nclass=20)
+hist(out[[B]]$missing_y[[i]][,j], freq=T, col=rgb(0,1,0,.4), border='transparent', add=T, nc=20)
+hist(y[[i]][,j], freq=T,add=T, col=rgb(0,0,0,.3), border='transparent', nc=20)
 abline(v=0, lwd=3)
 
 
+i=1
+#for (j in 1:prior$J) {
 o = out[[B]]
 yij = sapply(out, function(o) {
   k = sample(1:prior$K, 1, prob=W_est[i,])
@@ -163,8 +170,11 @@ yij = sapply(out, function(o) {
   l = sample(1:Lz, 1, prob=eta_z)
   rnorm(1, mus_z[l], sqrt(sig2_z[l]))
 })
-hist(out[[B]]$missing_y_mean[[i]][,j], prob=TRUE, col=rgb(0,0,1,.4), border='transparent', xlim=c(-8,8)); abline(v=0, lwd=2)
-hist(yij, add=TRUE, prob=TRUE, col=rgb(0,0,0,.7), border='transparent')
+hist(out[[B]]$missing_y[[i]][,j], prob=TRUE, col=rgb(0,0,1,.4), border='transparent', xlim=c(-8,8), nclass=20, main=paste('i: ', i,', j: ', j))
+hist(yij, add=TRUE, prob=TRUE, col=rgb(0,0,0,.5), border='transparent', nclass=20)
+abline(v=rowMeans(mus), lty=2, col='grey'); abline(v=0, lwd=2)
+#Sys.sleep(1)
+#}
 
 for (b in 1:B) {
   my.image(t(out[[b]]$Z), main=b)

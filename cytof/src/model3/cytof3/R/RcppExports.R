@@ -26,9 +26,10 @@ test_gen_data_obj <- function(y) {
 #' @param thin_some  (int). Thinning amount for some parameters.
 #' @param compute_loglike_every  (int). Frequency of computing loglike.
 #' @param normalize_loglike  (bool). Whether the log-likelihood should be normalized.
+#' @param joint_update_freq(int). Frequency of proposing from prior (0 -> don't do it). NOT READY!
 #' @export
-fit_cytof_cpp <- function(y, B, burn, prior_ls, locked_ls, init_ls, thin = 1L, thin_some = 1L, compute_loglike_every = 1L, print_freq = 10L, ncores = 1L, show_timings = FALSE, normalize_loglike = FALSE) {
-    .Call('_cytof3_fit_cytof_cpp', PACKAGE = 'cytof3', y, B, burn, prior_ls, locked_ls, init_ls, thin, thin_some, compute_loglike_every, print_freq, ncores, show_timings, normalize_loglike)
+fit_cytof_cpp <- function(y, B, burn, prior_ls, locked_ls, init_ls, thin = 1L, thin_some = 1L, compute_loglike_every = 1L, print_freq = 10L, ncores = 1L, joint_update_freq = 0L, show_timings = FALSE, normalize_loglike = FALSE) {
+    .Call('_cytof3_fit_cytof_cpp', PACKAGE = 'cytof3', y, B, burn, prior_ls, locked_ls, init_ls, thin, thin_some, compute_loglike_every, print_freq, ncores, joint_update_freq, show_timings, normalize_loglike)
 }
 
 #' Shuffle matrix by rows
