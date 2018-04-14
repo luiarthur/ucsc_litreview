@@ -1,4 +1,4 @@
-library(rcommon)
+#library(rcommon)
 
 get_mus = function(out, a=.05) {
   mus_0 = sapply(out, function(o) o$mus_0)
