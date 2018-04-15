@@ -11,9 +11,11 @@ void update_Z(State &state, const Data &data, const Prior &prior, const Locked &
   const int J = data.J;
   const int K = prior.K;
 
-  if(!locked.Z) for (int j=0; j<J; j++) {
-    for (int k=0; k<K; k++) {
-      state.Z(j,k) = compute_zjk(state.H(j,k), prior.G(j,j), state.v(k));
+  if(!locked.Z) {
+    for (int j=0; j<J; j++) {
+      for (int k=0; k<K; k++) {
+        state.Z(j,k) = compute_zjk(state.H(j,k), prior.G(j,j), state.v(k));
+      }
     }
   }
 }

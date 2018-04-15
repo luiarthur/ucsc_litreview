@@ -15,10 +15,11 @@
 #include "update_s.h" // gibbs
 #include "update_gam.h" // gibbs
 #include "update_eta.h" // gibbs
+#include "update_Z.h" // deterministic
 #include "update_v.h" // metropolis
 #include "update_alpha.h" // gibbs
 #include "update_H.h" // metropolis
-#include "update_Z.h" // deterministic
+#include "update_vH.h" // metropolis
 #include "update_lam.h" // gibbs
 #include "update_W.h" // gibbs
 
@@ -38,9 +39,11 @@ void update_theta(State &state, const Data &data, const Prior &prior, const Lock
   TIME_CODE(show_timings, "s",   update_s(state, data, prior, locked));
 
   // metropolis
-  TIME_CODE(show_timings, "v", update_v(state, data, prior, locked));
-  TIME_CODE(show_timings, "H", update_H(state, data, prior, locked));
-  TIME_CODE(show_timings, "Z", update_Z(state, data, prior, locked));
+  //TIME_CODE(show_timings, "v", update_v(state, data, prior, locked));
+  //TIME_CODE(show_timings, "H", update_H(state, data, prior, locked));
+  //TIME_CODE(show_timings, "Z", update_Z(state, data, prior, locked));
+  TIME_CODE(show_timings, "VHZ", update_vH(state, data, prior, locked));
+
 
   // gibbs
   TIME_CODE(show_timings, "alpha", update_alpha(state, data, prior, locked));

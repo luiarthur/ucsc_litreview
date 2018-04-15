@@ -10,12 +10,16 @@
 struct SS_sig2 { // sufficient stats for sig2
   // constructor
   SS_sig2(const State &state, const Data &data, const Prior &prior) : a_new(2), b_new(2) {
+    int Lz;
     for (int z=0; z<2; z++) {
-      a_new[z].set_size(data.I, get_Lz(state, z));
+      Lz = get_Lz(state, z);
+      a_new[z].set_size(data.I, Lz);
       a_new[z].fill(prior.a_sig);
+      b_new[z].set_size(data.I, Lz);
       for (int i=0; i<data.I; i++) {
-        b_new[z].set_size(data.I, get_Lz(state, z));
-        b_new[z].fill(state.s(i));
+        for (int l=0; l < Lz; l++) {
+          b_new[z](i,l) = state.s(i) + 0;
+        }
       }
     }
   }
@@ -54,11 +58,19 @@ void update_sig2(State &state, const Data &data, const Prior &prior, const Locke
     }
   }
 
-  if(!locked.sig2_0) for (int i=0; i<I; i++) for(l=0; l < get_Lz(state,0); l++) {
-    update_sig2_zil(state, data, prior, ss_sig2, 0, i, l);
+  if(!locked.sig2_0) {
+    for (int i=0; i<I; i++) {
+      for(l=0; l < get_Lz(state,0); l++) {
+        update_sig2_zil(state, data, prior, ss_sig2, 0, i, l);
+      }
+    }
   }
-  if(!locked.sig2_1) for (int i=0; i<I; i++) for(l=0; l < get_Lz(state,1); l++) {
-    update_sig2_zil(state, data, prior, ss_sig2, 1, i, l);
+  if(!locked.sig2_1) {
+    for (int i=0; i<I; i++) {
+      for(l=0; l < get_Lz(state,1); l++) {
+        update_sig2_zil(state, data, prior, ss_sig2, 1, i, l); 
+      }
+    }
   }
 }
 
