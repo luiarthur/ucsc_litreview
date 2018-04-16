@@ -59,7 +59,7 @@ void update_mus(State &state, const Data &data, const Prior &prior, const Locked
     for (int j=0; j<J; j++) {
       for (int n=0; n<Ni; n++) {
         z = state.Z(j, state.lam[i](n));
-        l = state.gam[i](n, j);
+        l = state.gam[i](n,j);
         ss_mus.S_card[z](i,l)++;
         ss_mus.S_sum[z](i,l) += state.missing_y[i](n,j) / get_sig2_z(state,z)->at(i,l);
       }

@@ -2,10 +2,12 @@ library(rcommon)
 library(cytof3)
 
 source("plot_mus.R")
+source("plot_dat.R")
 
 #saveRDS(y, '../data/cytof_cb.rds')
 y_orig = readRDS('../data/cytof_cb.rds')
 y = resample(y_orig, prop=.01)
+#y = preimpute(y_orig, .01)
 #y = y_orig
 
 ### Missing Mechanism params ###
@@ -27,10 +29,13 @@ prior$tau2_1 = 1
 
 #prior$cs_v = .01 # I think this should be better
 #prior$cs_h = 1 # I think this should be better
+# 1,1 -> great changes
 prior$cs_v = 1
 prior$cs_h = 1
 
-prior$a_sig=3; prior$a_s=.04; prior$b_s=2
+#prior$a_sig=3; prior$a_s=.04; prior$b_s=2
+# sig2 ~ IG(mean=.1, variance=.01)
+prior$a_sig=102; prior$a_s=10201; prior$b_s=1010
 
 sig2_prior = 1 / rgamma(1000, prior$a_sig, rgamma(1000, prior$a_s, prior$b_s))
 hist(sig2_prior)
@@ -48,17 +53,21 @@ init0 = gen_default_init(prior)
 set.seed(1)
 init = gen_default_init(prior)
 init$mus_0 = seq(-5,-1, l=prior$L0)
-init$mus_1 = seq(1, 5, l=prior$L1)
-init$sig2_0 = matrix(.5^2, prior$I, prior$L0) # TODO: Did this work?
-init$sig2_1 = matrix(.5^2, prior$I, prior$L1) # TODO: Did this work?
-init$Z = matrix(1, prior$J, prior$K)
-init$H = matrix(-2, prior$J, prior$K)
+init$mus_1 = seq(0, 5, l=prior$L1)
+init$sig2_0 = matrix(.5, prior$I, prior$L0) # TODO: Did this work?
+init$sig2_1 = matrix(.5, prior$I, prior$L1) # TODO: Did this work?
+#init$Z = matrix(1, prior$J, prior$K)
+#init$H = matrix(-2, prior$J, prior$K)
+init$H = matrix(rnorm(prior$J*prior$K, 0, 2), prior$J, prior$K)
+init$Z = compute_Z(H=init$H, v=init$v, G=prior$G)
 
 
 ### Fixed parameters ###
 locked = gen_default_locked(init)
 locked$beta_0 = TRUE # TODO: Can I make this random?
 locked$beta_1 = TRUE # TODO: Can I make this random?
+
+#locked$s = TRUE
 #locked$sig2_0 = TRUE # TODO: Can I make this random?
 #locked$sig2_1 = TRUE # TODO: Can I make this random?
 
@@ -73,14 +82,18 @@ Y = do.call(rbind, preimpute_y)
 Z_est_kmeans = kmeans(Y, centers=10)
 my.image(unique(Z_est_kmeans$centers > 0))
 
-system.time(
-  #out <- fit_cytof_cpp(y, B=200, burn=300, prior=prior, locked=locked, init=init, print_freq=1, show_timings=FALSE, normalize_loglike=TRUE, joint_update_freq=0)
-  out <- fit_cytof_cpp(y, B=50, burn=0, prior=prior, locked=locked, init=init, print_freq=1, show_timings=FALSE, normalize_loglike=TRUE, joint_update_freq=0)
+### Init Z ###
+#init$Z = t((Z_est_kmeans$centers > 0) * 1)
 
-  prior$cs_v = .001
-  prior$cs_h = .001
-  out <- fit_cytof_cpp(y, B=50, burn=0, prior=prior, locked=locked, init=last(out), print_freq=1, show_timings=FALSE, normalize_loglike=TRUE, joint_update_freq=0)
+st = system.time(
+  out <- fit_cytof_cpp(y, B=200, burn=300, prior=prior, locked=locked, init=init, print_freq=1, show_timings=FALSE, normalize_loglike=TRUE, joint_update_freq=0)
+  #out <- fit_cytof_cpp(y, B=50, burn=0, prior=prior, locked=locked, init=init, print_freq=1, show_timings=FALSE, normalize_loglike=TRUE, joint_update_freq=0)
+
+  #prior$cs_v = .001
+  #prior$cs_h = .001
+  #out <- fit_cytof_cpp(y, B=50, burn=0, prior=prior, locked=locked, init=last(out), print_freq=1, show_timings=FALSE, normalize_loglike=TRUE, joint_update_freq=0)
 )
+print(st)
 
 B = length(out)
 
@@ -91,31 +104,45 @@ plot(ll, type='l')
 ### Expensive order: H, lam, v, gam, y, beta, mus, sig2, eta, W, alpha, s.
 
 beta_0 = t(sapply(out, function(o) o$beta_0))
-beta_1 = t(sapply(out, function(o) o$beta_1))
-
+beta_1 = t(sapply(out, function(o) o$beta_1)) 
 #plotPosts(beta_0)
 #plotPosts(beta_1)
 
 alpha = sapply(out, function(o) o$alpha)
 mus_0 = sapply(out, function(o) o$mus_0)
 mus_1 = sapply(out, function(o) o$mus_1)
+
+### v ###
 v = sapply(out, function(o) o$v)
 plotPost(v[1,])
 plot(rowMeans(v))
 
+### H ###
+H = sapply(out, function(o) c(o$H))
+H_mean = matApply(lapply(out, function(o) o$H), mean)
+ci_H = apply(H, 1, quantile, c(.025,.975))
+plotPost(H[1,])
+plot(rowMeans(H), ylim=range(ci_H), pch=20, col='blue')
+add.errbar(t(ci_H), col='grey')
+my.image(t(H_mean), mn=-3, mx=3, col=blueToRed(), addL=TRUE)
+
+### alpha ###
 plotPost(alpha)
 
 
+### mus ###
 mus = rbind(mus_0, mus_1)
 #plotPosts(t(mus[1:4,]))
 plot_mus(out)
 
+### sig2_0 ###
 sig2_0 = sapply(out, function(o) o$sig2_0)
 ci_sig2_0 = apply(sig2_0, 1, quantile, c(.025,.975))
 plot(rowMeans(sig2_0), col=rgb(0,0,1,.5), pch=20, cex=1.5, ylim=range(ci_sig2_0))
 abline(h=0, lty=2, col='grey')
 add.errbar(t(ci_sig2_0), col='grey')
 
+### sig2_1 ###
 sig2_1 = sapply(out, function(o) o$sig2_1)
 ci_sig2_1 = apply(sig2_1, 1, quantile, c(.025,.975))
 plot(rowMeans(sig2_1), col=rgb(0,0,1,.5), pch=20, cex=1.5, ylim=range(ci_sig2_1))
@@ -191,8 +218,9 @@ abline(v=0, lwd=3)
 Y_last = do.call(rbind, out[[B]]$missing_y)
 
 
-#i=1; j=5
-i=1; j=7
+#i=1; j=30
+i=1; j=5
+#i=1; j=7
 #for (j in 1:prior$J) {
 o = out[[B]]
 yij = sapply(out, function(o) {
@@ -208,15 +236,17 @@ yij = sapply(out, function(o) {
   rnorm(1, mus_z[l], sqrt(sig2_z[l]))
 })
 zjk_mean = compute_zjk_mean(out, i, j)
-hist(out[[B]]$missing_y[[i]][,j], prob=TRUE, col=rgb(0,0,1,.4), border='transparent', xlim=c(-8,8), nclass=20, main=paste('i: ', i,', j: ', j, ' (Z_ij mean: ', zjk_mean, ')'))
+plot_dat(out[[B]]$missing_y, i, j, xlim=c(-8,8), main=paste('i: ', i,', j: ', j, ' (Z_ij mean: ', zjk_mean, ')'))
+#plot_dat(y, i, j, xlim=c(-8,8), main=paste('i: ', i,', j: ', j, ' (Z_ij mean: ', zjk_mean, ')'))
 hist(yij, add=TRUE, prob=TRUE, col=rgb(0,0,0,.5), border='transparent', nclass=20)
-#hist(Y_last[,j], col=rgb(0,1,0,.3), border='transparent',nclass=20,prob=TRUE,add=TRUE)
-abline(v=0, lwd=2);# abline(v=rowMeans(mus), lty=2, col='grey')
 points(rowMeans(mus), rep(0,NROW(mus)), pch=4, cex=.5, lwd=2)
-#Sys.sleep(1)
-#}
+#Sys.sleep(1)}
 
 for (b in 1:B) {
   my.image(t(out[[b]]$Z), main=b)
   Sys.sleep(.1)
 }
+
+Z = lapply(out, function(o) t(o$Z))
+my.image(matApply(Z, mean) > .5)
+my.image(last(Z))

@@ -34,15 +34,6 @@ sample_from_miss_mech_prior = function(y, m_beta0, s2_beta0, a_beta1, b_beta1,
   sapply(1:B, function(b) prob_miss(y, b0[b], b1[b], c0, c1))
 }
 
-#' Compute parameters of gamma distribution from mean and sd
-#' TODO: Put in different file
-#' @export
-gamma_params = function(m, v) {
-  rate = m/v
-  shape = m * rate
-  c(shape=shape, rate=rate)
-}
-
 ## TEST
 #param = miss_mech_params(c(-4,-2,-1), c(.1, .99, .001))
 #y = seq(-7, 7, l=100)

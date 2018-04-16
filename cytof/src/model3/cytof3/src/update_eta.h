@@ -29,8 +29,11 @@ void update_eta_zij(State &state, const Data &data, const Prior &prior, int z, i
 
 
 void update_eta_z(State &state, const Data &data, const Prior &prior, int z){
-  for (int i=0; i < data.I; i++) {
-    for (int j=0; j < data.J; j++) {
+  const int I = data.I;
+  const int J = data.J;
+
+  for (int i=0; i < I; i++) {
+    for (int j=0; j < J; j++) {
       update_eta_zij(state, data, prior, z, i, j);
     }
   }
