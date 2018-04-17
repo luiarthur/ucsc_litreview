@@ -1,5 +1,13 @@
 # Model 3
 
+## NOW 
+- [ ] Abstract for this project
+- [ ] `beta_1 ~ N+`
+- [ ] random `s_i`
+- [ ] CB all data
+- [ ] simulation data 
+- [ ] 2000 MCMC samples!
+
 ## Timeline
 
 Goal: Advancement by week of **4 June, 2018**.
