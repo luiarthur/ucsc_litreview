@@ -7,6 +7,7 @@
 - [ ] CB all data
 - [ ] simulation data 
 - [ ] 2000 MCMC samples!
+- [ ] update tex. use Juhee's, and upload mine.
 
 ## Timeline
 
