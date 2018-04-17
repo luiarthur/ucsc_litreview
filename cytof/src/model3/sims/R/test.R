@@ -1,12 +1,14 @@
+library(ggplot2)
 library(rcommon)
 library(cytof3)
 
 source("plot_mus.R")
 source("plot_dat.R")
+source("postpred_yij.R")
 
 #saveRDS(y, '../data/cytof_cb.rds')
 y_orig = readRDS('../data/cytof_cb.rds')
-y = resample(y_orig, prop=.01)
+y = resample(y_orig, prop=.2)
 #y = preimpute(y_orig, .01)
 #y = y_orig
 
@@ -34,8 +36,11 @@ prior$cs_v = 1
 prior$cs_h = 1
 
 #prior$a_sig=3; prior$a_s=.04; prior$b_s=2
-# sig2 ~ IG(mean=.1, variance=.01)
-prior$a_sig=102; prior$a_s=10201; prior$b_s=1010
+# sig2 ~ IG(mean=.1, sd=.01)
+sig2_ab = invgamma_params(m=.1, sig=.01)
+prior$a_sig=sig2_ab[1]
+s_ab = gamma_params(m=sig2_ab[2], v=.001)
+prior$a_s=s_ab[1]; prior$b_s=s_ab[2]
 
 sig2_prior = 1 / rgamma(1000, prior$a_sig, rgamma(1000, prior$a_s, prior$b_s))
 hist(sig2_prior)
@@ -219,34 +224,31 @@ Y_last = do.call(rbind, out[[B]]$missing_y)
 
 
 #i=1; j=30
-i=1; j=5
 #i=1; j=7
-#for (j in 1:prior$J) {
-o = out[[B]]
-yij = sapply(out, function(o) {
-  k = sample(1:prior$K, 1, prob=o$W[i,])
-  #k = sample(1:prior$K, 1000, prob=W_est[i,], replace=TRUE)
-  z_jk = o$Z[j,k]
-  #mean(z_jk)
-  eta_z = if (z_jk == 0) o$eta_0[i,j,] else o$eta_1[i,j,]
-  mus_z = if (z_jk == 0) o$mus_0 else o$mus_1
-  sig2_z = if (z_jk == 0) o$sig2_0[i,] else o$sig2_1[i,]
-  Lz = length(mus_z)
-  l = sample(1:Lz, 1, prob=eta_z)
-  rnorm(1, mus_z[l], sqrt(sig2_z[l]))
-})
-zjk_mean = compute_zjk_mean(out, i, j)
-plot_dat(out[[B]]$missing_y, i, j, xlim=c(-8,8), main=paste('i: ', i,', j: ', j, ' (Z_ij mean: ', zjk_mean, ')'))
-#plot_dat(y, i, j, xlim=c(-8,8), main=paste('i: ', i,', j: ', j, ' (Z_ij mean: ', zjk_mean, ')'))
-hist(yij, add=TRUE, prob=TRUE, col=rgb(0,0,0,.5), border='transparent', nclass=20)
-points(rowMeans(mus), rep(0,NROW(mus)), pch=4, cex=.5, lwd=2)
-#Sys.sleep(1)}
+#i=1; j=7
+source("plot_dat.R")
+pdf('../out/y_hist.pdf')
+par(mfrow=c(4,2))
+for (i in 1:prior$I) for (j in 1:prior$J) {
+  zjk_mean = compute_zjk_mean(out, i, j)
+  plot_dat(out[[B]]$missing_y, i, j, xlim=c(-8,8), lwd=1, col='grey',
+           main=paste('i: ', i,', j: ', j, ' (Z_ij mean: ', zjk_mean, ')'))
+
+  yij = postpred_yij(out, i, j)
+  lines(density(yij), col='darkgrey', lwd=2)
+
+  eta_0ij = sapply(out, function(o) o$eta_0[i,j,])
+  eta_1ij = sapply(out, function(o) o$eta_1[i,j,])
+  eta_ij = c(rowMeans(eta_0ij), rowMeans(eta_1ij))
+  col = c(rep('blue', NROW(eta_0ij)), rep('red', NROW(eta_1ij)))
+  points(rowMeans(mus), rep(0,NROW(mus)), pch=4, lwd=2, cex=eta_ij, col=col)
+}
+par(mfrow=c(1,1))
+dev.off()
 
 for (b in 1:B) {
   my.image(t(out[[b]]$Z), main=b)
   Sys.sleep(.1)
 }
 
-Z = lapply(out, function(o) t(o$Z))
-my.image(matApply(Z, mean) > .5)
-my.image(last(Z))
+y_Z_inspect(out, y, c(-4,4))
