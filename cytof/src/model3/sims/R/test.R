@@ -8,12 +8,13 @@ source("postpred_yij.R")
 
 #saveRDS(y, '../data/cytof_cb.rds')
 y_orig = readRDS('../data/cytof_cb.rds')
-y = resample(y_orig, prop=.2)
+#y = resample(y_orig, prop=.2)
+y = resample(y_orig, prop=.01)
 #y = preimpute(y_orig, .01)
 #y = y_orig
 
 ### Missing Mechanism params ###
-mmp = miss_mech_params(y=c(-4, -2.5, -1.0), p=c(.1, .99, .01))
+mmp = miss_mech_params(y=c(-6, -2.5, -1.0), p=c(.1, .99, .01))
 
 ### TODO: add def for miss-mech in gen_default prior ###
 prior = gen_default_prior(y, K=10, L0=5, L1=5)
@@ -50,8 +51,10 @@ prior$a_beta1 = b1_ab[1]; prior$b_beta1 = b1_ab[2]
 yy = seq(-7,3,l=50)
 bb = sample_from_miss_mech_prior(yy, prior$m_beta0, prior$s2_beta0, prior$a_beta1,
                                  prior$b_beta1, prior$c0, prior$c1)
+pdf('../out/miss_mech_prior.pdf')
 plot(yy,bb[,1], type='n'); abline(v=0)
 for (i in 1:NCOL(bb)) lines(yy, bb[,i], col='grey')
+dev.off()
 
 set.seed(1)
 init0 = gen_default_init(prior)
@@ -104,7 +107,9 @@ B = length(out)
 
 ### loglike 
 ll = sapply(out, function(o) o$ll)
+pdf('../out/ll.pdf')
 plot(ll, type='l')
+dev.off()
 
 ### Expensive order: H, lam, v, gam, y, beta, mus, sig2, eta, W, alpha, s.
 
@@ -132,14 +137,19 @@ add.errbar(t(ci_H), col='grey')
 my.image(t(H_mean), mn=-3, mx=3, col=blueToRed(), addL=TRUE)
 
 ### alpha ###
+pdf('../out/alpha.pdf')
 plotPost(alpha)
+dev.off()
 
 
 ### mus ###
 mus = rbind(mus_0, mus_1)
 #plotPosts(t(mus[1:4,]))
+pdf('../out/mus.pdf')
 plot_mus(out)
+dev.off()
 
+pdf('../out/sig2.pdf')
 ### sig2_0 ###
 sig2_0 = sapply(out, function(o) o$sig2_0)
 ci_sig2_0 = apply(sig2_0, 1, quantile, c(.025,.975))
@@ -153,6 +163,7 @@ ci_sig2_1 = apply(sig2_1, 1, quantile, c(.025,.975))
 plot(rowMeans(sig2_1), col=rgb(0,0,1,.5), pch=20, cex=1.5, ylim=range(ci_sig2_1))
 abline(h=0, lty=2, col='grey')
 add.errbar(t(ci_sig2_1), col='grey')
+dev.off()
 
 s = sapply(out, function(o) o$s)
 ci_s = apply(s, 1, quantile, c(.025,.975))
@@ -189,17 +200,6 @@ for (i in 1:NCOL(mm_post)) lines(yy,mm_post[,i], col='blue')
 #}
 
 
-my.image(y[[1]], col=blueToRed(), mn=-4, mx=4)
-ord = order(out[[B]]$lam[[1]])
-my.image(out[[B]]$missing_y_mean[[1]][ord,], col=blueToRed(), mn=-4,mx=4)
-
-### Check missing values mean. Should be < 0.
-missing_y_mean = out[[B]]$missing_y_mean[[1]]
-idx_miss = which(is.na(y[[1]]), arr.ind=TRUE)
-missing_y_mean[idx_miss]
-#y[[1]][idx_miss]
-
-
 ### PP 
 W_est = out[[B]]$W; Z_est = out[[B]]$Z
 
@@ -213,27 +213,21 @@ compute_zjk_mean= function(out, i, j) {
   mean(zjk)
 }
 
-i = 1; j= 10
-hist(out[[B]]$missing_y_mean[[i]][,j], freq=T, col=rgb(0,0,1,.4), border='transparent', nclass=20)
-hist(out[[B]]$missing_y[[i]][,j], freq=T, col=rgb(0,1,0,.4), border='transparent', add=T, nc=20)
-hist(y[[i]][,j], freq=T,add=T, col=rgb(0,0,0,.3), border='transparent', nc=20)
-abline(v=0, lwd=3)
 
 ### Y aggregate last ###
 Y_last = do.call(rbind, out[[B]]$missing_y)
 
 
-#i=1; j=30
-#i=1; j=7
-#i=1; j=7
 source("plot_dat.R")
 pdf('../out/y_hist.pdf')
 par(mfrow=c(4,2))
 for (i in 1:prior$I) for (j in 1:prior$J) {
   zjk_mean = compute_zjk_mean(out, i, j)
-  plot_dat(out[[B]]$missing_y, i, j, xlim=c(-8,8), lwd=1, col='grey',
-           main=paste('i: ', i,', j: ', j, ' (Z_ij mean: ', zjk_mean, ')'))
+  plot_dat(out[[B]]$missing_y_mean, i, j, xlim=c(-8,8), lwd=1, col='red',
+           main=paste0('i: ', i,', j: ', j, ' (Z_ij mean: ', zjk_mean, ')'))
 
+  lines(density(out[[B]]$missing_y[[i]][,j]), col='grey')
+         
   yij = postpred_yij(out, i, j)
   lines(density(yij), col='darkgrey', lwd=2)
 
@@ -246,9 +240,17 @@ for (i in 1:prior$I) for (j in 1:prior$J) {
 par(mfrow=c(1,1))
 dev.off()
 
-for (b in 1:B) {
-  my.image(t(out[[b]]$Z), main=b)
-  Sys.sleep(.1)
-}
+#for (b in 1:B) {
+#  my.image(t(out[[b]]$Z), main=b)
+#  Sys.sleep(.1)
+#}
 
-y_Z_inspect(out, y, c(-4,4))
+png('../out/YZ%03d.png')
+y_Z_inspect(out, y, c(-2,2), i=0, thresh=.05)
+dev.off()
+
+#my.image(Z[[161]])
+#my.image(Z[[77]])
+#my.image(Z[[79]])
+
+
