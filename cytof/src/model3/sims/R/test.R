@@ -8,8 +8,8 @@ source("postpred_yij.R")
 
 #saveRDS(y, '../data/cytof_cb.rds')
 y_orig = readRDS('../data/cytof_cb.rds')
-#y = resample(y_orig, prop=.2)
-y = resample(y_orig, prop=.01)
+#y = resample(y_orig, prop=.01)
+y = y_orig
 #y = preimpute(y_orig, .01)
 #y = y_orig
 
