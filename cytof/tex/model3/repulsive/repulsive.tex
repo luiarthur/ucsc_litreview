@@ -1,0 +1,100 @@
+\documentclass[12pt]{article}
+\usepackage{fullpage,amsmath}
+\usepackage{setspace}
+\usepackage{graphicx, psfrag, amsfonts}
+\usepackage{natbib}
+
+
+\newcommand{\Dt}{\mbox{$\tilde{D}$}}
+\newcommand{\bu}{\mbox{\boldmath $u$}}
+
+\newcommand{\bp}{\mbox{\boldmath $p$}}
+\newcommand{\bq}{\mbox{\boldmath $q$}}
+\newcommand{\bz}{\mbox{\boldmath $z$}}
+
+
+\newcommand{\bzero}{\mbox{\boldmath $0$}}
+
+\newcommand{\bT}{\mbox{\boldmath $T$}}
+\newcommand{\bY}{\mbox{\boldmath $Y$}}
+\newcommand{\bZ}{\mbox{\boldmath $Z$}}
+\newcommand{\bd}{\mbox{\boldmath $d$}}
+\newcommand{\D}{\mbox{${\cal D}$}}
+\newcommand{\cH}{\mbox{${\cal H}$}}
+\newcommand{\Q}{\mbox{${\cal Q}$}}
+\newcommand{\cX}{\mbox{${\cal X}$}}
+\newcommand{\cA}{\mbox{${\cal A}$}}
+
+\def\bpsi{\mbox{\boldmath $\psi$}}
+\def\bal{\mbox{\boldmath $\alpha$}}
+\def\bdel{\mbox{\boldmath $\delta$}}
+\def\bmu{\mbox{\boldmath $\mu$}}
+\def\bxi{\mbox{\boldmath $\xi$}}
+\def\bet{\mbox{\boldmath $\eta$}}
+\def\bth{\mbox{\boldmath $\theta$}}
+\newcommand{\xibar}{\bar{\xi}}
+\newcommand{\etbar}{\bar{\eta}}
+\newcommand{\bebar}{\bar{\beta}}
+\def\bbet{\mbox{\boldmath $\beta$}}
+\newcommand{\bbebar}{\bar{\bbe}}
+
+
+\newcommand{\Exp}{\mbox{E}}
+
+\newcommand{\Bern}{\mbox{Bern}}
+\newcommand{\Nor}{\mbox{N}}
+\newcommand{\Ga}{\mbox{Gamma}}
+\newcommand{\Dir}{\mbox{Dir}}
+\newcommand{\Ber}{\mbox{Ber}}
+\newcommand{\Be}{\mbox{Be}}
+\newcommand{\Unif}{\mbox{Unif}}
+\newcommand{\Rep}{\mbox{Rep}}
+
+\newcommand{\iid}{\stackrel{iid}{\sim}}
+\newcommand{\indep}{\stackrel{indep}{\sim}}
+
+
+\begin{document}
+\onehalfspacing
+
+\noindent
+\begin{center}
+{\bf Repulsive Feature Allocation Model}
+\end{center}
+
+\vskip .1in
+\today
+
+\vskip .1in
+Similar to the construction of the conventional IBP, we assume $v_k \iid \Be(\alpha/K, 1)$ with fixed $K > 1$.  We consider a prior for $\alpha$, $\alpha \sim \Ga(a_\alpha, b_\alpha)$.  We utilize a repulsive distribution in \cite{quinlan2017parsimonious} and develop a repulsive feature allocation model (rep-FAM) for $J \times K$ binary matrix $\bZ=[z_{ik}], j=1, \ldots, J$ and $k=1, \ldots, K$.  The rep-FAM assigns larger probabilities for $\bZ$ whose columns are more distinct.  Recall that columns $\bz_k$, $k=1, \ldots, K$ characterize latent cell phenotypes in CyTof application.  In particular, consider the following for $\bZ=[\bz_1, \ldots, \bz_K]$,
+\begin{eqnarray*}
+\bZ \sim \Rep_{J,K}(f_0, C_0, r),
+\end{eqnarray*}
+where
+\begin{eqnarray}
+f_{0k}(\bz_k) = \prod_{j=1}^J (v_k)^{z_{jk}} (1-v_k)^{(1-z_{jk})}, \nonumber \\
+C_0(r) = \exp \left( - \frac{r^2}{2\nu} \right), \mbox{ with fixed } \nu>0 \label{eq:C_0} \\
+r_{k_1, k_2} = \sqrt{\sum_{j=1}^J |z_{jk_1} - z_{jk_2}|}. \label{eq:diff}
+\end{eqnarray}
+$r_{k_1, k_2} \geq 0$ in \eqref{eq:diff} measures difference between columns $\bz_{k_1}$ and $\bz_{k_2}$.  $C_0(r)$ is a function decreasing in $r$ with $0 < C_0(r) \leq 1$.  We write the density function of $\bZ$ as follows; for given $J$ and $K$,
+\begin{eqnarray}
+p(\bZ \mid f_0, C_0, r, v_k) &\propto& \prod_{k=1}^K f_{0k}(\bz_k) \prod_{k_1=1}^{K-1} \prod_{k_2 = k_1+1}^K \left\{ 1- C_0(r_{k_1, k_2})\right\} \nonumber \\
+&\propto&
+\prod_{k=1}^K \prod_{j=1}^J (v_k)^{z_{jk}} (1-v_k)^{(1-z_{jk})} \nonumber \\
+& &
+\qquad 
+\times
+\underbrace{
+\prod_{k_1=1}^{K-1} \prod_{k_2 = k_1+1}^K \left\{ 1- \exp \left( - \frac{\sum_{j=1}^J |z_{jk_1} - z_{jk_2}|}{2\nu} \right)\right\}.}
+_\text{(A)} \label{eq:den_Z}
+\end{eqnarray}
+$p(\bZ \mid f_0, C_0, r, v_k)$ in \eqref{eq:den_Z} gives probability 0 to any $\bZ$ that has some repeated columns.  If $\bz_k$, $k=1, \ldots, K$ are very different from each other, $(A)$ in \eqref{eq:den_Z} is close to 1 and gives a larger probability than any $\bZ$ that has similar columns.  That is, the rep-FAM in \eqref{eq:den_Z} encourages latent cell phenotypes to have different expression combinations.  Other functions are used for $(A)$ in \eqref{eq:den_Z} in \cite{xie2017bayesian, petralia2012repulsive}.   Under the rep-FAM $\mbox{P}(z_{jk}=1) \neq v_k$ and depends on $\nu$, $K$, $J$ as well as $v_k$, unlike the conventional IBP.  We cannot analytically find $\mbox{P}(z_{jk}=1)$ since $\sum_{\bz_{K+1}} \Rep_{J, K+1} \neq \Rep_{J,K}$.   We numerically examine some properties of the rep-FAM through simulations and compare to those of the IBP.  
+
+
+
+
+\bibliographystyle{natbib}
+\bibliography{repulsive}
+
+
+\end{document}

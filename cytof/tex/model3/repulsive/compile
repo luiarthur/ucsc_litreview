@@ -1,0 +1,10 @@
+#!/bin/bash
+
+filename="repulsive"
+
+pdflatex ${filename}.tex
+bibtex ${filename}.aux
+pdflatex ${filename}.tex
+pdflatex ${filename}.tex
+rm -f *.{log,aux,nav,out,snm,toc,blg,bbl}
+
