@@ -10,6 +10,7 @@
 #include "util.h" // minus_idx
 #include "dmixture.h"
 
+#include <omp.h>
 
 // TODO: profile this function. Optimize if bottleneck.
 void compute_m_S2_for_hjk(const State &state, const Data &data, const Prior &prior, double &m_j, double &S2_j, const int j, const int k) {
@@ -59,6 +60,7 @@ void update_H(State &state, const Data &data, const Prior &prior, const Locked &
   const int K = prior.K;
 
   if (!locked.H && !locked.Z) {
+#pragma omp parallel for
     for (int k=0; k<K; k++) {
       for (int j=0; j<J; j++) {
         update_Hjk(state, data, prior, j, k);

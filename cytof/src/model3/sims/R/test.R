@@ -97,7 +97,9 @@ my.image(unique(Z_est_kmeans$centers > 0))
 #init$Z = t((Z_est_kmeans$centers > 0) * 1)
 
 st = system.time(
-  out <- fit_cytof_cpp(y, B=1000, burn=2000, prior=prior, locked=locked, init=init, print_freq=1, show_timings=FALSE, normalize_loglike=TRUE, joint_update_freq=0)
+  out <- fit_cytof_cpp(y, B=1000, burn=2000, prior=prior, locked=locked,
+                       init=init, print_freq=1, show_timings=TRUE,
+                       normalize_loglike=TRUE, joint_update_freq=0, ncore=8)
   #out <- fit_cytof_cpp(y, B=50, burn=0, prior=prior, locked=locked, init=init, print_freq=1, show_timings=FALSE, normalize_loglike=TRUE, joint_update_freq=0)
 
   #prior$cs_v = .001
@@ -115,7 +117,7 @@ pdf('../out/ll.pdf')
 plot(ll, type='l')
 dev.off()
 
-### Expensive order: H, lam, v, gam, y, beta, mus, sig2, eta, W, alpha, s.
+### Expensive order: lam, H, v, gam, y, beta, mus, sig2, eta, W, alpha, s.
 
 alpha = sapply(out, function(o) o$alpha)
 mus_0 = sapply(out, function(o) o$mus_0)

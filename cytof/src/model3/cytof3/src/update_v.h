@@ -8,6 +8,7 @@
 #include "Locked.h"
 #include "update_Z.h"
 #include "dmixture.h"
+#include <omp.h>
 
 void update_v_jointly(State &state, const Data &data, const Prior &prior, const Locked &locked){
   const int K = prior.K;
@@ -29,6 +30,7 @@ void update_v_jointly(State &state, const Data &data, const Prior &prior, const 
     for (int i=0; i<I; i++) {
       Ni = data.N(i);
       for (int j=0; j<J; j++) {
+#pragma omp parallel for
         for (int n=0; n<Ni; n++) {
           k = state.lam[i](n);
           z = compute_zjk(state.H(j,k), prior.G(j,j), v(k));

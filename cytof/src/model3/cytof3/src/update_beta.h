@@ -8,6 +8,8 @@
 #include "Locked.h"
 #include "missing_mechanism.h"
 
+#include <omp.h>
+
 void update_beta0i(State &state, const Data &data, const Prior &prior, int i){
   auto log_fc = [&](double b0i) {
     const double lp = -pow(b0i - prior.m_beta0, 2) / (2 * prior.s2_beta0);
@@ -16,6 +18,7 @@ void update_beta0i(State &state, const Data &data, const Prior &prior, int i){
     
     double ll = 0;
     for (int j=0; j < J; j++) {
+#pragma omp parallel for
       for (int n=0; n < Ni; n++) {
         ll += log(f_inj(state.missing_y[i](n,j), data.M[i](n,j), b0i, state.beta_1(i), prior.c0, prior.c1));
       }
@@ -38,6 +41,7 @@ void update_beta1i(State &state, const Data &data, const Prior &prior, int i){
     double ll = 0;
     if (b1i > 0) {
       for (int j=0; j < J; j++) {
+#pragma omp parallel for
         for (int n=0; n < Ni; n++) {
           ll += log(f_inj(state.missing_y[i](n,j), data.M[i](n,j), 
                           state.beta_0(i), b1i, prior.c0, prior.c1));

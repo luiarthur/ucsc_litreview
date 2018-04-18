@@ -26,7 +26,7 @@
 #include "my_timer.h" // TIME_CODE
 
 void update_theta(State &state, const Data &data, const Prior &prior, const Locked &locked, bool show_timings=false, int thin_some=1) {
-  INIT_TIMER;
+  //INIT_TIMER;
   if (show_timings) Rcout << std::endl;
 
   // metropolis

@@ -10,6 +10,7 @@
 #include "update_all_jointly.h"
 
 #include <omp.h>           // shared memory multicore parallelism
+// [[Rcpp::plugins(openmp)]]
 
 using namespace Rcpp;
 
@@ -39,6 +40,8 @@ std::vector<List> fit_cytof_cpp(
   bool show_timings=false, 
   bool normalize_loglike=false) {
 
+  omp_set_num_threads(ncores);
+
   const Prior prior = gen_prior_obj(prior_ls);
   const Locked locked= gen_locked_obj(locked_ls);
   const Data data = gen_data_obj(y);
@@ -46,21 +49,23 @@ std::vector<List> fit_cytof_cpp(
   const int I = data.I;
   const int J = data.J;
 
-  int iter=1;
+  //int iter=1;
   
   // update function
   auto update = [&](State &state) {
     for (int t=0; t<thin; t++) {
-      update_theta(state, data, prior, locked, show_timings, thin_some);
+      TIME_CODE(show_timings, "theta", 
+        update_theta(state, data, prior, locked, show_timings, thin_some)
+      );
     }
 
-    // Do giant propose from prior every so often
+    /** Do giant propose from prior every so often
     if (joint_update_freq > 0 && iter % joint_update_freq == 0) {
-      Rcout << "Doing it" << std::endl;
       INIT_TIMER;
       TIME_CODE(show_timings, "update_all_jointly", update_all_jointly(state, data, prior, locked));
     }
     iter++;
+    */
   };
 
   // accumulater for sum of missing y's
@@ -122,7 +127,6 @@ std::vector<List> fit_cytof_cpp(
     }
   };
 
-  //omp_set_num_threads(ncores);
 
   mcmc::gibbs<State>(init, update, assign_to_out, B, burn, print_freq);
   

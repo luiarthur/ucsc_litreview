@@ -1,22 +1,27 @@
 /*** my_timer.h
  * This script creates a macro timer for functions.
- * To use this macro, INIT_TIMER; must first be invoked once and only once!
- * Then, TIME_CODE(bool: show_time, string: message, code); will do the trick.
+ * To use this macro, just wrap the macro TIME_CODE around your code like this:
+ *
+ * TIME_CODE(bool: show_time, string: message, any_arbitrary_code_or_function_call)
+ *
+ * For example,
+ *
+ * TIME_CODE(true, "This is the elapsed time: ", int x = 100)
+ *
  * If show_time = true, then the timings will show. Otherwise, the times will not show.
  */
 
 #ifndef MY_TIMER_H
 #define MY_TIMER_H
+#include <chrono> // for timing
 
-#define INIT_TIMER std::clock_t start_time;
-#define TIME_CODE(show_timing, s, code) if (show_timings) {start_time = std::clock(); code; print_time(s, start_time);} else {code;};
-
-#include <ctime>
-
-void print_time(const char* msg, std::clock_t start_time) {
-  // prints time in seconds
-  Rcout << msg << ": " << double(std::clock() - start_time) / CLOCKS_PER_SEC << "s" << std::endl;
-}
-
+#define TIME_CODE(SHOW_TIMINGS, MSG, CODE) \
+  if (SHOW_TIMINGS) { \
+    auto MY_START_TIME = std::chrono::high_resolution_clock::now(); \
+    CODE; \
+    auto MY_END_TIME = std::chrono::high_resolution_clock::now(); \
+    std::chrono::duration<double> elapsed = MY_END_TIME - MY_START_TIME; \
+    Rcout << MSG << ": " << elapsed.count() << "s" << std::endl; \
+  } else { CODE; };
 
 #endif

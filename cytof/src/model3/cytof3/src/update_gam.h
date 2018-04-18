@@ -7,6 +7,8 @@
 #include "Prior.h"
 #include "Locked.h"
 
+#include <omp.h>
+
 void update_gam_inj(State &state, const Data &data, const Prior &prior, int i, int n, int j){
 
   const int z = state.Z(j, state.lam[i](n));
@@ -29,13 +31,18 @@ void update_gam(State &state, const Data &data, const Prior &prior, const Locked
   const int J = data.J;
   int Ni;
 
-  if (!locked.gam) for (int i=0; i < I; i++) {
-    Ni = data.N[i];
-    for (int j=0; j < J; j++) {
-      for (int n=0; n < Ni; n++) {
-        update_gam_inj(state, data, prior, i, n, j);
+  if (!locked.gam) {
+
+    for (int i=0; i < I; i++) {
+      Ni = data.N[i];
+      for (int j=0; j < J; j++) {
+#pragma omp parallel for
+        for (int n=0; n < Ni; n++) {
+          update_gam_inj(state, data, prior, i, n, j);
+        }
       }
     }
+
   }
 }
 
