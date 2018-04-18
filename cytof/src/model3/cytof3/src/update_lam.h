@@ -28,26 +28,6 @@ void update_lam_in(State &state, const Data &data, const Prior &prior, int i, in
 }
 
 
-// This is kept here for my records
-// If I wanted to parallelize across all ns, this is how to do it.
-// also see the commented section below.
-void update_lam_ns(State &state, const Data &data, const Prior &prior, int ns){
-  // get i, n
-  int i = -1;
-  int n = ns;
-  int n_cumsum = 0;
-  int Ni;
-  while (ns >= n_cumsum) {
-    i++;
-    Ni = data.N[i];
-    n_cumsum += Ni;
-    n -= Ni;
-  }
-  n += Ni;
-
-  update_lam_in(state, data, prior, i, n);
-}
-
 void update_lam(State &state, const Data &data, const Prior &prior, const Locked &locked){
   if (!locked.lam) {
     const int I = data.I;
@@ -61,15 +41,6 @@ void update_lam(State &state, const Data &data, const Prior &prior, const Locked
       }
     }
 
-    /**
-    // parallel i,n
-    const int N_sum = data.N_sum;
-#pragma omp parallel for
-    for (int ns=0; ns<N_sum; ns++) {
-      update_lam_ns(state, data, prior, ns);
-    }
-    // end of parallel i,n
-    */
   }
 }
 
