@@ -11,11 +11,9 @@ struct Prior {
   double m_beta0;
   double s2_beta0;
   double cs_beta0;
-  // beta_1 ~ Gamma(shape=a_beta1, rate=b_beta1). metropolis.
-  // Note that `rate = mean / var`, `shape = mean * rate`.
-  // i.e. `mean = shape/rate`, `var = shape / rate^2`
-  double a_beta1;
-  double b_beta1;
+  // beta_1 ~ N+(m_beta1, s2_beta1). metropolis.
+  double m_beta1;
+  double s2_beta1;
   double cs_beta1;
   // missing_y
   double cs_y;

@@ -11,8 +11,8 @@ Prior gen_prior_obj(const Rcpp::List &prior_ls) {
   prior.m_beta0 = Rcpp::as<double>(prior_ls["m_beta0"]);
   prior.s2_beta0 = Rcpp::as<double>(prior_ls["s2_beta0"]);
   prior.cs_beta0 = Rcpp::as<double>(prior_ls["cs_beta0"]);
-  prior.a_beta1 = Rcpp::as<double>(prior_ls["a_beta1"]);
-  prior.b_beta1 = Rcpp::as<double>(prior_ls["b_beta1"]);
+  prior.m_beta1 = Rcpp::as<double>(prior_ls["m_beta1"]);
+  prior.s2_beta1 = Rcpp::as<double>(prior_ls["s2_beta1"]);
   prior.cs_beta1 = Rcpp::as<double>(prior_ls["cs_beta1"]);
   prior.cs_y = Rcpp::as<double>(prior_ls["cs_y"]);
   prior.psi_0 = Rcpp::as<double>(prior_ls["psi_0"]);

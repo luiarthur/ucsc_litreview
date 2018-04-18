@@ -25,8 +25,8 @@ gen_default_prior = function(y, K=10, L0=10, L1=10) {
     m_beta0 = 4.6, #double
     s2_beta0 = .01, #double
     cs_beta0 = 1, #double
-    a_beta1 = 288, #double
-    b_beta1 = 170, #double
+    m_beta1 = .55, #double
+    s2_beta1 = .01, #double
     cs_beta1 = 1, #double
     cs_y = 1, #double
     psi_0 = -2, #double

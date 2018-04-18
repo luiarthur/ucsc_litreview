@@ -26,10 +26,10 @@ prob_miss = function(y, b0, b1, c0, c1) {
 
 #' Sample from missing mechanism prior
 #' @export
-sample_from_miss_mech_prior = function(y, m_beta0, s2_beta0, a_beta1, b_beta1,
+sample_from_miss_mech_prior = function(y, m_beta0, s2_beta0, m_beta1, s2_beta1,
                                        c0, c1, B=10) {
   b0 = rnorm(B, m_beta0, sqrt(s2_beta0))
-  b1 = rgamma(B, a_beta1, b_beta1)
+  b1 = sapply(1:B, function(b) rtn(m_beta1, sqrt(s2_beta1), 0, Inf))
 
   sapply(1:B, function(b) prob_miss(y, b0[b], b1[b], c0, c1))
 }

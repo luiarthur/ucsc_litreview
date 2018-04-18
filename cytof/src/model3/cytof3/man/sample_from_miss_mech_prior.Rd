@@ -4,7 +4,7 @@
 \alias{sample_from_miss_mech_prior}
 \title{Sample from missing mechanism prior}
 \usage{
-sample_from_miss_mech_prior(y, m_beta0, s2_beta0, a_beta1, b_beta1, c0, c1,
+sample_from_miss_mech_prior(y, m_beta0, s2_beta0, m_beta1, s2_beta1, c0, c1,
   B = 10)
 }
 \description{

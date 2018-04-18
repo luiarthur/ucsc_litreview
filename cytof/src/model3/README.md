@@ -1,8 +1,8 @@
 # Model 3
 
 ## NOW 
-- [ ] Abstract for this project
-- [ ] `beta_1 ~ N+`
+- [x] Abstract for this project
+- [x] `beta_1 ~ N+`
 - [ ] random `s_i`
 - [ ] CB all data
 - [ ] simulation data 

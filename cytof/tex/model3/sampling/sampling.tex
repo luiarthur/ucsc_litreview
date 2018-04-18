@@ -297,8 +297,8 @@ For $i=1, \ldots, I$,
 \begin{align*}
 \beta_{0i} &\iid \N(m_{\beta_0}, s^2_{\beta_0}) ~~~
 \text{(hyper-parameters determined empirically)}, \\
-\beta_{1i} &\iid \G(a_{\beta_1}, b_{\beta_1}) ~~~~
-\text{(with mean $a_{\beta_1}/b_{\beta_1}$, determined empirically)}. 
+\beta_{1i} &\iid \N^+(m_{\beta_1}, s^2_{\beta_1}) ~~~~
+\text{(hyper-parameters determined empirically)}, 
 \end{align*}
 %
 The Gamma distribution with parameters $(a,b)$ has mean $a/b$. The
@@ -438,14 +438,15 @@ p(\beta_{0i}) \times \prod_{n=1}^{N_i} \prod_{j=1}^J f_{inj} \\
 \subsubsection{\texorpdfstring{Full Conditional for
 $\beta_{1i}$}{Full Conditional for \textbackslash{}beta\_\{1i\}}}\label{full-conditional-for-beta_1i}
 
-Recall that $\beta_{1i}\ind \G(a_{\beta_1}, b_{\beta_1})$.
+Recall that $\beta_{1i}\ind \N^+(m_{\beta_1}, s^2_{\beta_1})$.
 %
 \begin{align*}
 p(\beta_{1i} \mid \y, \rest) &\propto
 p(\beta_{1i}) \times 
 \prod_{n=1}^{N_i} \prod_{j=1}^J f_{inj} \\
 %
-&\propto \beta_{1i}^{a_{\beta_1}-1}\exp\bc{-b_{\beta_1}\beta_{1i}} 
+&\propto \exp\bc{-\frac{(\beta_{1i} - m_{\beta_1})^2}{2s^2_{\beta_1}}}
+\Ind{\beta_{1i} > 0}
 \prod_{n=1}^{N_i} \prod_{j=1}^J f_{inj} \\
 \end{align*}
 %

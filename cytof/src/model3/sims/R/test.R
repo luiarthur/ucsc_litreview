@@ -13,16 +13,8 @@ y = resample(y_orig, prop=.01)
 #y = preimpute(y_orig, .01)
 #y = y_orig
 
-### Missing Mechanism params ###
-mmp = miss_mech_params(y=c(-6, -2.5, -1.0), p=c(.1, .99, .01))
-
 ### TODO: add def for miss-mech in gen_default prior ###
 prior = gen_default_prior(y, K=10, L0=5, L1=5)
-prior$c0 = mmp['c0']
-prior$c1 = mmp['c1']
-prior$m_beta0 = mmp['b0']; prior$s2_beta0 = 1
-prior$cs_beta0 = .1
-prior$cs_beta1 = .1
 
 # Are these good priors?
 prior$psi_0 = -2
@@ -40,20 +32,31 @@ prior$cs_h = 1
 # sig2 ~ IG(mean=.1, sd=.01)
 sig2_ab = invgamma_params(m=.1, sig=.01)
 prior$a_sig=sig2_ab[1]
-s_ab = gamma_params(m=sig2_ab[2], v=.001)
+s_ab = gamma_params(m=sig2_ab[2], v=1)
 prior$a_s=s_ab[1]; prior$b_s=s_ab[2]
 
 sig2_prior = 1 / rgamma(1000, prior$a_sig, rgamma(1000, prior$a_s, prior$b_s))
 hist(sig2_prior)
 
-b1_ab = gamma_params(mmp['b1'], .01)
-prior$a_beta1 = b1_ab[1]; prior$b_beta1 = b1_ab[2]
-yy = seq(-7,3,l=50)
-bb = sample_from_miss_mech_prior(yy, prior$m_beta0, prior$s2_beta0, prior$a_beta1,
-                                 prior$b_beta1, prior$c0, prior$c1)
+### Missing Mechanism Prior ###
+
+# Missing Mechanism params
+mmp = miss_mech_params(y=c(-6, -2.5, -1.0), p=c(.1, .99, .01))
+
+prior$c0 = mmp['c0']
+prior$c1 = mmp['c1']
+prior$m_beta0 = mmp['b0']; prior$s2_beta0 = .001 
+prior$m_beta1 = mmp['b1']; prior$s2_beta1 = .001
+prior$cs_beta0 = .1
+prior$cs_beta1 = .1
+
+yy = seq(-7,3,l=100)
+mm_prior = sample_from_miss_mech_prior(yy, prior$m_beta0, prior$s2_beta0, 
+                                       prior$m_beta1, prior$s2_beta1, 
+                                       prior$c0, prior$c1, B=1000)
 pdf('../out/miss_mech_prior.pdf')
-plot(yy,bb[,1], type='n'); abline(v=0)
-for (i in 1:NCOL(bb)) lines(yy, bb[,i], col='grey')
+plot(yy, mm_prior[,1], type='n'); abline(v=0)
+for (i in 1:NCOL(mm_prior)) lines(yy, mm_prior[,i], col='grey')
 dev.off()
 
 set.seed(1)
@@ -72,8 +75,8 @@ init$Z = compute_Z(H=init$H, v=init$v, G=prior$G)
 
 ### Fixed parameters ###
 locked = gen_default_locked(init)
-locked$beta_0 = TRUE # TODO: Can I make this random?
-locked$beta_1 = TRUE # TODO: Can I make this random?
+#locked$beta_0 = TRUE # TODO: Can I make this random?
+#locked$beta_1 = TRUE # TODO: Can I make this random?
 
 #locked$s = TRUE
 #locked$sig2_0 = TRUE # TODO: Can I make this random?
@@ -112,11 +115,6 @@ plot(ll, type='l')
 dev.off()
 
 ### Expensive order: H, lam, v, gam, y, beta, mus, sig2, eta, W, alpha, s.
-
-beta_0 = t(sapply(out, function(o) o$beta_0))
-beta_1 = t(sapply(out, function(o) o$beta_1)) 
-#plotPosts(beta_0)
-#plotPosts(beta_1)
 
 alpha = sapply(out, function(o) o$alpha)
 mus_0 = sapply(out, function(o) o$mus_0)
@@ -165,11 +163,13 @@ abline(h=0, lty=2, col='grey')
 add.errbar(t(ci_sig2_1), col='grey')
 dev.off()
 
+pdf('../out/s.pdf')
 s = sapply(out, function(o) o$s)
 ci_s = apply(s, 1, quantile, c(.025,.975))
 plot(rowMeans(s), col=rgb(0,0,1,.5), pch=20, cex=1.5, ylim=range(ci_s))
 abline(h=0, lty=2, col='grey')
 add.errbar(t(ci_s), col='grey')
+dev.off()
 
 N = prior$N
 K = prior$K
@@ -187,17 +187,31 @@ table(out[[B]]$lam[[1]])
 
 
 ### post miss mech
+beta_0 = t(sapply(out, function(o) o$beta_0))
+beta_1 = t(sapply(out, function(o) o$beta_1)) 
 #plotPosts(beta_0)
-mm_post = sapply(1:B, function(b) prob_miss(yy, beta_0[b,1], beta_1[b,1], prior$c0, prior$c1))
-plot(yy,bb[,1], type='n'); abline(v=0)
-for (i in 1:NCOL(bb)) lines(yy, bb[,i], col='grey')
-#plot(yy, mm_post[,1], type='n', ylim=0:1); abline(v=c(prior$c0, 0), col='grey')
-for (i in 1:NCOL(mm_post)) lines(yy,mm_post[,i], col='blue')
-#for (i in 1:100) {
-#  Sys.sleep(.1)
-#  plot(yy,mm_post[,i], col='red', type='l', lwd=4, main=i)
-#  abline(v=c(prior$c0, 0), col='grey')
-#}
+#plotPosts(beta_1)
+
+pdf('../out/miss_mech_posterior.pdf')
+mm_post = sapply(1:B, function(b) 
+                 prob_miss(yy, beta_0[b,1], beta_1[b,1], prior$c0, prior$c1))
+
+mm_post_mean = rowMeans(mm_post)
+mm_post_ci = apply(mm_post, 1, quantile, c(.025,.975))
+
+plot(yy, mm_post_mean, ylim=range(mm_post_ci), type='l',
+     bty='n', fg='grey', xlab='density', col='blue')
+color.btwn(yy, mm_post_ci[1,], mm_post_ci[2,], from=-10, to=10, col=rgb(0,0,1,.4))
+
+mm_prior_mean = rowMeans(mm_prior)
+mm_prior_ci = apply(mm_prior, 1, quantile, c(.025,.975))
+
+lines(yy, mm_prior_mean, col='red')
+color.btwn(yy, mm_prior_ci[1,], mm_prior_ci[2,], from=-10, to=10, col=rgb(1,0,0,.2))
+abline(v=0)
+#for (i in 1:NCOL(bb)) lines(yy, bb[,i], col='grey')
+#for (i in 1:NCOL(mm_post)) lines(yy,mm_post[,i], col='blue')
+dev.off()
 
 
 ### PP 

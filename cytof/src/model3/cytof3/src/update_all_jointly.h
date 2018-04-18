@@ -28,7 +28,7 @@ void update_all_jointly(State &state, const Data &data, const Prior &prior, cons
     cand.beta_0 = Rcpp::NumericVector(I);
     cand.beta_1 = Rcpp::NumericVector(I);
     if(!locked.beta_0) cand.beta_0(i) = R::rnorm(prior.m_beta0, sqrt(prior.s2_beta0));
-    if(!locked.beta_1) cand.beta_1(i) = R::rgamma(prior.a_beta1, 1/prior.b_beta1); // shape and scale
+    if(!locked.beta_1) cand.beta_1(i) = mcmc::rtnorm(prior.m_beta1, sqrt(prior.s2_beta1), 0, INFINITY);
   }
   // sample mus
   if(!locked.mus_0) {

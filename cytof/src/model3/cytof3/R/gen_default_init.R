@@ -27,7 +27,7 @@ gen_default_init = function(prior) {
 
   list(
     beta_0    = rep(prior$m_beta0, I),
-    beta_1    = rep(prior$a_beta1 / prior$b_beta1, I),
+    beta_1    = rep(prior$m_beta1, I),
     missing_y = y_init,
     mus_0     = rep(prior$psi_0, L0),
     mus_1     = rep(prior$psi_1, L1),
