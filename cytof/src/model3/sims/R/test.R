@@ -97,7 +97,7 @@ my.image(unique(Z_est_kmeans$centers > 0))
 #init$Z = t((Z_est_kmeans$centers > 0) * 1)
 
 st = system.time(
-  out <- fit_cytof_cpp(y, B=200, burn=300, prior=prior, locked=locked, init=init, print_freq=1, show_timings=FALSE, normalize_loglike=TRUE, joint_update_freq=0)
+  out <- fit_cytof_cpp(y, B=1000, burn=2000, prior=prior, locked=locked, init=init, print_freq=1, show_timings=FALSE, normalize_loglike=TRUE, joint_update_freq=0)
   #out <- fit_cytof_cpp(y, B=50, burn=0, prior=prior, locked=locked, init=init, print_freq=1, show_timings=FALSE, normalize_loglike=TRUE, joint_update_freq=0)
 
   #prior$cs_v = .001
@@ -105,6 +105,7 @@ st = system.time(
   #out <- fit_cytof_cpp(y, B=50, burn=0, prior=prior, locked=locked, init=last(out), print_freq=1, show_timings=FALSE, normalize_loglike=TRUE, joint_update_freq=0)
 )
 print(st)
+saveRDS(out, '../out/out.rds')
 
 B = length(out)
 
