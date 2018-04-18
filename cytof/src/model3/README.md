@@ -3,7 +3,7 @@
 ## NOW 
 - [x] Abstract for this project
 - [x] `beta_1 ~ N+`
-- [ ] random `s_i`
+- [x] random `s_i`
 - [ ] CB all data
 - [ ] simulation data 
 - [ ] 2000 MCMC samples!
