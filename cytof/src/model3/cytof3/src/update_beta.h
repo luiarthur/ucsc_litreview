@@ -57,7 +57,7 @@ void update_beta1i(State &state, const Data &data, const Prior &prior, int i){
 
 void update_beta(State &state, const Data &data, const Prior &prior, const Locked &locked){
   const int I = data.I;
-  for (int i=0; i < data.I; i++) {
+  for (int i=0; i < I; i++) {
     if (!locked.beta_0) update_beta0i(state, data, prior, i);
     if (!locked.beta_1) update_beta1i(state, data, prior, i);
   }

@@ -28,9 +28,7 @@ void update_Hjk(State &state, const Data &data, const Prior &prior, int j, int k
   double m_j; double S2_j;
   compute_m_S2_for_hjk(state, data, prior, m_j, S2_j, j, k);
 
-  const int J = data.J;
   const int I = data.I;
-  const int K = prior.K;
 
   // TODO: Profile and make more efficient? Joint updates?
   auto log_fc = [&](double h_jk) {

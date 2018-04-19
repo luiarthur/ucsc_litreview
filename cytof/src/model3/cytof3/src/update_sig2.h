@@ -44,7 +44,6 @@ void update_sig2(State &state, const Data &data, const Prior &prior, const Locke
   const int J = data.J;
   int Ni, Lz;
   int z, l;
-  double x;
   SS_sig2 ss_sig2(state, data, prior);
 
   for (int i=0; i<I; i++) {

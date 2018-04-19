@@ -19,7 +19,6 @@ void update_all_jointly(State &state, const Data &data, const Prior &prior, cons
   const int L1 = get_L1(state);
 
   int Ni;
-  int Lz;
 
   State cand;
 
@@ -166,6 +165,7 @@ void update_all_jointly(State &state, const Data &data, const Prior &prior, cons
       for (int j=0; j<J; j++) {
         for (int n=0; n<Ni; n++) {
           z = cand.Z(j, cand.lam[i](n));
+          l = state.gam[i](n,j);
           mu = get_mus_z(cand,z)->at(l);
           s2 = get_sig2_z(cand,z)->at(i,l);
           cand.missing_y[i](n,j) = R::rnorm(mu, sqrt(s2));

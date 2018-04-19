@@ -122,13 +122,14 @@ namespace mcmc {
   double mh(double curr, std::function<double(double)> log_fc, double stepSig) {
     const double cand = R::rnorm(curr,stepSig);
     const double u = R::runif(0,1);
-    double out;
    
     if (log_fc(cand) - log_fc(curr) > log(u)) {
       return cand;
     } else {
       return curr;
     }
+
+    return 0; // shouldn't happen
   }
   
   // Multiariate Metropolis step with Normal proposal
