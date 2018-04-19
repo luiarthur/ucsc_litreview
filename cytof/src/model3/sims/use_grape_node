@@ -1,0 +1,14 @@
+#!/bin/bash
+
+### Request 2 nodes, 16 cores each, for 48 hours.
+#qsub -l nodes=2:ppn=16 -l walltime=48:00:00 -I
+
+### Request 1 node, 16 cores each, for 48 hours.
+qsub -l nodes=1:ppn=16 -l walltime=48:00:00 -I
+
+
+### Go to current work directory
+cd $PBS_O_WORKDIR 
+
+### Stats ###
+# qstat

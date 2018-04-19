@@ -3,7 +3,7 @@ OUTDIR = '../out/locked_beta1_K20/'
 ### END OF GLOBALS ###
 
 
-library(ggplot2)
+#library(ggplot2)
 library(rcommon)
 library(cytof3)
 
