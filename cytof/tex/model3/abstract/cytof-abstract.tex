@@ -1,0 +1,96 @@
+\documentclass[12pt]{article}
+\usepackage{fullpage,amsmath}
+\usepackage{setspace}
+\usepackage{graphicx, psfrag, amsfonts}
+
+
+\newcommand{\Dt}{\mbox{$\tilde{D}$}}
+\newcommand{\bu}{\mbox{\boldmath $u$}}
+
+\newcommand{\bp}{\mbox{\boldmath $p$}}
+\newcommand{\bq}{\mbox{\boldmath $q$}}
+\newcommand{\bz}{\mbox{\boldmath $z$}}
+
+
+\newcommand{\bzero}{\mbox{\boldmath $0$}}
+
+\newcommand{\bT}{\mbox{\boldmath $T$}}
+\newcommand{\bY}{\mbox{\boldmath $Y$}}
+\newcommand{\bZ}{\mbox{\boldmath $Z$}}
+\newcommand{\bd}{\mbox{\boldmath $d$}}
+\newcommand{\D}{\mbox{${\cal D}$}}
+\newcommand{\cH}{\mbox{${\cal H}$}}
+\newcommand{\Q}{\mbox{${\cal Q}$}}
+\newcommand{\cX}{\mbox{${\cal X}$}}
+\newcommand{\cA}{\mbox{${\cal A}$}}
+
+\def\bpsi{\mbox{\boldmath $\psi$}}
+\def\bal{\mbox{\boldmath $\alpha$}}
+\def\bdel{\mbox{\boldmath $\delta$}}
+\def\bmu{\mbox{\boldmath $\mu$}}
+\def\bxi{\mbox{\boldmath $\xi$}}
+\def\bet{\mbox{\boldmath $\eta$}}
+\def\bth{\mbox{\boldmath $\theta$}}
+\newcommand{\xibar}{\bar{\xi}}
+\newcommand{\etbar}{\bar{\eta}}
+\newcommand{\bebar}{\bar{\beta}}
+\def\bbet{\mbox{\boldmath $\beta$}}
+\newcommand{\bbebar}{\bar{\bbe}}
+
+
+\newcommand{\Exp}{\mbox{E}}
+
+\newcommand{\Bern}{\mbox{Bern}}
+\newcommand{\Nor}{\mbox{N}}
+\newcommand{\Ga}{\mbox{Gamma}}
+\newcommand{\Dir}{\mbox{Dir}}
+\newcommand{\Ber}{\mbox{Ber}}
+\newcommand{\Be}{\mbox{Be}}
+\newcommand{\Unif}{\mbox{Unif}}
+
+\newcommand{\iid}{\stackrel{iid}{\sim}}
+\newcommand{\indep}{\stackrel{indep}{\sim}}
+
+
+\begin{document}
+\onehalfspacing
+
+\noindent
+\today
+
+\vspace*{0.2in}
+\noindent
+{\bf Title:} Bayesian Feature Allocation Models for Natural Killer Cell Repertoire Studies Using Mass Cytometry Data
+
+\vspace*{0.2in}
+\noindent
+{\bf Abstract:}  Bayesian feature allocation models (FAMs) embedded with
+clustering are developed to analyze mass cytometry data, with primary aim to
+characterize underlying cell repertoire structures.   Cell repertoires in
+samples are heterogeneous. Each repertoire consists of a collection of cells
+possessing different phenotypes that can be characterized by differences in
+expression levels of cell surface markers.  In particular, mass cytometry data
+collected to study the clinical efficacy of natural killer (NK) cells as
+immunotherapeutic agents against leukemia is considered. NK cells play a
+critical role in cancer immune surveillance and are the first line of defense
+against viruses and transformed tumor cells.  The data includes expression
+levels of 32 surface markers on each of thousands of cells from multiple
+samples. NK cell repertoires may affect both NK cell function and immune
+surveillance.  A key conceptual shift compared with existing approaches is to
+explicitly characterize latent cell phenotypes through a FAM.  The models
+simultaneously (1) characterize NK cell phenotypes based on expression /
+non-expression of surface markers, (2) estimate compositions of the samples
+based on the identified phenotypes, and (3) infer associations of subjects'
+covariates, with the composition of the identified phenotypes in the samples.
+The conventional Indian buffet process (IBP), one of the most popular feature
+allocation models, is first utilized to model cell phenotypes. Non-ignorable
+missing data that is present due to technical artifacts in mass cytometry are
+accounted for using an informed prior missing mechanism. The repulsive FAM
+(rep-FAM) is next proposed.  In contrast with the IBP, the rep-FAM produces a
+parsimonious representation of phenotypes by discouraging the creation of
+redundant phenotypes, and thus can improve inference on phenotypes.  Further
+extensions to incorporate subject-based covariates are discussed to provide
+inferences on phenotypes potentially associated with positive clinical
+outcomes.  
+
+\end{document}
