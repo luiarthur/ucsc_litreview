@@ -1,0 +1,6 @@
+#!/bin/bash
+
+SERVER="alui2@firedance"
+DIR="repo/ucsc_litreview/cytof/src/model3/sims/out/"
+
+rsync -av $SERVER:~/$DIR/ out/ --exclude *.rds

@@ -36,7 +36,7 @@ s_ab = gamma_params(m=sig2_ab[2], v=1)
 prior$a_s=s_ab[1]; prior$b_s=s_ab[2]
 
 sig2_prior = 1 / rgamma(1000, prior$a_sig, rgamma(1000, prior$a_s, prior$b_s))
-hist(sig2_prior)
+#hist(sig2_prior)
 
 ### Missing Mechanism Prior ###
 
@@ -76,7 +76,7 @@ init$Z = compute_Z(H=init$H, v=init$v, G=prior$G)
 ### Fixed parameters ###
 locked = gen_default_locked(init)
 #locked$beta_0 = TRUE # TODO: Can I make this random?
-#locked$beta_1 = TRUE # TODO: Can I make this random?
+locked$beta_1 = TRUE # TODO: Can I make this random?
 
 #locked$s = TRUE
 #locked$sig2_0 = TRUE # TODO: Can I make this random?
@@ -91,14 +91,14 @@ preimpute_y = preimpute(y)
 init$missing_y = preimpute_y
 Y = do.call(rbind, preimpute_y)
 Z_est_kmeans = kmeans(Y, centers=10)
-my.image(unique(Z_est_kmeans$centers > 0))
+#my.image(unique(Z_est_kmeans$centers > 0))
 
 ### Init Z ###
 #init$Z = t((Z_est_kmeans$centers > 0) * 1)
 
 st = system.time(
   out <- fit_cytof_cpp(y, B=1000, burn=2000, prior=prior, locked=locked,
-                       init=init, print_freq=1, show_timings=TRUE,
+                       init=init, print_freq=1, show_timings=FALSE,
                        normalize_loglike=TRUE, joint_update_freq=0, ncore=8)
   #out <- fit_cytof_cpp(y, B=50, burn=0, prior=prior, locked=locked, init=init, print_freq=1, show_timings=FALSE, normalize_loglike=TRUE, joint_update_freq=0)
 
