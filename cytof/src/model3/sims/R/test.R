@@ -1,3 +1,8 @@
+### GLOBALS ###
+OUTDIR = '../out/locked_beta1_K20/'
+### END OF GLOBALS ###
+
+
 library(ggplot2)
 library(rcommon)
 library(cytof3)
@@ -6,8 +11,9 @@ source("plot_mus.R")
 source("plot_dat.R")
 source("postpred_yij.R")
 
-OUTDIR = '../out/test_ll/'
 system(paste0('mkdir -p ', OUTDIR))
+system(paste0('cp test.R ', OUTDIR))
+
 
 fileDest = function(filename) paste0(OUTDIR, filename)
 
@@ -19,7 +25,7 @@ y = y_orig
 #y = y_orig
 
 ### TODO: add def for miss-mech in gen_default prior ###
-prior = gen_default_prior(y, K=10, L0=5, L1=5)
+prior = gen_default_prior(y, K=20, L0=5, L1=5)
 
 # Are these good priors?
 prior$psi_0 = -2
@@ -102,8 +108,8 @@ Z_est_kmeans = kmeans(Y, centers=10)
 #init$Z = t((Z_est_kmeans$centers > 0) * 1)
 
 st = system.time(
-  out <- fit_cytof_cpp(y, B=1000, burn=1000, prior=prior, locked=locked,
-                       init=init, print_freq=1, show_timings=TRUE,
+  out <- fit_cytof_cpp(y, B=1000, burn=2000, prior=prior, locked=locked,
+                       init=init, print_freq=1, show_timings=FALSE,
                        normalize_loglike=TRUE, joint_update_freq=0, ncore=4)
   #out <- fit_cytof_cpp(y, B=50, burn=0, prior=prior, locked=locked, init=init, print_freq=1, show_timings=FALSE, normalize_loglike=TRUE, joint_update_freq=0)
 
