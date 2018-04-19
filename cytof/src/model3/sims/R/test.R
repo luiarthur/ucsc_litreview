@@ -6,7 +6,7 @@ source("plot_mus.R")
 source("plot_dat.R")
 source("postpred_yij.R")
 
-OUTDIR = '../out/locked_beta/'
+OUTDIR = '../out/test_ll/'
 system(paste0('mkdir -p ', OUTDIR))
 
 fileDest = function(filename) paste0(OUTDIR, filename)
@@ -14,8 +14,8 @@ fileDest = function(filename) paste0(OUTDIR, filename)
 #saveRDS(y, '../data/cytof_cb.rds')
 y_orig = readRDS('../data/cytof_cb.rds')
 #y = resample(y_orig, prop=.01)
-#y = y_orig
-y = preimpute(y_orig, .01)
+y = y_orig
+#y = preimpute(y_orig, .01)
 #y = y_orig
 
 ### TODO: add def for miss-mech in gen_default prior ###
@@ -102,9 +102,9 @@ Z_est_kmeans = kmeans(Y, centers=10)
 #init$Z = t((Z_est_kmeans$centers > 0) * 1)
 
 st = system.time(
-  out <- fit_cytof_cpp(y, B=1000, burn=2000, prior=prior, locked=locked,
-                       init=init, print_freq=1, show_timings=FALSE,
-                       normalize_loglike=TRUE, joint_update_freq=0, ncore=1)
+  out <- fit_cytof_cpp(y, B=500, burn=1000, prior=prior, locked=locked,
+                       init=init, print_freq=1, show_timings=TRUE,
+                       normalize_loglike=TRUE, joint_update_freq=0, ncore=4)
   #out <- fit_cytof_cpp(y, B=50, burn=0, prior=prior, locked=locked, init=init, print_freq=1, show_timings=FALSE, normalize_loglike=TRUE, joint_update_freq=0)
 
   #prior$cs_v = .001
@@ -117,10 +117,15 @@ saveRDS(out, fileDest('out.rds'))
 B = length(out)
 
 ### loglike 
-ll = sapply(out, function(o) o$ll)
+ll = last(out)$ll
 pdf(fileDest('ll.pdf'))
-plot(ll, type='l')
+plot(ll, type='l', ylab='log-likelihood', xlab='MCMC iteration')
 dev.off()
+
+pdf(fileDest('ll_post_burn.pdf'))
+plot(tail(ll, B), type='l', ylab='log-likelihood', xlab='MCMC iteration (after burn-in)')
+dev.off()
+
 
 ### Expensive order: lam, H, v, gam, y, beta, mus, sig2, eta, W, alpha, s.
 

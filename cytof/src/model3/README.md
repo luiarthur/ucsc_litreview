@@ -4,9 +4,9 @@
 - [x] Abstract for this project
 - [x] `beta_1 ~ N+`
 - [x] random `s_i`
-- [ ] CB all data
+- [x] CB all data
 - [ ] simulation data 
-- [ ] 2000 MCMC samples!
+- [x] 1000 MCMC samples!
 - [x] update tex. use Juhee's, and upload mine.
 
 ## Timeline
@@ -15,7 +15,7 @@ Goal: Advancement by week of **4 June, 2018**.
 
 - [ ] Project I (due **4 May, 2018**)
     - [ ] Implement smart initial values (due by **13 April, 2018**)
-        - [ ] pre-impute `y`
+        - [x] pre-impute `y`
         - [ ] pre-compute other parameters using ad-hoc methods like kmeans, etc.
     - [ ] Adaptive MCMC  (due by **18 April, 2018**)
     - [ ] written report

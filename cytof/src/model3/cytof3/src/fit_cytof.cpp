@@ -78,17 +78,16 @@ std::vector<List> fit_cytof_cpp(
   std::vector<List> out(B);
 
   // loglike
-  double ll = 0;
+  std::vector<double> ll;
 
   // assign function
   auto assign_to_out = [&](const State &state, int i) {
+    // update loglike
+    if ( (i-burn+1) % compute_loglike_every == 0 || i == burn ) {
+      ll.push_back(compute_loglike(state, data, prior, normalize_loglike));
+    }
     // only do the following after burn-in
     if (i - burn >= 0) {
-      // update loglike
-      if ( (i-burn+1) % compute_loglike_every == 0 || i == burn ) {
-        ll = compute_loglike(state, data, prior, normalize_loglike);
-      }
-
       // update missing_y_mean
       for (int s=0; s<I; s++) {
         missing_y_mean[s] += state.missing_y[s] / B;
@@ -112,8 +111,7 @@ std::vector<List> fit_cytof_cpp(
         Named("H") = state.H + 0,
         Named("Z") = state.Z + 0,
         Named("lam") = cpVecT<Rcpp::IntegerVector>(state.lam),
-        Named("W") = state.W + 0,
-        Named("ll") = ll + 0
+        Named("W") = state.W + 0
       );
     }
 
@@ -124,6 +122,7 @@ std::vector<List> fit_cytof_cpp(
       out[B-1]["missing_y_mean"] = missing_y_mean;
       out[B-1]["missing_y"] = state.missing_y;
       out[B-1]["gam"] = state.gam;
+      out[B-1]["ll"] = ll;
     }
   };
 
