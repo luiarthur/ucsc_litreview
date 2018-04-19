@@ -123,6 +123,7 @@ std::vector<List> fit_cytof_cpp(
       out[B-1]["missing_y"] = state.missing_y;
       out[B-1]["gam"] = state.gam;
       out[B-1]["ll"] = ll;
+      out[B-1]["prior"] = prior_ls;
     }
   };
 

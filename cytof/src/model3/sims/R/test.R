@@ -102,7 +102,7 @@ Z_est_kmeans = kmeans(Y, centers=10)
 #init$Z = t((Z_est_kmeans$centers > 0) * 1)
 
 st = system.time(
-  out <- fit_cytof_cpp(y, B=500, burn=1000, prior=prior, locked=locked,
+  out <- fit_cytof_cpp(y, B=1000, burn=1000, prior=prior, locked=locked,
                        init=init, print_freq=1, show_timings=TRUE,
                        normalize_loglike=TRUE, joint_update_freq=0, ncore=4)
   #out <- fit_cytof_cpp(y, B=50, burn=0, prior=prior, locked=locked, init=init, print_freq=1, show_timings=FALSE, normalize_loglike=TRUE, joint_update_freq=0)
@@ -135,8 +135,10 @@ mus_1 = sapply(out, function(o) o$mus_1)
 
 ### v ###
 v = sapply(out, function(o) o$v)
+pdf(fileDest('v.pdf'))
 plotPost(v[1,])
 plot(rowMeans(v))
+dev.off()
 
 ### H ###
 H = sapply(out, function(o) c(o$H))
@@ -188,9 +190,8 @@ N = prior$N
 K = prior$K
 
 ### Z ###
-my.image(t(out[[B]]$Z)[out[[B]]$W[1,]>.1,])
-
-table(out[[B]]$lam[[1]])
+#my.image(t(out[[B]]$Z)[out[[B]]$W[1,]>.1,])
+#table(out[[B]]$lam[[1]])
 
 
 ### Force a copy by doing this:
