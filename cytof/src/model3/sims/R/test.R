@@ -6,11 +6,16 @@ source("plot_mus.R")
 source("plot_dat.R")
 source("postpred_yij.R")
 
+OUTDIR = '../out/locked_beta/'
+system(paste0('mkdir -p ', OUTDIR))
+
+fileDest = function(filename) paste0(OUTDIR, filename)
+
 #saveRDS(y, '../data/cytof_cb.rds')
 y_orig = readRDS('../data/cytof_cb.rds')
 #y = resample(y_orig, prop=.01)
-y = y_orig
-#y = preimpute(y_orig, .01)
+#y = y_orig
+y = preimpute(y_orig, .01)
 #y = y_orig
 
 ### TODO: add def for miss-mech in gen_default prior ###
@@ -54,7 +59,7 @@ yy = seq(-7,3,l=100)
 mm_prior = sample_from_miss_mech_prior(yy, prior$m_beta0, prior$s2_beta0, 
                                        prior$m_beta1, prior$s2_beta1, 
                                        prior$c0, prior$c1, B=1000)
-pdf('../out/miss_mech_prior.pdf')
+pdf(fileDest('miss_mech_prior.pdf'))
 plot(yy, mm_prior[,1], type='n'); abline(v=0)
 for (i in 1:NCOL(mm_prior)) lines(yy, mm_prior[,i], col='grey')
 dev.off()
@@ -107,13 +112,13 @@ st = system.time(
   #out <- fit_cytof_cpp(y, B=50, burn=0, prior=prior, locked=locked, init=last(out), print_freq=1, show_timings=FALSE, normalize_loglike=TRUE, joint_update_freq=0)
 )
 print(st)
-saveRDS(out, '../out/out.rds')
+saveRDS(out, fileDest('out.rds'))
 
 B = length(out)
 
 ### loglike 
 ll = sapply(out, function(o) o$ll)
-pdf('../out/ll.pdf')
+pdf(fileDest('ll.pdf'))
 plot(ll, type='l')
 dev.off()
 
@@ -138,7 +143,7 @@ add.errbar(t(ci_H), col='grey')
 my.image(t(H_mean), mn=-3, mx=3, col=blueToRed(), addL=TRUE)
 
 ### alpha ###
-pdf('../out/alpha.pdf')
+pdf(fileDest('alpha.pdf'))
 plotPost(alpha)
 dev.off()
 
@@ -146,11 +151,11 @@ dev.off()
 ### mus ###
 mus = rbind(mus_0, mus_1)
 #plotPosts(t(mus[1:4,]))
-pdf('../out/mus.pdf')
+pdf(fileDest('mus.pdf'))
 plot_mus(out)
 dev.off()
 
-pdf('../out/sig2.pdf')
+pdf(fileDest('sig2.pdf'))
 ### sig2_0 ###
 sig2_0 = sapply(out, function(o) o$sig2_0)
 ci_sig2_0 = apply(sig2_0, 1, quantile, c(.025,.975))
@@ -166,7 +171,7 @@ abline(h=0, lty=2, col='grey')
 add.errbar(t(ci_sig2_1), col='grey')
 dev.off()
 
-pdf('../out/s.pdf')
+pdf(fileDest('s.pdf'))
 s = sapply(out, function(o) o$s)
 ci_s = apply(s, 1, quantile, c(.025,.975))
 plot(rowMeans(s), col=rgb(0,0,1,.5), pch=20, cex=1.5, ylim=range(ci_s))
@@ -195,7 +200,7 @@ beta_1 = t(sapply(out, function(o) o$beta_1))
 #plotPosts(beta_0)
 #plotPosts(beta_1)
 
-pdf('../out/miss_mech_posterior.pdf')
+pdf(fileDest('miss_mech_posterior.pdf'))
 mm_post = sapply(1:B, function(b) 
                  prob_miss(yy, beta_0[b,1], beta_1[b,1], prior$c0, prior$c1))
 
@@ -236,7 +241,7 @@ Y_last = do.call(rbind, out[[B]]$missing_y)
 
 
 source("plot_dat.R")
-pdf('../out/y_hist.pdf')
+pdf(fileDest('y_hist.pdf'))
 par(mfrow=c(4,2))
 for (i in 1:prior$I) for (j in 1:prior$J) {
   zjk_mean = compute_zjk_mean(out, i, j)
@@ -262,7 +267,7 @@ dev.off()
 #  Sys.sleep(.1)
 #}
 
-png('../out/YZ%03d.png')
+png(fileDest('YZ%03d.png'))
 y_Z_inspect(out, y, c(-2,2), i=0, thresh=.05)
 dev.off()
 
