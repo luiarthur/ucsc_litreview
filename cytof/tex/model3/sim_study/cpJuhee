@@ -1,0 +1,17 @@
+#!/bin/bash
+
+numArgs=$#
+
+if [ $numArgs == 0 ]
+then
+  echo "Usage:"
+  echo "        $ ./cpJuhee <VERSION_NUMBER>"
+  exit 1
+fi
+
+#ddmmmyy=`date +%d%b%Y`
+VERSION_NUMBER=$1
+FILE_NAME="sim-cytof"
+
+cp ${FILE_NAME}.tex juhee/${FILE_NAME}-${VERSION_NUMBER}.tex
+cp ${FILE_NAME}.pdf juhee/${FILE_NAME}-${VERSION_NUMBER}.pdf

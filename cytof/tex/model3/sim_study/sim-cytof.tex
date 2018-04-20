@@ -1,0 +1,99 @@
+\documentclass[12pt]{article}
+\usepackage{fullpage,amsmath}
+\usepackage{setspace}
+\usepackage{graphicx, psfrag, amsfonts}
+
+
+\newcommand{\true}{{\mbox{\tiny TR}}}
+
+
+\newcommand{\Dt}{\mbox{$\tilde{D}$}}
+\newcommand{\bu}{\mbox{\boldmath $u$}}
+
+\newcommand{\bp}{\mbox{\boldmath $p$}}
+\newcommand{\bq}{\mbox{\boldmath $q$}}
+\newcommand{\bz}{\mbox{\boldmath $z$}}
+\newcommand{\bw}{\mbox{\boldmath $w$}}
+
+
+\newcommand{\bzero}{\mbox{\boldmath $0$}}
+
+\newcommand{\bT}{\mbox{\boldmath $T$}}
+\newcommand{\bY}{\mbox{\boldmath $Y$}}
+\newcommand{\bZ}{\mbox{\boldmath $Z$}}
+\newcommand{\bd}{\mbox{\boldmath $d$}}
+\newcommand{\D}{\mbox{${\cal D}$}}
+\newcommand{\cH}{\mbox{${\cal H}$}}
+\newcommand{\Q}{\mbox{${\cal Q}$}}
+\newcommand{\cX}{\mbox{${\cal X}$}}
+\newcommand{\cA}{\mbox{${\cal A}$}}
+
+\def\bpsi{\mbox{\boldmath $\psi$}}
+\def\bal{\mbox{\boldmath $\alpha$}}
+\def\bdel{\mbox{\boldmath $\delta$}}
+\def\bmu{\mbox{\boldmath $\mu$}}
+\def\bxi{\mbox{\boldmath $\xi$}}
+\def\bet{\mbox{\boldmath $\eta$}}
+\def\bth{\mbox{\boldmath $\theta$}}
+\newcommand{\xibar}{\bar{\xi}}
+\newcommand{\etbar}{\bar{\eta}}
+\newcommand{\bebar}{\bar{\beta}}
+\def\bbet{\mbox{\boldmath $\beta$}}
+\newcommand{\bbebar}{\bar{\bbe}}
+
+
+\newcommand{\Exp}{\mbox{E}}
+
+\newcommand{\Bern}{\mbox{Bern}}
+\newcommand{\Nor}{\mbox{N}}
+\newcommand{\Ga}{\mbox{Gamma}}
+\newcommand{\Dir}{\mbox{Dir}}
+\newcommand{\Ber}{\mbox{Ber}}
+\newcommand{\Be}{\mbox{Be}}
+\newcommand{\Unif}{\mbox{Unif}}
+
+\newcommand{\iid}{\stackrel{iid}{\sim}}
+\newcommand{\indep}{\stackrel{indep}{\sim}}
+
+
+\begin{document}
+\onehalfspacing
+
+\noindent
+\begin{center}
+{\bf Simulation Scenarios For CyToF}
+\end{center}
+
+\vskip .1in
+\today
+
+\begin{enumerate}
+\item Specify $I$, $J$, $N_i$, $K$, $L^0$ and $L^1$ (say, the true values of $K$, $L^0$ and $L^1$ are less than their values used for analysis).
+
+\item Fix $\bZ^\true$ 
+
+Instead of randomly generating $z^\true_{jk}$, you may assume some patterns for cell types.  e.g. some cell types are only few expressed markers, and some others have many expressed markers.  Some markers are expressed in many cell types and some never expressed (or few).
+
+\item Fix $\sigma^{2, \true}_{0i\ell}$ and $\sigma^{2,\true}_{1i\ell}$.
+
+\item Fix $\mu^{\star, \true}_{0\ell}$ and $\mu^{\star, \true}_{1\ell}$.  May use some empirical values from CB data
+
+\item Fix $\bw^\true_i$.  May simulate from a Dirichlet distribution with parameters, say $a_1, \ldots, a_K$.  Randomly permute those $a$ for samples so that $\bw^\true_i$s are from different dirichlet distributions.
+
+\item Simulate $\eta^\true_{0ij}$ and $\eta^\true_{1ij}$ for ($i,j$).  May simulate them similar to $\bw^\true_i$.  
+
+\item Simulate $y_{inj}$.  
+
+
+\item Make some $y$ missing.  
+\begin{enumerate}
+\item First set a certain percentage for missing values (should be less than $\sum_k w^\true_{ik}z^\true_{jk}$).  Say, we get 68\%.
+
+\item Sample the ($N_i\times$percentage) of $y_{inj}$ without replacement. Say, then $N_i \times 68\%$ of $y$ are missing.  The probability of a value of $y$ is proportional to some missing mechanism.  Make sure $y$ with positive values have almost zero chance to be missing.   Use a slightly different missing mechanism (like quadratic only -- we have $(y-c)^2$ on one side and $\sqrt{y-c}$ on the other side currently).  
+\end{enumerate}
+
+
+\end{enumerate}
+
+
+\end{document}
