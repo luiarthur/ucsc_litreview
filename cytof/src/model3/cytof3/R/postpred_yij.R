@@ -1,3 +1,4 @@
+#' @export
 postpred_yij = function(out, i, j) {
   sapply(out, function(o) {
     k = sample(1:prior$K, 1, prob=o$W[i,])

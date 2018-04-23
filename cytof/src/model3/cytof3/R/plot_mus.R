@@ -1,5 +1,6 @@
 #library(rcommon)
 
+#' @export
 get_mus = function(out, a=.05) {
   mus_0 = sapply(out, function(o) o$mus_0)
   mus_1 = sapply(out, function(o) o$mus_1)
@@ -11,6 +12,7 @@ get_mus = function(out, a=.05) {
   list(mus=mus, ci_mus=ci_mus, L0=L0, L1=L1)
 }
 
+#' @export
 plot_mus = function(out, a=.05, col=rgb(0,0,1,.5), ...) {
   B = length(out)
   mus_stats = get_mus(out, a)

@@ -2,14 +2,10 @@
 OUTDIR = '../out/locked_beta1_K20/'
 ### END OF GLOBALS ###
 
-
-#library(ggplot2)
 library(rcommon)
 library(cytof3)
 
-source("plot_mus.R")
-source("plot_dat.R")
-source("postpred_yij.R")
+source("smart_init.R")
 
 system(paste0('mkdir -p ', OUTDIR))
 system(paste0('cp test.R ', OUTDIR))
