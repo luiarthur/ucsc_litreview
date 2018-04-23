@@ -180,6 +180,29 @@ abline(h=0, lty=2, col='grey')
 add.errbar(t(ci_sig2_1), col='grey')
 dev.off()
 
+### mus vs sig2 ###
+pdf(fileDest('mus_vs_sig2.pdf'))
+sig2_0i = sapply(out, function(o) o$sig2_0[1,])
+plot(rowMeans(sig2_0i), rowMeans(mus_0), pch=as.character(1:prior$L0),
+     main=paste0('Red: i=1, Green: i=2, Blue: i=3'),
+     type='n', xlim=range(sig2_0), ylim=range(mus_0))
+for (i in 1:I) {
+  sig2_0i = sapply(out, function(o) o$sig2_0[i,])
+  points(rowMeans(sig2_0i), rowMeans(mus_0), pch=as.character(1:last(out)$prior$L0),
+       main=paste0('i=',i), col=i+1)
+}
+
+sig2_1i = sapply(out, function(o) o$sig2_1[1,])
+plot(rowMeans(sig2_1i), rowMeans(mus_1), pch=as.character(1:prior$L1),
+     main=paste0('Red: i=1, Green: i=2, Blue: i=3'),
+     type='n', xlim=range(sig2_1), ylim=range(mus_1))
+for (i in 1:I) {
+  sig2_1i = sapply(out, function(o) o$sig2_1[i,])
+  points(rowMeans(sig2_1i), rowMeans(mus_1), pch=as.character(1:last(out)$prior$L1),
+         main=paste0('i=',i), col=i+1)
+}
+dev.off()
+
 pdf(fileDest('s.pdf'))
 s = sapply(out, function(o) o$s)
 ci_s = apply(s, 1, quantile, c(.025,.975))
@@ -194,6 +217,33 @@ K = prior$K
 ### Z ###
 #my.image(t(out[[B]]$Z)[out[[B]]$W[1,]>.1,])
 #table(out[[B]]$lam[[1]])
+idx_best = sapply(1:I, function(i) estimate_ZWi_index(out,i))
+pdf(fileDest('Z_best_new.pdf'))
+par(mar=c(5.1, 4, 2.1, 4))
+for (i in 1:I) {
+  Zi = out[[idx_best[i]]]$Z
+  Wi = out[[idx_best[i]]]$W[i,]
+  K = prior$K
+  my.image(t(Zi), main=paste0('best Z_',i), ylab='cell-types', xlab='markers')
+  axis(4, at=1:K, labels=paste0(round(Wi,3)*100,'%'), las=2, cex.axis=.8)
+}
+par(mar=c(5,4,4,2)+.1)
+dev.off()
+
+Zs = lapply(out, function(o) o$Z)
+idx_best_old = estimate_Z(Zs, returnIndex=TRUE)
+pdf(fileDest('Z_best_old.pdf'))
+par(mar=c(5.1, 4, 2.1, 4))
+for (i in 1:I) {
+  Z_best = Zs[[idx_best_old]]
+  Wi = out[[idx_best_old]]$W[i,]
+  K = prior$K
+  my.image(t(Zi), main=paste0('best Z_',i), ylab='cell-types', xlab='markers')
+  axis(4, at=1:K, labels=paste0(round(Wi,3)*100,'%'), las=2, cex.axis=.8)
+}
+par(mar=c(5,4,4,2)+.1)
+dev.off()
+
 
 
 ### Force a copy by doing this:
