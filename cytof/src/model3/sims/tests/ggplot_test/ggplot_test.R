@@ -3,7 +3,7 @@ library(cytof3)
 library(ggplot2)
 source('multiplot.R')
 
-y_orig = readRDS('../data/cytof_cb.rds')
+y_orig = readRDS('../../data/cytof_cb.rds')
 y = preimpute(y_orig, .01)
 Y = do.call(rbind, y)
 N = sapply(y, NROW)
