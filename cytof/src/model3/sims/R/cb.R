@@ -229,7 +229,7 @@ par(mar=c(5,4,4,2)+.1)
 dev.off()
 
 Zs = lapply(out, function(o) o$Z)
-idx_best_old = estimate_Z(Zs, returnIndex=TRUE)
+idx_best_old = estimate_Z_old(Zs, returnIndex=TRUE)
 pdf(fileDest('Z_best_old.pdf'))
 par(mar=c(5.1, 4, 2.1, 4))
 for (i in 1:I) {

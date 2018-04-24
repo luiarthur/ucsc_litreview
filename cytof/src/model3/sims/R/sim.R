@@ -1,18 +1,41 @@
 ### GLOBALS ###
-OUTDIR = '../out/sim_locked_beta1_K20/'
+OUTDIR = '../out/sim_locked_beta1_K20_N100/'
 ### END OF GLOBALS ###
 
 library(rcommon)
 library(cytof3)
+set.seed(3)
 
 system(paste0('mkdir -p ', OUTDIR))
 system(paste0('cp sim.R ', OUTDIR))
 
 fileDest = function(filename) paste0(OUTDIR, filename)
 
-I=3; J=32; N=c(3,2,1)*100
-dat = sim_dat(I=I, J=J, N=N, K=10, L0=3, L1=4)
+dat_lim=c(-3,3)
+I=3; J=32; N=c(3,2,1)*1000; K=10
+
+dat = sim_dat(I=I, J=J, N=N, K=K, L0=3, L1=4, Z=genZ(J,K,.6))
 y = dat$y
+
+
+pdf(fileDest('Z_true.pdf'))
+my.image(t(dat$Z), xlab='markers', ylab='cell-types', xaxt='n', yaxt='n')
+axis(1, at=1:J, fg='grey', las=2, cex.axis=.8)
+axis(2, at=1:K, fg='grey', las=2, cex.axis=1)
+abline(h=1:K+.5, v=1:J+.5, col='grey')
+dev.off()
+
+png(fileDest('Y%03d.png'))
+for (i in 1:I) {
+  my.image(y[[i]], col=blueToRed(), addL=TRUE, mn=dat_lim[1], mx=dat_lim[2])
+}
+dev.off()
+
+png(fileDest('Ysorted%03d.png'))
+for (i in 1:I) {
+  my.image(y[[i]][order(dat$lam[[i]]), ], col=blueToRed(), addL=TRUE, mn=dat_lim[1], mx=dat_lim[2])
+}
+dev.off()
 
 prior = gen_default_prior(y, K=12, L0=5, L1=5)
 
@@ -85,11 +108,12 @@ locked$beta_1 = TRUE # TODO: Can I make this random?
 #locked$mus_0 = TRUE  # TODO: Can I make this random?
 #locked$mus_1 = TRUE  # TODO: Can I make this random?
 
-
-### kmeans
+### preimpute y for initialization
 preimpute_y = preimpute(y)
 init$missing_y = preimpute_y
 
+
+### Start MCMC ###
 st = system.time(
   out <- fit_cytof_cpp(y, B=200, burn=200, prior=prior, locked=locked,
                        init=init, print_freq=1, show_timings=FALSE,
@@ -128,10 +152,12 @@ dev.off()
 H = sapply(out, function(o) c(o$H))
 H_mean = matApply(lapply(out, function(o) o$H), mean)
 ci_H = apply(H, 1, quantile, c(.025,.975))
+pdf(fileDest('H.pdf'))
 plotPost(H[1,])
 plot(rowMeans(H), ylim=range(ci_H), pch=20, col='blue')
 add.errbar(t(ci_H), col='grey')
 my.image(t(H_mean), mn=-3, mx=3, col=blueToRed(), addL=TRUE)
+dev.off()
 
 ### alpha ###
 pdf(fileDest('alpha.pdf'))
@@ -213,7 +239,7 @@ par(mar=c(5,4,4,2)+.1)
 dev.off()
 
 Zs = lapply(out, function(o) o$Z)
-idx_best_old = estimate_Z(Zs, returnIndex=TRUE)
+idx_best_old = estimate_Z_old(Zs, returnIndex=TRUE)
 pdf(fileDest('Z_best_old.pdf'))
 par(mar=c(5.1, 4, 2.1, 4))
 for (i in 1:I) {
@@ -263,11 +289,8 @@ dev.off()
 
 
 ### PP 
-W_est = out[[B]]$W; Z_est = out[[B]]$Z
-
 compute_zjk_mean= function(out, i, j) {
   B = length(out)
-  #k = sapply(sample(1:prior$K, 1, prob=W_est[i,]))
   zjk = sapply(out, function(o) {
     k = sample(1:prior$K, 1, prob=o$W[i,])
     o$Z[j,k]
@@ -280,7 +303,6 @@ compute_zjk_mean= function(out, i, j) {
 Y_last = do.call(rbind, out[[B]]$missing_y)
 
 
-source("plot_dat.R")
 pdf(fileDest('y_hist.pdf'))
 par(mfrow=c(4,2))
 for (i in 1:prior$I) for (j in 1:prior$J) {
@@ -310,8 +332,9 @@ dev.off()
 # TODO: Test this with simulation data
 png(fileDest('YZ%03d.png'))
 for (i in 1:I) {
-  yZ_inspect(out, last(out)$missing_y_mean, dat_lim=c(-3,3), i=i, thresh=.7)
-  #yZ_inspect_old(out, y, dat_lim=c(-3,3), i=i, thresh=.05)
+  yZ_inspect(out, y, dat_lim=dat_lim, i=i, thresh=.9)
+  #yZ_inspect(out, last(out)$missing_y_mean, dat_lim=dat_lim, i=i, thresh=.9)
+  #yZ_inspect_old(out, y, dat_lim=dat_lim, i=i, thresh=.05)
 }
 dev.off()
 

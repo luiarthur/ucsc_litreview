@@ -8,7 +8,7 @@ sim_dat(I, J, N, K, L0, L1, mmp = miss_mech_params(c(-6, -2.5, -1), c(0.1,
   0.99, 0.001)), Z = genSimpleZ(J, K), sig2_0 = matrix(0.1, I, L0),
   sig2_1 = matrix(0.1, I, L1), mus_0 = seq(-5, -1, length = L0),
   mus_1 = seq(1, 5, length = L1), a_W = 1:K, a_eta0 = 1:L0,
-  a_eta1 = 1:L1)
+  a_eta1 = 1:L1, sort_lambda = FALSE)
 }
 \description{
 Given some metrics, generate data y, and simulation truth of parameters
