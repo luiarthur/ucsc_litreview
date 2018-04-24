@@ -3,6 +3,7 @@ library(optparse)
 getOpts = function() {
   option_list = list(
     make_option("--N", type='integer'),
+    make_option("--ncores", type='integer', default=1),
     make_option(c("--outdir", "-o"), type='character')
   )
 

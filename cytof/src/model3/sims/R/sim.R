@@ -8,6 +8,7 @@ set.seed(3)
 #
 #N_degree=100
 #OUTDIR = '../out/sim_locked_beta1_K20_N100/'
+#NCORES=1
 #
 ##########
 ### OR ###
@@ -19,6 +20,7 @@ opt = parse_args(opt_parser)
 ### Globals ###
 OUTDIR = getOrFail(paste0(opt$outdir,'/'), opt_parser)
 N_degree = getOrFail(opt$N, opt_parser)
+NCORES = getOrFail(opt$ncores, opt_parser)
 ### END OF GLOBALS ###
 
 
@@ -133,7 +135,7 @@ init$missing_y = preimpute_y
 st = system.time(
   out <- fit_cytof_cpp(y, B=200, burn=200, prior=prior, locked=locked,
                        init=init, print_freq=1, show_timings=FALSE,
-                       normalize_loglike=TRUE, joint_update_freq=0, ncore=1)
+                       normalize_loglike=TRUE, joint_update_freq=0, ncores=NCORES)
 )
 print(st)
 saveRDS(out, fileDest('out.rds'))

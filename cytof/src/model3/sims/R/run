@@ -2,7 +2,7 @@
 
 ### PARAMETERS FOR PARALLEL JOB ###
 i=0
-MAX_CORES=10
+MAX_CORES=3
 
 ### Rscript Params ###
 N="100 1000 10000"
