@@ -1,10 +1,26 @@
-### GLOBALS ###
-OUTDIR = '../out/sim_locked_beta1_K20_N100/'
-### END OF GLOBALS ###
-
 library(rcommon)
 library(cytof3)
+source("getOpts.R")
 set.seed(3)
+
+### GLOBALS (SET IN R) ###
+#
+#
+#N_degree=100
+#OUTDIR = '../out/sim_locked_beta1_K20_N100/'
+#
+##########
+### OR ###
+##########
+#
+### Get Commandline Args ###
+opt_parser = getOpts()
+opt = parse_args(opt_parser)
+### Globals ###
+OUTDIR = getOrFail(paste0(opt$outdir,'/'), opt_parser)
+N_degree = getOrFail(opt$N, opt_parser)
+### END OF GLOBALS ###
+
 
 system(paste0('mkdir -p ', OUTDIR))
 system(paste0('cp sim.R ', OUTDIR))
@@ -12,7 +28,7 @@ system(paste0('cp sim.R ', OUTDIR))
 fileDest = function(filename) paste0(OUTDIR, filename)
 
 dat_lim=c(-3,3)
-I=3; J=32; N=c(3,2,1)*1000; K=10
+I=3; J=32; N=c(3,2,1)*N_degree; K=10
 
 dat = sim_dat(I=I, J=J, N=N, K=K, L0=3, L1=4, Z=genZ(J,K,.6))
 y = dat$y
@@ -117,7 +133,7 @@ init$missing_y = preimpute_y
 st = system.time(
   out <- fit_cytof_cpp(y, B=200, burn=200, prior=prior, locked=locked,
                        init=init, print_freq=1, show_timings=FALSE,
-                       normalize_loglike=TRUE, joint_update_freq=0, ncore=4)
+                       normalize_loglike=TRUE, joint_update_freq=0, ncore=1)
 )
 print(st)
 saveRDS(out, fileDest('out.rds'))

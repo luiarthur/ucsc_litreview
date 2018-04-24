@@ -1,0 +1,21 @@
+#!/bin/bash
+
+### PARAMETERS FOR PARALLEL JOB ###
+i=0
+MAX_CORES=10
+
+### Rscript Params ###
+N="100 1000 10000"
+
+### Environment Variables ###
+export OPENBLAS_NUM_THREADS=1
+
+### Simulation Study ###
+for n in $N; do
+  i=$((i+1)) 
+  outdir="../out/sim_locked_beta1_K20_N${n}/"
+  cmd="Rscript sim.R --N=$n -o $outdir"
+  mkdir -p $outdir
+  sem -j $MAX_CORES $cmd > ${outdir}log.txt
+  echo "Simulation $i: $outdir"
+done
