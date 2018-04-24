@@ -325,8 +325,13 @@ dev.off()
 
 # TODO: Test this with simulation data
 png(fileDest('YZ%03d.png'))
+fy = function(lami) {
+  abline(h=cumsum(table(lami))+.5, lwd=1, col='white', lty=2)
+  axis(4, at=cumsum(table(lami))+.5, col=NA, col.ticks=1, cex.axis=.0001)
+}
 for (i in 1:I) {
-  yZ_inspect(out, last(out)$missing_y_mean, dat_lim=c(-3,3), i=i, thresh=.7)
+  #yZ_inspect(out, y, dat_lim=c(-3,3), i=i, thresh=.9, prop_lower_panel=.4, fy=fy)
+  yZ_inspect(out,last(out)$missing_y_mean,dat_lim=c(-3,3),i=i,thresh=.9,prop_lower_panel=.4,fy=fy)
   #yZ_inspect_old(out, y, dat_lim=c(-3,3), i=i, thresh=.05)
 }
 dev.off()

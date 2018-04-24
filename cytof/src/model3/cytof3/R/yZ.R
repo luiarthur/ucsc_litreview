@@ -65,7 +65,7 @@ yZ = function(yi, Zi, Wi, cell_types_i, dat_lim=c(-4,4),
 
   my.image(yi[order(lami),],
            mn=dat_lim[1], mx=dat_lim[2],
-           ylab='obs', xlab='', col=COL, xaxt='n')
+           ylab='cells', xlab='', col=COL, xaxt='n')
   axis(1, at=1:J, labels=marker_names, las=2, fg='grey')
   fy(lami)
   color.bar(COL,mn,mx,nticks)

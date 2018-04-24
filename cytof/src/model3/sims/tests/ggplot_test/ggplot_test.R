@@ -76,9 +76,10 @@ melt.y1 = melt(y1_cut)
 #ggplot(melt.y1, aes(x=Var1,y=Var2,fill=value)) + geom_tile() + scale_fill_brewer(palette = "PRGn")
 
 
+pdf('out/heatmap.pdf')
 ggplot(melt.y1, aes(x=Var1,y=Var2,fill=value)) + geom_tile() + 
       scale_fill_manual(breaks=c("[-Inf,-3)", "[-3,-2)", "[-2,-1)", 
                                  "[-1,0)", "[0,1)", "[1,2)", 
                                  "[2,3)", "[3, Inf)"),
                         values = blueToRed(8))
-
+dev.off()
