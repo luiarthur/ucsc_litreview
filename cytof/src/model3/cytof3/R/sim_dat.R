@@ -1,13 +1,15 @@
+#' @export
 left_order <- function(Z) {
-  #' @export
   order(apply(Z, 2, function(z) paste0(as.character(z), collapse='')), decreasing=TRUE)
 }
 
+#' @export
 rowSort <- function(arr) {
-  #' @export
   arr[do.call(order, lapply(1:NCOL(arr), function(i) arr[, i])), ]
 }
 
+  
+#' @export
 genSimpleZ <- function(J, K) {
   g <- J %/% K
   Z <- matrix(0, J, K)
@@ -22,17 +24,19 @@ genSimpleZ <- function(J, K) {
   Z[, left_order(Z)]
 }
 
-genZ <- function(J,K,prob=c(.4,.6)) {
-  #' @export
-  Z <- sample(0:1, J*K, replace=TRUE, prob=prob)
+#' @export
+genZ <- function(J,K,prob1=c(.6)) {
+  stopifnot(prob1 > 0 && prob1 < 1)
+  Z <- sample(0:1, J*K, replace=TRUE, prob=c(1-prob1, prob1))
   Z <- matrix(Z, J, K, byrow=TRUE)
   Z <- rowSort(Z)
   Z <- Z[, left_order(Z)]
 
-  if (all(rowSums(Z) > 0)) Z else genZ(J,K,prob)
+  if (all(rowSums(Z) > 0)) Z else genZ(J,K,prob1)
 }
 
 
+#' @export
 rdirichlet = function(a) {
   x = rgamma(length(a), a, 1)
   x / sum(x)
@@ -41,7 +45,9 @@ rdirichlet = function(a) {
 #' Simulate Data
 #' @description Given some metrics, generate data y, and simulation truth of parameters
 #' @export
-sim_dat = function(I, J, N, K, L0, L1, Z=genSimpleZ(J,K),
+sim_dat = function(I, J, N, K, L0, L1,
+                   mmp=miss_mech_params(c(-6, -2.5, -1),c(.1,.99,.001)),
+                   Z=genSimpleZ(J,K),
                    sig2_0=matrix(.1, I, L0), sig2_1=matrix(.1, I, L1),
                    mus_0=seq(-5,-1,length=L0), mus_1=seq(1,5,length=L1),
                    a_W=1:K, a_eta0=1:L0, a_eta1=1:L1) {
@@ -122,15 +128,28 @@ sim_dat = function(I, J, N, K, L0, L1, Z=genSimpleZ(J,K),
       mu_ij = sapply(1:N[i], function(n) mu_inj(z_ij[n], gam_ij[n]))
       sig_ij = sapply(1:N[i], function(n) sig_inj(i, z_ij[n], gam_ij[n]))
       y_complete[[i]][,j] = rnorm(N[i], mu_ij, sig_ij)
+      p_miss = prob_miss(y_complete[[i]][,j], mmp['b0'], mmp['b1'],
+                         mmp['c0'], mmp['c1'])
+      y[[i]][,j] = ifelse(p_miss > runif(N[i]),NA, y_complete[[i]][,j])
     }
   }
 
   list(y=y, y_complete=y_complete, Z=Z, W=W,
        eta_0=eta_0, eta_1=eta_1, mus_0=mus_0, mus_1=mus_1,
-       sig2_0=sig2_0, sig2_1=sig2_1, lam=lam, gam=gam)
+       sig2_0=sig2_0, sig2_1=sig2_1, lam=lam, gam=gam,
+       b0=mmp['b0'], b1=mmp['b1'], c0=mmp['c0'], c1=mmp['c1'])
 }
 
 
-dat = sim_dat(I=3, J=16, N=c(100,200,300), K=4, L0=4, L1=6, Z=genZ(16,4))
-
-plot_dat(dat$y_complete, i=2, j=16, xlim=c(-7,7))
+### Test ###
+#I=3; J=32; K=10
+#dat = sim_dat(I=I, J=J, N=c(300,200,100), K=K, L0=4, L1=5, Z=genZ(J,K,prob=.5))
+##I=3; J=32; K=8
+##dat = sim_dat(I=I, J=J, N=c(300,200,100), K=K, L0=4, L1=5, Z=genSimpleZ(J,K))
+#
+#hist(dat$y_complete[[1]][,1], xlim=c(-7,7), col=rgb(0,0,1,.5), border='transparent')
+#hist(dat$y[[1]][,1], add=TRUE, col=rgb(1,0,0,.5),border='transparent')
+#
+#plot_dat(dat$y_complete, i=1, j=16, xlim=c(-7,7))
+#
+#my.image(dat$Z)

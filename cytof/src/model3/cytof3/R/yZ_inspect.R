@@ -3,7 +3,10 @@ greys = function(n=10) {
   rev(grey(seq(0,1,len=n)))
 } 
 
-### TODO: build from yZ.R ###
+#' Plot y and Z together
+#' @param fy function to execute after making y image
+#' @param fZ function to execute after making Z image
+#' @export
 yZ_inspect = function(out, y, dat_lim, i, thresh=0.7, 
                       col=list(blueToRed(), greys(10))[[1]],
                       prop_lower_panel=.3, is.postpred=FALSE,
@@ -13,9 +16,6 @@ yZ_inspect = function(out, y, dat_lim, i, thresh=0.7,
                         axis(4, at=cumsum(table(lami))+.5, col=NA, col.ticks=1, cex.axis=.0001)
                       },
                       fZ=function(Z) abline(v=1:NCOL(Z)+.5, h=1:NROW(Z)+.5, col='grey')) {
-  #' @export
-  #' @param fy function to execute after making y image
-  #' @param fZ function to execute after making Z image
   idx_best = estimate_ZWi_index(out, i)
   Zi = out[[idx_best]]$Z
   Wi = out[[idx_best]]$W[i,]
@@ -25,15 +25,15 @@ yZ_inspect = function(out, y, dat_lim, i, thresh=0.7,
      decimals_W=decimals_W, fy=fy, fZ=fZ)
 }
 
-### TODO: build from yZ.R ###
-y_Z_inspect_old = function(out, y, dat_lim, i=0, thresh=0.1, 
+#' Plot y and Z together (old version)
+#' @param fy function to execute after making y image
+#' @param fZ function to execute after making Z image
+#' @export
+yZ_inspect_old = function(out, y, dat_lim, i=0, thresh=0.1, 
                            col=list(blueToRed(), greys(10))[[1]],
                            prop_lower_panel=.3, is.postpred=FALSE,
                            fy=function() stopifnot(TRUE),
                            fZ=function() stopifnot(TRUE)) {
-  #' @export
-  #' @param fy function to execute after making y image
-  #' @param fZ function to execute after making Z image
   I = length(y)
   J = NCOL(y[[1]])
 

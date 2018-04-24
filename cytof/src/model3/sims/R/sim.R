@@ -1,27 +1,20 @@
 ### GLOBALS ###
-OUTDIR = '../out/locked_beta1_K20/'
+OUTDIR = '../out/sim_locked_beta1_K20/'
 ### END OF GLOBALS ###
 
 library(rcommon)
 library(cytof3)
 
-source("smart_init.R")
-
 system(paste0('mkdir -p ', OUTDIR))
-system(paste0('cp test.R ', OUTDIR))
-
+system(paste0('cp sim.R ', OUTDIR))
 
 fileDest = function(filename) paste0(OUTDIR, filename)
 
-#saveRDS(y, '../data/cytof_cb.rds')
-y_orig = readRDS('../data/cytof_cb.rds')
-#y = resample(y_orig, prop=.01)
-y = y_orig
-#y = preimpute(y_orig, .01)
-#y = y_orig
+I=3; J=32; N=c(3,2,1)*100
+dat = sim_dat(I=I, J=J, N=N, K=10, L0=3, L1=4)
+y = dat$y
 
-### TODO: add def for miss-mech in gen_default prior ###
-prior = gen_default_prior(y, K=20, L0=5, L1=5)
+prior = gen_default_prior(y, K=12, L0=5, L1=5)
 
 # Are these good priors?
 prior$psi_0 = -2
@@ -96,22 +89,11 @@ locked$beta_1 = TRUE # TODO: Can I make this random?
 ### kmeans
 preimpute_y = preimpute(y)
 init$missing_y = preimpute_y
-#Y = do.call(rbind, preimpute_y)
-#Z_est_kmeans = kmeans(Y, centers=10)
-#my.image(unique(Z_est_kmeans$centers > 0))
-
-### Init Z ###
-#init$Z = t((Z_est_kmeans$centers > 0) * 1)
 
 st = system.time(
-  out <- fit_cytof_cpp(y, B=1000, burn=2000, prior=prior, locked=locked,
+  out <- fit_cytof_cpp(y, B=200, burn=200, prior=prior, locked=locked,
                        init=init, print_freq=1, show_timings=FALSE,
                        normalize_loglike=TRUE, joint_update_freq=0, ncore=4)
-  #out <- fit_cytof_cpp(y, B=50, burn=0, prior=prior, locked=locked, init=init, print_freq=1, show_timings=FALSE, normalize_loglike=TRUE, joint_update_freq=0)
-
-  #prior$cs_v = .001
-  #prior$cs_h = .001
-  #out <- fit_cytof_cpp(y, B=50, burn=0, prior=prior, locked=locked, init=last(out), print_freq=1, show_timings=FALSE, normalize_loglike=TRUE, joint_update_freq=0)
 )
 print(st)
 saveRDS(out, fileDest('out.rds'))
@@ -329,7 +311,7 @@ dev.off()
 png(fileDest('YZ%03d.png'))
 for (i in 1:I) {
   yZ_inspect(out, last(out)$missing_y_mean, dat_lim=c(-3,3), i=i, thresh=.7)
-  #y_Z_inspect_old(out, y, dat_lim=c(-3,3), i=i, thresh=.05)
+  #yZ_inspect_old(out, y, dat_lim=c(-3,3), i=i, thresh=.05)
 }
 dev.off()
 

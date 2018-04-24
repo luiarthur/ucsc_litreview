@@ -5,7 +5,7 @@
 \title{Returns a pairwise allocation matrix of a feature allocation (binary) matrix Z
 using SALSO by David B. Dahl.}
 \usage{
-pairwise_alloc(Z)
+pairwise_alloc(Z, W, i)
 }
 \description{
 Returns a pairwise allocation matrix of a feature allocation (binary) matrix Z
