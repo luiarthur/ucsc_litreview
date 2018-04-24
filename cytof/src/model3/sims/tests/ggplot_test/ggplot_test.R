@@ -1,6 +1,9 @@
 # https://stackoverflow.com/questions/5322836/choosing-between-qplot-and-ggplot-in-ggplot2
+#https://stackoverflow.com/questions/18700938/ggplot2-positive-and-negative-values-different-color-gradient/21893276
 library(cytof3)
 library(ggplot2)
+library(reshape2)
+
 source('multiplot.R')
 
 y_orig = readRDS('../../data/cytof_cb.rds')
@@ -58,3 +61,24 @@ for (j in 1:8) {
   plotlist[[j]] = m
 }
 multiplot(plotlist=plotlist, cols=2)
+
+
+### Heatmap
+#y = y_orig
+y = preimpute(y_orig)
+km = kmeans(y[[1]], 10)
+
+y1 = y[[1]][km$clus,]
+#melt.y1 = melt(y1)
+#ggplot(melt.y1, aes(x=Var2,y=Var1,fill=value)) + geom_tile() + scale_fill_gradient2(low=-3, high=3, mid=0)
+y1_cut = apply(y1, 2, function(y1j) cut(y1j, breaks=c(-Inf,-3:3,Inf), right=FALSE))
+melt.y1 = melt(y1_cut)
+#ggplot(melt.y1, aes(x=Var1,y=Var2,fill=value)) + geom_tile() + scale_fill_brewer(palette = "PRGn")
+
+
+ggplot(melt.y1, aes(x=Var1,y=Var2,fill=value)) + geom_tile() + 
+      scale_fill_manual(breaks=c("[-Inf,-3)", "[-3,-2)", "[-2,-1)", 
+                                 "[-1,0)", "[0,1)", "[1,2)", 
+                                 "[2,3)", "[3, Inf)"),
+                        values = blueToRed(8))
+
