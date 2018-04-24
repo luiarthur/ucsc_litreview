@@ -4,10 +4,36 @@ greys = function(n=10) {
 } 
 
 ### TODO: build from yZ.R ###
-y_Z_inspect = function(out, y, dat_lim, i=0, thresh=0.1, 
-                       col=list(blueToRed(), greys(10))[[1]],
-                       prop_lower_panel=.3, is.postpred=FALSE) {
+yZ_inspect = function(out, y, dat_lim, i, thresh=0.7, 
+                      col=list(blueToRed(), greys(10))[[1]],
+                      prop_lower_panel=.3, is.postpred=FALSE,
+                      decimals_W=1,
+                      fy=function(lami) {
+                        #abline(h=cumsum(table(lami))+.5, lwd=2)
+                        axis(4, at=cumsum(table(lami))+.5, col=NA, col.ticks=1, cex.axis=.0001)
+                      },
+                      fZ=function(Z) abline(v=1:NCOL(Z)+.5, h=1:NROW(Z)+.5, col='grey')) {
   #' @export
+  #' @param fy function to execute after making y image
+  #' @param fZ function to execute after making Z image
+  idx_best = estimate_ZWi_index(out, i)
+  Zi = out[[idx_best]]$Z
+  Wi = out[[idx_best]]$W[i,]
+  lami = out[[idx_best]]$lam[[i]]
+  yZ(y[[i]], Zi, Wi, lami, dat_lim, using_zero_index=TRUE,
+     thresh=thresh, col=col, prop_lower_panel=prop_lower_panel, 
+     decimals_W=decimals_W, fy=fy, fZ=fZ)
+}
+
+### TODO: build from yZ.R ###
+y_Z_inspect_old = function(out, y, dat_lim, i=0, thresh=0.1, 
+                           col=list(blueToRed(), greys(10))[[1]],
+                           prop_lower_panel=.3, is.postpred=FALSE,
+                           fy=function() stopifnot(TRUE),
+                           fZ=function() stopifnot(TRUE)) {
+  #' @export
+  #' @param fy function to execute after making y image
+  #' @param fZ function to execute after making Z image
   I = length(y)
   J = NCOL(y[[1]])
 
@@ -56,6 +82,7 @@ y_Z_inspect = function(out, y, dat_lim, i=0, thresh=0.1,
              ylab='obs', xlab='', col=COL, xaxt='n')
     axis(1, at=1:J, labels=marker_names, las=2, fg='grey')
     color.bar(COL,mn,mx,nticks)
+    fy()
 
     cell_types = which(W_est[i,] > thresh)
     my.image(t(Z_est[, cell_types]), xlab='markers', ylab='cell-types', axes=F)
@@ -63,6 +90,7 @@ y_Z_inspect = function(out, y, dat_lim, i=0, thresh=0.1,
     axis(4, at=1:length(cell_types), label=perc, las=2, fg='grey', cex.axis=.8)
     axis(2, at=1:length(cell_types), label=cell_types, las=2, fg='grey', cex.axis=.8)
     axis(1, at=1:J, label=1:J, las=2, fg='grey')
+    fZ()
   }
 
   if (i == 0) {

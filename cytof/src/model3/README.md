@@ -1,13 +1,15 @@
 # Model 3
 
 ## NOW 
-- [x] Abstract for this project
-- [x] `beta_1 ~ N+`
-- [x] random `s_i`
-- [x] CB all data
 - [ ] simulation data 
-- [x] 1000 MCMC samples!
-- [x] update tex. use Juhee's, and upload mine.
+- [ ] post pred for observed y
+- [ ] For missing y, make prob Z_{j,lin} = 0 | data, for all (i,j) pairs
+- [ ] compare against one method (kmeans)
+- [ ] sort yz by Wi
+- [ ] `heatmap.2` -> missing -> change color
+- [ ] in heatmap and Z, use horizontal line for grouping
+- [ ] in W%, add one decimal
+- [ ] why is beta1 so strange?
 
 ## Timeline
 

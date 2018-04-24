@@ -325,12 +325,14 @@ dev.off()
 #  Sys.sleep(.1)
 #}
 
+# TODO: Test this with simulation data
 png(fileDest('YZ%03d.png'))
-y_Z_inspect(out, y, c(-2,2), i=0, thresh=.05)
+for (i in 1:I) {
+  yZ_inspect(out, last(out)$missing_y_mean, dat_lim=c(-3,3), i=i, thresh=.7)
+  #y_Z_inspect_old(out, y, dat_lim=c(-3,3), i=i, thresh=.05)
+}
 dev.off()
 
-#my.image(Z[[161]])
-#my.image(Z[[77]])
-#my.image(Z[[79]])
 
-
+#my.image(last(out)$Z)
+#round(last(out)$W[i,] * 100, 2)
