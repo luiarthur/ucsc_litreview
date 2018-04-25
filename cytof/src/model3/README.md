@@ -1,15 +1,17 @@
 # Model 3
 
 ## NOW 
-- [ ] simulation data 
 - [ ] post pred for observed y
 - [ ] For missing y, make prob Z_{j,lin} = 0 | data, for all (i,j) pairs
 - [ ] compare against one method (kmeans)
-- [ ] sort yz by Wi
-- [ ] `heatmap.2` -> missing -> change color
-- [ ] in heatmap and Z, use horizontal line for grouping
-- [ ] in W%, add one decimal
 - [ ] why is beta1 so strange?
+- [ ] Summarize CB analysis
+- [ ] Summarize simulation study
+- [x] sort yz by Wi
+- [x] `heatmap.2` -> missing -> change color
+- [x] in heatmap and Z, use horizontal line for grouping
+- [x] in W%, add one decimal
+- [x] simulation data 
 
 ## Timeline
 
