@@ -29,6 +29,7 @@ using namespace Rcpp;
 //' @param compute_loglike_every  (int). Frequency of computing loglike.
 //' @param normalize_loglike  (bool). Whether the log-likelihood should be normalized.
 //' @param joint_update_freq(int). Frequency of proposing from prior (0 -> don't do it). NOT READY!
+//' @param print_new_line(bool). Whether or not to print new line for MCMC progress
 //' @export
 // [[Rcpp::export]]
 std::vector<List> fit_cytof_cpp(
@@ -38,7 +39,8 @@ std::vector<List> fit_cytof_cpp(
   int compute_loglike_every=1, int print_freq=10, int ncores=1,
   int joint_update_freq=0,
   bool show_timings=false, 
-  bool normalize_loglike=false) {
+  bool normalize_loglike=false,
+  bool print_new_line=false) {
 
   omp_set_num_threads(ncores);
 
@@ -128,7 +130,7 @@ std::vector<List> fit_cytof_cpp(
   };
 
 
-  mcmc::gibbs<State>(init, update, assign_to_out, B, burn, print_freq);
+  mcmc::gibbs<State>(init, update, assign_to_out, B, burn, print_freq, print_new_line);
   
   return out;  
 }  

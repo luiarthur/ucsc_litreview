@@ -20,7 +20,7 @@ namespace mcmc {
   void gibbs(S state,
              std::function<void(S&)> update, // function to update state
              std::function<void(const S&, int)> assign_to_out, // function to assign to out and perhaps do adaptive mcmc
-             int B, int burn, int print_freq) {
+             int B, int burn, int print_freq, bool print_new_line=false) {
   
     assign_to_out(state, 0);
     
@@ -33,7 +33,11 @@ namespace mcmc {
      
       if (print_freq > 0 && (i+1) % print_freq == 0) {
         //Rcout << "\rProgress:  " << i+1 << "/" << B+burn << "\t";
-        Rcout << "\tProgress:  " << i+1 << "/" << B+burn << "\t\r";
+        if (print_new_line) {
+          Rcout << "\tProgress:  " << i+1 << "/" << B+burn << std::endl;
+        } else {
+          Rcout << "\tProgress:  " << i+1 << "/" << B+burn << "\t\r";
+        }
       }
     }
     

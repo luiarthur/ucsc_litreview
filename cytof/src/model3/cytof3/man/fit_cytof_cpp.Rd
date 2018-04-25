@@ -8,7 +8,7 @@ TODO: add descriptions for params}
 fit_cytof_cpp(y, B, burn, prior_ls, locked_ls, init_ls, thin = 1L,
   thin_some = 1L, compute_loglike_every = 1L, print_freq = 10L,
   ncores = 1L, joint_update_freq = 0L, show_timings = FALSE,
-  normalize_loglike = FALSE)
+  normalize_loglike = FALSE, print_new_line = FALSE)
 }
 \arguments{
 \item{y}{A list of NumericMatrix with same number of columns.}
@@ -32,6 +32,8 @@ fit_cytof_cpp(y, B, burn, prior_ls, locked_ls, init_ls, thin = 1L,
 \item{normalize_loglike}{(bool). Whether the log-likelihood should be normalized.}
 
 \item{joint_update_freq(int).}{Frequency of proposing from prior (0 -> don't do it). NOT READY!}
+
+\item{print_new_line(bool).}{Whether or not to print new line for MCMC progress}
 }
 \description{
 Cytof Model for fixed K
