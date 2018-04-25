@@ -1,3 +1,4 @@
+library(session)
 library(rcommon)
 library(cytof3)
 source("getOpts.R")
@@ -130,6 +131,9 @@ locked$beta_1 = TRUE # TODO: Can I make this random?
 preimpute_y = preimpute(y)
 init$missing_y = preimpute_y
 
+### Save Checkpoint###
+#save(prior, init, locked, dat, file=fileDest('dat.rda'))
+save.session(file=fileDest('checkpoint.rda'))
 
 ### Start MCMC ###
 st = system.time(
@@ -139,7 +143,8 @@ st = system.time(
                        ncores=NCORES, print_new_line=TRUE)
 )
 print(st)
-saveRDS(out, fileDest('out.rds'))
+#saveRDS(out, fileDest('out.rds'))
+save.session(file=fileDest('checkpoint.rda'))
 
 B = length(out)
 
