@@ -33,7 +33,8 @@ fileDest = function(filename) paste0(OUTDIR, filename)
 dat_lim=c(-3,3)
 I=3; J=32; N=c(3,2,1)*N_degree; K=10
 
-dat = sim_dat(I=I, J=J, N=N, K=K, L0=3, L1=4, Z=genZ(J,K,.6))
+dat = sim_dat(I=I, J=J, N=N, K=K, L0=3, L1=4, Z=genZ(J,K,.6),
+              miss_mech_params(c(-7, -3, -1), c(.1, .99, .001)))
 y = dat$y
 
 
