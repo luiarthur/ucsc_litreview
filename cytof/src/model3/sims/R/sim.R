@@ -1,4 +1,4 @@
-library(session)
+#library(session)
 library(rcommon)
 library(cytof3)
 source("getOpts.R")
@@ -150,7 +150,8 @@ init$missing_y = preimpute_y
 
 ### Save Checkpoint###
 #save(prior, init, locked, dat, file=fileDest('dat.rda'))
-save.session(file=fileDest('checkpoint.rda'))
+#save(file=fileDest('checkpoint.rda'))
+save.image()
 
 ### Start MCMC ###
 st = system.time(
@@ -161,7 +162,8 @@ st = system.time(
 )
 print(st)
 #saveRDS(out, fileDest('out.rds'))
-save.session(file=fileDest('checkpoint.rda'))
+#save.session(file=fileDest('checkpoint.rda'))
+save.image()
 
 B = length(out)
 
