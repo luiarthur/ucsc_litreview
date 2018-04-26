@@ -1,4 +1,6 @@
 \documentclass[12pt,]{article}
+
+%{{{1
 \usepackage{lmodern}
 \usepackage{amssymb,amsmath}
 %\usepackage{ifxetex,ifluatex}
@@ -105,6 +107,15 @@
 \def\h{\bm{h}}
 \def\Z{\bm{Z}}
 \def\Unif{\text{Unif}}
+
+%sim-tex-commands
+\newcommand{\true}{{\mbox{\tiny TR}}}
+\newcommand{\bZ}{\mbox{\boldmath $Z$}}
+\newcommand{\bp}{\mbox{\boldmath $p$}}
+\newcommand{\bq}{\mbox{\boldmath $q$}}
+\newcommand{\bz}{\mbox{\boldmath $z$}}
+\newcommand{\bw}{\mbox{\boldmath $w$}}
+%}}}1
 
 \title{Bayesian Feature Allocation Models for Natural Killer Cell Repertoire Studies Using Mass Cytometry Data}
 \author{Arthur Lui}
@@ -399,8 +410,50 @@ We then compute the mean adjacency matrix \(\bar A_i = \sum_{b=1}^B A_i^{(b)} / 
 \]
 Conditioning on $\hat{\Z}_i$, we report posterior point estimates $\hat{\bm W}_i$ and $\hat{\lambda}_{in}$.
 
-\subsection{Simulation}
 
+%%% sim-study-proj1 %%%
+\subsection{Simulation} %%% Change name to Simulation Study?
+In order to understand the strengths and limitations of the proposed model, a
+simulation study was conducted. The study generated data that resemble the
+cord-blood (CB) CyTOF data. This section details the data-simulation strategy
+and the results of the analysis on the simulated data using the proposed model.
+
+\subsubsection{Data Simulation}
+The steps for simulating data is as follows.
+
+First, specify dimensions of the data through $I$ (number of samples), $J$
+(number of markers), and $N_i$ (number of cells in sample $i$). Specify the
+dimensions of the parameters through $K$ (true number of latent cell-types),
+$L^0$ (number of mixture components in density for cells not expressing a
+marker), and $L^1$ (number of mixture components in density for cells
+expressing a marker). Then fix the latent cell-type matrix $\bZ^\true$
+according to $J$ and $K$. Set values for $\sigma^{2, \true}_{0i\ell}$,
+$\sigma^{2,\true}_{1i\ell}$, $\mu^{\star, \true}_{0\ell}$ and $\mu^{\star, \true}_{1\ell}$.  This can be done using some empirical values from CB data.
+
+
+\begin{enumerate}
+\item Fix $\bw^\true_i$.  May simulate from a Dirichlet distribution with parameters, say $a_1, \ldots, a_K$.  Randomly permute those $a$ for samples so that $\bw^\true_i$s are from different dirichlet distributions.
+
+\item Simulate $\eta^\true_{0ij}$ and $\eta^\true_{1ij}$ for ($i,j$).  May simulate them similar to $\bw^\true_i$.  
+
+\item Simulate $y_{inj}$.  
+
+
+\item Make some $y$ missing.  
+\begin{enumerate}
+\item First set a certain percentage for missing values (should be less than $\sum_k w^\true_{ik}z^\true_{jk}$).  Say, we get 68\%.
+
+\item Sample the ($N_i\times$percentage) of $y_{inj}$ without replacement. Say, then $N_i \times 68\%$ of $y$ are missing.  The probability of a value of $y$ is proportional to some missing mechanism.  Make sure $y$ with positive values have almost zero chance to be missing.   Use a slightly different missing mechanism (like quadratic only -- we have $(y-c)^2$ on one side and $\sqrt{y-c}$ on the other side currently).  
+\end{enumerate}
+
+
+\end{enumerate}
+
+
+
+\subsubsection{Results}
+
+%%% cb-proj1 %%%
 \subsection{Cord Blood Data}
 
 \subsection{Conclusions}
