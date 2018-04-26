@@ -1,26 +1,27 @@
 \documentclass[12pt,]{article}
 \usepackage{lmodern}
 \usepackage{amssymb,amsmath}
-\usepackage{ifxetex,ifluatex}
-\usepackage{fixltx2e} % provides \textsubscript
-\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
-  \usepackage[T1]{fontenc}
-  \usepackage[utf8]{inputenc}
-\else % if luatex or xelatex
-  \ifxetex
-    \usepackage{mathspec}
-  \else
-    \usepackage{fontspec}
-  \fi
-  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
-\fi
+%\usepackage{ifxetex,ifluatex}
+%\usepackage{fixltx2e} % provides \textsubscript
+%\ifnum 0\ifxetex 1\fi\ifluatex 1\fi=0 % if pdftex
+%  \usepackage[T1]{fontenc}
+%  \usepackage[utf8]{inputenc}
+%\else % if luatex or xelatex
+%  \ifxetex
+%    \usepackage{mathspec}
+%  \else
+%    \usepackage{fontspec}
+%  \fi
+%  \defaultfontfeatures{Ligatures=TeX,Scale=MatchLowercase}
+%\fi
 % use upquote if available, for straight quotes in verbatim environments
-\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
-% use microtype if available
-\IfFileExists{microtype.sty}{%
-\usepackage{microtype}
-\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
-}{}
+%\IfFileExists{upquote.sty}{\usepackage{upquote}}{}
+%% use microtype if available
+%\IfFileExists{microtype.sty}{%
+%\usepackage{microtype}
+%\UseMicrotypeSet[protrusion]{basicmath} % disable protrusion for tt fonts
+%}{}
+\usepackage{setspace}
 \usepackage[margin=1in]{geometry}
 \usepackage[unicode=true]{hyperref}
 \hypersetup{
@@ -44,12 +45,14 @@
 % Redefines (sub)paragraphs to behave more like sections
 \ifx\paragraph\undefined\else
 \let\oldparagraph\paragraph
-\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
+%\renewcommand{\paragraph}[1]{\oldparagraph{#1}\mbox{}}
 \fi
 \ifx\subparagraph\undefined\else
 \let\oldsubparagraph\subparagraph
 \renewcommand{\subparagraph}[1]{\oldsubparagraph{#1}\mbox{}}
 \fi
+
+
 \usepackage{bm}
 \usepackage{bbm}
 \usepackage{graphicx}
@@ -76,6 +79,10 @@
 \newcommand{\iid}{\overset{iid}{\sim}}
 \newcommand{\ind}{\overset{ind}{\sim}}
 \newcommand{\I}{\mathrm{\mathbf{I}}}
+
+\def\bet{\bm{\eta}}
+
+
 \allowdisplaybreaks
 \def\M{\mathcal{M}}
 \def\logit{\text{logit}}
@@ -99,22 +106,165 @@
 \def\Z{\bm{Z}}
 \def\Unif{\text{Unif}}
 
-\title{Sampling Scheme for CYTOF Model3}
+\title{Bayesian Feature Allocation Models for Natural Killer Cell Repertoire Studies Using Mass Cytometry Data}
 \author{Arthur Lui}
 \date{\today}
 
 \begin{document}
 \maketitle
+\onehalfspacing
 
-\section{Notation}\label{notation}
 
+
+\begin{abstract}
+\noindent
+Bayesian feature allocation models (FAMs) embedded with
+clustering are developed to analyze mass cytometry data, with primary aim to
+characterize underlying cell repertoire structures.   Cell repertoires in
+samples are heterogeneous. Each repertoire consists of a collection of cells
+possessing different phenotypes that can be characterized by differences in
+expression levels of cell surface markers.  In particular, mass cytometry data
+collected to study the clinical efficacy of natural killer (NK) cells as
+immunotherapeutic agents against leukemia is considered. NK cells play a
+critical role in cancer immune surveillance and are the first line of defense
+against viruses and transformed tumor cells.  The data includes expression
+levels of 32 surface markers on each of thousands of cells from multiple
+samples. NK cell repertoires may affect both NK cell function and immune
+surveillance.  A key conceptual shift compared with existing approaches is to
+explicitly characterize latent cell phenotypes through a FAM.  The models
+simultaneously (1) characterize NK cell phenotypes based on expression /
+non-expression of surface markers, (2) estimate compositions of the samples
+based on the identified phenotypes, and (3) infer associations of subjects'
+covariates, with the composition of the identified phenotypes in the samples.
+The conventional Indian buffet process (IBP), one of the most popular feature
+allocation models, is first utilized to model cell phenotypes. Non-ignorable
+missing data that is present due to technical artifacts in mass cytometry are
+accounted for using an informed prior missing mechanism. The repulsive FAM
+(rep-FAM) is next proposed.  In contrast with the IBP, the rep-FAM produces a
+parsimonious representation of phenotypes by discouraging the creation of
+redundant phenotypes, and thus can improve inference on phenotypes.  Further
+extensions to incorporate subject-based covariates are discussed to provide
+inferences on phenotypes potentially associated with positive clinical
+outcomes.  
+
+%\noindent
+%{\em Keywords:} ~  Count data, Laplace prior, Metagenomics, Microbiome, Regularizing prior, Process convolution,  Negative binomial model, Next-generation sequencing
+\end{abstract}
+
+
+
+
+\section{Introduction}
+Clinical application of natural killer (NK) cells %as immunotherapeutic agents against leukemia
+recently has emerged as a powerful treatment modality for advanced cancers refractory to conventional therapies \citep{rezvani2015application}. % and intensely investigated.
+%NK cells, the third lymphocyte lineage, % preceded by T cells and B cells,
+%play critical roles in the immune response to certain %virus infected cells and
+%transformed tumor cells.
+NK cells play a critical role in cancer immune surveillance and are the first line of defense against viruses and transformed tumor cells.
+They have the intrinsic ability to infiltrate cancer tissue and their presence in the tumor is reported to be associated with better clinical outcomes \citep{suck2016natural}.  %NK cells develop in the bone marrow and are ``educated'' during their development to ensure not to attack normal self cells whiling rapidly killing tumor or virally infected cells.
+% (called self-tolerance).
+%During the development,
+Drs. Thall and Rezvani, collaborators at UT MD Anderson Cancer Center, have conducted clinical trials to study potential clinical efficacy of umbilical cord blood (UCB) transplantation as a therapy for leukemia.  UCB has become an established source of hematopoietic stem cells for transplantation. UCB NK cell therapy has the advantages of low risk of viral transmission from donor to recipient \citep{sarvaria2017umbilical}. In the trials, leukemia patients received UCB cell transplants. % after irradiation therapy.  %Some characteristics of the patients such as their survival after the treatment are recorded.
+During follow up, samples were taken at multiple time points from each patient.  Samples from %In addition, peripheral blood samples from
+healthy subjects and cord blood samples also were collected for comparison to leukemia patient samples.
+The samples were processed and expressions of 32 NK cell-associated cell surface protein markers, %in individual cells of the samples
+measured for individual cells in the samples using mass cytometry.
+Their primary research goal is to understand phenotypes and functions structured across heterogeneous NK cells. % based on the markers' expression levels.
+Better understanding of the characteristics of NK cells is crucial to estimate the true potential of NK cell therapies against cancer.  %for cancer immunotherapy. %against leukemia and possibly also against solid tumors.
+
+
+
+%NK cells play critical roles in defending against tumors. Furthermore, their diversity and function are
+%known to be linked. Researchers have thus studied NK cell diversity from
+%various perspectives. For instance, it is known that NK cell diversity
+%is lower at birth \citep{strauss2015human} than in adults. Some
+%researchers have studied the effect of introducing diverse NK cells into
+%tumor patients. Yet again, some researchers have found that patients
+%with higher NK diversity are associated with higher exposure risk of
+%HIV-1, suggesting that existing diversity may decrease flexibility of
+%the antiviral response. Many questions about NK cells remain to be
+%answered. Understanding NK diversity through spectrometry has therefore
+%been an important research area in the bio-sciences.   
+
+%The main
+%inferential goal of this project is to identify the NK cell phenotypes
+%(or cell-types) in various samples as a set of subpopulations of the set
+%of some provided surface markers. The NK cell-types are latent, and for
+%\(J\) markers \(2^J\) different cell-types can be considered. This
+%provides a computational challenge when the number of markers is even
+%moderately large. Thirty-two markers are included in this analysis, and
+%naively enumerating all possible markers is not feasible. We therefore,
+%use a latent feature allocation model to learn the latent structure of
+%predominant cell-types. Latent feature models have been successfully
+%applied to various problems and will be reviewed in the following
+%section.
+%Data for this project is rendered through CyTOF analyses of
+%NK-cell-targeting markers. Having some understanding of CyTOF and NK
+%cells their importance is therefore necessary.
+
+
+Advances in cytometry has led to more research and greater understanding  of natural killer (NK) cells and how their diversity impacts immunity against the development of tumors and other viral diseases. Flow cytometry (developed by Wallace Coulter in the 1950's) is a laser-based biophysical technology which is sometimes used for biomarker
+detection. It is regularly used to diagnose health disorders like cancer. Cytometry has advanced over the years. Fluorescence-based flow cytometry, which makes use of fluorescent dyes and lasers that emit
+light at specific wavelengths, is one such advancement that has been
+mainstream for several decades. {\tt include reference}  In recent years, a new technique called
+Cytometry at time-of-flight (CyTOF) has surfaced. It makes use of
+time-of-flight mass spectrometry, where sophisticated devices are used
+to accelerate, separate, and identify ions by mass. This new method
+warrants the analysis of multiple parameters in shorter time.  {\tt include reference} %Through CyTOF, scientists have been able to better understand natural killer (NK) cells \citep{horowitz2013genetic}. 
+A major challenge in deciphering mass cytometry data is to develop efficient inferential frameworks that can handle the complexity of the data, including high dimensionality and noise. Many existing computational methods use dimension reduction techniques and/or clustering-based approaches.  For example,  {\tt introduce some existing approaches.  Explain a bit the methods that we will use for comparison.  State limitations of existing methods.  Are they Bayesian?  Are they modeling phenotypes like our $\Z$.  Emphasize that our methods produce direct inferences on phenotypes or quantification of uncertainty associated with their inference.}  To overcome the limitations of existing methods, we propose to develop novel Bayesian feature allocation models (FAMs) embedded with clustering. 
+
+
+
+\subsection{Literature Review: Feature Allocation Models}\label{literature-review}
+One of the main inferential goals is  to learn a latent structure of predominant cell phenotypes, where cell phenotype are composed of distinct expression combinations of the markers. Specifically, phenotype $k$ is represented by a $J$-dim binary vector, $\bm z_k=(z_{1k}, \ldots, z_{Jk})$ where $z_{jk}$ take either of 1 or 0 if marker $j$ is or is not expressed in phenotype $k$.  For \(J\) markers, \(2^J\) phenotypes can be constructed.
+One could create a \(J \times 2^J\) matrix, which contains all possible
+phenotypes generated by the \(J\) markers, with each column representing 
+each phenotype. It is computationally infeasible when \(J\) is large. Taking a Bayesian approach, we consider a prior probability model for binary matrices with infinite number of columns and learn the predominant ones in posterior that  generate observed data . %For computational efficiency, we require a flexible prior which will also learn the number of cell-types \((K)\). 
+These models are also called latent feature allocation models.  One of popular models for binary feature matrices is the Indian buffet process (IBP) proposed by \citet{griffiths2011indian}. 
+%The IBP have been used in a variety of applications where modelling latent binary features is of interest. 
+
+\citet{griffiths2011indian} construct the IBP by considering the finite feature allocation
+model and taking the limit with respect to the number of features; for a given $K$,
+\begin{align}
+\begin{split}
+v_k \mid \alpha &\sim \text{Beta}(\alpha/K, 1),~ k=1, \ldots, K \\
+z_{jk} \mid \pi_k &\sim \text{Bernoulli}(v_k),~ k=1, \ldots, K~\mbox{ and } j=1, \ldots, J. \\
+\end{split}
+\label{eq:ibp}
+\end{align}
+The marginal limiting distribution of $\Z$ defines an IBP as $K \rightarrow \infty$ and dropping all columns with all 0s, that is,  \(Z \sim \text{IBP}(\alpha)\). Under the IBP, each row is expected to have  \(\alpha\) active features.  The number of columns with $\sum_{j=1}^J z_{jk} >0$ is random and it can be shown that the number of such columns follows \(\text{Poisson}(\alpha \sum_{j=1}^J j^{-1})\).   A prior distribution can be placed on \(\alpha\) to reflect uncertainty. A gamma prior is popular for $\alpha$ due to conjugacy.  \citet{teh2007stick} represented the IBP using the stick-breaking construction similar to the stick-breaking representation of the Dirichlet process (DP).  \citet{williamson2010dependent} developed a dependent IBP (dIBP) to induce correlations between objects
+(rows) and to model multiple $\Z$s that can be dependent.
+
+
+
+{\tt need to include Tamara's papers on feature allocation model, my papers on tumor heterogeneity. 
+\begin{itemize}
+\item ``Feature allocations, probability functions, and paintboxes.'', ``Combinatorial clustering and the beta negative binomial process.'' etc by Tamara \url{http://www.tamarabroderick.com/papers.html}
+
+\item ``Bayesian Inference for Intra-Tumor Heterogeneity in Mutations and Copy Number Variation'', ``A Bayesian Feature Allocation Model for Tumor Heterogeneity.'' by me
+
+\item ``Bay- clone: Bayesian nonparametric inference of tumor subclones using ngs data'' by Subhajit et al.
+ 
+\item YX's works: ``Bayesian Inference for Latent Biologic Structure with Determinantal Point Processes'', "MAD Bayes for Tumor Heterogeneity Feature Allocation with Exponential Family Sampling"  \url{http://www.ams.jhu.edu/~yxu70/pub.html}.
+
+\item There could be more.  Please search for those.
+\end{itemize}
+
+}
+
+\section{Project 1: }
+\subsection{Introduction}
+{\tt short intro for project 1}
+
+\subsection{Model}\label{prob-model}
+\subsubsection{Sampling Model} 
 Samples are taken from \(I\) subjects, \(i = 1,2,...,I\). Sample \(i\)
 consists of \(N_i\) cells, \(n=1, \ldots, N_i\) and for each cell,
 expression levels of \(J\) markers are measured. Let
 \(\tilde{y}_{inj} \in \mathbb{R}^+\) represent the raw measurement of an
 expression level of marker \(j\) of cell \(n\) in sample \(i\). Let
-\(c_{ij}\) denote the ``cutoff'' values (provided by scientists) for
-sample \(i\), marker \(j\). We consider the logarithm transformation
+\(c_{ij}\) denote the ``cutoff'' for
+ marker \(j\) in sample \(i\). A marker of a cell is likely to be expressed if its observed expression level is greater than the cutoff. A value of $\tilde{y}_{inj}$ below the cutoff may imply that marker $j$ is not expressed in cell $n$ of sample $i$.    We consider the logarithm transformation
 after scaling \(\tilde{y}_{inj}\) by \(c_{ij}\), \[
 y_{inj}=\log\p{\frac{\tilde{y}_{inj}}{c_{ij}}} \in \mathbb{R}.
 \] For some \((i, n, j)\), \(\tilde{y}_{inj}\) is missing and we
@@ -124,7 +274,7 @@ m_{inj} = \begin{cases}
   1, & \text{if $\tilde{y}_{inj}$ is missing.}
 \end{cases}
 \] That is, \(m_{inj}=1\) indicates that the expression level of marker
-\(j\) of cell \(n\) in sample \(i\) \textbf{is missing}.
+\(j\) of cell \(n\) in sample \(i\) is missing.
 
 %\begin{enumerate}
 \def\labelenumi{\arabic{enumi}.}
@@ -142,134 +292,131 @@ m_{inj} = \begin{cases}
 
 %\newpage
 
-\section{Sampling Model}\label{sampling-model}
 
-We introduce latent indicators for latent cell types, \(\lambda_{in}\),
-\(i=1, \ldots, I\) and \(n=1, \ldots, N_i\).
-\(\lambda_{in} \in \{1, \ldots, K\}\) denotes the cell phenotype of cell
-\(n\) in sample \(i\) defined by column \(k\) of \(J \times K\) binary
-matrix \(\Z\). Element \(z_{j, k} \in \{0, 1\}\) indicates if marker
-\(j\) is expressed in cell phenotype \(k\). Event \(z_{j,k}=0\)
-represents that marker \(j\) is not expressed, and \(z_{j,k}=1\) for
-expression. Given \(z_{j, \lambda_{i,n}}\), we assume a mixture of
+We assume that a sample has heterogeneous cells having $K$ different phenotypes.  The phenotypes are not directly observable and we introduce latent phenotype indicators \(\lambda_{in} \in \{1, \ldots, K\}\), for cell $n$ in sample $i$, \(i=1, \ldots, I\) and \(n=1, \ldots, N_i\).
+%\(\lambda_{in} \in \{1, \ldots, K\}\) denotes the cell phenotype of cell \(n\) in sample \(i\) defined by 
+The cell phenotypes are defined by columns of \(J \times K\) binary matrix \(\Z\). Element \(z_{j, k} \in \{0, 1\}\) indicates if marker \(j\) is expressed in cell phenotype \(k\). Event \(z_{jk}=0\) represents that marker \(j\) is not expressed for phenotype $k$, and \(z_{jk}=1\) for
+expression. We let $\Z$ and $\lambda_{in}$ random. Details will be discussed later.  Given \(z_{j, \lambda_{in}} \in \{0, 1\}\), we assume a mixture of
 normals for \(y_{inj}\),
-\begin{align*}
-y_{inj} \mid \mu^*, \sigma^{2 *}_{i} \ind
+\begin{align}
+y_{inj} \mid \eta_{ij}, \mu^\star, \sigma^{2 \star}_{i} \ind
 \begin{cases}
-\sum_{\ell=1}^{L^0} \eta^0_{ij\ell} \N(\mu^\star_{0\ell}, \sigma^{2 \star}_{0i\ell}), &\mbox{if $z_{j,k}=0$},\\
-\sum_{\ell=1}^{L^1} \eta^1_{ij\ell} \N(\mu^\star_{1\ell}, \sigma^{2 \star}_{1i\ell}), &\mbox{if $z_{j,k}=1$},\\
-\end{cases}
-\end{align*}
-where \(L^0\) and \(L^1\) are fixed, \(0 < \eta^0_{ij\ell} < 1\) with
-\(\sum_{\ell} \eta^0_{ij\ell}=1\) and \(0 < \eta^1_{ij\ell} < 1\) with
-\(\sum_{\ell} \eta^1_{ij\ell}=1\). Given \(\lambda_{in}=k\) we define
+\sum_{\ell=1}^{L^0} \eta^0_{ij\ell}~ \N(\mu^\star_{0\ell}, \sigma^{2 \star}_{0i\ell}), &\mbox{if $z_{j,\lambda_{in}}=0$},\\
+\sum_{\ell=1}^{L^1} \eta^1_{ij\ell}~ \N(\mu^\star_{1\ell}, \sigma^{2 \star}_{1i\ell}), &\mbox{if $z_{j,\lambda_{in}}=1$},\\
+\end{cases} \label{eq:y-mix}
+\end{align}
+where the number of mixture components \(L^0\) and \(L^1\) are fixed.  The vectors $\bet^0_{ij}$ and $\bet^1_{ij}$ are mixture weights with \(\sum_{\ell} \eta^0_{ij\ell}\sum_{\ell}= \eta^1_{ij\ell}=1\) where \(0 < \eta^1_{ij\ell} < 1\) and \(0 < \eta^0_{ij\ell} < 1\).  In \eqref{eq:y-mix}, $\mu^\star$ are common for all samples and markers but $\sigma^{2, \star}$ are indexed by sample $i$ to account for sample specific variability.  The mixture model can thus flexibly capture various features in data.  For easy computation, we introduce mixture component indicators $\gamma_{inj}$ for $y_{inj}$.  Given \(\lambda_{in}=k\) we define
 \(\gamma_{inj}\); for \(i=1, \ldots, I\), \(n=1, \ldots, N_i\) and
 \(j=1, \ldots, J\),
-\begin{eqnarray*}
-p(\gamma_{inj} = \ell)=\eta^{z_{jk}}_{ij\ell}, \mbox{ where }~ \ell \in \{1,\ldots, L^{z_{jk}}\}.
-\end{eqnarray*}
+\begin{eqnarray}
+p(\gamma_{inj} = \ell)=\eta^{z_{jk}}_{ij\ell}, \mbox{ where }~ \ell \in \{1,\ldots, L^{z_{jk}}\}. \label{eq:gam}
+\end{eqnarray}
 Given \(\lambda_{in}=k\) and \(\gamma_{inj}=\ell\), we assume a normal
 distribution for \(y_{inj}\); for \(i=1, \ldots, I\),
 \(n=1, \ldots, N_i\) and \(j=1, \ldots, J\),
-\begin{align*}
-  y_{inj} \mid \mu_{inj}, \sigma^2_{inj}  &\ind \N(\mu_{inj}, \sigma^2_{inj}),
-\end{align*}
+\begin{align}
+  y_{inj} \mid \mu_{inj}, \sigma^2_{inj}  &\ind \N(\mu_{inj}, \sigma^2_{inj}), \label{eq:y-gam}
+\end{align}
 where \(\mu_{inj} = \mu^\star_{z_{j,k},\ell}\) and
-\(\sigma^2_{inj} = {\sigma^{2}}^\star_{iz_{j,k}\ell}\). Given
-\(y_{inj}\), we assume a Bernoulli distribution for \(m_{inj}\); for
+\(\sigma^2_{inj} = {\sigma^{2}}^\star_{iz_{j,k}\ell}\). After marginalizing $\gamma_{inj}$ out, the model in \eqref{eq:y-gam} and \eqref{eq:gam} is equivalent to the model in \eqref{eq:y-mix}.  
+
+We next build a model for the missingness mechanism.  {\tt explain our approach for missing in few sentences.}  Given
+\(y_{inj}\), we consider a selection function for \(m_{inj}\); for
 \(i=1, \ldots, I\), \(n=1, \ldots, N_i\) and \(j=1, \ldots, J\),
-\begin{align*}
-  m_{inj} \mid p_{inj} &\ind \Bern(p_{inj}) \\
-  \logit(p_{inj}) &:= \begin{cases}
+\begin{align}
+  m_{inj} \mid p_{inj} &\ind \Bern(p_{inj}) \nonumber \\
+  \logit(p_{inj}) &= \begin{cases}
   \beta_{0i} - \beta_{1i}(y_{inj}-c_0)^2, & \text{if } y_{inj} < c_0\nonumber, \\
   \beta_{0i} - \beta_{1i}c_1\p{y_{inj}-c_0}^{1/2}, & \text{otherwise}, \nonumber \\
-  \end{cases}
-\end{align*}
-where \(c_0\) and \(c_1\) are fixed.
-
-Let \(\btheta\) represent all parameters (discussed in the next
-section). Let \(\y\) represent all \(y_{inj} ~ \forall(i,n,j)\). Let
-\(\m\) represent all \(m_{inj} ~ \forall(i,n,j)\).
-
-The resulting \textbf{likelihood} is as follows:
-\begin{align}
-\mathcal{L} = p(\y, \m \mid \btheta) &= p(\m \mid \y) p(\y \mid \btheta) \nonumber\\
-&= \prod_{i,n,j} p(m_{inj} \mid y_{inj}, \btheta) p(y_{inj} \mid \btheta) \nonumber\\
-&= \prod_{i,n,j} \bc{
-  p_{inj}^{m_{inj}} (1-p_{inj})^{1-m_{inj}} \times 
-   \frac{1}{\sqrt{2\pi\sigma^2_{inj}}} \exp\bc{-\frac{(y_{inj}-\mu_{inj})^2}{2\sigma^2_{inj}}}
-}.
+  \end{cases} \label{eq:missing}
 \end{align}
+where \(c_0\) and \(c_1\) are fixed.  {\tt say something like it is ``untestable'' but take this approach by incorporating our input from biologists}
 
-The model is fully specified after priors are placed on all unknown
-parameters. The marginal density for \(y_{i,n,j}\) after integrating out
-\(\lambda\) and \(\gamma\) is
-\begin{align}
-p(y_{inj} \mid \theta) = \sum_{k=1}^K W_{ik} \sum_{\ell=1}^{L^{Z_{jk}}}
-\eta^{Z_{jk}}_{ijl} \cdot \N(y_{inj} \mid \mu^*_{Z_{jk}, \ell}, {\sigma^2}^*_{i,Z_{jk},\ell}).
-\end{align}
 
-\section{Priors}\label{priors}
+\subsubsection{Priors}\label{priors}
+\paragraph*{Latent cell phenotypes}  Recall that we characterize cell phenotypes with a $J\times K$ binary matrix \(\Z =\{z_{jk}\}\).  Following \citet{williamson2010dependent}, we assume
+\begin{eqnarray*}
+v_k \mid \alpha &\iid& \Be(\alpha/K, 1),~ k=1, \ldots, K, \\
+\h_k &\iid& \N_J(\bm{0}, \Gamma), \\ 
+z_{jk} \mid h_{jk}, v_k &=& \mathbb{I}\left\{ \Phi(h_{jk} \mid 0, \Gamma_{jj}) < v_k \right\},
+\end{eqnarray*}
+where $\Phi(h \mid m, s)$ is the cumulative distribution function of the normal distribution with mean $m$ and variance $s$ and $\mathbb{I}(\cdot)$ is an indicator function having 1 if $\Phi(h_{jk} \mid 0, \Gamma_{jj}) < v_k$ or 0 otherwise.  As $K \rightarrow \infty$, the limiting distribution of $Z$ is the IBP {\tt cite the paper}.  Interactions between $J$ markers in phenotypes can be modeled through $\bm G$.  Due to the multivariate probit construction for $\Z$, $\Gamma$ is not identifiable and it is common to restrict $\Gamma$ to be a correlation matrix.  {\tt discuss a bit models for correlation matrix.  I will send you some references on models for correlation matrix.}  We let $\alpha \sim \G(a_\alpha, b_\alpha)$ with mean $a_\alpha/b_\alpha$.  
 
-Let \(\bm\theta\) be \ldots{} \textbf{TODO}
+The $K$ cell phenotypes are common in all samples but the relative weights vary across samples. Let $W_{ik}$ denote an abundance level of phenotype $k$ in sample $i$.  We assume independent Dirichlet priors for $\bm W_i=(W_{i1}, \ldots, W_{iK})$ given $K$, $\bm W_{i} \mid K \iid \Dir_K(d/K)$. For latent cell phenotype indicators, we let $p(\lin=k \mid \bm W_i) = W_{ik}$.
 
-For \(i=1, \ldots, I\),
-\begin{align*}
-\beta_{0i} &\iid \N(m_{\beta_0}, s^2_{\beta_0}) ~~~
-\text{(hyper-parameters determined empirically)}, \\
-\beta_{1i} &\iid \N_+(m_{\beta_1}, s^2_{\beta_1}) ~~~~
-\text{(hyper-parameters determined empirically)}, 
-\end{align*}
-
-The Gamma distribution with parameters \((a,b)\) has mean \(a/b\). The
-inverse-Gamma distribution with parameters \((a,b)\) has mean
-\(b / (a-1)\). For the mixture locations of the likelihood,
+\paragraph*{Parameters in the Mixture for $y$} In \eqref{eq:y-mix}, normal mixture models are assumed for $y_{inj}$. The mean expression level of maker $j$ in cell $n$ is determined by its phenotype $\lambda_{in}$.  In particular, if the marker is not expressed in the cell type, $z_{j \lambda_{in}}=0$, its mean expression level is below the cutoff, that is, a negative value.  If the marker is expressed $z_{j \lambda_{in}}=0$, the expression of marker $j$ take a positive value.   Recall that $\mus_{0\ell}$, $\ell=1, \ldots, L^0$ are mixture locations for $z_{j \lambda_{in}}=0$ and $\mus_{1\ell}$, $\ell=1, \ldots, L^1$ for $z_{j \lambda_{in}}=1$.  We assume 
 \begin{align*}
 \mus_{0\ell} \mid \psi_0, \tau^2_0 &\iid \N_-(\psi_0, \tau^2_0), ~~~ \ell \in \bc{1,...,L^0}, \\
-\mus_{1\ell} \mid \psi_1, \tau^2_1 &\iid \N_+(\psi_1, \tau^2_1), ~~~ \ell \in \bc{1,...,L^1}. 
+\mus_{1\ell} \mid \psi_1, \tau^2_1 &\iid \N_+(\psi_1, \tau^2_1), ~~~ \ell \in \bc{1,...,L^1}, 
 \end{align*}
-Note that \(X \sim \N_-(m,s^2)\) denotes that \(X\) is distributed Normally
-with mean \(m\) and variance \(s^2\), truncated to take on only
-\textbf{negative} values. Similarly, \(X \sim \N_+(m,s^2)\) denotes that
-\(X\) is distributed Normally with mean \(m\) and variance \(s^2\),
-truncated to take on only \textbf{positive} values.
-
-For \(i=1, \ldots, I\),
+where \(\N_-(m,s^2)\) and \(\N_+(m,s^2)\) denote the normal distribution with mean \(m\) and variance \(s^2\), truncated to take on only negative values and positive values, respectively.  The variances in the mixture components differ by the value of $z_{j \lambda_{in}}$ and also vary across samples. We let; for \(i=1, \ldots, I\),
 \begin{align*}
 \sigma^2_{0i\ell} \mid s_i &\ind \IG(a_\sigma, s_i), ~~~ \ell \in \bc{1,...,L^0}, \\
-\sigma^2_{1i\ell} \mid s_i &\ind \IG(a_\sigma, s_i), ~~~ \ell \in \bc{1,...,L^1}, \\
-s_i &\iid \G(a_s, b_s), ~~~ i \in \bc{1,...,I}.
+\sigma^2_{1i\ell} \mid s_i &\ind \IG(a_\sigma, s_i), ~~~ \ell \in \bc{1,...,L^1}.  
 \end{align*}
-
-For \(i=1, \ldots, I\), \(n=1, \ldots, N_i\) and \(j=1, \ldots, J\),
+We also assume $s_i \iid \G(a_s, b_s)$, $i \in \bc{1,...,I}$, with mean \(a_s/b_s\). Lastly, we consider a model for mixture weights. To flexibly model the distribution of $y$, we assume for a marker in a sample have two sets of it own weights, one for each value of $z$, $\bm\eta^0_{ij}$ and $\bm\eta^1_{ij}$; for each $(i, j)$ For \(i=1, \ldots, I\), \(n=1, \ldots, N_i\) and \(j=1, \ldots, J\),
 \begin{align*}
-p(\gamma_{inj} = \ell \mid \bm\eta^{Z_{j \lambda_{in}}}_{i,j}) &= \eta^{Z_{j \lambda_{in}}}_{ijl},
-~~~ \ell \in \bc{1,...,L^{Z_{j \lambda_{in}}}}  \\
-\bm\eta^0_{ij} &\iid \Dir_{L^0}(a_{\eta^0}/L^0) \\
-\bm\eta^1_{ij} &\iid \Dir_{L^1}(a_{\eta^1}/L^1) 
+\bm\eta^0_{ij} &\iid \Dir_{L^0}(a_{\eta^0}/L^0), \\
+\bm\eta^1_{ij} &\iid \Dir_{L^1}(a_{\eta^1}/L^1). 
 \end{align*}
 
-For \(J\times K\) binary matrix \(\Z\),
+
+\paragraph*{Parameters for Missingness Mechanism}  {\tt explain what you do for missingness mechanism}.  We assume that $\beta_{0i} \iid \N(m_{\beta_0}, s^2_{\beta_0})$ and $\beta_{1i} \iid \N_+(m_{\beta_1}, s^2_{\beta_1})$, $i=1, \ldots, I$.  We use data to specify the values of the fixed hyperparameters, $m_{\beta_0}$ and $m_{\beta_1}$.  We let $s^2_{\beta_0}$ and $s^2_{\beta_1}$ small to induce a informative prior for $\beta_{0i}$ and $\beta_{1i}$.
+
+
+
+\subsubsection{Posterior Computation}\label{sampling-via-mcmc}
+Let \(\btheta=\{\bm \mu^\star_0, \bm \mu^\star_1, \bm \sigma^2_{0i}, \bm \sigma^2_{1i}, \bm \eta^0, \bm \eta^1, \bm \lambda, \bm \gamma, \bm v, \bm h, \bm \beta_0, \bm \beta_1\}\) represent all random parameters.  Let \(\y\) and \(\m\) denote all \(y_{inj}\) and \(m_{inj}$ for all \((i,n,j)\), respectively. The joint posterior distribution is 
 \begin{align*}
-v_k \mid \alpha &\iid \Be(\alpha/K, 1),~ k=1, \ldots, K, \\
-\alpha &\sim \G(a_\alpha, b_\alpha) \\
-\h_k &\iid \N_J(\bm{0}, \bm G) \\
-Z_{jk} \mid h_{jk}, v_k &:=
-\Ind{\Phi(h_{jk} \mid 0, \Gamma_{jj}) < v_k} 
+p(\btheta \mid \y, \m) &\propto 
+p(\btheta) \prod_{i,n,j} p(m_{inj} \mid y_{inj}, \btheta) p(y_{inj} \mid \btheta) \nonumber\\
+&=  
+p(\btheta)
+\prod_{i,n,j} \left[
+  p_{inj}^{m_{inj}} (1-p_{inj})^{1-m_{inj}} \times 
+   \frac{1}{\sqrt{2\pi\sigma^2_{inj}}} \exp\bc{-\frac{(y_{inj}-\mu_{inj})^2}{2\sigma^2_{inj}}}
+\right].
 \end{align*}
+The marginal density for \(y_{i,n,j}\) after integrating out
+\(\lambda\) and \(\gamma\) is
+\begin{align}
+p(y_{inj} \mid \btheta) = \sum_{k=1}^K W_{ik} \sum_{\ell=1}^{L^{Z_{jk}}}
+\eta^{Z_{jk}}_{ijl} \cdot \N(y_{inj} \mid \mu^\star_{Z_{jk}, \ell}, {\sigma^2}^\star_{i,Z_{jk},\ell}).
+\end{align}
+Posterior simulation can be done via Gibbs sampling by repeatedly updating each parameter one at a time until convergence. Parameter updates are made by
+sampling from it full conditional distribution. Where this cannot be done conveniently, a metropolis step can be used.  {\tt do you use the marginal density of $y$ in posterior simulation?  If so, explain why we use it.}  Details of the posterior simulation is described in Appendix A. 
 
-For latent cell phenotypes,
-\begin{align*}
-&p(\lin=k \mid \bm W_i) = W_{ik} \\
-&\bm W_{i} \iid \Dir_K(d/K).
-\end{align*}
 
-\section{Sampling via MCMC}\label{sampling-via-mcmc}
+Summarizing the joint posterior distribution $p(\btheta \mid \y, \m)$ is challenging, especially for $\Z$, $\bm W$ and $\lambda$, possibly due to a label switching problem. {\tt Include David's approach here and explain his approach.  Also explain why we include $w$ in the adjacency matrix, which is different from David's approach. }  Using the posterior Monte Carlo sample we find posterior point estimates for each sample $\hat{\Z}_i$, $\hat{\bm W}_i$ and $\hat{\lambda}_{in}$ as follows; Suppose we obtain \(B\) posterior samples simulated from the posterior distribution of \(\theta\). For each posterior sample of \(\Z\) and \(\bm W_i\), we compute a $J \times J$ adjacency matrix, \(\bm A_i^{(b)} =\{A^{(b)}_{i,j,j'}\}\), where 
+\[
+A^{(b)}_{i,j,j'} = \sum_{k=1}^K W^{(b)}_{i,k} 
+\mathbb{I}\left( z^{(b)}_{j,k} = 1\right)
+\mathbb{I}\left(z^{(b)}_{j',k} = 1\right), b \in \bc{1,...,B}.
+\]
+We then compute the mean adjacency matrix \(\bar A_i = \sum_{b=1}^B A_i^{(b)} / B\).  We report a posterior point estimate of $\Z_i$ by choosing
+\[
+\hat{\bm Z}_i = \text{argmin}_{\bm Z} \sum_{j,j'} (A_{i,j,j'}^{(b)} - \bar A_{i,j,j'})^2).
+\]
+Conditioning on $\hat{\Z}_i$, we report posterior point estimates $\hat{\bm W}_i$ and $\hat{\lambda}_{in}$.
 
-Sampling can be done via Gibbs sampling by repeatedly updating each
-parameter one at a time until convergence. Parameter updates are made by
-sampling from it full conditional distribution. Where this cannot be
-done conveniently, a metropolis step will be necessary.
+\subsection{Simulation}
+
+\subsection{Cord Blood Data}
+
+\subsection{Conclusions}
+
+\section{Project 2: Repulsive Feature Allocation Model}
+
+
+
+
+\bibliography{litreview.bib}
+
+
+\appendix
+\section{Posterior Computation for Project 1}
+{\tt Please write a short intro about the posterior sampling and reorganize the full conditionals }
+
 
 To sample from a distribution which is otherwise difficult to sample
 from, the Metropolis-Hastings algorithm can be used. This is
@@ -342,7 +489,12 @@ Some common parameter transformations are therefore presented here:
   \(f_Y(y) = f_X(e^y) e^y\).
 \end{enumerate}
 
-\section{Full Conditionals}\label{full-conditionals}
+
+{\tt instead of subsections, we may do ``itemize'' for full conditionals.  I commented out the full conditionals temporarily since it gives some errors in compiling.  Please comment in as you revise. }
+
+
+
+%\end{document}
 
 \subsection{\texorpdfstring{Full Conditional for
 \(\bm \beta\)}{Full Conditional for \textbackslash{}bm \textbackslash{}beta}}\label{full-conditional-for-bm-beta}
@@ -421,7 +573,7 @@ p(y_{inj} \mid \rest) \\
 %f_{inj} \\
 &\propto
 p_{inj} 
-\sum_{\ell=1}^{L^{Z_{j\lin}}} \eta^{Z_{j\lin}}_{ij\ell} \cdot \N(y_{inj} \mid \mu^*_{Z_{jk}, \ell}, {\sigma^2}^*_{i,Z_{j\lin},\ell}).
+\sum_{\ell=1}^{L^{Z_{j\lin}}} \eta^{Z_{j\lin}}_{ij\ell} \cdot \N(y_{inj} \mid \mu^*_{Z_{jk}, \ell}, {\sigma^2}^\star_{i,Z_{j\lin},\ell}).
 \end{align*}
 
 \mhSpiel{y_{inj}}
@@ -430,10 +582,10 @@ Note that \(f_{inj}\) is a function of \(y_{inj}\) and should be
 computed accordingly.
 
 \subsection{\texorpdfstring{Full Conditional for
-\(\bm\mu^*\)}{Full Conditional for \textbackslash{}bm\textbackslash{}mu\^{}*}}\label{full-conditional-for-bmmu}
+\(\bm\mu^\star\)}{Full Conditional for \textbackslash{}bm\textbackslash{}mu\^{}\star}}\label{full-conditional-for-bmmu}
 
-For $\mus_{0\ell}$, let
-\(S_{0i\ell} = \bc{(i,n,j) : \p{Z_{j,\lin} = 0 ~\cap~ \gamma_{inj} = \ell}}\)
+For \(\mus_{0\ell}\)g, let
+\(S_{0i\ell} = \bc{(i,n,j) : \p{Z_{j,\lin} = 0 ~\cap~ \gamma_{inj} = \ell}}\)g
 and \(|S_{0i\ell}|\) the cardinality of \(S_{0i\ell}\).
 
 \newcommand\musZeroPostvarDenom{
@@ -442,7 +594,7 @@ and \(|S_{0i\ell}|\) the cardinality of \(S_{0i\ell}\).
 \newcommand\musZeroPostMeanNum{
   \frac{\psi_0}{\tau^2_0} + 
   \sum_{i=1}^I \sum_{S_{0i\ell}}  
-  \frac{y_{inj}}{{\sigma^2}^*_{0i\ell}}
+  \frac{y_{inj}}{{\sigma^2}^\star_{0i\ell}}
 }
 
 \begin{align*}
@@ -474,8 +626,8 @@ p(\mus_{0\ell} \mid \psi_0, \tau^2_0) \times p(\y \mid \mus_{0\ell},\rest) \\
 }
 \]
 
-Similarly for \(\mus_{1\ell}\), let
-\(S_{1\ell} = \bc{(i,n,j) : \p{Z_{j,\lin} = 1 ~\cap~ \gamma_{inj} = \ell}}\)
+Similarly for \(\mus_{1\ell}\)g, let
+\(S_{1\ell} = \bc{(i,n,j) : \p{Z_{j,\lin} = 1 ~\cap~ \gamma_{inj} = \ell}}\)g
 and \(|S_{1i\ell}|\) the cardinality of \(S_{1i\ell}\).
 
 \[
@@ -709,41 +861,6 @@ Therefore, \[
 Consequently, the full conditional for \(\bm{W}_i\) can be sampled from
 directly from a Dirichlet distribution of the form above.
 
-\subsection{\texorpdfstring{Posterior Estimate for \(Z\), \(W\), and
-\(\lambda\)}{Posterior Estimate for Z, W, and \textbackslash{}lambda}}\label{posterior-estimate-for-z-w-and-lambda}
 
-Obtaining posterior estimates and quantifying uncertainty for \(Z\),
-\(W\), and \(\lambda\) can be a challenge since they depend directly on
-\(K\) and are susceptible to label-switching. Therefore, we describe a
-way to select point-estimates for \(Z\), \(W\), and \(\lambda\) from
-their posterior samples.
-
-Suppose we obtain \(B\) samples from the posterior distribution of
-\(\theta\). Let \(\theta^{(b)}\) denote sample \(b\) in that sample for
-\(b \in \bc{1,...,B}\).
-
-Then, for each posterior sample of \(Z\) and \(W_i\) (i.e. \(Z^{(b)}\)
-and \(W_i^{(b)}\)) let \(A_i^{(b)}\) be a \(J\times J\)
-adjacency-matrix;
-
-\[
-A^{(b)}_{i,j,j'} = \sum_{k=1}^K W^{(b)}_{i,k} \Ind{Z^{(b)}_{j,k} = 1}
-\Ind{Z^{(b)}_{j',k} = 1}.
-\]
-
-Then, compute the mean adjacency-matrix as
-\(\bar A_i = \sum_{b=1}^B A_i^{(b)} / B\). The posterior estimate for
-\(\bm Z_i\) is then
-
-\[
-\hat{\bm Z}_i = \text{argmin}_{\bm Z} \sum_{j,j'} (A_{i,j,j'}^{(b)} - \bar A_{i,j,j'})^2).
-\]
-
-We search for such \(\hat \Z_i\) using the Monte Carlo method. Suppose
-\(\hat{\bm Z}_i = \bm Z^{(b)}\). We then let
-\(\widehat{\bm W}_i = \bm W_i^{(b)}\), and
-\(\hat{\bm \lambda}_i = \bm \lambda_i^{(b)}\).
-
-\bibliography{../../bib/litreview.bib}
 
 \end{document}
