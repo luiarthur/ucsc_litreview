@@ -35,7 +35,7 @@ void update_lam(State &state, const Data &data, const Prior &prior, const Locked
 
     for (int i=0; i<I; i++){
       Ni = data.N[i];
-#pragma omp parallel for num_threads(8)
+#pragma omp parallel for
       for (int n=0; n<Ni; n++){
         update_lam_in(state, data, prior, i, n);
       }
