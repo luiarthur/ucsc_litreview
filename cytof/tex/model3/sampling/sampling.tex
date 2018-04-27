@@ -115,6 +115,10 @@
 \newcommand{\bq}{\mbox{\boldmath $q$}}
 \newcommand{\bz}{\mbox{\boldmath $z$}}
 \newcommand{\bw}{\mbox{\boldmath $w$}}
+
+%%% Graphing
+\def\beginmyfig{\begin{figure}[H]\center}
+\def\endmyfig{\end{figure}}
 %}}}1
 
 \title{Bayesian Feature Allocation Models for Natural Killer Cell Repertoire Studies Using Mass Cytometry Data}
@@ -442,10 +446,22 @@ w^\true_{ik}z^\true_{jk}$ so that truly expressed cells are unlikely to be
 missing. Sample the ($N_i\times p\%$) of $y_{inj}$ without replacement.  The
 probability of missing for $y$ is proportional to some predetermined missing
 mechanism (possibly different from the one used in this model). Care should be
-taken to ensure $y$ with positive values have almost zero chance to be missing.
-
+taken to ensure $y$ with positive values have almost zero probability of being
+missing.
 
 \subsubsection{Results}
+
+\textbf{True $\bZ$ and $W$}
+\beginmyfig
+\includegraphics[height=0.3\textwidth,width=1.0\textwidth]{img/Z_true_byW_p1.pdf}
+\endmyfig
+
+\textbf{Posterior Estimate for $\bZ$ and $W$}
+
+\textbf{Posterior Predictive for $\y$}
+
+
+
 
 %%% cb-proj1 %%%
 \subsection{Cord Blood Data}

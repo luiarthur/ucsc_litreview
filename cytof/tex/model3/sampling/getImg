@@ -1,0 +1,13 @@
+#!/bin/bash
+
+imgPath="../../../src/model3/sims/out/"
+simName="newsim_locked_beta1_K20_N1000/"
+#simName="newsim_locked_beta1_K20_N10000"
+
+I="1 2 3"
+for i in $I; do
+  pdfPage ${imgPath}/${simName}/"Z_true_byW.pdf" $i
+  mv ${imgPath}/${simName}/"Z_true_byW_p${i}.pdf" img/
+
+  cp ${imgPath}/${simName}/"YZ00${i}.png" img/
+done
