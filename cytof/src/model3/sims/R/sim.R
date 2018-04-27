@@ -151,7 +151,7 @@ init$missing_y = preimpute_y
 
 ### Save Checkpoint###
 #save(prior, init, locked, dat, file=fileDest('dat.rda'))
-save(file=fileDest('checkpoint.rda'))
+save.image(file=fileDest('checkpoint.rda'))
 
 ### Start MCMC ###
 st = system.time(
@@ -163,7 +163,7 @@ st = system.time(
 print(st)
 #saveRDS(out, fileDest('out.rds'))
 #save.session(file=fileDest('checkpoint.rda'))
-save(file=fileDest('checkpoint.rda'))
+save.image(file=fileDest('checkpoint.rda'))
 
 B = length(out)
 
