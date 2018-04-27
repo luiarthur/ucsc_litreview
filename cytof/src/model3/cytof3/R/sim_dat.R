@@ -130,9 +130,20 @@ sim_dat = function(I, J, N, K, L0, L1,
       mu_ij = sapply(1:N[i], function(n) mu_inj(z_ij[n], gam_ij[n]))
       sig_ij = sapply(1:N[i], function(n) sig_inj(i, z_ij[n], gam_ij[n]))
       y_complete[[i]][,j] = rnorm(N[i], mu_ij, sig_ij)
+
+      ### Set some to be missing
       p_miss = prob_miss(y_complete[[i]][,j], mmp['b0'], mmp['b1'],
                          mmp['c0'], mmp['c1'])
-      y[[i]][,j] = ifelse(p_miss > runif(N[i]),NA, y_complete[[i]][,j])
+
+      # old 
+      #y[[i]][,j] = ifelse(p_miss > runif(N[i]),NA, y_complete[[i]][,j])
+
+      # new
+      prop_missing = runif(1, 0, sum(W[i,] * (1-Z[j,])) * .7)
+      num_missing = round(N[i] * prop_missing)
+      idx_missing = sample(1:N[i], num_missing, prob=p_miss)
+      y[[i]][,j] = y_complete[[i]][,j]
+      y[[i]][idx_missing, j] = NA
     }
   }
 
