@@ -50,7 +50,8 @@ sim_dat = function(I, J, N, K, L0, L1,
                    Z=genSimpleZ(J,K),
                    sig2_0=matrix(.1, I, L0), sig2_1=matrix(.1, I, L1),
                    mus_0=seq(-5,-1,length=L0), mus_1=seq(1,5,length=L1),
-                   a_W=1:K, a_eta0=1:L0, a_eta1=1:L1, sort_lambda=FALSE) {
+                   a_W=1:K, a_eta0=1:L0, a_eta1=1:L1, sort_lambda=FALSE,
+                   prop_missing_scale=0.7) {
 
   # Check Z dimensions
   stopifnot(NCOL(Z) == K && NROW(Z) == J)
@@ -139,7 +140,7 @@ sim_dat = function(I, J, N, K, L0, L1,
       #y[[i]][,j] = ifelse(p_miss > runif(N[i]),NA, y_complete[[i]][,j])
 
       # new
-      prop_missing = runif(1, 0, sum(W[i,] * (1-Z[j,])) * .7)
+      prop_missing = runif(1, 0, sum(W[i,] * (1-Z[j,])) * prop_missing_scale)
       num_missing = round(N[i] * prop_missing)
       idx_missing = sample(1:N[i], num_missing, prob=p_miss)
       y[[i]][,j] = y_complete[[i]][,j]

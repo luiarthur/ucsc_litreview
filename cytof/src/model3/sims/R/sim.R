@@ -45,19 +45,20 @@ axis(2, at=1:K, fg='grey', las=2, cex.axis=1)
 abline(h=1:K+.5, v=1:J+.5, col='grey')
 dev.off()
 
-pdf(fileDest('Z_true_byW.pdf'))
+pdf(fileDest('Z_true_all.pdf'))
+mar = par("mar")
+par(mfrow=c(I,1), mar=c(5.1, 4.1, 2.1, 4.1)) # b,l,t,r
 for (i in 1:I) {
-  mar = par("mar")
-  par(mar=c(5.1, 4.1, 4.1, 4.1))
   Wi = dat$W[i,]
   ord = order(Wi, decreasing=TRUE)
-  my.image(t(dat$Z[,ord]), xlab='markers', ylab='cell-types', xaxt='n', yaxt='n')
+  my.image(t(dat$Z[,ord]), xlab='markers', ylab='cell-types', xaxt='n', yaxt='n',
+           main=paste('Sample',i))
   axis(1, at=1:J, fg='grey', las=2, cex.axis=.8)
   axis(2, at=1:K, label=ord ,fg='grey', las=2, cex.axis=1)
   axis(4, at=1:K, paste0(round(Wi[ord]*100, 1),'%') ,fg='grey', las=2, cex.axis=1)
   abline(h=1:K+.5, v=1:J+.5, col='grey')
-  par(mar=mar)
 }
+par(mfrow=c(1,1), mar=mar)
 dev.off()
 
 
