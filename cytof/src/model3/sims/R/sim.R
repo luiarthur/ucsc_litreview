@@ -156,7 +156,7 @@ save.image(file=fileDest('checkpoint.rda'))
 ### Start MCMC ###
 st = system.time(
   out <- fit_cytof_cpp(y, B=2000, burn=1000, prior=prior, locked=locked,
-                       init=init, print_freq=1, show_timings=FALSE,
+                       init=init, print_freq=1, show_timings=TRUE,
                        normalize_loglike=TRUE, joint_update_freq=0,
                        ncores=NCORES, print_new_line=TRUE)
 )

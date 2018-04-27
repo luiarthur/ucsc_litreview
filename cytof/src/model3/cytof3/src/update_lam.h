@@ -10,7 +10,7 @@
 
 #include <omp.h>
 
-void update_lam_in(State &state, const Data &data, const Prior &prior, int i, int n){
+int updated_lam_in(const State &state, const Data &data, const Prior &prior, int i, int n){
   const int J = data.J;
   const int K = prior.K;
   int z_jk;
@@ -24,7 +24,7 @@ void update_lam_in(State &state, const Data &data, const Prior &prior, int i, in
     }
   }
 
-  state.lam[i](n) = mcmc::wsample_index_log_prob(log_p, K);
+  mcmc::wsample_index_log_prob(log_p, K);
 }
 
 
@@ -37,7 +37,8 @@ void update_lam(State &state, const Data &data, const Prior &prior, const Locked
       Ni = data.N[i];
 #pragma omp parallel for
       for (int n=0; n<Ni; n++){
-        update_lam_in(state, data, prior, i, n);
+#pragma omp atomic write
+        state.lam[i](n) = updated_lam_in(state, data, prior, i, n);
       }
     }
 
