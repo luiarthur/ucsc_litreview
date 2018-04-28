@@ -18,7 +18,6 @@ void update_lam_in(State &state, const Data &data, const Prior &prior, int i, in
 
   for (int k=0; k<K; k++) {
     log_p[k] = log(state.W(i, k));
-#pragma omp parallel for
     for (int j=0; j<J; j++) {
       z_jk = state.Z(j,k);
       log_p[k] += log( dmixture(state, data, prior, z_jk, i, n, j) );
@@ -36,6 +35,7 @@ void update_lam(State &state, const Data &data, const Prior &prior, const Locked
 
     for (int i=0; i<I; i++){
       Ni = data.N[i];
+#pragma omp parallel for
       for (int n=0; n<Ni; n++){
         update_lam_in(state, data, prior, i, n);
       }
