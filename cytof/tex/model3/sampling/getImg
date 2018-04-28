@@ -1,14 +1,22 @@
 #!/bin/bash
 
-imgPath="../../../src/model3/sims/out/"
+simImgPath="../../../src/model3/sims/out/"
 simName="sim_locked_beta1_K20_N1000/"
-#simName="newsim_locked_beta1_K20_N10000"
+mkdir -p img/sim/
+
+#cbImgPath="../../../src/model3/sims/out/"
+#cbDirname="sim_locked_beta1_K20_N1000/"
+#mkdir -p img/cb/
 
 I="1 2 3"
 for i in $I; do
   #pdfPage ${imgPath}/${simName}/"Z_true_byW.pdf" $i
   #mv ${imgPath}/${simName}/"Z_true_byW_p${i}.pdf" img/
 
-  cp ${imgPath}/${simName}/"Z_true_all.pdf" img/
-  cp ${imgPath}/${simName}/"YZ00${i}.png" img/
+  cp ${simImgPath}/${simName}/"Z_true_all.pdf" img/sim
+  cp ${simImgPath}/${simName}/"YZ00${i}.png" img/sim
+  cp ${simImgPath}/${simName}/"Y00${i}.png" img/sim
+  cp ${simImgPath}/${simName}/"Ysorted00${i}.png" img/sim
+  cp ${simImgPath}/${simName}/"y_hist.pdf" img/sim
+  cp ${simImgPath}/${simName}/"sim.R" img/sim
 done

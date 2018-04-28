@@ -2,7 +2,12 @@
 
 ## NOW 
 - [ ] post pred for observed y
-- [ ] For missing y, make prob Z_{j,lin} = 0 | data, for all (i,j) pairs
+- [x] For missing y, make prob Z_{j,lin} = 0 | data, for all (i,j) pairs
+    - basically, in simulation study
+        - For N in thousands, the probability of non-expression for missing y
+          is all 0 or near-0.
+        - For N in hundreds, that probability is usually non-zero. For a few
+          cases, the probability can be up to 50%.
 - [ ] compare against one method (kmeans)
 - [ ] why is beta1 so strange?
 - [ ] Summarize CB analysis

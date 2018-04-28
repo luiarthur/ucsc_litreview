@@ -442,21 +442,72 @@ vector. Using these parameters, simulate $y_{inj}$ according to the sampling
 density. Finally, probabilistically set some of the $y_{inj}$ to be missing.
 This can be done by first predetermining a certain percentage ($p\%$) of the
 data to be missing. This percentage should should be less than $\sum_k
-w^\true_{ik}z^\true_{jk}$ so that truly expressed cells are unlikely to be
-missing. Sample the ($N_i\times p\%$) of $y_{inj}$ without replacement.  The
-probability of missing for $y$ is proportional to some predetermined missing
-mechanism (possibly different from the one used in this model). Care should be
-taken to ensure $y$ with positive values have almost zero probability of being
-missing.
+w^\true_{ik}(1-z^\true_{jk})$ so that truly expressed cells are unlikely to be
+missing, and so as to be consistent with the simulated $W^\true$ and
+$\bZ^\true$. Sample the ($N_i\times p\%$) of $y_{inj}$ without replacement.
+The probability of missing for $y$ is proportional to some predetermined
+missing mechanism (possibly different from the one used in this model). Care
+should be taken to ensure $y$ with positive values have almost zero probability
+of being missing.
+
+\textbf{Simulated $\bZ^\true$ and $W^\true$}
+
+Following this scheme, we generated data comparable to the CB data. We first
+simulated $\bZ^\true$ and $W^\true$. For $\bZ^\true$ we chose the number of
+rows to be $J=3$ because the CB data analyzes 32 markers, and we chose the
+number of columns to be $K=10$ to include a variety of cell-types. Figure
+\ref{fig:sim-Z} shows the simulated $\bZ^\true$ with the latent features sorted
+by $W_i$ for each sample. 
+
+\beginmyfig
+\includegraphics{img/sim/Z_true_all.pdf}
+\caption{True $\bZ^T$ with cell-types sorted by $W_i$ for each sample}
+\label{fig:sim-Z}
+\endmyfig
+%reference this figure like so: \ref{fig:sim-Z}
+
+The data $\y$ are shown in Figure \ref{fig:sim-Y}. The number of cells in each
+sample are $N=(30000, 20000, 10000)$, which is comparable to the size of the CB
+data. Note that in the upper panel contains marker expression data for sample 1
+(left), sample 2 (middle), and sample 3 (right). The lower panel contains the
+same data but with the rows grouped by the true cell-types ($\lambda$).  Red
+regions represent high expression levels, whereas blue regions represent low
+expression levels. Thus, through the visualization, we can observe the true
+latent cell-types that are generating the data. Note that in this simulated
+data set, the white regions represent missing data.  Three and four mixture
+components were used for non-expressed and expressed marker expression levels
+respectively. 
+
+\beginmyfig
+\includegraphics[scale=.3]{img/sim/Y001.png}
+\includegraphics[scale=.3]{img/sim/Y002.png}
+\includegraphics[scale=.3]{img/sim/Y003.png} \\
+\includegraphics[scale=.3]{img/sim/Ysorted001.png}
+\includegraphics[scale=.3]{img/sim/Ysorted002.png}
+\includegraphics[scale=.3]{img/sim/Ysorted003.png} 
+\caption{The simulated marker expression data $y$. The upper panel contains
+data for sample 1 (left), sample 2 (middle), and sample 3 (right). The lower
+panel is the same data but with the rows (cells) grouped according to the true
+cell-types ($\lambda$).}
+\label{fig:sim-Y}
+\endmyfig
+%reference this figure like so: \ref{fig:sim-Y}
 
 \subsubsection{Results}
 
-\textbf{True $\bZ$ and $W$}
-\beginmyfig
-\includegraphics{img/Z_true_all.pdf}
-\endmyfig
+Two thousand samples from the joint posterior distribution of all the parameters
+were collected after a burn-in period of 1000. 
+
 
 \textbf{Posterior Estimate for $\bZ$ and $W$}
+\beginmyfig
+\includegraphics[scale=.3]{img/sim/YZ001.png}
+\includegraphics[scale=.3]{img/sim/YZ002.png}
+\includegraphics[scale=.3]{img/sim/YZ003.png}
+\caption{}
+\label{fig:sim-post-Z}
+\endmyfig
+
 
 \textbf{Posterior Predictive for $\y$}
 
