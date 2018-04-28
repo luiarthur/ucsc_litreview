@@ -444,20 +444,20 @@ This can be done by first predetermining a certain percentage ($p\%$) of the
 data to be missing. This percentage should should be less than $\sum_k
 w^\true_{ik}(1-z^\true_{jk})$ so that truly expressed cells are unlikely to be
 missing, and so as to be consistent with the simulated $W^\true$ and
-$\bZ^\true$. Sample the ($N_i\times p\%$) of $y_{inj}$ without replacement.
-The probability of missing for $y$ is proportional to some predetermined
-missing mechanism (possibly different from the one used in this model). Care
-should be taken to ensure $y$ with positive values have almost zero probability
-of being missing.
+$\bZ^\true$. Sample ($N_i\times p\%$) observations of $y_{inj}$ without
+replacement with the probability of missing for $y$ being proportional to some
+predetermined missing mechanism (possibly different from the one used in this
+model). Care should be taken to ensure $y$ with positive values have almost
+zero probability of being missing.
 
 \textbf{Simulated $\bZ^\true$ and $W^\true$}
 
-Following this scheme, we generated data comparable to the CB data. We first
-simulated $\bZ^\true$ and $W^\true$. For $\bZ^\true$ we chose the number of
-rows to be $J=3$ because the CB data analyzes 32 markers, and we chose the
-number of columns to be $K=10$ to include a variety of cell-types. Figure
-\ref{fig:sim-Z} shows the simulated $\bZ^\true$ with the latent features sorted
-by $W_i$ for each sample. 
+Following this scheme, we generated data comparable to the CB data.  In our
+simulated data we assume 3 samples, each having $J=32$ markers, and each sample
+containing tens of thousands of cells. This size resembles that of the CB data.
+We then simulated $\bZ^\true$ and $W^\true$ with number of columns being $K=10$
+to include a variety of cell-types. Figure \ref{fig:sim-Z} shows the simulated
+$\bZ^\true$ with the latent features sorted by $W_i$ for each sample. 
 
 \beginmyfig
 \includegraphics{img/sim/Z_true_all.pdf}
@@ -467,16 +467,15 @@ by $W_i$ for each sample.
 %reference this figure like so: \ref{fig:sim-Z}
 
 The data $\y$ are shown in Figure \ref{fig:sim-Y}. The number of cells in each
-sample are $N=(30000, 20000, 10000)$, which is comparable to the size of the CB
-data. Note that in the upper panel contains marker expression data for sample 1
-(left), sample 2 (middle), and sample 3 (right). The lower panel contains the
-same data but with the rows grouped by the true cell-types ($\lambda$).  Red
-regions represent high expression levels, whereas blue regions represent low
-expression levels. Thus, through the visualization, we can observe the true
-latent cell-types that are generating the data. Note that in this simulated
-data set, the white regions represent missing data.  Three and four mixture
-components were used for non-expressed and expressed marker expression levels
-respectively. 
+sample are $N=(30000, 20000, 10000)$. Note that in the upper panel contains
+marker expression data for sample 1 (left), sample 2 (middle), and sample 3
+(right). The lower panel contains the same data but with the rows grouped by
+the true cell-types ($\lambda$).  Red regions represent high expression levels,
+whereas blue regions represent low expression levels. Thus, through this
+visualization, we can observe the true latent cell-types that are generating
+the data. Note that in this simulated data set, the white regions represent
+missing data.  Three and four mixture components were used for non-expressed
+and expressed marker expression levels respectively. 
 
 \beginmyfig
 \includegraphics[scale=.3]{img/sim/Y001.png}
@@ -495,21 +494,31 @@ cell-types ($\lambda$).}
 
 \subsubsection{Results}
 
-Two thousand samples from the joint posterior distribution of all the parameters
-were collected after a burn-in period of 1000. 
-
+Using MCMC and the sampling scheme mentioned above, two thousand samples from
+the joint posterior distribution of all the parameters were collected after a
+burn-in period of 1000 iterations. Figure \ref{fig:sim-post-Z} provides
+representation of the data $y$ sorted by a point-estimate of their cell-types,
+for each sample.  These figures are supplemented by a point-estimate of $\Z$
+and $W$. The point estimates for $Z$ resemble $Z^\true$ and vary only rarely by
+small permutations in less common cell-types. The cell-types in $\Z$ are sorted
+by a point-estimate for $W_i$.  These also resemble $W_i^\true$ but vary
+occasionally from the truth for smaller values of $W_i$. Only the cell-types
+that make up the top 90\% of cells are included in Figure \ref{fig:sim-post-Z}.
 
 \textbf{Posterior Estimate for $\bZ$ and $W$}
 \beginmyfig
 \includegraphics[scale=.3]{img/sim/YZ001.png}
 \includegraphics[scale=.3]{img/sim/YZ002.png}
 \includegraphics[scale=.3]{img/sim/YZ003.png}
-\caption{}
+\caption{$y$ sorted by a point-estimate of their cell-types ($\lambda$), for each sample.
+  Point-estimates of $\Z$ (sorted by $W_i$) and $W_i$ are provided for each sample below
+  each $y_i$. 
+}
 \label{fig:sim-post-Z}
 \endmyfig
 
 
-\textbf{Posterior Predictive for $\y$}
+\textbf{Posterior Predictive for $\y$}: TODO
 
 
 
@@ -932,8 +941,7 @@ p(h_{jk} \mid \y, \rest)  &\propto p(h_{jk}) \prod_{(i,n) \in S} p(y_{inj} \mid 
 Note also that \(\mus_{Z_{jk}\ell}\) and \(\sss_{Z_{jk}i\ell}\) are
 functions of \(h_{jk}\), and should be computed accordingly. Moreover,
 we will only recompute the likelihood (in the metropolis acceptance
-ratio) when \(Z_{jk}\) becomes different.
-
+ratio) when \(Z_{jk}\) becomes different.  
 \subsection{\texorpdfstring{Full Conditional for
 \(\bm \lambda\)}{Full Conditional for \textbackslash{}bm \textbackslash{}lambda}}\label{full-conditional-for-bm-lambda}
 
