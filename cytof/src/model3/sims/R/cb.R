@@ -102,7 +102,7 @@ init$missing_y = preimpute_y
 #init$Z = t((Z_est_kmeans$centers > 0) * 1)
 
 st = system.time(
-  out <- fit_cytof_cpp(y, B=1000, burn=2000, prior=prior, locked=locked,
+  out <- fit_cytof_cpp(y, B=2000, burn=1000, prior=prior, locked=locked,
                        init=init, print_freq=1, show_timings=FALSE,
                        normalize_loglike=TRUE, joint_update_freq=0, ncore=4)
   #out <- fit_cytof_cpp(y, B=50, burn=0, prior=prior, locked=locked, init=init, print_freq=1, show_timings=FALSE, normalize_loglike=TRUE, joint_update_freq=0)

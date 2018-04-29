@@ -40,7 +40,8 @@ std::vector<List> fit_cytof_cpp(
   int joint_update_freq=0,
   bool show_timings=false, 
   bool normalize_loglike=false,
-  bool print_new_line=false) {
+  bool print_new_line=false,
+  bool save_gam=false) {
 
   omp_set_num_threads(ncores);
 
@@ -105,7 +106,6 @@ std::vector<List> fit_cytof_cpp(
         Named("sig2_0") = state.sig2_0 + 0,
         Named("sig2_1") = state.sig2_1 + 0,
         Named("s") = state.s + 0,
-        //Named("gam") = cpVecT<Rcpp::IntegerMatrix>(state.gam), // remove in production
         Named("eta_0") = state.eta_0 + 0,
         Named("eta_1") = state.eta_1 + 0,
         Named("v") = state.v + 0,
@@ -115,6 +115,10 @@ std::vector<List> fit_cytof_cpp(
         Named("lam") = cpVecT<Rcpp::IntegerVector>(state.lam),
         Named("W") = state.W + 0
       );
+      // Saving gam is expensive! In most cases, don't do it!
+      if (save_gam) {
+        out[i - burn]["gam"] = cpVecT<Rcpp::IntegerMatrix>(state.gam);
+      }
     }
 
     // Append `missing_y_mean` and `missing_y_last` to last iteration of MCMC

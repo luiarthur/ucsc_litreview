@@ -29,8 +29,8 @@ test_gen_data_obj <- function(y) {
 #' @param joint_update_freq(int). Frequency of proposing from prior (0 -> don't do it). NOT READY!
 #' @param print_new_line(bool). Whether or not to print new line for MCMC progress
 #' @export
-fit_cytof_cpp <- function(y, B, burn, prior_ls, locked_ls, init_ls, thin = 1L, thin_some = 1L, compute_loglike_every = 1L, print_freq = 10L, ncores = 1L, joint_update_freq = 0L, show_timings = FALSE, normalize_loglike = FALSE, print_new_line = FALSE) {
-    .Call('_cytof3_fit_cytof_cpp', PACKAGE = 'cytof3', y, B, burn, prior_ls, locked_ls, init_ls, thin, thin_some, compute_loglike_every, print_freq, ncores, joint_update_freq, show_timings, normalize_loglike, print_new_line)
+fit_cytof_cpp <- function(y, B, burn, prior_ls, locked_ls, init_ls, thin = 1L, thin_some = 1L, compute_loglike_every = 1L, print_freq = 10L, ncores = 1L, joint_update_freq = 0L, show_timings = FALSE, normalize_loglike = FALSE, print_new_line = FALSE, save_gam = FALSE) {
+    .Call('_cytof3_fit_cytof_cpp', PACKAGE = 'cytof3', y, B, burn, prior_ls, locked_ls, init_ls, thin, thin_some, compute_loglike_every, print_freq, ncores, joint_update_freq, show_timings, normalize_loglike, print_new_line, save_gam)
 }
 
 #' Shuffle matrix by rows

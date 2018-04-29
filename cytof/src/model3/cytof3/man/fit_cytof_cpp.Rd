@@ -8,7 +8,7 @@ TODO: add descriptions for params}
 fit_cytof_cpp(y, B, burn, prior_ls, locked_ls, init_ls, thin = 1L,
   thin_some = 1L, compute_loglike_every = 1L, print_freq = 10L,
   ncores = 1L, joint_update_freq = 0L, show_timings = FALSE,
-  normalize_loglike = FALSE, print_new_line = FALSE)
+  normalize_loglike = FALSE, print_new_line = FALSE, save_gam = FALSE)
 }
 \arguments{
 \item{y}{A list of NumericMatrix with same number of columns.}
