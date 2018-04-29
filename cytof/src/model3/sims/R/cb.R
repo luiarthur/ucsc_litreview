@@ -35,7 +35,7 @@ prior$cs_h = 1
 
 #prior$a_sig=3; prior$a_s=.04; prior$b_s=2
 # sig2 ~ IG(mean=.1, sd=.01)
-sig2_ab = invgamma_params(m=.1, sig=.01)
+sig2_ab = invgamma_params(m=.2, sig=.01)
 prior$a_sig=sig2_ab[1]
 s_ab = gamma_params(m=sig2_ab[2], v=1)
 prior$a_s=s_ab[1]; prior$b_s=s_ab[2]
