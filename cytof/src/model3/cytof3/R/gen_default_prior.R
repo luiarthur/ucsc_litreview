@@ -33,6 +33,7 @@ gen_default_prior = function(y, K=10, L0=10, L1=10) {
     psi_1 = 2, #double
     tau2_0 = .1, #double
     tau2_1 = 1, #double
+    sig2_max = Inf, #double
     a_sig = 3, #double
     a_s = 3, #double
     b_s = 3, #double

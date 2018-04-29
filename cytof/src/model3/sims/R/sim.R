@@ -90,10 +90,11 @@ prior$cs_h = 1
 
 #prior$a_sig=3; prior$a_s=.04; prior$b_s=2
 # sig2 ~ IG(mean=.1, sd=.01)
-sig2_ab = invgamma_params(m=.25, sig=.05)
+sig2_ab = invgamma_params(m=.2, sig=.01)
 prior$a_sig=sig2_ab[1]
 s_ab = gamma_params(m=sig2_ab[2], v=1)
 prior$a_s=s_ab[1]; prior$b_s=s_ab[2]
+#prior$sig2_max = Inf # .8
 
 sig2_prior = 1 / rgamma(1000, prior$a_sig, rgamma(1000, prior$a_s, prior$b_s))
 #hist(sig2_prior)
@@ -123,8 +124,8 @@ set.seed(1)
 init0 = gen_default_init(prior)
 set.seed(1)
 init = gen_default_init(prior)
-init$mus_0 = seq(-5,-1, l=prior$L0)
-init$mus_1 = seq(0, 5, l=prior$L1)
+init$mus_0 = seq(-6,-.5, l=prior$L0)
+init$mus_1 = seq(.5, 6,  l=prior$L1)
 init$sig2_0 = matrix(.5, prior$I, prior$L0) # TODO: Did this work?
 init$sig2_1 = matrix(.5, prior$I, prior$L1) # TODO: Did this work?
 #init$Z = matrix(1, prior$J, prior$K)

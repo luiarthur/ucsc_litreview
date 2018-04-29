@@ -23,6 +23,7 @@ struct Prior {
   double tau2_0; double tau2_1;
   // sig2. Gibbs.
   double a_sig;
+  double sig2_max;
   // s. Gibbs.
   double a_s; double b_s;
   // eta. Gibbs.

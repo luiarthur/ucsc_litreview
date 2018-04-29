@@ -30,18 +30,22 @@ struct SS_sig2 { // sufficient stats for sig2
 };
 
 
-void update_sig2_zil(State &state, const Data &data, const Prior &prior, const SS_sig2 &ss_sig2, int z, int i, int l, double thresh=.7){
-  const double new_sig2_zil = mcmc::rinvgamma(ss_sig2.a_new[z](i,l),ss_sig2.b_new[z](i,l));
-  const double cur_sig2_zil = (z==0) ? state.sig2_0(i,l) : state.sig2_1(i,l);
-  if (new_sig2_zil < thresh || cur_sig2_zil > thresh) { // FIXME: This helps MCMC not select high values for sig2. Hack?
+void update_sig2_zil(State &state, const Data &data, const Prior &prior, const SS_sig2 &ss_sig2, int z, int i, int l){
 
-    // This is the non-hacky stuff
-    if (z == 0) {
-      state.sig2_0(i,l)=new_sig2_zil;
-    } else {
-      state.sig2_1(i,l)=new_sig2_zil;
-    }
+  double new_sig2_zil=mcmc::rinvgamma(ss_sig2.a_new[z](i,l),ss_sig2.b_new[z](i,l));
 
+  // FIXME: This hacky stuff helps MCMC not select high values for sig2.
+  //        Is there a better solution to avoid large sig2?
+  if (new_sig2_zil > prior.sig2_max) {
+    //new_sig2_zil = prior.sig2_max + R::runif(0, .01);
+    new_sig2_zil = mcmc::rinvgamma(prior.a_sig, state.s[i]);
+  }
+
+  // This is the non-hacky stuff
+  if (z == 0) {
+    state.sig2_0(i,l)=new_sig2_zil;
+  } else {
+    state.sig2_1(i,l)=new_sig2_zil;
   }
 }
 
