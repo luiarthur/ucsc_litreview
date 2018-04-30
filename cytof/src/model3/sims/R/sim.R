@@ -120,7 +120,9 @@ mm_prior = sample_from_miss_mech_prior(yy, prior$m_beta0, prior$s2_beta0,
                                        prior$m_beta1, prior$s2_beta1, 
                                        prior$c0, prior$c1, B=1000)
 pdf(fileDest('miss_mech_prior.pdf'))
-plot(yy, mm_prior[,1], type='n', ylim=0:1); abline(v=0)
+plot(yy, mm_prior[,1], type='n', ylim=0:1, bty='n',
+     fg='grey', xlab='y', ylab='probability of missing')
+abline(v=0)
 for (i in 1:NCOL(mm_prior)) lines(yy, mm_prior[,i], col='grey')
 dev.off()
 

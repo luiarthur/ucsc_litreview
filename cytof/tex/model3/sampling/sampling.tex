@@ -230,20 +230,24 @@ has been mainstream for several decades \citep{herzenberg2002history}.  In recen
 years, a new technique called Cytometry at time-of-flight (CyTOF) has surfaced.
 It makes use of time-of-flight mass spectrometry, where sophisticated devices
 are used to accelerate, separate, and identify ions by mass. This new method
-warrants the analysis of multiple parameters in shorter time \citep{cheung2001screening}. 
+warrants the analysis of multiple parameters in shorter time \citep{cheung2011screening}. 
 %Through CyTOF, scientists have been able to better understand natural killer
 %(NK) cells \citep{horowitz2013genetic}. 
 A major challenge in deciphering mass cytometry data is to develop efficient
 inferential frameworks that can handle the complexity of the data, including
 high dimensionality and noise. Many existing computational methods use
-dimension reduction techniques and/or clustering-based approaches.  For
-example,  {\tt introduce some existing approaches.  Explain a bit the methods
-that we will use for comparison.  State limitations of existing methods.  Are
-they Bayesian?  Are they modeling phenotypes like our $\Z$.  Emphasize that our
-methods produce direct inferences on phenotypes or quantification of
-uncertainty associated with their inference.}  To overcome the limitations of
-existing methods, we propose to develop novel Bayesian feature allocation
-models (FAMs) embedded with clustering. 
+dimension reduction techniques and/or clustering-based approaches. 
+%{\tt introduce some existing approaches.  Explain a bit the methods
+%that we will use for comparison.  State limitations of existing methods.  Are
+%they Bayesian?  Are they modeling phenotypes like our $\Z$.  Emphasize that our
+%methods produce direct inferences on phenotypes or quantification of
+%uncertainty associated with their inference.}
+FlowSOM \citep{van2015flowsom} is one such method which uses a self-organizing
+map to cluster flow cytometry data. While among existing methods it is
+considered the fastest and most flexible at finding subpopulations, it is not
+able to measure uncertainty about the learned clusters.
+To overcome the limitations of existing methods, we propose to develop novel
+Bayesian feature allocation models (FAMs) embedded with clustering. 
 
 
 
@@ -352,7 +356,15 @@ distribution for \(y_{inj}\); for \(i=1, \ldots, I\),
 where \(\mu_{inj} = \mu^\star_{z_{j,k},\ell}\) and
 \(\sigma^2_{inj} = {\sigma^{2}}^\star_{iz_{j,k}\ell}\). After marginalizing $\gamma_{inj}$ out, the model in \eqref{eq:y-gam} and \eqref{eq:gam} is equivalent to the model in \eqref{eq:y-mix}.  
 
-We next build a model for the missingness mechanism.  {\tt explain our approach for missing in few sentences.}  Given
+We next build a model for the missingness mechanism.
+%{\tt explain our approach for missing in few sentences.}
+This mechanism should reflect our belief that marker expression-levels are
+recorded as ``missing'' when signals from cells for a marker are extremely
+weak.  In addition, we will impose the restriction that extremely low
+expression values have low prior probability. This ensures that parameters in
+the sampling density will not be unnecessarily inflated.
+%
+Given
 \(y_{inj}\), we consider a selection function for \(m_{inj}\); for
 \(i=1, \ldots, I\), \(n=1, \ldots, N_i\) and \(j=1, \ldots, J\),
 \begin{align}
@@ -362,7 +374,14 @@ We next build a model for the missingness mechanism.  {\tt explain our approach 
   \beta_{0i} - \beta_{1i}c_1\p{y_{inj}-c_0}^{1/2}, & \text{otherwise}, \nonumber \\
   \end{cases} \label{eq:missing}
 \end{align}
-where \(c_0\) and \(c_1\) are fixed.  {\tt say something like it is ``untestable'' but take this approach by incorporating our input from biologists}
+where \(c_0\) and \(c_1\) are fixed.
+%{\tt say something like it is ``untestable'' but take this approach by
+%incorporating our input from biologists}
+Note that the assumptions for the distribution of the unobserved data are
+untestable. However, we can incorporate input from biologists through informed
+prior specifications. Prior uncertainty can then be directly propagated to the
+posterior distribution for the missing mechanism.
+
 
 
 \subsubsection{Priors}\label{priors}
@@ -372,28 +391,70 @@ v_k \mid \alpha &\iid& \Be(\alpha/K, 1),~ k=1, \ldots, K, \\
 \h_k &\iid& \N_J(\bm{0}, \Gamma), \\ 
 z_{jk} \mid h_{jk}, v_k &=& \mathbb{I}\left\{ \Phi(h_{jk} \mid 0, \Gamma_{jj}) < v_k \right\},
 \end{eqnarray*}
-where $\Phi(h \mid m, s)$ is the cumulative distribution function of the normal distribution with mean $m$ and variance $s$ and $\mathbb{I}(\cdot)$ is an indicator function having 1 if $\Phi(h_{jk} \mid 0, \Gamma_{jj}) < v_k$ or 0 otherwise.  As $K \rightarrow \infty$, the limiting distribution of $Z$ is the IBP {\tt cite the paper}.  Interactions between $J$ markers in phenotypes can be modeled through $\bm G$.  Due to the multivariate probit construction for $\Z$, $\Gamma$ is not identifiable and it is common to restrict $\Gamma$ to be a correlation matrix.  {\tt discuss a bit models for correlation matrix.  I will send you some references on models for correlation matrix.}  We let $\alpha \sim \G(a_\alpha, b_\alpha)$ with mean $a_\alpha/b_\alpha$.  
+where $\Phi(h \mid m, s)$ is the cumulative distribution function of the normal
+distribution with mean $m$ and variance $s$ and $\mathbb{I}(\cdot)$ is an
+indicator function having 1 if $\Phi(h_{jk} \mid 0, \Gamma_{jj}) < v_k$ or 0
+otherwise.  As $K \rightarrow \infty$, the limiting distribution of $Z$ is the
+IBP {\tt cite the paper}.  Interactions between $J$ markers in phenotypes can
+be modeled through $\bm G$.  Due to the multivariate probit construction for
+$\Z$, $\Gamma$ is not identifiable and it is common to restrict $\Gamma$ to be
+a correlation matrix.
+%
+{\tt discuss a bit models for correlation matrix.  I will send you some
+references on models for correlation matrix.}
+%
+%
+We let $\alpha \sim \G(a_\alpha, b_\alpha)$ with mean $a_\alpha/b_\alpha$.  
 
-The $K$ cell phenotypes are common in all samples but the relative weights vary across samples. Let $W_{ik}$ denote an abundance level of phenotype $k$ in sample $i$.  We assume independent Dirichlet priors for $\bm W_i=(W_{i1}, \ldots, W_{iK})$ given $K$, $\bm W_{i} \mid K \iid \Dir_K(d/K)$. For latent cell phenotype indicators, we let $p(\lin=k \mid \bm W_i) = W_{ik}$.
+The $K$ cell phenotypes are common in all samples but the relative weights vary
+across samples. Let $W_{ik}$ denote an abundance level of phenotype $k$ in
+sample $i$.  We assume independent Dirichlet priors for $\bm W_i=(W_{i1},
+\ldots, W_{iK})$ given $K$, $\bm W_{i} \mid K \iid \Dir_K(d/K)$. For latent
+cell phenotype indicators, we let $p(\lin=k \mid \bm W_i) = W_{ik}$.
 
-\paragraph*{Parameters in the Mixture for $y$} In \eqref{eq:y-mix}, normal mixture models are assumed for $y_{inj}$. The mean expression level of maker $j$ in cell $n$ is determined by its phenotype $\lambda_{in}$.  In particular, if the marker is not expressed in the cell type, $z_{j \lambda_{in}}=0$, its mean expression level is below the cutoff, that is, a negative value.  If the marker is expressed $z_{j \lambda_{in}}=0$, the expression of marker $j$ take a positive value.   Recall that $\mus_{0\ell}$, $\ell=1, \ldots, L^0$ are mixture locations for $z_{j \lambda_{in}}=0$ and $\mus_{1\ell}$, $\ell=1, \ldots, L^1$ for $z_{j \lambda_{in}}=1$.  We assume 
+\paragraph*{Parameters in the Mixture for $y$}
+In \eqref{eq:y-mix}, normal mixture models are assumed for $y_{inj}$. The mean
+expression level of maker $j$ in cell $n$ is determined by its phenotype
+$\lambda_{in}$.  In particular, if the marker is not expressed in the cell
+type, $z_{j \lambda_{in}}=0$, its mean expression level is below the cutoff,
+that is, a negative value.  If the marker is expressed $z_{j \lambda_{in}}=0$,
+the expression of marker $j$ take a positive value.   Recall that
+$\mus_{0\ell}$, $\ell=1, \ldots, L^0$ are mixture locations for $z_{j
+\lambda_{in}}=0$ and $\mus_{1\ell}$, $\ell=1, \ldots, L^1$ for $z_{j
+\lambda_{in}}=1$.  We assume 
 \begin{align*}
 \mus_{0\ell} \mid \psi_0, \tau^2_0 &\iid \N_-(\psi_0, \tau^2_0), ~~~ \ell \in \bc{1,...,L^0}, \\
 \mus_{1\ell} \mid \psi_1, \tau^2_1 &\iid \N_+(\psi_1, \tau^2_1), ~~~ \ell \in \bc{1,...,L^1}, 
 \end{align*}
-where \(\N_-(m,s^2)\) and \(\N_+(m,s^2)\) denote the normal distribution with mean \(m\) and variance \(s^2\), truncated to take on only negative values and positive values, respectively.  The variances in the mixture components differ by the value of $z_{j \lambda_{in}}$ and also vary across samples. We let; for \(i=1, \ldots, I\),
+where \(\N_-(m,s^2)\) and \(\N_+(m,s^2)\) denote the normal distribution with
+mean \(m\) and variance \(s^2\), truncated to take on only negative values and
+positive values, respectively.  The variances in the mixture components differ
+by the value of $z_{j \lambda_{in}}$ and also vary across samples. We let, for
+\(i=1, \ldots, I\),
 \begin{align*}
 \sigma^2_{0i\ell} \mid s_i &\ind \IG(a_\sigma, s_i), ~~~ \ell \in \bc{1,...,L^0}, \\
 \sigma^2_{1i\ell} \mid s_i &\ind \IG(a_\sigma, s_i), ~~~ \ell \in \bc{1,...,L^1}.  
 \end{align*}
-We also assume $s_i \iid \G(a_s, b_s)$, $i \in \bc{1,...,I}$, with mean \(a_s/b_s\). Lastly, we consider a model for mixture weights. To flexibly model the distribution of $y$, we assume for a marker in a sample have two sets of it own weights, one for each value of $z$, $\bm\eta^0_{ij}$ and $\bm\eta^1_{ij}$; for each $(i, j)$ For \(i=1, \ldots, I\), \(n=1, \ldots, N_i\) and \(j=1, \ldots, J\),
+We also assume $s_i \iid \G(a_s, b_s)$, $i \in \bc{1,...,I}$, with mean
+\(a_s/b_s\). Lastly, we consider a model for mixture weights. To flexibly model
+the distribution of $y$, we assume for a marker in a sample have two sets of it
+own weights, one for each value of $z$, $\bm\eta^0_{ij}$ and $\bm\eta^1_{ij}$,
+for each $(i, j)$. So for \(i=1, \ldots, I\), \(n=1, \ldots, N_i\) and \(j=1,
+\ldots, J\),
 \begin{align*}
 \bm\eta^0_{ij} &\iid \Dir_{L^0}(a_{\eta^0}/L^0), \\
 \bm\eta^1_{ij} &\iid \Dir_{L^1}(a_{\eta^1}/L^1). 
 \end{align*}
 
 
-\paragraph*{Parameters for Missingness Mechanism}  {\tt explain what you do for missingness mechanism}.  We assume that $\beta_{0i} \iid \N(m_{\beta_0}, s^2_{\beta_0})$ and $\beta_{1i} \iid \N_+(m_{\beta_1}, s^2_{\beta_1})$, $i=1, \ldots, I$.  We use data to specify the values of the fixed hyperparameters, $m_{\beta_0}$ and $m_{\beta_1}$.  We let $s^2_{\beta_0}$ and $s^2_{\beta_1}$ small to induce a informative prior for $\beta_{0i}$ and $\beta_{1i}$.
+\paragraph*{Parameters for Missingness Mechanism}
+{\tt explain what you do for missingness mechanism.}
+
+We assume that $\beta_{0i} \iid \N(m_{\beta_0}, s^2_{\beta_0})$ and $\beta_{1i}
+\iid \N_+(m_{\beta_1}, s^2_{\beta_1})$, $i=1, \ldots, I$.  We use data to
+specify the values of the fixed hyperparameters, $m_{\beta_0}$ and
+$m_{\beta_1}$.  We let $s^2_{\beta_0}$ and $s^2_{\beta_1}$ be small to induce a
+informative prior for $\beta_{0i}$ and $\beta_{1i}$.
 
 
 
