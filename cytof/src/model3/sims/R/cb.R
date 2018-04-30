@@ -60,7 +60,7 @@ mm_prior = sample_from_miss_mech_prior(yy, prior$m_beta0, prior$s2_beta0,
                                        prior$m_beta1, prior$s2_beta1, 
                                        prior$c0, prior$c1, B=1000)
 pdf(fileDest('miss_mech_prior.pdf'))
-plot(yy, mm_prior[,1], type='n'); abline(v=0)
+plot(yy, mm_prior[,1], type='n', ylim=0:1); abline(v=0)
 for (i in 1:NCOL(mm_prior)) lines(yy, mm_prior[,i], col='grey')
 dev.off()
 
@@ -261,7 +261,7 @@ mm_post = sapply(1:B, function(b)
 mm_post_mean = rowMeans(mm_post)
 mm_post_ci = apply(mm_post, 1, quantile, c(.025,.975))
 
-plot(yy, mm_post_mean, ylim=range(mm_post_ci), type='l',
+plot(yy, mm_post_mean, ylim=0:1, type='l',
      bty='n', fg='grey', xlab='density', col='blue')
 color.btwn(yy, mm_post_ci[1,], mm_post_ci[2,], from=-10, to=10, col=rgb(0,0,1,.4))
 
