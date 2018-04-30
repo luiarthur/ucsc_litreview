@@ -1,5 +1,5 @@
 ### GLOBALS ###
-OUTDIR = '../out/locked_beta1_K20/'
+OUTDIR = '../out/cb_locked_beta1_K20/'
 ### END OF GLOBALS ###
 
 library(rcommon)
@@ -104,12 +104,7 @@ init$missing_y = preimpute_y
 st = system.time(
   out <- fit_cytof_cpp(y, B=2000, burn=1000, prior=prior, locked=locked,
                        init=init, print_freq=1, show_timings=FALSE,
-                       normalize_loglike=TRUE, joint_update_freq=0, ncore=4)
-  #out <- fit_cytof_cpp(y, B=50, burn=0, prior=prior, locked=locked, init=init, print_freq=1, show_timings=FALSE, normalize_loglike=TRUE, joint_update_freq=0)
-
-  #prior$cs_v = .001
-  #prior$cs_h = .001
-  #out <- fit_cytof_cpp(y, B=50, burn=0, prior=prior, locked=locked, init=last(out), print_freq=1, show_timings=FALSE, normalize_loglike=TRUE, joint_update_freq=0)
+                       normalize_loglike=TRUE, joint_update_freq=0, ncore=1)
 )
 print(st)
 saveRDS(out, fileDest('out.rds'))
@@ -144,10 +139,13 @@ dev.off()
 H = sapply(out, function(o) c(o$H))
 H_mean = matApply(lapply(out, function(o) o$H), mean)
 ci_H = apply(H, 1, quantile, c(.025,.975))
+pdf(fileDest('H.pdf'))
 plotPost(H[1,])
 plot(rowMeans(H), ylim=range(ci_H), pch=20, col='blue')
 add.errbar(t(ci_H), col='grey')
 my.image(t(H_mean), mn=-3, mx=3, col=blueToRed(), addL=TRUE)
+dev.off()
+
 
 ### alpha ###
 pdf(fileDest('alpha.pdf'))
@@ -279,11 +277,9 @@ dev.off()
 
 
 ### PP 
-W_est = out[[B]]$W; Z_est = out[[B]]$Z
 
 compute_zjk_mean= function(out, i, j) {
   B = length(out)
-  #k = sapply(sample(1:prior$K, 1, prob=W_est[i,]))
   zjk = sapply(out, function(o) {
     k = sample(1:prior$K, 1, prob=o$W[i,])
     o$Z[j,k]
@@ -295,8 +291,6 @@ compute_zjk_mean= function(out, i, j) {
 ### Y aggregate last ###
 Y_last = do.call(rbind, out[[B]]$missing_y)
 
-
-source("plot_dat.R")
 pdf(fileDest('y_hist.pdf'))
 par(mfrow=c(4,2))
 for (i in 1:prior$I) for (j in 1:prior$J) {
@@ -323,19 +317,28 @@ dev.off()
 #  Sys.sleep(.1)
 #}
 
-# TODO: Test this with simulation data
 png(fileDest('YZ%03d.png'))
 fy = function(lami) {
   abline(h=cumsum(table(lami))+.5, lwd=1, col='white', lty=2)
   axis(4, at=cumsum(table(lami))+.5, col=NA, col.ticks=1, cex.axis=.0001)
 }
 for (i in 1:I) {
-  #yZ_inspect(out, y, dat_lim=c(-3,3), i=i, thresh=.9, prop_lower_panel=.4, fy=fy)
-  yZ_inspect(out,last(out)$missing_y_mean,dat_lim=c(-3,3),i=i,thresh=.9,prop_lower_panel=.4,fy=fy)
-  #yZ_inspect_old(out, y, dat_lim=c(-3,3), i=i, thresh=.05)
+  yZ_inspect(out, y, dat_lim=dat_lim, i=i, thresh=.9, fy=fy)
 }
 dev.off()
 
-
-#my.image(last(out)$Z)
-#round(last(out)$W[i,] * 100, 2)
+### Probability of non-expression for missing y
+pz0_missy = matrix(NA, I, J)
+f = function(i,j,b) {
+  lami = out[[b]]$lam[[i]] + 1
+  lami = lami[which(is.na(y[[i]][,j]))]
+  mean(out[[b]]$Z[j,lami] == 0)
+}
+for (i in 1:I) for (j in 1:J) {
+  pz0_missy_ij = sapply(1:B, function(b) f(i,j,b))
+  pz0_missy_ij_mean = mean(pz0_missy_ij)
+  pz0_missy[i,j] = pz0_missy_ij_mean
+}
+sink('pz0_missing_y.txt')
+print(round(t(pz0_missy),2))
+sink()
