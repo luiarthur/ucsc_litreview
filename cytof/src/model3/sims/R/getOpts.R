@@ -4,6 +4,8 @@ getOpts = function() {
   option_list = list(
     make_option("--N", type='integer'),
     make_option("--ncores", type='integer', default=1),
+    make_option("--B", type='integer', default=2000),
+    make_option("--burn", type='integer', default=1000),
     make_option(c("--outdir", "-o"), type='character')
   )
 

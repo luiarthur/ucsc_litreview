@@ -10,6 +10,8 @@ set.seed(3)
 #N_degree=100
 #OUTDIR = '../out/sim_locked_beta1_K20_N100/'
 #NCORES=1
+#B=2000
+#BURN=1000
 #
 ##########
 ### OR ###
@@ -22,6 +24,8 @@ opt = parse_args(opt_parser)
 OUTDIR = getOrFail(paste0(opt$outdir,'/'), opt_parser)
 N_degree = getOrFail(opt$N, opt_parser)
 NCORES = getOrFail(opt$ncores, opt_parser)
+B = getOrFail(opt$B, opt_parser)
+BURN = getOrFail(opt$burn, opt_parser)
 ### END OF GLOBALS ###
 
 
@@ -156,7 +160,7 @@ save.image(file=fileDest('checkpoint.rda'))
 
 ### Start MCMC ###
 st = system.time(
-  out <- fit_cytof_cpp(y, B=2000, burn=1000, prior=prior, locked=locked,
+  out <- fit_cytof_cpp(y, B=B, burn=BURN, prior=prior, locked=locked,
                        init=init, print_freq=1, show_timings=FALSE,
                        normalize_loglike=TRUE, joint_update_freq=0,
                        ncores=NCORES, print_new_line=TRUE)
