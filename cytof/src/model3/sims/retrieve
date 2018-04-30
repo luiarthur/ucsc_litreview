@@ -3,4 +3,14 @@
 SERVER="alui2@firedance"
 DIR="repo/ucsc_litreview/cytof/src/model3/sims/out/"
 
-rsync -av $SERVER:~/$DIR/ out/ --exclude *.rda
+cmd="rsync -av $SERVER:~/$DIR/ out/"
+#rsync -av $SERVER:~/$DIR/ out/ --exclude *.rda
+
+numargs=$#
+
+if [ $numargs == 0 ]
+then
+  $cmd --exclude *.rda
+else
+  $cmd
+fi
