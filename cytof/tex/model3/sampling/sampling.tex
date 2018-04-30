@@ -218,15 +218,32 @@ Better understanding of the characteristics of NK cells is crucial to estimate t
 %cells their importance is therefore necessary.
 
 
-Advances in cytometry has led to more research and greater understanding  of natural killer (NK) cells and how their diversity impacts immunity against the development of tumors and other viral diseases. Flow cytometry (developed by Wallace Coulter in the 1950's) is a laser-based biophysical technology which is sometimes used for biomarker
-detection. It is regularly used to diagnose health disorders like cancer. Cytometry has advanced over the years. Fluorescence-based flow cytometry, which makes use of fluorescent dyes and lasers that emit
-light at specific wavelengths, is one such advancement that has been
-mainstream for several decades. {\tt include reference}  In recent years, a new technique called
-Cytometry at time-of-flight (CyTOF) has surfaced. It makes use of
-time-of-flight mass spectrometry, where sophisticated devices are used
-to accelerate, separate, and identify ions by mass. This new method
-warrants the analysis of multiple parameters in shorter time.  {\tt include reference} %Through CyTOF, scientists have been able to better understand natural killer (NK) cells \citep{horowitz2013genetic}. 
-A major challenge in deciphering mass cytometry data is to develop efficient inferential frameworks that can handle the complexity of the data, including high dimensionality and noise. Many existing computational methods use dimension reduction techniques and/or clustering-based approaches.  For example,  {\tt introduce some existing approaches.  Explain a bit the methods that we will use for comparison.  State limitations of existing methods.  Are they Bayesian?  Are they modeling phenotypes like our $\Z$.  Emphasize that our methods produce direct inferences on phenotypes or quantification of uncertainty associated with their inference.}  To overcome the limitations of existing methods, we propose to develop novel Bayesian feature allocation models (FAMs) embedded with clustering. 
+Advances in cytometry has led to more research and greater understanding  of
+natural killer (NK) cells and how their diversity impacts immunity against the
+development of tumors and other viral diseases. Flow cytometry (developed by
+Wallace Coulter in the 1950's) is a laser-based biophysical technology which is
+sometimes used for biomarker detection. It is regularly used to diagnose health
+disorders like cancer. Cytometry has advanced over the years.
+Fluorescence-based flow cytometry, which makes use of fluorescent dyes and
+lasers that emit light at specific wavelengths, is one such advancement that
+has been mainstream for several decades \citep{herzenberg2002history}.  In recent
+years, a new technique called Cytometry at time-of-flight (CyTOF) has surfaced.
+It makes use of time-of-flight mass spectrometry, where sophisticated devices
+are used to accelerate, separate, and identify ions by mass. This new method
+warrants the analysis of multiple parameters in shorter time \citep{cheung2001screening}. 
+%Through CyTOF, scientists have been able to better understand natural killer
+%(NK) cells \citep{horowitz2013genetic}. 
+A major challenge in deciphering mass cytometry data is to develop efficient
+inferential frameworks that can handle the complexity of the data, including
+high dimensionality and noise. Many existing computational methods use
+dimension reduction techniques and/or clustering-based approaches.  For
+example,  {\tt introduce some existing approaches.  Explain a bit the methods
+that we will use for comparison.  State limitations of existing methods.  Are
+they Bayesian?  Are they modeling phenotypes like our $\Z$.  Emphasize that our
+methods produce direct inferences on phenotypes or quantification of
+uncertainty associated with their inference.}  To overcome the limitations of
+existing methods, we propose to develop novel Bayesian feature allocation
+models (FAMs) embedded with clustering. 
 
 
 
@@ -510,16 +527,13 @@ that make up the top 90\% of cells are included in Figure \ref{fig:sim-post-Z}.
 \includegraphics[scale=.3]{img/sim/YZ001.png}
 \includegraphics[scale=.3]{img/sim/YZ002.png}
 \includegraphics[scale=.3]{img/sim/YZ003.png}
-\caption{$y$ sorted by a point-estimate of their cell-types ($\lambda$), for each sample.
-  Point-estimates of $\Z$ (sorted by $W_i$) and $W_i$ are provided for each sample below
-  each $y_i$. 
-}
+\caption{$y$ sorted by a point-estimate of their cell-types ($\lambda$), for
+each sample.  Point-estimates of $\Z$ (sorted by $W_i$) and $W_i$ are provided
+for each sample below each $y_i$.}
 \label{fig:sim-post-Z}
 \endmyfig
 
-
-\textbf{Posterior Predictive for $\y$}: TODO
-
+\textbf{Posterior Predictive for $\y$ (How can I do this without storing gam?)}
 
 
 
