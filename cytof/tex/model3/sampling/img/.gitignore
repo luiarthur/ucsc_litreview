@@ -1,3 +1,4 @@
 # Eventually, commit the stable version of the images
 *
 !.gitignore
+!*.R
