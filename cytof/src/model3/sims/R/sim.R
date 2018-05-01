@@ -433,6 +433,9 @@ par(mfrow=c(4,2))
 thresh = -0
 for (i in 1:I) for (j in 1:J) {
   yij = postpred_yij(out, i, j)
+  while (length(which(yij > thresh)) < 3) {
+    yij = postpred_yij(out, i, j)
+  }
 
   pp_den = density(yij[yij > thresh])
   dat_den = density(y[[i]][which(y[[i]][,j] > thresh) ,j])
@@ -441,6 +444,11 @@ for (i in 1:I) for (j in 1:J) {
   plot(pp_den, bty='n', col='blue', lwd=2, ylim=c(0,h), fg='grey',
        main=paste0('positive y: i=',i,', j=',j), xlim=c(thresh,7))
   lines(dat_den, col='grey', lwd=2)
+
+  msg = paste0('P(Z=0) for missing y: ', round(pz0_missy[i,j],2))
+  x_pos = dat_lim[2] * .8
+  y_pos = h / 2
+  text(x_pos, y_pos, msg)
 }
 par(mfrow=c(1,1))
 dev.off()

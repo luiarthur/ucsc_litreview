@@ -7,7 +7,7 @@ library(cytof3)
 
 system(paste0('mkdir -p ', OUTDIR))
 system(paste0('cp cb.R ', OUTDIR))
-
+dat_lim=c(-8,8)
 
 fileDest = function(filename) paste0(OUTDIR, filename)
 
@@ -20,6 +20,9 @@ y = y_orig
 
 ### TODO: add def for miss-mech in gen_default prior ###
 prior = gen_default_prior(y, K=20, L0=5, L1=5)
+I = prior$I
+N = prior$N
+J = prior$J
 
 # Are these good priors?
 prior$psi_0 = -2
@@ -295,7 +298,7 @@ pdf(fileDest('y_hist.pdf'))
 par(mfrow=c(4,2))
 for (i in 1:prior$I) for (j in 1:prior$J) {
   zjk_mean = compute_zjk_mean(out, i, j)
-  plot_dat(out[[B]]$missing_y_mean, i, j, xlim=c(-8,8), lwd=1, col='red',
+  plot_dat(out[[B]]$missing_y_mean, i, j, xlim=dat_lim, lwd=1, col='red',
            main=paste0('i: ', i,', j: ', j, ' (Z_ij mean: ', zjk_mean, ')'))
 
   lines(density(out[[B]]$missing_y[[i]][,j]), col='grey')
@@ -346,17 +349,27 @@ sink()
 ### Density of positive data and posterior predictive ###
 pdf(fileDest('pp_obs.pdf'))
 par(mfrow=c(4,2))
-thresh = -0
+thresh = 0
 for (i in 1:I) for (j in 1:J) {
+  cat(i,j, '\n')
   yij = postpred_yij(out, i, j)
-
+  while (length(which(yij > thresh)) < 3) {
+    yij = postpred_yij(out, i, j)
+  }
   pp_den = density(yij[yij > thresh])
+
   dat_den = density(y[[i]][which(y[[i]][,j] > thresh) ,j])
   h = max(pp_den$y, dat_den$y)
 
   plot(pp_den, bty='n', col='blue', lwd=2, ylim=c(0,h), fg='grey',
-       main=paste0('positive y: i=',i,', j=',j), xlim=c(thresh,7))
+       main=paste0('positive y: i=',i,', j=',j),
+       xlim=c(thresh*1.1,dat_lim[2]*1.2))
   lines(dat_den, col='grey', lwd=2)
+
+  msg = paste0('P(Z=0) for missing y: ', round(pz0_missy[i,j],2))
+  x_pos = dat_lim[2] * .8
+  y_pos = h / 2
+  text(x_pos, y_pos, msg)
 }
 par(mfrow=c(1,1))
 dev.off()
