@@ -268,7 +268,17 @@ z_{jk} \mid \pi_k &\sim \text{Bernoulli}(v_k),~ k=1, \ldots, K~\mbox{ and } j=1,
 \end{split}
 \label{eq:ibp}
 \end{align}
-The marginal limiting distribution of $\Z$ defines an IBP as $K \rightarrow \infty$ and dropping all columns with all 0s, that is,  \(Z \sim \text{IBP}(\alpha)\). Under the IBP, each row is expected to have  \(\alpha\) active features.  The number of columns with $\sum_{j=1}^J z_{jk} >0$ is random and it can be shown that the number of such columns follows \(\text{Poisson}(\alpha \sum_{j=1}^J j^{-1})\).   A prior distribution can be placed on \(\alpha\) to reflect uncertainty. A gamma prior is popular for $\alpha$ due to conjugacy.  \citet{teh2007stick} represented the IBP using the stick-breaking construction similar to the stick-breaking representation of the Dirichlet process (DP).  \citet{williamson2010dependent} developed a dependent IBP (dIBP) to induce correlations between objects
+The marginal limiting distribution of $\Z$ defines an IBP as $K \rightarrow
+\infty$ and dropping all columns with all 0s, that is,  \(Z \sim
+\text{IBP}(\alpha)\). Under the IBP, each row is expected to have  \(\alpha\)
+active features.  The number of columns with $\sum_{j=1}^J z_{jk} >0$ is random
+and it can be shown that the number of such columns follows
+\(\text{Poisson}(\alpha \sum_{j=1}^J j^{-1})\).   A prior distribution can be
+placed on \(\alpha\) to reflect uncertainty. A gamma prior is popular for
+$\alpha$ due to conjugacy.  \citet{teh2007stick} represented the IBP using the
+stick-breaking construction similar to the stick-breaking representation of the
+Dirichlet process (DP).  \citet{williamson2010dependent} developed a dependent
+IBP (dIBP) to induce correlations between objects
 (rows) and to model multiple $\Z$s that can be dependent.
 
 
@@ -290,7 +300,18 @@ The marginal limiting distribution of $\Z$ defines an IBP as $K \rightarrow \inf
 
 \section{Project 1: }
 \subsection{Introduction}
-{\tt short intro for project 1}
+% {\tt short intro for project 1}
+In this project, we analyze marker expression data from a CyTOF analysis of
+blood samples from patients. Each sample consists of tens of thousands of cells
+and records expression levels for 32 NK-cell markers. High marker expression
+levels correspond to the expression of that marker, while low marker expression
+levels and missing values correspond to non-expression. For a given cell, the
+expression of certain markers corresponds to a phenotype. We are interested in
+identifying phenotypes that occur frequently within each sample. This is
+important to practitioners because NK-cell diversity is known to be affect
+immunity against infectious diseases. We therefore propose modelling marker
+expression levels with a flexible mixture model, and the latent cell-type
+structure with a latent feature allocation model.
 
 \subsection{Model}\label{prob-model}
 \subsubsection{Sampling Model} 
@@ -449,7 +470,7 @@ for each $(i, j)$. So for \(i=1, \ldots, I\), \(n=1, \ldots, N_i\) and \(j=1,
 
 \paragraph*{Parameters for Missingness Mechanism}
 {\tt explain what you do for missingness mechanism.}
-
+%
 We assume that $\beta_{0i} \iid \N(m_{\beta_0}, s^2_{\beta_0})$ and $\beta_{1i}
 \iid \N_+(m_{\beta_1}, s^2_{\beta_1})$, $i=1, \ldots, I$.  We use data to
 specify the values of the fixed hyperparameters, $m_{\beta_0}$ and
