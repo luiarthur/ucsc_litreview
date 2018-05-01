@@ -26,8 +26,8 @@ cp ${simImgPath}/${simName}/"pp_obs.pdf" $outdir
 cp ${simImgPath}/${simName}/"pz0_missing_y.txt" $outdir
 
 #### CB ###
-#I="1 2 3"
-#for i in $I; do
-#  cp ${simImgPath}/${cbSimName}/"YZ00${i}.png" $outdir
-#done
+I="1 2 3"
+for i in $I; do
+  cp ${simImgPath}/${cbSimName}/"YZ00${i}.png" $outdir
+done
 

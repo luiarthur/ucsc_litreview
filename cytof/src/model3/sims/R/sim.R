@@ -83,8 +83,8 @@ prior = gen_default_prior(y, K=12, L0=5, L1=5)
 # Are these good priors?
 prior$psi_0 = -2
 prior$psi_1 = 2
-prior$tau2_0 = .5^2
-prior$tau2_1 = 1
+prior$tau2_0 = .3^2
+prior$tau2_1 = .3^2
 
 #prior$cs_v = .01 # I think this should be better
 #prior$cs_h = 1 # I think this should be better
@@ -123,7 +123,7 @@ pdf(fileDest('miss_mech_prior.pdf'))
 plot(yy, mm_prior[,1], type='n', ylim=0:1, bty='n',
      fg='grey', xlab='y', ylab='probability of missing')
 abline(v=0)
-for (i in 1:NCOL(mm_prior)) lines(yy, mm_prior[,i], col='grey')
+for (i in 1:NCOL(mm_prior)) lines(yy, mm_prior[,i], col=rgb(1,0,0,.3))
 dev.off()
 
 set.seed(1)
@@ -143,7 +143,7 @@ init$Z = compute_Z(H=init$H, v=init$v, G=prior$G)
 ### Fixed parameters ###
 locked = gen_default_locked(init)
 #locked$beta_0 = TRUE # TODO: Can I make this random?
-locked$beta_1 = TRUE # TODO: Can I make this random?
+#locked$beta_1 = TRUE # TODO: Can I make this random?
 
 #locked$s = TRUE
 #locked$sig2_0 = TRUE # TODO: Can I make this random?
@@ -336,21 +336,22 @@ beta_1 = t(sapply(out, function(o) o$beta_1))
 #plotPosts(beta_1)
 
 pdf(fileDest('miss_mech_posterior.pdf'))
-mm_post = sapply(1:B, function(b) 
-                 prob_miss(yy, beta_0[b,1], beta_1[b,1], prior$c0, prior$c1))
-
-mm_post_mean = rowMeans(mm_post)
-mm_post_ci = apply(mm_post, 1, quantile, c(.025,.975))
-
-plot(yy, mm_post_mean, ylim=0:1, type='l',
+plot(0, 0, ylim=0:1, xlim=range(yy), type='n', ylab='Probability of missing',
      bty='n', fg='grey', xlab='density', col='blue')
-color.btwn(yy, mm_post_ci[1,], mm_post_ci[2,], from=-10, to=10, col=rgb(0,0,1,.4))
+for (i in 1:I) {
+  mm_post = sapply(1:B, function(b) 
+                   prob_miss(yy, beta_0[b,i], beta_1[b,i], prior$c0, prior$c1))
+  mm_post_mean = rowMeans(mm_post)
+  mm_post_ci = apply(mm_post, 1, quantile, c(.025,.975))
+  lines(yy, mm_post_mean, col=i+1, lwd=2)
+  color.btwn(yy, mm_post_ci[1,], mm_post_ci[2,], from=-10, to=10, col=rgb(0,0,0,.2))
+}
 
 mm_prior_mean = rowMeans(mm_prior)
-mm_prior_ci = apply(mm_prior, 1, quantile, c(.025,.975))
+mm_prior_ci = apply(mm_prior, 1, quantile, c(.01,.99))
 
-lines(yy, mm_prior_mean, col='red')
-color.btwn(yy, mm_prior_ci[1,], mm_prior_ci[2,], from=-10, to=10, col=rgb(1,0,0,.2))
+lines(yy, mm_prior_mean, col='black')
+color.btwn(yy, mm_prior_ci[1,], mm_prior_ci[2,], from=-10, to=10, col=rgb(0,0,0,.2))
 abline(v=0)
 #for (i in 1:NCOL(bb)) lines(yy, bb[,i], col='grey')
 #for (i in 1:NCOL(mm_post)) lines(yy,mm_post[,i], col='blue')
@@ -442,11 +443,11 @@ for (i in 1:I) for (j in 1:J) {
   h = max(pp_den$y, dat_den$y)
 
   plot(pp_den, bty='n', col='blue', lwd=2, ylim=c(0,h), fg='grey',
-       main=paste0('positive y: i=',i,', j=',j), xlim=c(thresh,7))
+       main=paste0('positive y: i=',i,', j=',j), xlim=c(thresh,7*1.2))
   lines(dat_den, col='grey', lwd=2)
 
   msg = paste0('P(Z=0) for missing y: ', round(pz0_missy[i,j],2))
-  x_pos = dat_lim[2] * .8
+  x_pos = 7 * .8
   y_pos = h / 2
   text(x_pos, y_pos, msg)
 }
