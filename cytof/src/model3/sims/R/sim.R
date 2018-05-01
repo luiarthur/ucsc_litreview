@@ -110,8 +110,8 @@ mmp = miss_mech_params(y=c(-6, -2.5, -1.0), p=c(.1, .99, .01))
 
 prior$c0 = mmp['c0']
 prior$c1 = mmp['c1']
-prior$m_beta0 = mmp['b0']; prior$s2_beta0 = .0001 
-prior$m_beta1 = mmp['b1']; prior$s2_beta1 = .0001
+prior$m_beta0 = mmp['b0']; prior$s2_beta0 = .001 
+prior$m_beta1 = mmp['b1']; prior$s2_beta1 = .001
 prior$cs_beta0 = .1
 prior$cs_beta1 = .1
 

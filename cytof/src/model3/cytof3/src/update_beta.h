@@ -47,6 +47,8 @@ void update_beta1i(State &state, const Data &data, const Prior &prior, int i){
                           state.beta_0(i), b1i, prior.c0, prior.c1));
         }
       }
+    } else {
+      ll = -INFINITY;
     }
     
     return lp + ll;
