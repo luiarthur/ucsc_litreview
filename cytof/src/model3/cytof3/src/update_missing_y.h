@@ -13,10 +13,15 @@
 
 void update_missing_yinj(State &state, const Data &data, const Prior &prior, int i, int n, int j){
   const int z = state.Z(j, state.lam[i](n));
+  const int lg = 0; // no log density
+  const int l = state.gam[i](n,j);
 
   auto log_fc = [&](double y_inj) {
     double fc = 0;
-    fc = dmixture(state, data, prior, z, i, n, j);
+    //fc = dmixture(state, data, prior, z, i, n, j);
+    fc = R::dnorm(state.missing_y[i](n,j), 
+                  get_mus_z(state, z)->at(l),
+                  sqrt(get_sig2_z(state, z)->at(i,l)), lg);
     fc *= prob_miss(y_inj, state.beta_0(i), state.beta_1(i), prior.c0, prior.c1);
 
     return log(fc);

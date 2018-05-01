@@ -3,21 +3,31 @@
 simImgPath="../../../src/model3/sims/out/"
 simName="sim_locked_beta1_K20_N10000/"
 outdir="img/sim/"
-
-#simName="locked_beta1_K20/"
-#outdir="img/cb/"
-
 mkdir -p $outdir
+
+cbSimName="cb_locked_beta1_K20/"
+cbOutdir="img/cb/"
+mkdir -p $cbOutdir
 
 I="1 2 3"
 for i in $I; do
   #pdfPage ${imgPath}/${simName}/"Z_true_byW.pdf" $i
   #mv ${imgPath}/${simName}/"Z_true_byW_p${i}.pdf" img/
 
-  cp ${simImgPath}/${simName}/"Z_true_all.pdf" $outdir
   cp ${simImgPath}/${simName}/"YZ00${i}.png" $outdir
   cp ${simImgPath}/${simName}/"Y00${i}.png" $outdir
   cp ${simImgPath}/${simName}/"Ysorted00${i}.png" $outdir
-  cp ${simImgPath}/${simName}/"y_hist.pdf" $outdir
-  cp ${simImgPath}/${simName}/"sim.R" $outdir
 done
+
+cp ${simImgPath}/${simName}/"Z_true_all.pdf" $outdir
+cp ${simImgPath}/${simName}/"y_hist.pdf" $outdir
+cp ${simImgPath}/${simName}/"sim.R" $outdir
+cp ${simImgPath}/${simName}/"pp_obs.pdf" $outdir
+cp ${simImgPath}/${simName}/"pz0_missing_y.txt" $outdir
+
+#### CB ###
+#I="1 2 3"
+#for i in $I; do
+#  cp ${simImgPath}/${cbSimName}/"YZ00${i}.png" $outdir
+#done
+
