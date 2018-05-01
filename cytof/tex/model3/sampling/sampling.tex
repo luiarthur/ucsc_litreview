@@ -119,6 +119,7 @@
 %%% Graphing
 \def\beginmyfig{\begin{figure}[H]\center}
 \def\endmyfig{\end{figure}}
+\usepackage{pgffor}
 %}}}1
 
 \title{Bayesian Feature Allocation Models for Natural Killer Cell Repertoire Studies Using Mass Cytometry Data}
@@ -666,30 +667,48 @@ for each sample below each $y_i$.}
 \label{fig:sim-post-Z}
 \endmyfig
 
-\textbf{How to include this?} \\
-\textbf{Posterior Predictive for positive $\y$} \\
-\textbf{Posterior Prob $Z_{inj} == 0$ for missing $y_{inj}$} \\
 
 %%% cb-proj1 %%%
 \subsection{Cord Blood Data}
 In this section we fit the proposed model to a real data set comprising
-cord-blood samples from three patients ($I=3$), with sample sizes $(41474,
-10454, 5177)$, for $J=32$ markers. 2000 samples from the posterior distribution
-were obtained after a burn-in period of 1000 iterations.
+cord-blood samples from three patients ($I=3$), with sample sizes $N=(41474,
+10454, 5177)$, for $J=32$ markers.Figure \ref{fig:cb-Y} shows the data. 
+\beginmyfig
+\includegraphics[scale=.2]{img/cb/Y001.png}
+\includegraphics[scale=.2]{img/cb/Y002.png}
+\includegraphics[scale=.2]{img/cb/Y003.png}
+\caption{Cord blood marker expression data $y$ for sample 1 (left), sample 2
+(middle), and sample 3 (right). Each column contains the expression levels of a
+marker for all cells in the sample. High expression levels are red, low
+expression levels are blue, missing values are white.}
+\label{fig:cb-Y}
+\endmyfig
 
-%\textbf{Posterior Estimate for $\bZ$ and $W$}
-%\beginmyfig
-%\includegraphics[scale=.3]{img/sim/YZ001.png}
-%\includegraphics[scale=.3]{img/sim/YZ002.png}
-%\includegraphics[scale=.3]{img/sim/YZ003.png}
-%\caption{$y$ sorted by a point-estimate of their cell-types ($\lambda$), for
-%each sample.  Point-estimates of $\Z$ (sorted by $W_i$) and $W_i$ are provided
-%for each sample below each $y_i$.}
-%\label{fig:sim-post-Z}
-%\endmyfig
+\textbf{Posterior Estimate for $\bZ$ and $W$}
 
-
-
+2000 samples from the posterior distribution were obtained after a burn-in
+period of 1000 iterations. The results are summarized in Figure \ref{fig:cb-post-Z}.
+In the top panel, the observations are sorted by a posterior estimate of their
+cell-types, with the more predominant cell-types placed toward the bottom. 
+The binary matrices in the lower panel show the 90\% most frequent cell-types.
+%
+\beginmyfig
+\includegraphics[scale=.2]{img/cb/YZ001.png}
+\includegraphics[scale=.2]{img/cb/YZ002.png}
+\includegraphics[scale=.2]{img/cb/YZ003.png}
+\caption{CB data sorted by a point-estimate of their cell-types ($\lambda$), for
+each sample.  Point-estimates of $\Z$ (sorted by $W_i$) and $W_i$ are provided
+for each sample below each $y_i$.}
+\label{fig:cb-post-Z}
+\endmyfig
+%
+The model is able to group similar cells together and learn a reasonable
+underlying cell-type for those groups of cells. But it should be noted that the
+estimated $\bZ$ matrix for each sample contains different cell-types, but
+within each sample, the cell-types may be repeated or vary by only one marker.
+We would like the learned cell-types to be different rather than very similar
+(or repeated). We can impose this constraint using a repulsive prior for the
+cell-types ({\tt citation needed}).
 
 \subsection{Conclusions}
 
@@ -1161,6 +1180,14 @@ Therefore, \[
 Consequently, the full conditional for \(\bm{W}_i\) can be sampled from
 directly from a Dirichlet distribution of the form above.
 
+\section{Posterior Predictive for CB data}
+\foreach \ppp in {1,...,12}{
+  \beginmyfig \includegraphics[page=\ppp]{img/cb/y_hist.pdf} \endmyfig
+}
 
+\section{Posterior Predictive for Positive values of CB data}
+\foreach \ppp in {1,...,12}{
+  \beginmyfig \includegraphics[page=\ppp]{img/cb/pp_obs.pdf} \endmyfig
+}
 
 \end{document}
