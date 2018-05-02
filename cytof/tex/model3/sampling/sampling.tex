@@ -276,28 +276,39 @@ active features.  The number of columns with $\sum_{j=1}^J z_{jk} >0$ is random
 and it can be shown that the number of such columns follows
 \(\text{Poisson}(\alpha \sum_{j=1}^J j^{-1})\).   A prior distribution can be
 placed on \(\alpha\) to reflect uncertainty. A gamma prior is popular for
-$\alpha$ due to conjugacy.  \citet{teh2007stick} represented the IBP using the
+$\alpha$ due to conjugacy.  \cite{teh2007stick} represented the IBP using the
 stick-breaking construction similar to the stick-breaking representation of the
-Dirichlet process (DP).  \citet{williamson2010dependent} developed a dependent
-IBP (dIBP) to induce correlations between objects
-(rows) and to model multiple $\Z$s that can be dependent.
+Dirichlet process (DP).  \cite{williamson2010dependent} developed a dependent
+IBP (dIBP) to induce correlations between objects (rows) and to model multiple
+$\Z$s that can be dependent.
 
+%{\tt need to include Tamara's papers on feature allocation model, my papers on
+%  tumor heterogeneity. 
+%\begin{itemize}
+%\item ``Feature allocations, probability functions, and paintboxes.'',
+%  ``Combinatorial clustering and the beta negative binomial process.'' etc by
+%  Tamara \url{http://www.tamarabroderick.com/papers.html}
+%
+%\item ``Bay- clone: Bayesian nonparametric inference of tumor subclones using
+%  ngs data'' by Subhajit et al.
+% 
+%\item YX's works: ``Bayesian Inference for Latent Biologic Structure with
+%  Determinantal Point Processes'', "MAD Bayes for Tumor Heterogeneity Feature
+%  Allocation with Exponential Family Sampling"
+%  \url{http://www.ams.jhu.edu/~yxu70/pub.html}.
+%
+%\item There could be more.  Please search for those.
+%\end{itemize}
+%}
+The IBP has been extended so that the feature allocation matrix may contain
+integer values beyond 0 and 1 by replacing the Bernoulli distribution with an
+integer-supported distribution \citep{broderick2013feature}. Such models have
+been applied in topic modeling and computer vision
+\cite{broderick2015combinatorial} as well as in the study of tumor sub-clones
+\citep{sengupta2014bayclone}.
+%The IBP has been successfully applied in feature
+%allocation models to study tumor heterogeneity \citep{lee2016bayesian}, 
 
-
-{\tt need to include Tamara's papers on feature allocation model, my papers on tumor heterogeneity. 
-\begin{itemize}
-\item ``Feature allocations, probability functions, and paintboxes.'', ``Combinatorial clustering and the beta negative binomial process.'' etc by Tamara \url{http://www.tamarabroderick.com/papers.html}
-
-\item ``Bayesian Inference for Intra-Tumor Heterogeneity in Mutations and Copy Number Variation'', ``A Bayesian Feature Allocation Model for Tumor Heterogeneity.'' by me
-
-\item ``Bay- clone: Bayesian nonparametric inference of tumor subclones using ngs data'' by Subhajit et al.
- 
-\item YX's works: ``Bayesian Inference for Latent Biologic Structure with Determinantal Point Processes'', "MAD Bayes for Tumor Heterogeneity Feature Allocation with Exponential Family Sampling"  \url{http://www.ams.jhu.edu/~yxu70/pub.html}.
-
-\item There could be more.  Please search for those.
-\end{itemize}
-
-}
 
 \section{Project 1: }
 \subsection{Introduction}
@@ -420,13 +431,20 @@ where $\Phi(h \mid m, s)$ is the cumulative distribution function of the normal
 distribution with mean $m$ and variance $s$ and $\mathbb{I}(\cdot)$ is an
 indicator function having 1 if $\Phi(h_{jk} \mid 0, \Gamma_{jj}) < v_k$ or 0
 otherwise.  As $K \rightarrow \infty$, the limiting distribution of $Z$ is the
-IBP {\tt cite the paper}.  Interactions between $J$ markers in phenotypes can
-be modeled through $\bm G$.  Due to the multivariate probit construction for
-$\Z$, $\Gamma$ is not identifiable and it is common to restrict $\Gamma$ to be
-a correlation matrix.
+IBP \citep{friggiths2011indian}.  Interactions between $J$ markers in
+phenotypes can be modeled through $\bm G$.  Due to the multivariate probit
+construction for $\Z$, $\Gamma$ is not identifiable and it is common to
+restrict $\Gamma$ to be a correlation matrix. Prior distributions for
+correlation matrices have been proposed to handle such cases. Jointly uniform
+and marginally uniform prior distributions have been identified by
+\cite{barnard2000modeling} for correlation matrices. \cite{box2011bayesian}
+have noted that the Jeffreys' prior for correlation matrices is $p(\Gamma)
+\propto \abs{\Gamma}^{-(J+1)/2}$.  \cite{zhang2006sampling} presents more
+generalized and flexible priors which can be reduced to the two previous priors
+as special cases.
 %
-{\tt discuss a bit models for correlation matrix.  I will send you some
-references on models for correlation matrix.}
+%{\tt discuss a bit models for correlation matrix.  I will send you some
+%references on models for correlation matrix.}
 %
 %
 We let $\alpha \sim \G(a_\alpha, b_\alpha)$ with mean $a_\alpha/b_\alpha$.  
@@ -656,7 +674,7 @@ by a point-estimate for $W_i$.  These also resemble $W_i^\true$ but vary
 occasionally from the truth for smaller values of $W_i$. Only the cell-types
 that make up the top 90\% of cells are included in Figure \ref{fig:sim-post-Z}.
 
-\textbf{Posterior Estimate for $\bZ$ and $W$}
+%\textbf{Posterior Estimate for $\bZ$ and $W$}
 \beginmyfig
 \includegraphics[scale=.3]{img/sim/YZ001.png}
 \includegraphics[scale=.3]{img/sim/YZ002.png}
@@ -672,7 +690,11 @@ for each sample below each $y_i$.}
 \subsection{Cord Blood Data}
 In this section we fit the proposed model to a real data set comprising
 cord-blood samples from three patients ($I=3$), with sample sizes $N=(41474,
-10454, 5177)$, for $J=32$ markers.Figure \ref{fig:cb-Y} shows the data. 
+10454, 5177)$, for $J=32$ markers. Figure \ref{fig:cb-Y} shows the data. 
+Each panel in the figure represents a different sample.  Each column in the
+panels contains the expression levels of a marker across all cells in the
+sample.  High expression levels are red, low expression levels are blue,
+and missing values are white.
 \beginmyfig
 \includegraphics[scale=.2]{img/cb/Y001.png}
 \includegraphics[scale=.2]{img/cb/Y002.png}
@@ -683,38 +705,88 @@ marker for all cells in the sample. High expression levels are red, low
 expression levels are blue, missing values are white.}
 \label{fig:cb-Y}
 \endmyfig
-
-\textbf{Posterior Estimate for $\bZ$ and $W$}
+Note that some columns (markers) consists of mostly missing values. For those
+columns, the model will rely heavily on the prior missing mechanism
+to impute the missing values.
 
 2000 samples from the posterior distribution were obtained after a burn-in
-period of 1000 iterations. The results are summarized in Figure \ref{fig:cb-post-Z}.
-In the top panel, the observations are sorted by a posterior estimate of their
-cell-types, with the more predominant cell-types placed toward the bottom. 
-The binary matrices in the lower panel show the 90\% most frequent cell-types.
+period of 1000 iterations. The results are summarized in Figure
+\ref{fig:cb-post-Z}.  In the top panel, the observations are sorted by a
+posterior estimate of their cell-types, with the more predominant cell-types
+placed toward the bottom.  The binary matrices in the lower panel show the 90\%
+most frequent cell-types.
 %
 \beginmyfig
 \includegraphics[scale=.2]{img/cb/YZ001.png}
 \includegraphics[scale=.2]{img/cb/YZ002.png}
 \includegraphics[scale=.2]{img/cb/YZ003.png}
 \caption{CB data sorted by a point-estimate of their cell-types ($\lambda$), for
-each sample.  Point-estimates of $\Z$ (sorted by $W_i$) and $W_i$ are provided
+each sample.  Point-estimates of $\Z_i$ (sorted by $W_i$) and $W_i$ are provided
 for each sample below each $y_i$.}
 \label{fig:cb-post-Z}
 \endmyfig
 %
-The model is able to group similar cells together and learn a reasonable
-underlying cell-type for those groups of cells. But it should be noted that the
-estimated $\bZ$ matrix for each sample contains different cell-types, but
-within each sample, the cell-types may be repeated or vary by only one marker.
-We would like the learned cell-types to be different rather than very similar
-(or repeated). We can impose this constraint using a repulsive prior for the
-cell-types ({\tt citation needed}).
+The model is able to group similar cells together and learn reasonable
+underlying cell-types for those groups of cells. But it should be noted that
+the estimated $\bZ$ matrix for each sample contains different cell-types.
+Moreover, within each sample, the cell-types may be repeated or vary by only
+one marker. We would like the learned cell-types to be different rather than
+very similar (or repeated). We can impose this constraint using a repulsive
+mixture prior \citep{petralia2012repulsive} for the cell-types. This serves as
+the motivation for Project 2, where we impose more structure in the prior 
+specification of the latent feature matrix $\bZ$ so that similar cell-types
+appearing in the matrix is discouraged, while distinctness is encouraged.
+
+Finally, it can be seen that the different samples consist of different
+sub-populations of NK-cells though some cell-types are shared across samples.
+Hence, we see that information can be borrowed across multiple samples to
+discover common cell-types across samples.
+
+\textbf{Assessing Model Fit}
+
+One way to assess model fit is through comparing the posterior predictive
+distribution to the data. Since the data contains missing values, we compare
+the posterior predictive density to the observed data augmented with the
+posterior mean of the imputed data for each sample and marker.  We have
+included these figures in Appendix \ref{sec:cb-pp}. 
+At the top of each sub-figure, the sample ($i$) and marker ($j$) are listed.
+The statistic $Z_ij$ mean refers to the posterior mean proportion of cells
+that express marker $j$ in sample $i$. We expect this statistic to be close 
+to one if the distribution is tipped more to the positive side, and close to
+zero otherwise.  Within the figures, the thick grey line is the posterior
+predictive density, and the red line is the data augmented with the posterior
+mean of the imputed values.  The thin grey line is the observed data augmented
+with one sample from the posterior distribution of the imputed values.
+
+Another way to assess model fit is through comparing the observed data
+distribution to the posterior predictive distribution of non-missing data.
+This requires storing $\gamma_{inj}$ at each iteration of the MCMC and is quite
+expensive storage-wise. A compromise is to compare the observed data having
+positive values to the positive values in the posterior predictive
+distribution.  This comparison is provided in Appendix
+\ref{sec:cb-pp-positive}. The blue line represents the posterior predictive 
+distribution for $y>0$, and the grey line represents the observed data density
+for $y>0$. The fit is mostly good but can be poor when the number of
+observations is small. The figures are annotated with a statistic $\hat
+P(Z=0\mid m=1, \text{data})$, which is the posterior mean probability that an
+observation recorded as missing will not express a marker. We expect this
+quantity to be close to 1. This is generally the case, except for samples and
+markers where there are only a few missing values and most of the expression
+levels are high.
+
 
 \subsection{Conclusions}
+We have proposed a Bayesian feature allocation model for studying NK-cell
+diversity from mass cytometry data. We used a simulation study to show that our
+model is able to recover the true latent feature allocation matrix generating
+the observed data. Through providing an informed prior distribution on the
+missing mechanism, we are able to reasonably impute missing values to obtain a
+full dataset.  When applied to real cord blood data, we find that the
+cell-types learned tend to be similar, and sometimes repeated. This can be
+remedied using a repulsive mixture prior and will be included in Project 2.
+
 
 \section{Project 2: Repulsive Feature Allocation Model}
-
-
 
 
 \bibliography{litreview.bib}
@@ -722,8 +794,12 @@ cell-types ({\tt citation needed}).
 
 \appendix
 \section{Posterior Computation for Project 1}
-{\tt Please write a short intro about the posterior sampling and reorganize the full conditionals }
-
+%{\tt Please write a short intro about the posterior sampling and reorganize the
+%full conditionals }
+This section presents detailed derivations of the full conditional
+distributions for each model parameter. Using traditional Markov
+chain Monte Carlo (MCMC), we can sample from the joint posterior 
+distribution of the parameters.
 
 To sample from a distribution which is otherwise difficult to sample
 from, the Metropolis-Hastings algorithm can be used. This is
@@ -797,112 +873,147 @@ Some common parameter transformations are therefore presented here:
 \end{enumerate}
 
 
-{\tt instead of subsections, we may do ``itemize'' for full conditionals.  I commented out the full conditionals temporarily since it gives some errors in compiling.  Please comment in as you revise. }
+%{\tt instead of subsections, we may do ``itemize'' for full conditionals.  I
+%commented out the full conditionals temporarily since it gives some errors in
+%compiling.  Please comment in as you revise. }
 
+\vspace{5em}
+\hrule
+\vspace{5em}
 
+% fc-v
+\textbf{Full Conditional for $\bm v$}
 
-%\end{document}
+The prior distribution for \(v_k\) are
+\(v_k \mid \alpha \ind \Be(\alpha/K, 1)\), for \(k = 1,...,K\). So,
+\(p(v_k \mid \alpha) = \alpha v_k^{\alpha/K-1}\).
 
-\subsection{\texorpdfstring{Full Conditional for
-\(\bm \beta\)}{Full Conditional for \textbackslash{}bm \textbackslash{}beta}}\label{full-conditional-for-bm-beta}
-
-Define \(f_{inj}\) to be
+Let \(S = \bc{(i,n)\colon \lin = k}\).
 
 \begin{align*}
-f_{inj} &:= P(m_{inj} \mid p_{inj}, y_{inj}) \\
-&= p_{inj}^{m_{inj}} (1-p_{inj})^{1 - m_{inj}} \\
-&= \left(\frac{1}{1+e^{-x_{inj}}} \right)^{m_{inj}}\left(\frac{1}{1+e^{x_{inj}}} \right)^{1-m_{inj}},
+p(v_k \mid \y, \rest) &\propto p(v_k) \prod_{j=1}^J\prod_{(i,n)\in S} p(\y \mid v_k, \rest) \\
+&\propto (v_k)^{\alpha/K-1} \prod_{j=1}^J \prod_{(i,n)\in S}
+\sum_{\ell=1}^{L^{Z_{jk}}} \eta^{Z_{jk}}_{ij\ell} \cdot
+\N(y_{inj} \mid \mus_{Z_{jk}\ell}, \sss_{Z_{jk}i\ell})
 \end{align*}
+
+\mhLogitSpiel{v_k}{\xi}
+
+Note also that \(\mus_{Z_{jk}\ell}\) and \(\sss_{Z_{jk}i\ell}\) are
+functions of \(v_k\), and should be computed accordingly. Moreover, we
+will only recompute the likelihood (in the metropolis acceptance ratio)
+when \(Z_{jk}\) becomes different.
+\vspace{2em}
+
+
+% fc-alpha
+\textbf{Full Conditional for $\alpha$}
+
+\begin{align*}
+p(\alpha \mid \y, \rest) &\propto p(\alpha) \times \prod_{k=1}^K p(v_k \mid \alpha) \\
+&\propto \alpha^{a_\alpha - 1} \exp\bc{-b_\alpha \alpha} \times \prod_{k=1}^K 
+\alpha~v_k^{\alpha/K} \\
+&\propto \alpha^{a_\alpha + K -1} \exp\bc{-\alpha\p{b_\alpha - 
+\frac{\sum_{k=1}^K \log v_k}{K}}}
+\end{align*}
+
+\[
+\therefore \alpha \mid \y, \rest \sim 
+\G\p{a_\alpha + K,~ b_\alpha - \frac{\sum_{k=1}^K \log v_k}{K}}
+\]
+\vspace{2em}
+
+
+% fc-H
+\textbf{Full Conditional for $\bm H$}
+
+The prior for \(\h_k\) is \(\h_k \sim \N_J(0, \Gamma)\). We can
+analytically compute the conditional distribution
+\(h_{j,k} \mid \h_{-j,k}\), which is
+
+\[
+h_{jk}  \mid \h_{-j,k} \sim \N(m_j, S^2_j),
+\]
 
 where
 
-\begin{align*}
-  x_{inj} &:= \begin{cases}
-  \beta_{0i} - \beta_{1i}(y_{inj}-c_0)^2, & \text{if } y_{inj} < c_0\nonumber \\
-  \beta_{0i} - \beta_{1i}c_1\sqrt{y_{inj}-c_0}, & \text{otherwise}, \nonumber \\
-  \end{cases}\\
-\end{align*}
+\[
+\begin{cases}
+m_j &= \bm G_{j,-j} \bm G_{-j,-j}^{-1}(\h_{-j,k})\\
+S_j^2 &= \bm G_{j,j} - \bm G_{j,-j}\bm G_{-j,-j}^{-1}\bm G_{-j,j}\\
+\end{cases}
+\]
 
-where \(c_0\) and \(c_1\) are real constant, $\beta_{0i} \in \mathbb{R}$, and
-$\beta_{1i} > 0$.
-One way to determine a prior for the missing mechanism is to first select three
-points to constrain the missing mechanism $(c_\text{low}, p_\text{low})$,
-$(c_0, p_0)$, and $(c_\text{high}, p_\text{high})$, and then 
-solve for $\beta_0$, $\beta_1$, and $c_1$. Figure \ref{fig:prob-miss-eg} shows
-an example missing mechanism where $(c_\text{low}, p_\text{low}) = (-6,0.1)$,
-$(c_0, p_0)=(-2,.99)$, and $(c_\text{high}, p_\text{high}) = (-1,0.01)$.
-\beginmyfig
-\includegraphics[scale=.5]{img/prob_miss_example.pdf}
-\caption{Example missing mechanism. The blue points serve as guides in
-determining a missing mechanism. Values for $\beta$ and $c$ can be solved for
-through a system of equations.}
-\label{fig:prob-miss-eg}
-\endmyfig
+and the notation \(\h_{-j,k}\) refers to the vector \(h_k\) excluding
+the \(j^{th}\) element. Likewise, \(\bm G_{-j,k}\) refers to the
+\(k^{th}\) column of the matrix \(\bm G\) excluding the \(j^{th}\) row.
 
-Through simple algebra, we can solve for $\beta$ and $c_0$ as follows:
-\begin{align*}
-  \beta_0 &:= \logit(p_0) \\
-  \beta_1 &:= \frac{\beta_0 - \logit(p_\text{low})}{(y_\text{low} - c_0)^2} \\
-  c_1 &:= \frac{\beta_0 - \logit(p_\text{high})}{\beta_1 ~ \sqrt{y_\text{high} - c_0} }. \\
-\end{align*}
-Hence, specifying three critical points in the missing mechanism can guide
-the construction of its prior distribution.
-
-
-\subsubsection{\texorpdfstring{Full Conditional for
-\(\beta_{0i}\)}{Full Conditional for \textbackslash{}beta\_\{0i\}}}\label{full-conditional-for-beta_0i}
-
-Recall that \(\beta_{0i} \iid \N(m_{\beta_0},s^2_{\beta_0})\).
+Note that if \(\bm G = \I_J\), then \(m_j=0\) and \(S_j^2 = 1\). Let
+\(S = \bc{(i,n)\colon \lin=k}\).
 
 \begin{align*}
-p(\beta_{0i} \mid \y, \rest) &\propto
-p(\beta_{0i}) \times \prod_{n=1}^{N_i} \prod_{j=1}^J f_{inj} \\
+p(h_{jk} \mid \y, \rest)  &\propto p(h_{jk}) \prod_{(i,n) \in S} p(y_{inj} \mid h_{jk}, \rest) \\
 %
-&\propto \exp\bc{\frac{-(\beta_{0i}-m_{\beta_0})^2}{2s^2_{\beta_0}}} \prod_{n=1}^{N_i} \prod_{j=1}^J f_{inj} \\
-\end{align*}
-
-\mhSpiel{\beta_{0i}}
-
-\subsubsection{\texorpdfstring{Full Conditional for
-\(\beta_{1i}\)}{Full Conditional for \textbackslash{}beta\_\{1i\}}}\label{full-conditional-for-beta_1i}
-
-Recall that $\beta_{1i}\ind \N^+(m_{\beta_1}, s^2_{\beta_1})$.
-%
-\begin{align*}
-p(\beta_{1i} \mid \y, \rest) &\propto
-p(\beta_{1i}) \times 
-\prod_{n=1}^{N_i} \prod_{j=1}^J f_{inj} \\
-%
-&\propto \exp\bc{-\frac{(\beta_{1i} - m_{\beta_1})^2}{2s^2_{\beta_1}}}
-\Ind{\beta_{1i} > 0}
-\prod_{n=1}^{N_i} \prod_{j=1}^J f_{inj} \\
-\end{align*}
-
-\mhLogSpiel{\beta_{1i}}{\xi}
-
-\subsection{\texorpdfstring{Full Conditional for Missing
-\(\bm \y\)}{Full Conditional for Missing \textbackslash{}bm \textbackslash{}y}}\label{full-conditional-for-missing-bm-y}
-
-\begin{align*}
-p(y_{inj} \mid m_{inj}=1, \rest) &\propto
-p(m_{inj} =1\mid y_{inj}, \rest) ~
-p(y_{inj} \mid \rest) \\
-%
-%&\propto
-%\exp\bc{\frac{-(y_{inj} - \mu_{inj})^2}{2\sigma^2_{inj}}}
-%f_{inj} \\
 &\propto
-p_{inj} 
-\sum_{\ell=1}^{L^{Z_{j\lin}}} \eta^{Z_{j\lin}}_{ij\ell} \cdot \N(y_{inj} \mid \mu^*_{Z_{jk}, \ell}, {\sigma^2}^\star_{i,Z_{j\lin},\ell}).
+\exp\bc{\frac{-(h_{jk} - m_j)^2}{2S_j^2}}
+ \prod_{j=1}^J \prod_{(i,n)\in S}
+\sum_{\ell=1}^{L^{Z_{jk}}} \eta^{Z_{jk}}_{ij\ell} \cdot
+\N(y_{inj} \mid \mus_{Z_{jk}\ell}, \sss_{Z_{jk}i\ell})
 \end{align*}
 
-\mhSpiel{y_{inj}}
+\mhSpiel{h_{jk}}
 
-Note that \(f_{inj}\) is a function of \(y_{inj}\) and should be
-computed accordingly.
+Note also that \(\mus_{Z_{jk}\ell}\) and \(\sss_{Z_{jk}i\ell}\) are
+functions of \(h_{jk}\), and should be computed accordingly. Moreover,
+we will only recompute the likelihood (in the metropolis acceptance
+ratio) when \(Z_{jk}\) becomes different.  
+\vspace{2em}
 
-\subsection{\texorpdfstring{Full Conditional for
-\(\bm\mu^\star\)}{Full Conditional for \textbackslash{}bm\textbackslash{}mu\^{}\star}}\label{full-conditional-for-bmmu}
+
+% fc-lam
+\textbf{Full Conditional for $\bm \lambda$}
+
+The prior for \(\lin\) is \(p(\lin = k \mid \bm W_i) = W_{ik}\).
+
+\begin{align*}
+p(\lin=k\mid \y,\rest) &\propto p(\lin=k) ~ p(\y \mid \lin=k, \rest) \\
+&\propto W_{ik}
+\prod_{j=1}^J 
+\p{
+  \sum_{\ell=1}^{L^{Z_{jk}}} \eta^{Z_{jk}}_{ij\ell} \cdot
+  \N(y_{inj} \mid 
+  \mus_{Z_{jk}\ell}, \sss_{Z_{jk}i\ell})
+}\\
+\end{align*}
+
+The normalizing constant is obtained by summing the last expression over
+\(k = 1,...,K\). Moreover, since \(k\) is discrete, a Gibbs update can
+be done on \(\lin\).
+
+\textbf{Full Conditional for $\bm W$}
+
+The prior for \(\bm{W}_i\) is \(\bm W_i \sim \Dir(d, \cdots, d)\). So
+the full conditional for \(\bm{W}_i\) is:
+
+\begin{align*}
+p(\bm W_i \mid \rest) \propto&~~ p(\bm{W}_i) \times \prod_{n=1}^{N_i} p(\lin \mid \bm{W}_i)\\
+\propto&~~ p(\bm{W}_i) \times \prod_{n=1}^{N_i}\prod_{k=1}^K W_{ik}^{\Ind{\lin=k}}\\
+\propto&~~ \prod_{k=1}^K W_{ik}^{d/K-1} \times \prod_{n=1}^{N_i}\prod_{k=1}^K W_{ik}^{\Ind{\lin=k}}\\
+\propto&~~ \prod_{k=1}^K W_{ik}^{\p{d/K + \sum_{n=1}^{N_i}\Ind{\lin=k}}-1}\\
+%
+\end{align*}
+
+Therefore, \[
+\bm{W}_i \mid \y,\rest ~\sim~ \Dir\p{d/K+\sum_{n=1}^{N_i}\Ind{\lambda_{i,n}=1},...,d/K+\sum_{n=1}^{N_i}\Ind{\lambda_{i,n}=K}} 
+\]
+
+Consequently, the full conditional for \(\bm{W}_i\) can be sampled from
+directly from a Dirichlet distribution of the form above.
+\vspace{2em}
+
+
+% fc-mu
+\textbf{Full Conditional for $\bm\mu^\star$}
 
 For \(\mus_{0\ell}\)g, let
 \(S_{0i\ell} = \bc{(i,n,j) : \p{Z_{j,\lin} = 0 ~\cap~ \gamma_{inj} = \ell}}\)g
@@ -962,9 +1073,11 @@ and \(|S_{1i\ell}|\) the cardinality of \(S_{1i\ell}\).
   \frac{\tau^2_1}{\musOnePostvarDenom}
 }
 \]
+\vspace{2em}
 
-\subsection{\texorpdfstring{Full Conditional for
-\(\bm{{\sigma^2}}^*\)}{Full Conditional for \textbackslash{}bm\{\{\textbackslash{}sigma\^{}2\}\}\^{}*}}\label{full-conditional-for-bmsigma2}
+
+% fc-sig2
+\textbf{Full Conditional for $\bm{{\sigma^2}}^*$}
 
 Let
 \(S_{0i\ell} = \bc{(i, n,j): Z_{j,\lin} = 0 ~\cap~ \gamma_{inj}=\ell}\),
@@ -998,9 +1111,11 @@ Then, the full conditional for \(\sss_{1i\ell}\) is \[
 \frac{(y_{inj}-\mus_{1\ell})^2}{2}
 }.
 \]
+\vspace{2em}
 
-\subsection{\texorpdfstring{Full Conditional for
-\(s_i\)}{Full Conditional for s\_i}}\label{full-conditional-for-s_i}
+
+% fc-s
+\textbf{Full Conditional for $s_i$}
 
 \begin{align*}
 p(s_i \mid \y, \rest) &\propto p(s_i) \times \prod_{z=0}^1 \prod_{\ell=1}^{L^z} p(\sss_{zi\ell} \mid s_i)\\
@@ -1012,9 +1127,11 @@ p(s_i \mid \y, \rest) &\propto p(s_i) \times \prod_{z=0}^1 \prod_{\ell=1}^{L^z} 
 \therefore s_i \mid \y, \rest \sim 
 \G\p{a_s + (L^0 + L^1)a_\sigma, ~~ b_s + \sum_{z=0}^1 \sum_{\ell=1}^{L^z} \frac{1}{\sss_{zi\ell}} }.
 \]
+\vspace{2em}
 
-\subsection{\texorpdfstring{Full Conditional for
-\(\bm\gamma\)}{Full Conditional for \textbackslash{}bm\textbackslash{}gamma}}\label{full-conditional-for-bmgamma}
+
+% fc-gam
+\textbf{Full Conditional for $\bm\gamma$}
 
 The prior for \(\gamma_{inj}\) is
 \(p(\gamma_{inj} = \ell \mid Z_{j\lin}=z, \eta^z_{ij\ell}) = \eta^z_{ij\ell}\),
@@ -1032,9 +1149,11 @@ p(\gamma_{inj}=\ell \mid \y, Z_{j\lin}=z, \rest) &\propto p(\gamma_{inj}=\ell) \
 The normalizing constant is obtained by summing the last expression over
 \(\ell = 1,...,L^z\). Moreover, since \(\ell\) is discrete, a Gibbs
 update can be done on \(\gamma_{inj}\).
+\vspace{2em}
 
-\subsection{\texorpdfstring{Full Conditional for
-\(\bm\eta\)}{Full Conditional for \textbackslash{}bm\textbackslash{}eta}}\label{full-conditional-for-bmeta}
+
+% fc-eta
+\textbf{Full Conditional for $\bm\eta$}
 
 The prior for \(\bm\eta^z_{ij}\) is
 \(\bm \eta^z_{ij} \sim \Dir_{L^z}(a_{\eta^z})\), for \(z\in\bc{0,1}\).
@@ -1056,136 +1175,121 @@ Therefore, \[
 \(a^*_\ell = a_{\eta^z}/L^z+\sum_{n=1}^{N_i}\Ind{\gamma_{inj}=\ell ~\cap~ Z_{j\lin}=z}\).
 Consequently, the full conditional for \(\bm{\eta}^z_{ij}\) can be
 sampled from directly from a Dirichlet distribution of the form above.
+\vspace{2em}
 
-\subsection{\texorpdfstring{Full Conditional for
-\(\bm v\)}{Full Conditional for \textbackslash{}bm v}}\label{full-conditional-for-bm-v}
 
-The prior distribution for \(v_k\) are
-\(v_k \mid \alpha \ind \Be(\alpha/K, 1)\), for \(k = 1,...,K\). So,
-\(p(v_k \mid \alpha) = \alpha v_k^{\alpha/K-1}\).
+% fc-beta
+\textbf{Full Conditional for $\bm\beta$}
 
-Let \(S = \bc{(i,n)\colon \lin = k}\).
+Define \(f_{inj}\) to be
 
 \begin{align*}
-p(v_k \mid \y, \rest) &\propto p(v_k) \prod_{j=1}^J\prod_{(i,n)\in S} p(\y \mid v_k, \rest) \\
-&\propto (v_k)^{\alpha/K-1} \prod_{j=1}^J \prod_{(i,n)\in S}
-\sum_{\ell=1}^{L^{Z_{jk}}} \eta^{Z_{jk}}_{ij\ell} \cdot
-\N(y_{inj} \mid \mus_{Z_{jk}\ell}, \sss_{Z_{jk}i\ell})
+f_{inj} &:= P(m_{inj} \mid p_{inj}, y_{inj}) \\
+&= p_{inj}^{m_{inj}} (1-p_{inj})^{1 - m_{inj}} \\
+&= \left(\frac{1}{1+e^{-x_{inj}}} \right)^{m_{inj}}\left(\frac{1}{1+e^{x_{inj}}} \right)^{1-m_{inj}},
 \end{align*}
-
-\mhLogitSpiel{v_k}{\xi}
-
-Note also that \(\mus_{Z_{jk}\ell}\) and \(\sss_{Z_{jk}i\ell}\) are
-functions of \(v_k\), and should be computed accordingly. Moreover, we
-will only recompute the likelihood (in the metropolis acceptance ratio)
-when \(Z_{jk}\) becomes different.
-
-\subsection{\texorpdfstring{Full Conditional for
-\(\alpha\)}{Full Conditional for \textbackslash{}alpha}}\label{full-conditional-for-alpha}
-
-\begin{align*}
-p(\alpha \mid \y, \rest) &\propto p(\alpha) \times \prod_{k=1}^K p(v_k \mid \alpha) \\
-&\propto \alpha^{a_\alpha - 1} \exp\bc{-b_\alpha \alpha} \times \prod_{k=1}^K 
-\alpha~v_k^{\alpha/K} \\
-&\propto \alpha^{a_\alpha + K -1} \exp\bc{-\alpha\p{b_\alpha - 
-\frac{\sum_{k=1}^K \log v_k}{K}}}
-\end{align*}
-
-\[
-\therefore \alpha \mid \y, \rest \sim 
-\G\p{a_\alpha + K,~ b_\alpha - \frac{\sum_{k=1}^K \log v_k}{K}}
-\]
-
-\subsection{\texorpdfstring{Full Conditional for
-\(\bm H\)}{Full Conditional for \textbackslash{}bm H}}\label{full-conditional-for-bm-h}
-
-The prior for \(\h_k\) is \(\h_k \sim \N_J(0, \Gamma)\). We can
-analytically compute the conditional distribution
-\(h_{j,k} \mid \h_{-j,k}\), which is
-
-\[
-h_{jk}  \mid \h_{-j,k} \sim \N(m_j, S^2_j),
-\]
 
 where
 
-\[
-\begin{cases}
-m_j &= \bm G_{j,-j} \bm G_{-j,-j}^{-1}(\h_{-j,k})\\
-S_j^2 &= \bm G_{j,j} - \bm G_{j,-j}\bm G_{-j,-j}^{-1}\bm G_{-j,j}\\
-\end{cases}
-\]
+\begin{align*}
+  x_{inj} &:= \begin{cases}
+  \beta_{0i} - \beta_{1i}(y_{inj}-c_0)^2, & \text{if } y_{inj} < c_0\nonumber \\
+  \beta_{0i} - \beta_{1i}c_1\sqrt{y_{inj}-c_0}, & \text{otherwise}, \nonumber \\
+  \end{cases}\\
+\end{align*}
 
-and the notation \(\h_{-j,k}\) refers to the vector \(h_k\) excluding
-the \(j^{th}\) element. Likewise, \(\bm G_{-j,k}\) refers to the
-\(k^{th}\) column of the matrix \(\bm G\) excluding the \(j^{th}\) row.
+where \(c_0\) and \(c_1\) are real constant, $\beta_{0i} \in \mathbb{R}$, and
+$\beta_{1i} > 0$.
+One way to determine a prior for the missing mechanism is to first select three
+points to constrain the missing mechanism $(c_\text{low}, p_\text{low})$,
+$(c_0, p_0)$, and $(c_\text{high}, p_\text{high})$, and then 
+solve for $\beta_0$, $\beta_1$, and $c_1$. Figure \ref{fig:prob-miss-eg} shows
+an example missing mechanism where $(c_\text{low}, p_\text{low}) = (-6,0.1)$,
+$(c_0, p_0)=(-2,.99)$, and $(c_\text{high}, p_\text{high}) = (-1,0.01)$.
+\beginmyfig
+\includegraphics[scale=.5]{img/prob_miss_example.pdf}
+\caption{Example missing mechanism. The blue points serve as guides in
+determining a missing mechanism. Values for $\beta$ and $c$ can be solved for
+through a system of equations.}
+\label{fig:prob-miss-eg}
+\endmyfig
 
-Note that if \(\bm G = \I_J\), then \(m_j=0\) and \(S_j^2 = 1\). Let
-\(S = \bc{(i,n)\colon \lin=k}\).
+Through simple algebra, we can solve for $\beta$ and $c_0$ as follows:
+\begin{align*}
+  \beta_0 &:= \logit(p_0) \\
+  \beta_1 &:= \frac{\beta_0 - \logit(p_\text{low})}{(y_\text{low} - c_0)^2} \\
+  c_1 &:= \frac{\beta_0 - \logit(p_\text{high})}{\beta_1 ~ \sqrt{y_\text{high} - c_0} }. \\
+\end{align*}
+Hence, specifying three critical points in the missing mechanism can guide
+the construction of its prior distribution.
+\vspace{2em}
+
+
+% fc-beta_0
+\textbf{Full Conditional for $\beta_{0i}$}
+
+Recall that \(\beta_{0i} \iid \N(m_{\beta_0},s^2_{\beta_0})\).
 
 \begin{align*}
-p(h_{jk} \mid \y, \rest)  &\propto p(h_{jk}) \prod_{(i,n) \in S} p(y_{inj} \mid h_{jk}, \rest) \\
+p(\beta_{0i} \mid \y, \rest) &\propto
+p(\beta_{0i}) \times \prod_{n=1}^{N_i} \prod_{j=1}^J f_{inj} \\
 %
+&\propto \exp\bc{\frac{-(\beta_{0i}-m_{\beta_0})^2}{2s^2_{\beta_0}}} \prod_{n=1}^{N_i} \prod_{j=1}^J f_{inj} \\
+\end{align*}
+
+\mhSpiel{\beta_{0i}}
+\vspace{2em}
+
+
+%fc-beta_1
+\textbf{Full Conditional for $\beta_{1i}$}
+
+Recall that $\beta_{1i}\ind \N^+(m_{\beta_1}, s^2_{\beta_1})$.
+%
+\begin{align*}
+p(\beta_{1i} \mid \y, \rest) &\propto
+p(\beta_{1i}) \times 
+\prod_{n=1}^{N_i} \prod_{j=1}^J f_{inj} \\
+%
+&\propto \exp\bc{-\frac{(\beta_{1i} - m_{\beta_1})^2}{2s^2_{\beta_1}}}
+\Ind{\beta_{1i} > 0}
+\prod_{n=1}^{N_i} \prod_{j=1}^J f_{inj} \\
+\end{align*}
+
+\mhLogSpiel{\beta_{1i}}{\xi}
+\vspace{2em}
+
+
+% fc-y
+\textbf{Full Conditional for Missing $\bm \y$}
+
+\begin{align*}
+p(y_{inj} \mid m_{inj}=1, \rest) &\propto
+p(m_{inj} =1\mid y_{inj}, \rest) ~
+p(y_{inj} \mid \rest) \\
+%
+%&\propto
+%\exp\bc{\frac{-(y_{inj} - \mu_{inj})^2}{2\sigma^2_{inj}}}
+%f_{inj} \\
 &\propto
-\exp\bc{\frac{-(h_{jk} - m_j)^2}{2S_j^2}}
- \prod_{j=1}^J \prod_{(i,n)\in S}
-\sum_{\ell=1}^{L^{Z_{jk}}} \eta^{Z_{jk}}_{ij\ell} \cdot
-\N(y_{inj} \mid \mus_{Z_{jk}\ell}, \sss_{Z_{jk}i\ell})
+p_{inj} 
+\sum_{\ell=1}^{L^{Z_{j\lin}}} \eta^{Z_{j\lin}}_{ij\ell} \cdot \N(y_{inj} \mid \mu^*_{Z_{jk}, \ell}, {\sigma^2}^\star_{i,Z_{j\lin},\ell}).
 \end{align*}
 
-\mhSpiel{h_{jk}}
+\mhSpiel{y_{inj}}
 
-Note also that \(\mus_{Z_{jk}\ell}\) and \(\sss_{Z_{jk}i\ell}\) are
-functions of \(h_{jk}\), and should be computed accordingly. Moreover,
-we will only recompute the likelihood (in the metropolis acceptance
-ratio) when \(Z_{jk}\) becomes different.  
-\subsection{\texorpdfstring{Full Conditional for
-\(\bm \lambda\)}{Full Conditional for \textbackslash{}bm \textbackslash{}lambda}}\label{full-conditional-for-bm-lambda}
+Note that \(f_{inj}\) is a function of \(y_{inj}\) and should be
+computed accordingly.
 
-The prior for \(\lin\) is \(p(\lin = k \mid \bm W_i) = W_{ik}\).
+\newpage
 
-\begin{align*}
-p(\lin=k\mid \y,\rest) &\propto p(\lin=k) ~ p(\y \mid \lin=k, \rest) \\
-&\propto W_{ik}
-\prod_{j=1}^J 
-\p{
-  \sum_{\ell=1}^{L^{Z_{jk}}} \eta^{Z_{jk}}_{ij\ell} \cdot
-  \N(y_{inj} \mid 
-  \mus_{Z_{jk}\ell}, \sss_{Z_{jk}i\ell})
-}\\
-\end{align*}
-
-The normalizing constant is obtained by summing the last expression over
-\(k = 1,...,K\). Moreover, since \(k\) is discrete, a Gibbs update can
-be done on \(\lin\).
-
-\subsection{\texorpdfstring{Full Conditional for
-\(\bm W\)}{Full Conditional for \textbackslash{}bm W}}\label{full-conditional-for-bm-w}
-
-The prior for \(\bm{W}_i\) is \(\bm W_i \sim \Dir(d, \cdots, d)\). So
-the full conditional for \(\bm{W}_i\) is:
-
-\begin{align*}
-p(\bm W_i \mid \rest) \propto&~~ p(\bm{W}_i) \times \prod_{n=1}^{N_i} p(\lin \mid \bm{W}_i)\\
-\propto&~~ p(\bm{W}_i) \times \prod_{n=1}^{N_i}\prod_{k=1}^K W_{ik}^{\Ind{\lin=k}}\\
-\propto&~~ \prod_{k=1}^K W_{ik}^{d/K-1} \times \prod_{n=1}^{N_i}\prod_{k=1}^K W_{ik}^{\Ind{\lin=k}}\\
-\propto&~~ \prod_{k=1}^K W_{ik}^{\p{d/K + \sum_{n=1}^{N_i}\Ind{\lin=k}}-1}\\
-%
-\end{align*}
-
-Therefore, \[
-\bm{W}_i \mid \y,\rest ~\sim~ \Dir\p{d/K+\sum_{n=1}^{N_i}\Ind{\lambda_{i,n}=1},...,d/K+\sum_{n=1}^{N_i}\Ind{\lambda_{i,n}=K}} 
-\]
-
-Consequently, the full conditional for \(\bm{W}_i\) can be sampled from
-directly from a Dirichlet distribution of the form above.
-
-\section{Posterior Predictive for CB data}
+%%% Many Graphs 
+\section{Posterior Predictive for CB data \label{sec:cb-pp}}
 \foreach \ppp in {1,...,12}{
   \beginmyfig \includegraphics[page=\ppp]{img/cb/y_hist.pdf} \endmyfig
 }
 
-\section{Posterior Predictive for Positive values of CB data}
+\section{Posterior Predictive for Positive values of CB data \label{sec:cb-pp-positive}}
 \foreach \ppp in {1,...,12}{
   \beginmyfig \includegraphics[page=\ppp]{img/cb/pp_obs.pdf} \endmyfig
 }
