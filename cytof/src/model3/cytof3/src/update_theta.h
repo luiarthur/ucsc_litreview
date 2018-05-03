@@ -25,7 +25,7 @@
 
 #include "my_timer.h" // TIME_CODE
 
-void update_theta(State &state, const Data &data, const Prior &prior, const Locked &locked, bool show_timings=false, int thin_some=1) {
+void update_theta(State &state, const Data &data, const Prior &prior, const Locked &locked, bool show_timings=false, int thin_some=1, bool use_repulsive=false) {
   //INIT_TIMER;
   if (show_timings) Rcout << std::endl;
 
@@ -39,10 +39,14 @@ void update_theta(State &state, const Data &data, const Prior &prior, const Lock
   TIME_CODE(show_timings, "s",   update_s(state, data, prior, locked));
 
   // metropolis
-  TIME_CODE(show_timings, "v", update_v(state, data, prior, locked));
-  TIME_CODE(show_timings, "H", update_H(state, data, prior, locked));
-  TIME_CODE(show_timings, "Z", update_Z(state, data, prior, locked));
-  //TIME_CODE(show_timings, "VHZ", update_vH(state, data, prior, locked));
+  if (!use_repulsive) {
+    TIME_CODE(show_timings, "v", update_v(state, data, prior, locked));
+    TIME_CODE(show_timings, "H", update_H(state, data, prior, locked));
+    TIME_CODE(show_timings, "Z", update_Z(state, data, prior, locked));
+    //TIME_CODE(show_timings, "VHZ", update_vH(state, data, prior, locked));
+  } else {
+    throw Rcpp::exception("In `update_theta`: `repulsive prior for Z` is not implemented.");
+  }
 
 
   // gibbs

@@ -27,8 +27,8 @@ BEGIN_RCPP
 END_RCPP
 }
 // fit_cytof_cpp
-std::vector<List> fit_cytof_cpp(const std::vector<Rcpp::NumericMatrix>& y, int B, int burn, List prior_ls, List locked_ls, List init_ls, int thin, int thin_some, int compute_loglike_every, int print_freq, int ncores, int joint_update_freq, bool show_timings, bool normalize_loglike, bool print_new_line, bool save_gam);
-RcppExport SEXP _cytof3_fit_cytof_cpp(SEXP ySEXP, SEXP BSEXP, SEXP burnSEXP, SEXP prior_lsSEXP, SEXP locked_lsSEXP, SEXP init_lsSEXP, SEXP thinSEXP, SEXP thin_someSEXP, SEXP compute_loglike_everySEXP, SEXP print_freqSEXP, SEXP ncoresSEXP, SEXP joint_update_freqSEXP, SEXP show_timingsSEXP, SEXP normalize_loglikeSEXP, SEXP print_new_lineSEXP, SEXP save_gamSEXP) {
+std::vector<List> fit_cytof_cpp(const std::vector<Rcpp::NumericMatrix>& y, int B, int burn, List prior_ls, List locked_ls, List init_ls, int thin, int thin_some, int compute_loglike_every, int print_freq, int ncores, int joint_update_freq, bool use_repulsive, bool show_timings, bool normalize_loglike, bool print_new_line, bool save_gam);
+RcppExport SEXP _cytof3_fit_cytof_cpp(SEXP ySEXP, SEXP BSEXP, SEXP burnSEXP, SEXP prior_lsSEXP, SEXP locked_lsSEXP, SEXP init_lsSEXP, SEXP thinSEXP, SEXP thin_someSEXP, SEXP compute_loglike_everySEXP, SEXP print_freqSEXP, SEXP ncoresSEXP, SEXP joint_update_freqSEXP, SEXP use_repulsiveSEXP, SEXP show_timingsSEXP, SEXP normalize_loglikeSEXP, SEXP print_new_lineSEXP, SEXP save_gamSEXP) {
 BEGIN_RCPP
     Rcpp::RObject rcpp_result_gen;
     Rcpp::RNGScope rcpp_rngScope_gen;
@@ -44,11 +44,12 @@ BEGIN_RCPP
     Rcpp::traits::input_parameter< int >::type print_freq(print_freqSEXP);
     Rcpp::traits::input_parameter< int >::type ncores(ncoresSEXP);
     Rcpp::traits::input_parameter< int >::type joint_update_freq(joint_update_freqSEXP);
+    Rcpp::traits::input_parameter< bool >::type use_repulsive(use_repulsiveSEXP);
     Rcpp::traits::input_parameter< bool >::type show_timings(show_timingsSEXP);
     Rcpp::traits::input_parameter< bool >::type normalize_loglike(normalize_loglikeSEXP);
     Rcpp::traits::input_parameter< bool >::type print_new_line(print_new_lineSEXP);
     Rcpp::traits::input_parameter< bool >::type save_gam(save_gamSEXP);
-    rcpp_result_gen = Rcpp::wrap(fit_cytof_cpp(y, B, burn, prior_ls, locked_ls, init_ls, thin, thin_some, compute_loglike_every, print_freq, ncores, joint_update_freq, show_timings, normalize_loglike, print_new_line, save_gam));
+    rcpp_result_gen = Rcpp::wrap(fit_cytof_cpp(y, B, burn, prior_ls, locked_ls, init_ls, thin, thin_some, compute_loglike_every, print_freq, ncores, joint_update_freq, use_repulsive, show_timings, normalize_loglike, print_new_line, save_gam));
     return rcpp_result_gen;
 END_RCPP
 }
@@ -67,7 +68,7 @@ END_RCPP
 static const R_CallMethodDef CallEntries[] = {
     {"_cytof3_cytof3_unit_tests_cpp", (DL_FUNC) &_cytof3_cytof3_unit_tests_cpp, 0},
     {"_cytof3_test_gen_data_obj", (DL_FUNC) &_cytof3_test_gen_data_obj, 1},
-    {"_cytof3_fit_cytof_cpp", (DL_FUNC) &_cytof3_fit_cytof_cpp, 16},
+    {"_cytof3_fit_cytof_cpp", (DL_FUNC) &_cytof3_fit_cytof_cpp, 17},
     {"_cytof3_shuffle_mat", (DL_FUNC) &_cytof3_shuffle_mat, 1},
     {NULL, NULL, 0}
 };

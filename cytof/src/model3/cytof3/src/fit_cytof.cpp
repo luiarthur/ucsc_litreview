@@ -38,6 +38,7 @@ std::vector<List> fit_cytof_cpp(
   int thin=1, int thin_some=1,
   int compute_loglike_every=1, int print_freq=10, int ncores=1,
   int joint_update_freq=0,
+  bool use_repulsive=false,
   bool show_timings=false, 
   bool normalize_loglike=false,
   bool print_new_line=false,
@@ -58,7 +59,7 @@ std::vector<List> fit_cytof_cpp(
   auto update = [&](State &state) {
     for (int t=0; t<thin; t++) {
       TIME_CODE(show_timings, "theta", 
-        update_theta(state, data, prior, locked, show_timings, thin_some)
+        update_theta(state, data, prior, locked, show_timings, thin_some, use_repulsive)
       );
     }
 

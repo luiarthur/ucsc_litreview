@@ -75,7 +75,7 @@ void update_v_jointly(State &state, const Data &data, const Prior &prior, const 
 }
 
 void update_v_sequentially(State &state, const Data &data, const Prior &prior, const Locked &locked){
- throw Rcpp::exception("In `update_v`: `joint_update=false` is not implemented.");
+  throw Rcpp::exception("In `update_v`: `joint_update=false` is not implemented.");
 }
 
 void update_v(State &state, const Data &data, const Prior &prior, const Locked &locked, bool joint_update=true){
