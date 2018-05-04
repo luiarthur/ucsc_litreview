@@ -67,12 +67,12 @@ update = function(state) {
   state
 }
 
-out = gibbs(init=list(b0=0,b1=0), update, B=3000, burn=2000, print_every=100)
+out = gibbs(init=list(b0=0,b1=0), update, B=3000, burn=10, print_every=100)
 #print(p)
 b0_out = sapply(out, function(o) o$b0)
 b1_out = sapply(out, function(o) o$b1)
 plotPost(b0_out,float=TRUE); abline(v=b0, lty=2); abline(v=mod$coef[1], col='blue')
-plotPost(b1_out,float=TRUE); abline(v=b1, lty=2); abline(v=mod$coef[2], col='blue')
+plotPost(b1_out,float=TRUE); abline(v=b1, lty=2); abline(v=mod$coef[2], col='blue') 
 
 effectiveSize(as.mcmc(b0_out))
 raftery.diag(as.mcmc(b0_out))
