@@ -153,8 +153,10 @@ locked = gen_default_locked(init)
 #locked$mus_1 = TRUE  # TODO: Can I make this random?
 
 ### preimpute y for initialization
-preimpute_y = preimpute(y)
-init$missing_y = preimpute_y
+#preimpute_y = preimpute(y)
+#init$missing_y = preimpute_y
+init$missing_y = y
+for (i in 1:I) init$missing_y[[i]][is.na(y[[i]])] = prior$c0
 
 ### Save Checkpoint###
 #save(prior, init, locked, dat, file=fileDest('dat.rda'))
@@ -442,9 +444,9 @@ for (i in 1:I) for (j in 1:J) {
   dat_den = density(y[[i]][which(y[[i]][,j] > thresh) ,j])
   h = max(pp_den$y, dat_den$y)
 
-  plot(pp_den, bty='n', col='blue', lwd=2, ylim=c(0,h), fg='grey',
+  plot(dat_den, bty='n', col='grey', lwd=2, ylim=c(0,h), fg='grey',
        main=paste0('positive y: i=',i,', j=',j), xlim=c(thresh,7*1.2))
-  lines(dat_den, col='grey', lwd=2)
+  lines(pp_den, col='blue', lwd=2)
 
   msg = paste0('P(Z=0) for missing y: ', round(pz0_missy[i,j],2))
   x_pos = 7 * .8

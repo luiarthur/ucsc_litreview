@@ -14,7 +14,7 @@ set.seed(1)
 
 b0 = 1
 b1 = -3
-N = 2000
+N = 100
 x = rnorm(N)
 p = sigmoid(b0 + b1 * x)
 y = rbinom(N, 1, p)
@@ -71,7 +71,8 @@ update = function(state) {
   state
 }
 
-out = gibbs(init=list(b0=0,b1=0), update, B=10000, burn=2000, print_every=100)
+#out = gibbs(init=list(b0=0,b1=0), update, B=1000, burn=2000, print_every=100, thin=30)
+out = gibbs(init=list(b0=0,b1=0), update, B=1000, burn=2000, print_every=100, thin=1)
 #print(p)
 b0_out = sapply(out, function(o) o$b0)
 b1_out = sapply(out, function(o) o$b1)

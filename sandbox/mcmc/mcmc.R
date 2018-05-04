@@ -31,7 +31,7 @@ mh_mv <- function(x, ll, lp, step_size) {
 }
 
 ### Gibbs Sampler (generic) ###
-gibbs = function(init, update, B, burn, print_every=0) {
+gibbs = function(init, update, B, burn, print_every=0, thin=1) {
   out = lapply(as.list(1:B), function(b) init)
 
   for (i in 1:(B+burn)) {
@@ -40,7 +40,15 @@ gibbs = function(init, update, B, burn, print_every=0) {
       # Or if C++
       # update(out[[1]])
     } else {
-      out[[i-burn]] = update(out[[i-burn-1]])
+      if (thin == 1) {
+        out[[i-burn]] = update(out[[i-burn-1]])
+      } else {
+        x = out[[i-burn-1]]
+        for (tt in 1:thin) {
+          x = update(x)
+        }
+        out[[i-burn]] = x
+      }
       # Or if C++
       # out[[i-burn]] = out[[i-burn-1]]
       # update(out[[i-burn]])
