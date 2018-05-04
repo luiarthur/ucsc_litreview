@@ -1,7 +1,10 @@
 # Model 3
 
 ## NOW 
-- [ ] post pred for observed y
+- [ ] edit report
+- [ ] repulsive Z
+- [ ] slice sample missing y
+- [x] post pred for observed y
 - [x] For missing y, make prob Z_{j,lin} = 0 | data, for all (i,j) pairs
     - basically, in simulation study
         - For N in thousands, the probability of non-expression for missing y
@@ -10,8 +13,8 @@
           cases, the probability can be up to 50%.
 - [ ] compare against one method (kmeans)
 - [ ] why is beta1 so strange?
-- [ ] Summarize CB analysis
-- [ ] Summarize simulation study
+- [x] Summarize CB analysis
+- [x] Summarize simulation study
 - [x] sort yz by Wi
 - [x] `heatmap.2` -> missing -> change color
 - [x] in heatmap and Z, use horizontal line for grouping
