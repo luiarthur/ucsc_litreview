@@ -1,6 +1,10 @@
 ### Slice sampler is good when number of aux variables is small (< 50)
 ### In this logistic regression example, N=50. Slice sampling is good.
 ### If N >> 50, then mixing is a bit slow. But still works.
+# Reference:
+# Gibbs sampling for Bayesian non-conjugate and hierarchical models 
+# by using auxiliary variables: 
+# https://deepblue.lib.umich.edu/bitstream/handle/2027.42/74035/1467-9868.00179.pdf?sequence=1&isAllowed=y
 
 library(rcommon)
 library(truncnorm)
