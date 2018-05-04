@@ -15,11 +15,18 @@
 #include "update_s.h" // gibbs
 #include "update_gam.h" // gibbs
 #include "update_eta.h" // gibbs
+
+
 #include "update_Z.h" // deterministic
 #include "update_v.h" // metropolis
 #include "update_alpha.h" // gibbs
 #include "update_H.h" // metropolis
 #include "update_vH.h" // metropolis
+
+#include "update_Z_repulsive.h" // metropolis
+#include "update_v_repulsive.h" // gibbs?
+
+
 #include "update_lam.h" // gibbs
 #include "update_W.h" // gibbs
 
