@@ -91,7 +91,7 @@ prior$tau2_1 = .3^2
 # 1,1 -> great changes
 prior$cs_v = 1
 prior$cs_h = 1
-prior$a_Z = .01
+prior$a_Z = 1/J
 prior$nu = 1.0
 
 #prior$a_sig=3; prior$a_s=.04; prior$b_s=2
