@@ -40,6 +40,9 @@ struct Prior {
   //arma::mat R;  // J x J-1 // precomputed R_{j,} = G_{j,-j} * G_{-j,-j}^{-1}
   //arma::vec S2; // J       // precomputed S_j^2 = G_{j,j} - R_{j,} * G_{-j,j}
   arma::mat G; // J x J
+  // Repulsive Z
+  double a_Z;
+  double nu;
   // W. Gibbs
   double d_W;
   // K. constant.

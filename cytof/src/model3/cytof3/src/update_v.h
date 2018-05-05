@@ -34,7 +34,7 @@ void update_v_jointly(State &state, const Data &data, const Prior &prior, const 
         for (int n=0; n<Ni; n++) {
           k = state.lam[i](n);
           z = compute_zjk(state.H(j,k), prior.G(j,j), v(k));
-          ll += dmixture(state, data, prior, z, i, n, j);
+          ll += log(dmixture(state, data, prior, z, i, n, j));
         }
       }
     }

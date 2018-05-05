@@ -44,6 +44,8 @@ gen_default_prior = function(y, K=10, L0=10, L1=10) {
     b_alpha = 2, #double
     cs_h = 1, #double
     G = diag(J), #arma::mat
+    a_Z = .5, #double (0 < a_Z < 1)
+    nu = 1.0, #double (nu > 0)
     d_W = 1/K, #double
     K = K, #int
     ### Not in struct Prior

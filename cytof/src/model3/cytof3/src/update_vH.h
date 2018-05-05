@@ -94,7 +94,7 @@ void update_vH(State &state, const Data &data, const Prior &prior, const Locked&
         for (int j=0; j<J; j++) {
           for (int n=0; n<Ni; n++) {
             z_j_lin = Z(j, state.lam[i](n));
-            ll += dmixture(state, data, prior, z_j_lin, i, n, j);
+            ll += log(dmixture(state, data, prior, z_j_lin, i, n, j));
           }
         }
       }

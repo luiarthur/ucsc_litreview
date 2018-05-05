@@ -42,7 +42,7 @@ void update_Hjk(State &state, const Data &data, const Prior &prior, int j, int k
       for (int n=0; n<Ni; n++) {
         if (state.lam[i](n) == k) {
           z_jk = compute_zjk(h_jk, prior.G(j,j), state.v(k));
-          ll += dmixture(state, data, prior, z_jk, i, n, j);
+          ll += log(dmixture(state, data, prior, z_jk, i, n, j));
         }
       }
     }

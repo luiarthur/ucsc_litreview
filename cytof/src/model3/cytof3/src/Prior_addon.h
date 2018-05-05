@@ -30,6 +30,8 @@ Prior gen_prior_obj(const Rcpp::List &prior_ls) {
   prior.b_alpha = Rcpp::as<double>(prior_ls["b_alpha"]);
   prior.cs_h = Rcpp::as<double>(prior_ls["cs_h"]);
   prior.G = Rcpp::as<arma::mat>(prior_ls["G"]);
+  prior.a_Z = Rcpp::as<double>(prior_ls["a_Z"]);
+  prior.nu = Rcpp::as<double>(prior_ls["nu"]);
   prior.d_W = Rcpp::as<double>(prior_ls["d_W"]);
   prior.K = Rcpp::as<int>(prior_ls["K"]);
 

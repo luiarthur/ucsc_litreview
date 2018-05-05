@@ -32,7 +32,7 @@
 
 #include "my_timer.h" // TIME_CODE
 
-void update_theta(State &state, const Data &data, const Prior &prior, const Locked &locked, bool show_timings=false, int thin_some=1, bool use_repulsive=false) {
+void update_theta(State &state, const Data &data, const Prior &prior, const Locked &locked, bool show_timings=false, int thin_some=1, bool use_repulsive=false, bool update_z_by_column=true) {
   //INIT_TIMER;
   if (show_timings) Rcout << std::endl;
 
@@ -52,7 +52,9 @@ void update_theta(State &state, const Data &data, const Prior &prior, const Lock
     TIME_CODE(show_timings, "Z", update_Z(state, data, prior, locked));
     //TIME_CODE(show_timings, "VHZ", update_vH(state, data, prior, locked));
   } else {
-    throw Rcpp::exception("In `update_theta`: `repulsive prior for Z` is not implemented.");
+    // gibbs
+    TIME_CODE(show_timings, "v", update_v_repulsive(state, data, prior, locked));
+    TIME_CODE(show_timings, "Z", update_Z_repulsive(state, data, prior, locked, update_z_by_column));
   }
 
 

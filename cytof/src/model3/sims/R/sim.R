@@ -91,6 +91,8 @@ prior$tau2_1 = .3^2
 # 1,1 -> great changes
 prior$cs_v = 1
 prior$cs_h = 1
+prior$a_Z = .01
+prior$nu = 1.0
 
 #prior$a_sig=3; prior$a_s=.04; prior$b_s=2
 # sig2 ~ IG(mean=.1, sd=.01)
@@ -167,7 +169,7 @@ st = system.time(
   out <- fit_cytof_cpp(y, B=B, burn=BURN, prior=prior, locked=locked,
                        init=init, print_freq=1, show_timings=FALSE,
                        normalize_loglike=TRUE, joint_update_freq=0,
-                       ncores=NCORES, print_new_line=TRUE)
+                       ncores=NCORES, print_new_line=TRUE, use_repulsive=TRUE)
 )
 print(st)
 #saveRDS(out, fileDest('out.rds'))
