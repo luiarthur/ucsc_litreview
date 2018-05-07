@@ -38,6 +38,7 @@ Rcpp::IntegerVector flip_bits(Rcpp::IntegerVector zk, double p) {
 
 void update_zjk_repulsive(State &state, const Data &data, const Prior &prior, int j, int k){
   // TODO
+  throw Rcpp::exception("In `update_zjk_repulsive`: NOT IMPLEMENTED!");
 }
 
 // Computes the distance between z
