@@ -26,6 +26,8 @@ N_degree = getOrFail(opt$N, opt_parser)
 NCORES = getOrFail(opt$ncores, opt_parser)
 B = getOrFail(opt$B, opt_parser)
 BURN = getOrFail(opt$burn, opt_parser)
+USE_REPULSIVE = getOrFail(opt$use_repulsive, opt_parser)
+println("Use repulsive: ", USE_REPULSIVE)
 ### END OF GLOBALS ###
 
 
@@ -169,7 +171,8 @@ st = system.time(
   out <- fit_cytof_cpp(y, B=B, burn=BURN, prior=prior, locked=locked,
                        init=init, print_freq=1, show_timings=FALSE,
                        normalize_loglike=TRUE, joint_update_freq=0,
-                       ncores=NCORES, print_new_line=TRUE, use_repulsive=TRUE)
+                       ncores=NCORES, print_new_line=TRUE,
+                       use_repulsive=USE_REPULSIVE)
 )
 print(st)
 #saveRDS(out, fileDest('out.rds'))
