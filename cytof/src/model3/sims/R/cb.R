@@ -24,6 +24,12 @@ I = prior$I
 N = prior$N
 J = prior$J
 
+png(fileDest('Y%03d.png'))
+for (i in 1:I) {
+  my.image(y[[i]], col=blueToRed(), addL=TRUE, zlim=dat_lim, na.color='black')
+}
+dev.off()
+
 # Are these good priors?
 prior$psi_0 = -2
 prior$psi_1 = 2
@@ -320,7 +326,7 @@ dev.off()
 #  Sys.sleep(.1)
 #}
 
-png(fileDest('YZ%03d.png'))
+png(fileDest('YZ%03d.png'), height=500, width=500)
 fy = function(lami) {
   abline(h=cumsum(table(lami))+.5, lwd=1, col='white', lty=2)
   axis(4, at=cumsum(table(lami))+.5, col=NA, col.ticks=1, cex.axis=.0001)

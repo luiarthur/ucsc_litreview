@@ -10,7 +10,7 @@ greys = function(n=10) {
 yZ_inspect = function(out, y, dat_lim, i, thresh=0.7, 
                       col=list(blueToRed(), greys(10))[[1]],
                       prop_lower_panel=.3, is.postpred=FALSE,
-                      decimals_W=1,
+                      decimals_W=1, na.color='transparent',
                       fy=function(lami) {
                         #abline(h=cumsum(table(lami))+.5, lwd=2)
                         abline(h=cumsum(table(lami))+.5, lwd=1, col='white', lty=2)
@@ -23,6 +23,6 @@ yZ_inspect = function(out, y, dat_lim, i, thresh=0.7,
   lami = out[[idx_best]]$lam[[i]]
   yZ(y[[i]], Zi, Wi, lami, dat_lim, using_zero_index=TRUE,
      thresh=thresh, col=col, prop_lower_panel=prop_lower_panel, 
-     decimals_W=decimals_W, fy=fy, fZ=fZ)
+     decimals_W=decimals_W, fy=fy, fZ=fZ, na.color=na.color)
 }
 

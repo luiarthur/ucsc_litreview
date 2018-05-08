@@ -50,7 +50,7 @@ yZ_inspect_old = function(out, y, dat_lim, i=0, thresh=0.1,
       Yi = matrix(last_out$missing_y_mean[[i]], ncol=J)
       lami_ord = order(lam_est[[i]])
     }
-    my.image(Yi[lami_ord,],
+    my.image.old(Yi[lami_ord,],
              mn=dat_lim[1], mx=dat_lim[2],
              ylab='obs', xlab='', col=COL, xaxt='n')
     axis(1, at=1:J, labels=marker_names, las=2, fg='grey')
@@ -58,7 +58,7 @@ yZ_inspect_old = function(out, y, dat_lim, i=0, thresh=0.1,
     fy()
 
     cell_types = which(W_est[i,] > thresh)
-    my.image(t(Z_est[, cell_types]), xlab='markers', ylab='cell-types', axes=F)
+    my.image.old(t(Z_est[, cell_types]), xlab='markers', ylab='cell-types', axes=F)
     perc = paste0(round(W_est[i,cell_types],2) * 100, '%')
     axis(4, at=1:length(cell_types), label=perc, las=2, fg='grey', cex.axis=.8)
     axis(2, at=1:length(cell_types), label=cell_types, las=2, fg='grey', cex.axis=.8)

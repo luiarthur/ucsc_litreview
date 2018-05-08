@@ -17,7 +17,7 @@ reorder_lami = function(ord, lami, using_zero_index=TRUE) {
 }
 
 yZ = function(yi, Zi, Wi, cell_types_i, dat_lim=c(-4,4),
-              using_zero_index=TRUE,
+              using_zero_index=TRUE, na.color='transparent',
               thresh=0.8, col=list(blueToRed(), greys(10))[[1]],
               prop_lower_panel=.3, decimals_W=1,
               fy=function(lami) {
@@ -29,8 +29,6 @@ yZ = function(yi, Zi, Wi, cell_types_i, dat_lim=c(-4,4),
   #' @export
   J = NCOL(yi)
 
-  mn = dat_lim[1]
-  mx = dat_lim[2]
   COL = col
   nticks = length(col) - 1
 
@@ -64,11 +62,11 @@ yZ = function(yi, Zi, Wi, cell_types_i, dat_lim=c(-4,4),
   par(mar=c(5.1, 4, 2.1, 0)) # b, l, t, r
 
   my.image(yi[order(lami),],
-           mn=dat_lim[1], mx=dat_lim[2],
+           zlim=dat_lim, na.color=na.color,
            ylab='cells', xlab='', col=COL, xaxt='n')
   axis(1, at=1:J, labels=marker_names, las=2, fg='grey')
   fy(lami)
-  color.bar(COL,mn,mx,nticks)
+  color.bar(COL,dat_lim[1],dat_lim[2],nticks)
 
 
   my.image(tZ_common[ord,],

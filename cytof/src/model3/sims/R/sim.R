@@ -70,13 +70,14 @@ dev.off()
 
 png(fileDest('Y%03d.png'))
 for (i in 1:I) {
-  my.image(y[[i]], col=blueToRed(), addL=TRUE, mn=dat_lim[1], mx=dat_lim[2])
+  my.image(y[[i]], col=blueToRed(), addL=TRUE, zlim=dat_lim, na.color='black')
 }
 dev.off()
 
 png(fileDest('Ysorted%03d.png'))
 for (i in 1:I) {
-  my.image(y[[i]][order(dat$lam[[i]]), ], col=blueToRed(), addL=TRUE, mn=dat_lim[1], mx=dat_lim[2])
+  my.image(y[[i]][order(dat$lam[[i]]), ], col=blueToRed(), addL=TRUE,
+           zlim=dat_lim, na.color='black')
 }
 dev.off()
 
@@ -213,7 +214,7 @@ pdf(fileDest('H.pdf'))
 plotPost(H[1,])
 plot(rowMeans(H), ylim=range(ci_H), pch=20, col='blue')
 add.errbar(t(ci_H), col='grey')
-my.image(t(H_mean), mn=-3, mx=3, col=blueToRed(), addL=TRUE)
+my.image(t(H_mean), zlim=c(-3,3), col=blueToRed(), addL=TRUE)
 dev.off()
 
 ### alpha ###
@@ -407,9 +408,14 @@ dev.off()
 #}
 
 # TODO: Test this with simulation data
-png(fileDest('YZ%03d.png'))
+png(fileDest('YZ%03d.png'), height=500, width=500)
+#png('YZ%03d.png', height=500, width=500)
+fy = function(lami) {
+  abline(h=cumsum(table(lami))+.5, lwd=3, col='yellow', lty=1)
+  axis(4, at=cumsum(table(lami))+.5, col=NA, col.ticks=1, cex.axis=.0001)
+}
 for (i in 1:I) {
-  yZ_inspect(out, y, dat_lim=dat_lim, i=i, thresh=.9)
+  yZ_inspect(out, y, dat_lim=dat_lim, i=i, thresh=.9, na.color='black', fy=fy)
   #yZ_inspect(out, last(out)$missing_y_mean, dat_lim=dat_lim, i=i, thresh=.9)
   #yZ_inspect_old(out, y, dat_lim=dat_lim, i=i, thresh=.05)
 }
