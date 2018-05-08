@@ -201,9 +201,11 @@ mus_1 = sapply(out, function(o) o$mus_1)
 
 ### v ###
 v = sapply(out, function(o) o$v)
+ci_v = apply(v, 1, quantile, c(.025,.975))
 pdf(fileDest('v.pdf'))
 plotPost(v[1,])
-plot(rowMeans(v))
+plot(rowMeans(v), ylim=0:1)
+add.errbar(t(ci_v), col='grey')
 dev.off()
 
 ### H ###
