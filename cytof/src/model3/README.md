@@ -25,7 +25,7 @@
 - [x] in heatmap and Z, use horizontal line for grouping
 - [x] in W%, add one decimal
 - [x] simulation data 
-- [x] [Parallel Random Number Generation][13]
+- [ ] [Parallel Random Number Generation][13]
 
 ## Timeline
 
