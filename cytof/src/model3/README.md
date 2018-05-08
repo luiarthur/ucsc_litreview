@@ -4,6 +4,11 @@
 - [ ] edit report
 - [ ] repulsive Z
 - [ ] slice sample missing y
+- [ ] Change missing mechanism and use slice sampling
+    - use quadratic missing mechanism -> more intuitive
+    - b0 controls location
+    - b1 controls width
+    - b2 controls height
 - [x] post pred for observed y
 - [x] For missing y, make prob Z_{j,lin} = 0 | data, for all (i,j) pairs
     - basically, in simulation study
