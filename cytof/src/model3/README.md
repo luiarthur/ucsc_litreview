@@ -25,6 +25,7 @@
 - [x] in heatmap and Z, use horizontal line for grouping
 - [x] in W%, add one decimal
 - [x] simulation data 
+- [x] [Parallel Random Number Generation][13]
 
 ## Timeline
 
@@ -91,3 +92,4 @@ Goal: Advancement by week of **4 June, 2018**.
 [10]: https://arxiv.org/pdf/1310.5438.pdf
 [11]: http://probability.ca/jeff/ftpdir/adaptex.pdf
 [12]: https://arxiv.org/pdf/1204.5243.pdf
+[13]: https://www.r-bloggers.com/parallel-random-number-generation-using-trng/
