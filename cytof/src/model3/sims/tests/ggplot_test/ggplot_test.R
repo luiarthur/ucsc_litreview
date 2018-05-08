@@ -66,20 +66,21 @@ multiplot(plotlist=plotlist, cols=2)
 ### Heatmap
 #y = y_orig
 y = preimpute(y_orig)
-km = kmeans(y[[1]], 10)
+km = kmeans(y[[1]], 12)
 
-y1 = y[[1]][km$clus,]
+y1 = y_orig[[1]][km$clus,]
 #melt.y1 = melt(y1)
 #ggplot(melt.y1, aes(x=Var2,y=Var1,fill=value)) + geom_tile() + scale_fill_gradient2(low=-3, high=3, mid=0)
+breaks = unique(cut(seq(-10,10,l=100), breaks=c(-Inf,-3:3,Inf), right=FALSE))
+breaks = as.character(breaks)
 y1_cut = apply(y1, 2, function(y1j) cut(y1j, breaks=c(-Inf,-3:3,Inf), right=FALSE))
 melt.y1 = melt(y1_cut)
 #ggplot(melt.y1, aes(x=Var1,y=Var2,fill=value)) + geom_tile() + scale_fill_brewer(palette = "PRGn")
 
 
-pdf('out/heatmap.pdf')
+named_colors = c(blueToRed(8))
+names(named_colors) = breaks
+png('out/heatmap.png', height=600, width=600)
 ggplot(melt.y1, aes(x=Var1,y=Var2,fill=value)) + geom_tile() + 
-      scale_fill_manual(breaks=c("[-Inf,-3)", "[-3,-2)", "[-2,-1)", 
-                                 "[-1,0)", "[0,1)", "[1,2)", 
-                                 "[2,3)", "[3, Inf)"),
-                        values = blueToRed(8))
+      scale_fill_manual(breaks=breaks, values=named_colors, na.value='black')
 dev.off()
