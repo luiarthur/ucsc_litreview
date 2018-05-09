@@ -49,7 +49,8 @@ fSOM <- FlowSOM(ff_Y,
                 # Input options:
                 colsToUse = 1:J,
                 # Metaclustering options:
-                nClus = 20,
+                #nClus = 20,
+                maxMeta=20,
                 # Seed for reproducible results:
                 seed = 42)
 #PlotStars(fSOM$FlowSOM, backgroundValues = as.factor(fSOM$metaclustering))
@@ -77,5 +78,5 @@ rcpp_clus = cutree(rclusterpp, 20)
 i = 1
 est = est_ZW_from_clusters(y_tilde[[i]], rcpp_clus[idx[i,1]:idx[i,2]])
 yZ(yi=y[[i]], Zi=est$Z*1, Wi=est$W, cell_types_i=est$clus-1,
-   dat_lim=c(-3,3), na.color='black', thresh=.9)
+   dat_lim=c(-1,1), na.color='black', thresh=.5)
 

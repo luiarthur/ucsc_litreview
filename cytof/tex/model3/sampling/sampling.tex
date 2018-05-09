@@ -274,9 +274,10 @@ data. Since neural networks are capable of learning non-linear surfaces, it may
 be considered a nonlinear generalization of Principal components analysis
 \citep{yin2008learning}.  In the FlowSOM implementation, the input space is
 projected into a two-dimensional space and can be conveniently visualized in a
-graph called a map. Among existing methods it is also considered the fastest and
-most flexible at finding subpopulations in cytometry data. However, it is not
-able to measure uncertainty about the learned clusters.
+graph called a map. Among existing methods it is also considered the fastest
+and most flexible at finding subpopulations in cytometry data. FlowSOM is also
+able to learn the number of clusters in the data. However, does not measure
+uncertainty about the learned clusters.
 %
 These are common traits among the clustering methods used in analyzing
 cytometry data. K-means, while fast, memory-efficient, and intuitive, produces
