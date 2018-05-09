@@ -1,9 +1,14 @@
 # Model 3
 
 ## NOW 
+- [ ] Post-pred for observed values only
 - [ ] edit report
 - [ ] repulsive Z
 - [ ] slice sample missing y
+- [ ] compare against several methods
+    - [ ] FlowSOM
+    - [ ] kmeans
+- [ ] why is beta1 so strange?
 - [ ] Change missing mechanism and use slice sampling
     - use quadratic missing mechanism -> more intuitive
     - b0 controls location
@@ -16,8 +21,6 @@
           is all 0 or near-0.
         - For N in hundreds, that probability is usually non-zero. For a few
           cases, the probability can be up to 50%.
-- [ ] compare against one method (kmeans)
-- [ ] why is beta1 so strange?
 - [x] Summarize CB analysis
 - [x] Summarize simulation study
 - [x] sort yz by Wi
@@ -26,6 +29,7 @@
 - [x] in W%, add one decimal
 - [x] simulation data 
 - [ ] [Parallel Random Number Generation][13]
+- [ ] use ggplot for images?
 
 ## Timeline
 
