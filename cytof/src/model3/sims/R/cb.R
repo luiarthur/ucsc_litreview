@@ -1,5 +1,5 @@
 ### GLOBALS ###
-OUTDIR = '../out/cb_locked_beta1_K20/'
+OUTDIR = '../out/cb_locked_beta1_K20_repulsive/'
 ### END OF GLOBALS ###
 
 library(rcommon)
@@ -113,7 +113,8 @@ init$missing_y = preimpute_y
 st = system.time(
   out <- fit_cytof_cpp(y, B=2000, burn=1000, prior=prior, locked=locked,
                        init=init, print_freq=1, show_timings=FALSE,
-                       normalize_loglike=TRUE, joint_update_freq=0, ncore=1)
+                       normalize_loglike=TRUE, joint_update_freq=0, ncore=1,
+                       use_repulsive=TRUE)
 )
 print(st)
 saveRDS(out, fileDest('out.rds'))
