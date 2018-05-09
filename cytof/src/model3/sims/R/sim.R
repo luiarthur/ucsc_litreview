@@ -92,10 +92,13 @@ prior$tau2_1 = .3^2
 #prior$cs_v = .01 # I think this should be better
 #prior$cs_h = 1 # I think this should be better
 # 1,1 -> great changes
-prior$cs_v = 1
-prior$cs_h = 1
+prior$cs_v = 1.0
+prior$cs_h = 1.0
+
+### Repulsive Z ###
 prior$a_Z = 1/J
-prior$nu = 1.0
+prior$nu_a = 0.5
+prior$nu_b = 1.5
 
 #prior$a_sig=3; prior$a_s=.04; prior$b_s=2
 # sig2 ~ IG(mean=.1, sd=.01)
@@ -149,6 +152,10 @@ init$Z = compute_Z(H=init$H, v=init$v, G=prior$G)
 locked = gen_default_locked(init)
 locked$beta_0 = TRUE # TODO: Can I make this random?
 locked$beta_1 = TRUE # TODO: Can I make this random?
+
+### Fix nu?
+locked$nu =TRUE # TODO: make random?
+init$nu = 1.0   # TODO: make random?
 
 #locked$s = TRUE
 #locked$sig2_0 = TRUE # TODO: Can I make this random?
@@ -225,6 +232,11 @@ pdf(fileDest('alpha.pdf'))
 plotPost(alpha)
 dev.off()
 
+### nu ###
+nu = sapply(out, function(o) o$nu)
+pdf(fileDest('nu.pdf'))
+plotPost(nu)
+dev.off()
 
 ### mus ###
 mus = rbind(mus_0, mus_1)

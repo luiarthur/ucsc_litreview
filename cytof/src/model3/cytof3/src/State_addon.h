@@ -21,6 +21,7 @@ State gen_state_obj(const Rcpp::List &state_ls) {
   state.alpha = Rcpp::as<double>(state_ls["alpha"]) + 0;
   state.H = Rcpp::as<arma::mat>(state_ls["H"]) + 0;
   state.Z = Rcpp::as<Rcpp::IntegerMatrix>(state_ls["Z"]) + 0;
+  state.nu = Rcpp::as<double>(state_ls["nu"]) + 0;
   state.lam = Rcpp::as<std::vector<Rcpp::IntegerVector>>(state_ls["lam"]);
   state.W = Rcpp::as<Rcpp::NumericMatrix>(state_ls["W"]) + 0;
 

@@ -111,6 +111,7 @@ std::vector<List> fit_cytof_cpp(
         Named("eta_1") = state.eta_1 + 0,
         Named("v") = state.v + 0,
         Named("alpha") = state.alpha + 0,
+        Named("nu") = state.nu + 0,
         Named("H") = state.H + 0,
         Named("Z") = state.Z + 0,
         Named("lam") = cpVecT<Rcpp::IntegerVector>(state.lam),

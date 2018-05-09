@@ -67,7 +67,7 @@ void update_zk_repulsive(State &state, const Data &data, const Prior &prior, int
     lp += zk_sum * log(vk) + (J - zk_sum) * log(1-vk);
     for (int kk=0; kk < K; kk++) {
       if (kk != k) {
-        lp += log(dist_z(zk, state.Z(_,kk), prior.nu));
+        lp += log(dist_z(zk, state.Z(_,kk), state.nu));
       }
     }
 

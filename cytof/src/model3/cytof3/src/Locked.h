@@ -19,6 +19,7 @@ struct Locked {
   bool alpha = false;
   bool H = false;
   bool Z = false;
+  bool nu = false;
   bool lam = false;
   bool W = false;
 };
