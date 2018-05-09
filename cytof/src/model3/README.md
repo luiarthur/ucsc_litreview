@@ -2,6 +2,10 @@
 
 ## NOW 
 - [ ] Post-pred for observed values only
+    - $\tilde\eta_{0ij}^{obs} = (p^0_1,...,p^0_{L0})$
+    - $\tilde\eta_{1ij}^{obs} = (p^1_1,...,p^1_{L0})$
+    - Then simulate $lam=k$ from $Z$ and $W$
+    - Then simulate $l$ from $k$ and $\tilde\eta^{obs}$
 - [ ] edit report
 - [ ] repulsive Z
 - [ ] slice sample missing y
