@@ -249,7 +249,7 @@ are used to accelerate, separate, and identify ions by mass. This new method
 warrants the analysis of multiple parameters in shorter time \citep{cheung2011screening}. 
 %Through CyTOF, scientists have been able to better understand natural killer
 %(NK) cells \citep{horowitz2013genetic}. 
-A major challenge in deciphering mass cytometry data is to develop efficient
+A major challenge in deciphering mass cytometry data is developing efficient
 inferential frameworks that can handle the complexity of the data, including
 high dimensionality and noise. Many existing computational methods use
 dimension reduction techniques and/or clustering-based approaches. 
@@ -258,15 +258,38 @@ dimension reduction techniques and/or clustering-based approaches.
 %they Bayesian?  Are they modeling phenotypes like our $\Z$.  Emphasize that our
 %methods produce direct inferences on phenotypes or quantification of
 %uncertainty associated with their inference.}
-FlowSOM \citep{van2015flowsom} is one such method which uses a self-organizing
-map to cluster flow cytometry data.
-
-{\tt include several examples of existing methods. explain what they do and
-produce for inference. explain what they miss.}
-
-While among existing methods it is considered the fastest and most flexible at
-finding subpopulations, it is not able to measure uncertainty about the learned
-clusters. To overcome the limitations of existing methods, we propose to
+%
+%{\tt include several examples of existing methods. explain what they do and
+%produce for inference. explain what they miss.}
+%
+To this end, a comparison of freely available clustering methods for
+high-dimensional cytometry data was made by \cite{weber2016comparison}. These
+methods are based on hierarchical clustering methods , k-means, density-based
+clustering methods, model-based clustering methods, nearest-neighbor methods,
+and self-organizing maps. Each method exhibits their own strengths. For
+example,
+FlowSOM \citep{van2015flowsom} uses a self-organizing map to cluster flow
+cytometry data. Self-organizing maps are trained by unsupervised neural
+networks to obtain a low-dimensional representation of the input space of the
+data. Since neural networks are capable of learning non-linear surfaces, it may
+be considered a nonlinear generalization of Principal components analysis
+\citep{yin2008learning}.  In the FlowSOM implementation, the input space is
+projected into a two-dimensional space and can be conveniently visualized in a
+graph called a map. Among existing methods it is also considered the fastest and
+most flexible at finding subpopulations in cytometry data. However, it is not
+able to measure uncertainty about the learned clusters.
+%
+These are common traits among the clustering methods used in analyzing
+cytometry data. K-means, while fast, memory-efficient, and intuitive, produces
+only point estimates of clusters. In addition, the number of clusters needs to
+be predetermined. Hierarchical clustering implementations typically suffer from
+memory-related bottlenecks for large datasets. Memory-efficient implementations
+suited for large datasets have been implemented in the statistical programming
+language R by \citep{linderman2013package}, making it a viable candidate method
+for cytometry data. In hierarchical clustering, no assumptions about the 
+number of clusters are made, and the final output is a dendrogram 
+%
+To overcome the limitations of existing methods, we propose to
 develop novel Bayesian feature allocation models (FAMs) embedded with
 clustering. 
 
