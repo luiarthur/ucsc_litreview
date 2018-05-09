@@ -8,10 +8,15 @@
     - Then simulate $l$ from $k$ and $\tilde\eta^{obs}$
 - [ ] edit report
 - [ ] repulsive Z
+- [ ] Project 2
+    - Write model and intro
+    - present properties of rep-FAM(through sim study, just changing Z-prior) and compare to IBP
+    - prior for nu?
+- [ ] Project 3
+    - Write model. Explain high-level idea
 - [ ] slice sample missing y
-- [ ] compare against several methods
-    - [ ] FlowSOM
-    - [ ] kmeans
+- [ ] compare against FlowSOM
+    - Mention other methods in literature review
 - [ ] why is beta1 so strange?
 - [ ] Change missing mechanism and use slice sampling
     - use quadratic missing mechanism -> more intuitive

@@ -1081,6 +1081,35 @@ remedied using a repulsive mixture prior and will be included in Project 2.
 \section{Project 2: Repulsive Feature Allocation Model}\label{sec:proj2}
 
 \section{Project 3: Covariate-Dependent Feature Allocation Model}\label{sec:proj3}
+%Let $\bx_i$ a vector of covariates of subject $i$ and $t$ time after receiving
+%a treatment.  We extend the model by letting $\bw_i$ a function of $\bx_i$ and
+%$t$ and jointly analyze samples of subjects collected at different time
+%points. While all samples share $\bZ$ (common cell phenotypes), phenotype
+%abundances $\bw(\bx_i, t)$ are sample specific and depend on covariates and
+%time points.  We also let $w_k(\bx_i, t)$ exactly equal to zero for some
+%phenotypes. 
+
+We extend the model by letting phenotype abundances $\bw=(w_1, \ldots, w_K)$ a
+function of time $t$ after treatment and jointly analyze samples of a subject
+collected at different time points. While all samples share $\bZ$ (common cell
+phenotypes), phenotype abundances $\bw_{t_i, k}$, $i=1, \ldots, I$ are
+dependent through time.  We also let $w_{t_i,k}$ exactly equal to zero for some
+phenotypes. Let $\xi_{t_1,1}=1$ and assume $\xi_{t_1,k} =
+\max(\xi^\prime_{t_1,k}, 0)$, $k=1, \ldots, K$, where $\xi^\prime_{t_1,k} \iid
+\N(0, s^2_1)$. We then normalize $w^\prime_{t_1,k}$,  $w_{t_1,k} =
+\xi_{t_1,k}/\sum_{k^\prime=1}^K \xi_{t_1, k^\prime}$, $k=1, \ldots, K$. For
+time points $t_i$, $i=2, \ldots, t_I$, we assume $\xi_{t_i,k} =
+\max(\xi^\prime_{t_i,k}, 0)$, $k, \ldots, K$ with $\xi^\prime_{t_i,k} =
+f_k(t_i)$ and let $w_{t_i,k} = \xi_{t_i,k}/\sum_{k^\prime=1}^K
+\xi_{t_i,k^\prime}$ similar to $w_{t_1,k}$.  For example, a quadratic function
+in time $t$, $f_k(t) = \xi_{t_1,k} + \beta_{k1}t + \beta_{k2}t^2$ can be used.
+$\xi_{t_1,k}$ is the baseline unnormalized baseline abundance for phenotype $k$
+and ($\beta_{k1}, \beta_{k2}$) explain change in unnormalized abundance over
+time. Alternatively, we can let $\xi^\prime_{t_i,k} = \xi^\prime_{t_{i-1},k} +
+g_{t_i,k}$ where $g_{t_i, k} \iid \N(0, s^2)$.
+
+
+
 
 \section{Timeline}\label{sec:time}
 
