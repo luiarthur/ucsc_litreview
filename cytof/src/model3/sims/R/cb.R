@@ -89,8 +89,8 @@ init$Z = compute_Z(H=init$H, v=init$v, G=prior$G)
 
 ### Fixed parameters ###
 locked = gen_default_locked(init)
-#locked$beta_0 = TRUE # TODO: Can I make this random?
-#locked$beta_1 = TRUE # TODO: Can I make this random?
+locked$beta_0 = TRUE # TODO: Can I make this random?
+locked$beta_1 = TRUE # TODO: Can I make this random?
 
 #locked$s = TRUE
 #locked$sig2_0 = TRUE # TODO: Can I make this random?
@@ -154,7 +154,7 @@ pdf(fileDest('H.pdf'))
 plotPost(H[1,])
 plot(rowMeans(H), ylim=range(ci_H), pch=20, col='blue')
 add.errbar(t(ci_H), col='grey')
-my.image(t(H_mean), mn=-3, mx=3, col=blueToRed(), addL=TRUE)
+my.image(t(H_mean), zlim=c(-3,3), col=blueToRed(), addL=TRUE)
 dev.off()
 
 
