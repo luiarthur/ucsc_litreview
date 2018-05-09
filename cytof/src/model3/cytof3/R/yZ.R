@@ -21,8 +21,7 @@ yZ = function(yi, Zi, Wi, cell_types_i, dat_lim=c(-4,4),
               thresh=0.8, col=list(blueToRed(), greys(10))[[1]],
               prop_lower_panel=.3, decimals_W=1,
               fy=function(lami) {
-                #abline(h=cumsum(table(lami))+.5, lwd=2)
-                #axis(2, at=cumsum(table(lami))+.5, col=NA, col.ticks=1, cex.axis=.0001)
+                abline(h=cumsum(table(lami))+.5, lwd=3, col='yellow', lty=1)
                 axis(4, at=cumsum(table(lami))+.5, col=NA, col.ticks=1, cex.axis=.0001)
               },
               fZ=function(Z) abline(v=1:NCOL(Z)+.5, h=1:NROW(Z)+.5, col='grey')) {
