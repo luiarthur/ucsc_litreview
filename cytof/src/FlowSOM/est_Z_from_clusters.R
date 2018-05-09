@@ -20,7 +20,7 @@ est_ZW_from_clusters = function(yi, clusters) {
   ### Cluster Means ###
   mu = matrix(0, J, K)
   for (k in 1:K) {
-    yik = yi[clusters[clusters == k],]
+    yik = yi[clusters == k,]
     if (NCOL(yik) > 1) {
       mu[,k] = colMeans(yik)
     } else {

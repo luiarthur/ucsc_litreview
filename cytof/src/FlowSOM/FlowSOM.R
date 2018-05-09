@@ -53,15 +53,16 @@ fSOM <- FlowSOM(ff_Y,
 #PlotStars(fSOM$FlowSOM, backgroundValues = as.factor(fSOM$metaclustering))
 fSOM.clus = fSOM$meta[fSOM$FlowSOM$map$mapping[,1]]
 
-i=3
+i=1
 clus = as.numeric(fSOM.clus)[idx[i,1]:idx[i,2]]
 est = est_ZW_from_clusters(y_tilde[[i]], clus)
-yZ(yi=y[[i]], Zi=est$Z, Wi=est$W, cell_types_i=est$clus,
-   dat_lim=c(-3,3), na.color='black', using_zero_index=FALSE)
+yZ(yi=y[[i]], Zi=est$Z*1, Wi=est$W, cell_types_i=est$clus-1,
+   dat_lim=c(-3,3), na.color='black', thresh=.9)
 
 ### Kmeans ###
 km = kmeans(Y_tilde, 10)
-i=3
+i=1
 est = est_ZW_from_clusters(y_tilde[[i]], km$cluster[idx[i,1]:idx[i,2]])
-yZ(yi=y[[i]], Zi=est$Z, Wi=est$W, cell_types_i=est$clus,
-   dat_lim=c(-3,3), na.color='black', using_zero_index=FALSE)
+yZ(yi=y[[i]], Zi=est$Z*1, Wi=est$W, cell_types_i=est$clus-1,
+   dat_lim=c(-3,3), na.color='black', thresh=.9)
+
