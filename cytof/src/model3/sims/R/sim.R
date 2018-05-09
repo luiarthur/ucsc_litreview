@@ -81,7 +81,7 @@ for (i in 1:I) {
 }
 dev.off()
 
-prior = gen_default_prior(y, K=12, L0=5, L1=5)
+prior = gen_default_prior(y, K=20, L0=5, L1=5)
 
 # Are these good priors?
 prior$psi_0 = -2

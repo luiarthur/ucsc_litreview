@@ -47,21 +47,21 @@ fSOM <- FlowSOM(ff_Y,
                 # Input options:
                 colsToUse = 1:J,
                 # Metaclustering options:
-                nClus = 10,
+                nClus = 20,
                 # Seed for reproducible results:
                 seed = 42)
 #PlotStars(fSOM$FlowSOM, backgroundValues = as.factor(fSOM$metaclustering))
 fSOM.clus = fSOM$meta[fSOM$FlowSOM$map$mapping[,1]]
 
-i=1
+i=3
 clus = as.numeric(fSOM.clus)[idx[i,1]:idx[i,2]]
 est = est_ZW_from_clusters(y_tilde[[i]], clus)
 yZ(yi=y[[i]], Zi=est$Z*1, Wi=est$W, cell_types_i=est$clus-1,
    dat_lim=c(-3,3), na.color='black', thresh=.9)
 
 ### Kmeans ###
-km = kmeans(Y_tilde, 10)
-i=1
+km = kmeans(Y_tilde, 20)
+i=3
 est = est_ZW_from_clusters(y_tilde[[i]], km$cluster[idx[i,1]:idx[i,2]])
 yZ(yi=y[[i]], Zi=est$Z*1, Wi=est$W, cell_types_i=est$clus-1,
    dat_lim=c(-3,3), na.color='black', thresh=.9)
