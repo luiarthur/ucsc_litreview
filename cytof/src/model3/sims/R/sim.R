@@ -183,6 +183,7 @@ save.image(file=fileDest('checkpoint.rda'))
 B = length(out)
 
 ### loglike 
+ll_true = compute_loglike(dat, dat$y_complete)
 ll = last(out)$ll
 pdf(fileDest('ll.pdf'))
 plot(ll, type='l', ylab='log-likelihood', xlab='MCMC iteration')
