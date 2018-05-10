@@ -430,8 +430,8 @@ fy = function(lami) {
   axis(4, at=cumsum(table(lami))+.5, col=NA, col.ticks=1, cex.axis=.0001)
 }
 for (i in 1:I) {
-  yZ_inspect(out, y, dat_lim=dat_lim, i=i, thresh=.9, na.color='black', fy=fy)
-  #yZ_inspect(out, last(out)$missing_y_mean, dat_lim=dat_lim, i=i, thresh=.9)
+  yZ_inspect(out, y, zlim=dat_lim, i=i, thresh=.9, na.color='black', fy=fy)
+  #yZ_inspect(out, last(out)$missing_y_mean, zlim=dat_lim, i=i, thresh=.9)
   #yZ_inspect_old(out, y, dat_lim=dat_lim, i=i, thresh=.05)
 }
 dev.off()

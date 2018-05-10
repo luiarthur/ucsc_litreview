@@ -7,7 +7,7 @@ greys = function(n=10) {
 #' @param fy function to execute after making y image
 #' @param fZ function to execute after making Z image
 #' @export
-yZ_inspect = function(out, y, dat_lim, i, thresh=0.7, 
+yZ_inspect = function(out, y, zlim, i, thresh=0.7, 
                       col=list(blueToRed(), greys(10))[[1]],
                       prop_lower_panel=.3, is.postpred=FALSE,
                       decimals_W=1, na.color='transparent',
@@ -21,7 +21,7 @@ yZ_inspect = function(out, y, dat_lim, i, thresh=0.7,
   Zi = out[[idx_best]]$Z
   Wi = out[[idx_best]]$W[i,]
   lami = out[[idx_best]]$lam[[i]]
-  yZ(y[[i]], Zi, Wi, lami, dat_lim, using_zero_index=TRUE,
+  yZ(y[[i]], Zi, Wi, lami, zlim, using_zero_index=TRUE,
      thresh=thresh, col=col, prop_lower_panel=prop_lower_panel, 
      decimals_W=decimals_W, fy=fy, fZ=fZ, na.color=na.color)
 }

@@ -4,7 +4,7 @@
 \alias{yZ_inspect}
 \title{Plot y and Z together}
 \usage{
-yZ_inspect(out, y, dat_lim, i, thresh = 0.7, col = list(blueToRed(),
+yZ_inspect(out, y, zlim, i, thresh = 0.7, col = list(blueToRed(),
   greys(10))[[1]], prop_lower_panel = 0.3, is.postpred = FALSE,
   decimals_W = 1, na.color = "transparent", fy = function(lami) {    
   abline(h = cumsum(table(lami)) + 0.5, lwd = 1, col = "white", lty = 2)    

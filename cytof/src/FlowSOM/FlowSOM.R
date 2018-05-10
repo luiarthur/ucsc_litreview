@@ -61,7 +61,7 @@ for (i in 1:I) {
   clus = as.numeric(fSOM.clus)[idx[i,1]:idx[i,2]]
   fs.est[[i]] = est_ZW_from_clusters(y_tilde[[i]], clus)
   yZ(yi=y[[i]], Zi=fs.est[[i]]$Z*1, Wi=fs.est[[i]]$W,
-     cell_types_i=fs.est[[i]]$clus-1, dat_lim=c(-3,3), na.color='black', thresh=.9)
+     cell_types_i=fs.est[[i]]$clus-1, zlim=c(-3,3), na.color='black', thresh=.9)
 }
 
 ### Kmeans ###
@@ -76,7 +76,7 @@ for (i in 1:I) {
   km.pY.est[[i]] = est_ZW_from_clusters(y_tilde[[i]],
                                         km.pY$cluster[idx[i,1]:idx[i,2]])
   yZ(yi=y[[i]], Zi=km.pY.est[[i]]$Z*1, Wi=km.pY.est[[i]]$W,
-     cell_types_i=km.pY.est[[i]]$clus-1, dat_lim=c(-3,3),
+     cell_types_i=km.pY.est[[i]]$clus-1, zlim=c(-3,3),
      na.color='black', thresh=.9)
 }
 
@@ -86,7 +86,7 @@ km.est = as.list(1:I)
 for (i in 1:I) {
   km.est[[i]] = est_ZW_from_clusters(y_tilde[[i]], km$cluster[idx[i,1]:idx[i,2]])
   yZ(yi=y[[i]], Zi=km.est[[i]]$Z*1, Wi=km.est[[i]]$W,
-     cell_types_i=km.est[[i]]$clus-1, dat_lim=c(-1,1), na.color='black', thresh=.9)
+     cell_types_i=km.est[[i]]$clus-1, zlim=c(-1,1), na.color='black', thresh=.9)
 }
 
 
@@ -99,7 +99,7 @@ hc.est = as.list(1:I)
 for (i in 1:I) {
   hc.est[[i]] = est_ZW_from_clusters(y_tilde[[i]], rcpp_clus[idx[i,1]:idx[i,2]])
   yZ(yi=y[[i]], Zi=hc.est[[i]]$Z*1, Wi=hc.est[[i]]$W, 
-     cell_types_i=hc.est[[i]]$clus-1, dat_lim=c(-1,1), na.color='black', thresh=.5)
+     cell_types_i=hc.est[[i]]$clus-1, zlim=c(-1,1), na.color='black', thresh=.5)
 }
 
 
