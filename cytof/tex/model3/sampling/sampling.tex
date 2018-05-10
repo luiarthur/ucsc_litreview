@@ -246,40 +246,103 @@ has been mainstream for several decades \citep{herzenberg2002history}.  In recen
 years, a new technique called Cytometry at time-of-flight (CyTOF) has surfaced.
 It makes use of time-of-flight mass spectrometry, where sophisticated devices
 are used to accelerate, separate, and identify ions by mass. This new method
-warrants the analysis of multiple parameters in shorter time \citep{cheung2011screening}. 
+enables analyses of multiple parameters to be done in less time
+\citep{cheung2011screening}. 
 %Through CyTOF, scientists have been able to better understand natural killer
 %(NK) cells \citep{horowitz2013genetic}. 
-A major challenge in deciphering mass cytometry data is to develop efficient
-inferential frameworks that can handle the complexity of the data, including
-high dimensionality and noise. Many existing computational methods use
-dimension reduction techniques and/or clustering-based approaches. 
+A major challenge in understanding mass cytometry data is developing efficient
+inferential frameworks that can handle their complexity. These data are often
+high-dimensional and noisy. Hence, many existing computational methods for
+analyzing cytometry data use dimension reduction techniques and/or
+clustering-based approaches.
 %{\tt introduce some existing approaches.  Explain a bit the methods
 %that we will use for comparison.  State limitations of existing methods.  Are
 %they Bayesian?  Are they modeling phenotypes like our $\Z$.  Emphasize that our
 %methods produce direct inferences on phenotypes or quantification of
 %uncertainty associated with their inference.}
-FlowSOM \citep{van2015flowsom} is one such method which uses a self-organizing
-map to cluster flow cytometry data.
-
-{\tt include several examples of existing methods. explain what they do and
-produce for inference. explain what they miss.}
-
-While among existing methods it is considered the fastest and most flexible at
-finding subpopulations, it is not able to measure uncertainty about the learned
-clusters. To overcome the limitations of existing methods, we propose to
-develop novel Bayesian feature allocation models (FAMs) embedded with
-clustering. 
+%
+%{\tt include several examples of existing methods. explain what they do and
+%produce for inference. explain what they miss.}
+%
+To better understand the properties of these different methods, 
+\cite{weber2016comparison} performed a study which compares freely available
+clustering methods for high-dimensional cytometry data. These methods are based
+on a variety of techniques including hierarchical clustering methods , k-means,
+density-based clustering methods, model-based clustering methods,
+nearest-neighbor methods, and self-organizing maps. Each method exhibits their
+own strengths.
+% FLOWSOM
+For example, FlowSOM \citep{van2015flowsom} uses a
+self-organizing map to reduce the dimensionality of and cluster flow cytometry
+data. Self-organizing maps are trained using unsupervised neural networks to
+obtain a low-dimensional representation of the input space of the data. Since
+neural networks are capable of learning non-linear functions, it may be
+considered a nonlinear generalization of principal components analysis
+\citep{yin2008learning}. In the FlowSOM implementation, the input space is
+projected into a two-dimensional space and can be conveniently visualized in a
+graph called a map. While self-organizing graphs depend on users to specify the
+number of clusters, FlowSOM can automatically learn the number of clusters in
+the data.  Among existing methods FlowSOM is considered the fastest and most
+flexible at finding subpopulations in cytometry data. However, it does not
+provide any measures of uncertainty about the learned clusters.
+% kmeans
+This is a common trait among the clustering methods used in analyzing
+cytometry data. K-means, while fast, memory-efficient, and intuitive, produces
+only point estimates of clusters. In addition, the number of clusters needs to
+be predetermined.
+% hclust
+Hierarchical clustering implementations typically suffer from
+memory-related bottlenecks for large datasets. Memory-efficient implementations
+suited for large datasets have been implemented in the statistical programming
+language R by \citep{linderman2013package}, making it a viable candidate method
+for cytometry data. In hierarchical clustering, no assumptions about the 
+number of clusters are made, and the final output is a dendrogram, which
+can then be cut at different levels to produce clusters. But again, they
+do not provide uncertainty estimates.
+%% TODO: Write about density-based, model-based, and nearest neighbors.
+% density-based. ClusterX @chen2016cytofkit 
+% model-based. flowClust
+% nearest neighbors. phenograph
+% 
+In addition to the lack of uncertainty measurements, the methods used above do
+not directly address missing values. Instead, missing values need to be
+pre-imputed to produce a complete dataset which is then used for analyses.
+%
+To overcome the limitations of existing methods, we propose developing novel
+Bayesian feature allocation models (FAMs) embedded with clustering
+capabilities. We also propose mechanisms for imputing missing values within the
+models we develop.
 
 
 \subsection{Literature Review: Feature Allocation Models}\label{literature-review}
-In the motivating data, one of the main inferential goals is  to learn a latent structure of predominant cell phenotypes, where cell phenotype are composed of distinct expression combinations of the markers. Specifically, phenotype $k$ is represented by a $J$-dim binary vector, $\bm z_k=(z_{1k}, \ldots, z_{Jk})$, with $J$ denoting the number of markers, where $z_{jk}$ equals 1 if marker $j$ is expressed in phenotype $k$, and 0 otherwise.  Let $\bZ$ denote a $J \times K$ binary matrix by letting columns represent phenotypes.  \(2^J\) different phenotypes can be constructed for \(J\) markers.
-One may consider a \(J \times 2^J\) binary matrix that includes all possible
-phenotypes generated by the \(J\) markers. It is computationally infeasible even when \(J\) is moderately large. Taking a Bayesian approach, we consider a prior probability model over binary matrices %with infinite number of columns 
-and learn the predominant ones in posterior that  generate observed data. %For computational efficiency, we require a flexible prior which will also learn the number of cell-types \((K)\). 
-These models are called latent feature allocation models. In feature allocation models, rows and columns correspond to objects and features, respectively (in our applications, markers and phenotypes, respectively). Similar to our construction of phenotypes, if object $j$ takes feature $k$, the corresponding $z_{jk}$ takes the value 1. Otherwise, it takes 0.  One of popular models for binary feature matrices is the Indian buffet process (IBP), a Bayesian nonparametric distribution over $\bZ$ with an unbounded number of latent features, proposed by \citet{griffiths2011indian}. 
+In the motivating data, one of the main inferential goals is  to learn a latent
+structure of predominant cell phenotypes, where cell phenotype are composed of
+distinct expression combinations of the markers. Specifically, phenotype $k$ is
+represented by a $J$-dim binary vector, $\bm z_k=(z_{1k}, \ldots, z_{Jk})$,
+with $J$ denoting the number of markers, where $z_{jk}$ equals 1 if marker $j$
+is expressed in phenotype $k$, and 0 otherwise.  Let $\bZ$ denote a $J \times
+K$ binary matrix by letting columns represent phenotypes.  \(2^J\) different
+phenotypes can be constructed for \(J\) markers.  One may consider a \(J \times
+2^J\) binary matrix that includes all possible phenotypes generated by the
+\(J\) markers. It is computationally infeasible even when \(J\) is moderately
+large. Taking a Bayesian approach, we consider a prior probability model over
+binary matrices
+%with infinite number of columns 
+and learn the predominant ones in posterior that  generate observed data.
+%For computational efficiency, we require a flexible prior which will also
+%learn the number of cell-types \((K)\). 
+These models are called latent feature allocation models. In feature allocation
+models, rows and columns correspond to objects and features, respectively (in
+our applications, markers and phenotypes, respectively). Similar to our
+construction of phenotypes, if object $j$ takes feature $k$, the corresponding
+$z_{jk}$ takes the value 1. Otherwise, it takes 0.  One of popular models for
+binary feature matrices is the Indian buffet process (IBP), a Bayesian
+nonparametric distribution over $\bZ$ with an unbounded number of latent
+features, proposed by \citet{griffiths2011indian}. 
 %The IBP have been used in a variety of applications where modelling latent binary features is of interest. 
 They construct the IBP by considering the finite feature allocation
-model and taking the limit with respect to the number of features; for a given $K$,
+model and taking the limit with respect to the number of features; for a given
+$K$,
 \begin{align}
 \begin{split}
 v_k \mid \alpha &\sim \text{Beta}(\alpha/K, 1),~ k=1, \ldots, K \\
@@ -289,7 +352,8 @@ z_{jk} \mid \pi_k &\sim \text{Bernoulli}(v_k),~ k=1, \ldots, K~\mbox{ and } j=1,
 \end{align}
 The marginal limiting distribution of $\Z$ defines an IBP as $K \rightarrow
 \infty$ and dropping all columns with all 0s, that is,  \(Z \sim
-\text{IBP}(\alpha)\). Under the IBP, an object can take a set of latent features and is expected to have  \(\alpha\)
+\text{IBP}(\alpha)\). Under the IBP, an object can take a set of latent
+features and is expected to have  \(\alpha\)
 active features.
 %
 {\tt active means?}
@@ -1029,6 +1093,35 @@ remedied using a repulsive mixture prior and will be included in Project 2.
 \section{Project 2: Repulsive Feature Allocation Model}\label{sec:proj2}
 
 \section{Project 3: Covariate-Dependent Feature Allocation Model}\label{sec:proj3}
+%Let $\bx_i$ a vector of covariates of subject $i$ and $t$ time after receiving
+%a treatment.  We extend the model by letting $\bw_i$ a function of $\bx_i$ and
+%$t$ and jointly analyze samples of subjects collected at different time
+%points. While all samples share $\bZ$ (common cell phenotypes), phenotype
+%abundances $\bw(\bx_i, t)$ are sample specific and depend on covariates and
+%time points.  We also let $w_k(\bx_i, t)$ exactly equal to zero for some
+%phenotypes. 
+
+We extend the model by letting phenotype abundances $\bw=(w_1, \ldots, w_K)$ a
+function of time $t$ after treatment and jointly analyze samples of a subject
+collected at different time points. While all samples share $\bZ$ (common cell
+phenotypes), phenotype abundances $\bw_{t_i, k}$, $i=1, \ldots, I$ are
+dependent through time.  We also let $w_{t_i,k}$ exactly equal to zero for some
+phenotypes. Let $\xi_{t_1,1}=1$ and assume $\xi_{t_1,k} =
+\max(\xi^\prime_{t_1,k}, 0)$, $k=1, \ldots, K$, where $\xi^\prime_{t_1,k} \iid
+\N(0, s^2_1)$. We then normalize $w^\prime_{t_1,k}$,  $w_{t_1,k} =
+\xi_{t_1,k}/\sum_{k^\prime=1}^K \xi_{t_1, k^\prime}$, $k=1, \ldots, K$. For
+time points $t_i$, $i=2, \ldots, t_I$, we assume $\xi_{t_i,k} =
+\max(\xi^\prime_{t_i,k}, 0)$, $k, \ldots, K$ with $\xi^\prime_{t_i,k} =
+f_k(t_i)$ and let $w_{t_i,k} = \xi_{t_i,k}/\sum_{k^\prime=1}^K
+\xi_{t_i,k^\prime}$ similar to $w_{t_1,k}$.  For example, a quadratic function
+in time $t$, $f_k(t) = \xi_{t_1,k} + \beta_{k1}t + \beta_{k2}t^2$ can be used.
+$\xi_{t_1,k}$ is the baseline unnormalized baseline abundance for phenotype $k$
+and ($\beta_{k1}, \beta_{k2}$) explain change in unnormalized abundance over
+time. Alternatively, we can let $\xi^\prime_{t_i,k} = \xi^\prime_{t_{i-1},k} +
+g_{t_i,k}$ where $g_{t_i, k} \iid \N(0, s^2)$.
+
+
+
 
 \section{Timeline}\label{sec:time}
 

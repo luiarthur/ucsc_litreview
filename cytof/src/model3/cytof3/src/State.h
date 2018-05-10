@@ -19,6 +19,7 @@ struct State {
   double alpha;
   arma::mat H; // J x K
   Rcpp::IntegerMatrix Z;
+  double nu;
   std::vector<Rcpp::IntegerVector> lam; // I x N[i]
   Rcpp::NumericMatrix W; // I x K
 };

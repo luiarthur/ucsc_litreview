@@ -335,7 +335,7 @@ fy = function(lami) {
   axis(4, at=cumsum(table(lami))+.5, col=NA, col.ticks=1, cex.axis=.0001)
 }
 for (i in 1:I) {
-  yZ_inspect(out, y, dat_lim=dat_lim, i=i, thresh=.9, fy=fy)
+  yZ_inspect(out, y, zlim=dat_lim, i=i, thresh=.9, fy=fy)
 }
 dev.off()
 

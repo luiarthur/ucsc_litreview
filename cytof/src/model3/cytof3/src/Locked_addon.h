@@ -21,6 +21,7 @@ Locked gen_locked_obj(const Rcpp::List &locked_ls) {
   locked.alpha = Rcpp::as<bool>(locked_ls["alpha"]);
   locked.H = Rcpp::as<bool>(locked_ls["H"]);
   locked.Z = Rcpp::as<bool>(locked_ls["Z"]);
+  locked.nu = Rcpp::as<bool>(locked_ls["nu"]);
   locked.lam = Rcpp::as<bool>(locked_ls["lam"]);
   locked.W = Rcpp::as<bool>(locked_ls["W"]);
 

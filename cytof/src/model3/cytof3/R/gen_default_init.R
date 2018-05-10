@@ -41,6 +41,7 @@ gen_default_init = function(prior) {
     alpha     = 1.0,
     H         = matrix(0, J, K),
     Z         = matrix(sample(0:1, J*K, replace=TRUE), J, K),
+    nu        = 1.0,
     lam       = lam_init,
     W         = matrix(1/K, I, K)
   ) 

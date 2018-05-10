@@ -42,7 +42,8 @@ struct Prior {
   arma::mat G; // J x J
   // Repulsive Z
   double a_Z;
-  double nu;
+  double nu_a;
+  double nu_b;
   // W. Gibbs
   double d_W;
   // K. constant.

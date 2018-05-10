@@ -4,9 +4,8 @@
 \alias{color.bar}
 \title{Adding a vertical color bar}
 \usage{
-color.bar(colorVec, mn, mx = -mn, nticks = length(colorVec) - 1,
-  digits = 1, ticks = seq(mn, mx, len = nticks), title = "",
-  colGrids = 10)
+color.bar(col, zlim = range(col), ticks = seq(zlim[1], zlim[2], len =
+  length(col)), digits = 1, title = "")
 }
 \description{
 Adding a vertical color bar

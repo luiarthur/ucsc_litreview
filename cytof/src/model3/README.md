@@ -1,9 +1,23 @@
 # Model 3
 
-## NOW 
+## NOW (Due Tuesday 15 May, 2018)
+- [ ] Post-pred for observed values only
+    - $\tilde\eta_{0ij}^{obs} = (p^0_1,...,p^0_{L0})$
+    - $\tilde\eta_{1ij}^{obs} = (p^1_1,...,p^1_{L0})$
+    - Then simulate $lam=k$ from $Z$ and $W$
+    - Then simulate $l$ from $k$ and $\tilde\eta^{obs}$
 - [ ] edit report
 - [ ] repulsive Z
+- [ ] Project 2
+    - Write model and intro
+    - present properties of rep-FAM(through sim study, just changing Z-prior) and compare to IBP
+    - prior for nu?
+- [ ] Project 3
+    - Write model. Explain high-level idea
 - [ ] slice sample missing y
+- [ ] compare against FlowSOM
+    - Mention other methods in literature review
+- [ ] why is beta1 so strange?
 - [ ] Change missing mechanism and use slice sampling
     - use quadratic missing mechanism -> more intuitive
     - b0 controls location
@@ -16,8 +30,6 @@
           is all 0 or near-0.
         - For N in hundreds, that probability is usually non-zero. For a few
           cases, the probability can be up to 50%.
-- [ ] compare against one method (kmeans)
-- [ ] why is beta1 so strange?
 - [x] Summarize CB analysis
 - [x] Summarize simulation study
 - [x] sort yz by Wi
@@ -26,6 +38,7 @@
 - [x] in W%, add one decimal
 - [x] simulation data 
 - [ ] [Parallel Random Number Generation][13]
+- [ ] use ggplot for images?
 
 ## Timeline
 

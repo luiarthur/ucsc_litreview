@@ -25,6 +25,7 @@
 
 #include "update_Z_repulsive.h" // metropolis
 #include "update_v_repulsive.h" // gibbs?
+#include "update_nu.h" // gibbs? slice.
 
 
 #include "update_lam.h" // gibbs
@@ -54,7 +55,10 @@ void update_theta(State &state, const Data &data, const Prior &prior, const Lock
   } else {
     // gibbs
     TIME_CODE(show_timings, "v", update_v_repulsive(state, data, prior, locked));
+    //metropolis
     TIME_CODE(show_timings, "Z", update_Z_repulsive(state, data, prior, locked, update_z_by_column));
+    // gibbs
+    TIME_CODE(show_timings, "nu", update_nu(state, data, prior, locked));
   }
 
 
