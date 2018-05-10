@@ -13,7 +13,9 @@ yZ_inspect = function(out, y, zlim, i, thresh=0.7,
                       decimals_W=1, na.color='transparent',
                       fy=function(lami) {
                         #abline(h=cumsum(table(lami))+.5, lwd=2)
-                        abline(h=cumsum(table(lami))+.5, lwd=1, col='white', lty=2)
+                        #abline(h=cumsum(table(lami))+.5, lwd=1, col='white', lty=2)
+                        #axis(4, at=cumsum(table(lami))+.5, col=NA, col.ticks=1, cex.axis=.0001)
+                        abline(h=cumsum(table(lami))+.5, lwd=3, col='yellow', lty=1)
                         axis(4, at=cumsum(table(lami))+.5, col=NA, col.ticks=1, cex.axis=.0001)
                       },
                       fZ=function(Z) abline(v=1:NCOL(Z)+.5, h=1:NROW(Z)+.5, col='grey')) {
