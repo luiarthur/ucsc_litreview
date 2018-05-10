@@ -65,6 +65,11 @@ yZ(yi=y[[i]], Zi=est$Z*1, Wi=est$W, cell_types_i=est$clus-1,
 ### Kmeans ###
 println("Running Kmeans...")
 km = kmeans(Y_tilde, 20)
+
+### Principal Components ###
+#pY = prcomp(Y_tilde)$x[,1:2]
+#km = kmeans(pY, 20)
+
 i=1
 est = est_ZW_from_clusters(y_tilde[[i]], km$cluster[idx[i,1]:idx[i,2]])
 yZ(yi=y[[i]], Zi=est$Z*1, Wi=est$W, cell_types_i=est$clus-1,
