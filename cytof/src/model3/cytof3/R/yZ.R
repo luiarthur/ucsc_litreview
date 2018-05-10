@@ -28,9 +28,6 @@ yZ = function(yi, Zi, Wi, cell_types_i, zlim=c(-4,4),
   #' @export
   J = NCOL(yi)
 
-  COL = col
-  nticks = length(col) - 1
-
   ### Configure Plot settings ###
   nrow_panel = 10
   nrow_lower_panel = round(nrow_panel * prop_lower_panel)
@@ -62,10 +59,10 @@ yZ = function(yi, Zi, Wi, cell_types_i, zlim=c(-4,4),
 
   my.image(yi[order(lami),],
            zlim=zlim, na.color=na.color,
-           ylab='cells', xlab='', col=COL, xaxt='n')
+           ylab='cells', xlab='', col=col, xaxt='n')
   axis(1, at=1:J, labels=marker_names, las=2, fg='grey')
   fy(lami)
-  color.bar(COL,zlim[1],zlim[2],nticks)
+  color.bar(col,zlim)
 
 
   my.image(tZ_common[ord,],
