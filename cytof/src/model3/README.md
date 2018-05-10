@@ -1,6 +1,6 @@
 # Model 3
 
-## NOW 
+## NOW (Due Tuesday 15 May, 2018)
 - [ ] Post-pred for observed values only
     - $\tilde\eta_{0ij}^{obs} = (p^0_1,...,p^0_{L0})$
     - $\tilde\eta_{1ij}^{obs} = (p^1_1,...,p^1_{L0})$
