@@ -83,7 +83,7 @@ my.image <- function(Z, col=grey(seq(1,0,len=2)), na.color='transparent',
                      fg='grey', f=function(dat) stopifnot(TRUE),
                      truncate=TRUE,
                      rm0Cols=FALSE,
-                     addLegend=FALSE,nticks=11, zlim=range(Z),...) {
+                     addLegend=FALSE,nticks=11, zlim=range(Z), ...) {
   #' Plotting an image with missing values
   #' @export
 
@@ -114,14 +114,13 @@ my.image <- function(Z, col=grey(seq(1,0,len=2)), na.color='transparent',
     Z[which(Z <= mn)] = mn
     Z[which(is.na(Z))] = mx + zstep
   }
-  image(1:K, 1:N, t(Z), fg=FG,col=c(col,na.color), zlim=c(mn, mx + zstep),
-        xlab='', ylab='', ...)
+  image(1:K, 1:N, t(Z), fg=FG,col=c(col,na.color), zlim=c(mn, mx + zstep), ...)
   f(Z)
 
   if (addLegend) {
     par(mar=c(5.1,1,4.1,1))
     #color.bar(COL[-length(COL)],mn,mx,nticks)
-    color.bar(col, c(mn, mx))
+    color.bar(col, zlim)
     par(mfrow=c(1,1),mar=c(5.1,4.1,4.1,2.1))
   }
 
@@ -134,3 +133,5 @@ my.image <- function(Z, col=grey(seq(1,0,len=2)), na.color='transparent',
 #my.image(ys, zlim=c(-3,3), col=blueToRed(), addL=TRUE, na.col='black')
 #my.image.old(ys, mn=-3, mx=3, col=blueToRed(), addL=TRUE)
 
+#X = matrix(sample(0:1, 15, replace=TRUE), 5, 3)
+#my.image(X,addL=TRUE, xlab='', ylab='')
