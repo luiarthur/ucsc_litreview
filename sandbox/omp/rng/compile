@@ -1,0 +1,3 @@
+#!/bin/bash
+
+gcc par_rng.cpp -fopenmp -lstdc++ -lgsl -std=c++11
