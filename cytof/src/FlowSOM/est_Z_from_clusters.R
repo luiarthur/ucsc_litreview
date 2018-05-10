@@ -10,7 +10,7 @@ relabel_clusters = function(clusters) {
   clusterLabelsOrdered
 }
 
-est_ZW_from_clusters = function(yi, clusters) {
+est_ZW_from_clusters = function(yi, clusters, f=mean) {
   J = NCOL(yi)
 
   ### Clusters ###
@@ -22,7 +22,7 @@ est_ZW_from_clusters = function(yi, clusters) {
   for (k in 1:K) {
     yik = yi[clusters == k,]
     if (NCOL(yik) > 1) {
-      mu[,k] = colMeans(yik)
+      mu[,k] = apply(yik, 2 ,f)
     } else {
       mu[,k] = yik
     }

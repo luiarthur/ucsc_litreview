@@ -51,9 +51,17 @@ print(runtime)
 #PlotStars(fSOM$FlowSOM, backgroundValues = as.factor(fSOM$metaclustering))
 fSOM.clus = fSOM$meta[fSOM$FlowSOM$map$mapping[,1]]
 
-i=3
+i=1
 clus = as.numeric(fSOM.clus)[idx[i,1]:idx[i,2]]
+print(length(unique(clus))) # Number of clusters learned
 est = est_ZW_from_clusters(y_tilde[[i]], clus)
 yZ(yi=y[[i]], Zi=est$Z*1, Wi=est$W, cell_types_i=est$clus-1,
    dat_lim=c(-1,1), na.color='black', thresh=.9)
+
+
+### Principal Components (2D) ###
+pY = prcomp(Y_tilde)
+#pY = prcomp(Y_tilde[idx[i,1]:idx[i,2],])
+cumsum(pY$sd^2 / sum(pY$sd^2))
+plot(pY$x[,c(1,2)], col=rgb(0,0,1,.1), pch=16) # appears to be 3 clusters
 
