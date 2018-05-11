@@ -15,13 +15,18 @@ void update_lam_in(State &state, const Data &data, const Prior &prior, int i, in
   const int K = prior.K;
   int z_jk;
   double log_p[K];
+  double lpk;
 
   for (int k=0; k<K; k++) {
-    log_p[k] = log(state.W(i, k));
+    //log_p[k] = log(state.W(i, k));
+    lpk = log(state.W(i,k));
+    # pragma omp parallel for reduction(+:lpk)
     for (int j=0; j<J; j++) {
       z_jk = state.Z(j,k);
-      log_p[k] += log( dmixture(state, data, prior, z_jk, i, n, j) );
+      //log_p[k] += log( dmixture(state, data, prior, z_jk, i, n, j) );
+      lpk += log( dmixture(state, data, prior, z_jk, i, n, j) );
     }
+    log_p[k] = lpk;
   }
 
   state.lam[i](n) = mcmc::wsample_index_log_prob(log_p, K);
