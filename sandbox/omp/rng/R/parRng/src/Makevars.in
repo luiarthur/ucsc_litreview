@@ -26,8 +26,8 @@ PKG_LIBS = $(SHLIB_OPENMP_CFLAGS) $(LAPACK_LIBS) $(BLAS_LIBS) $(FLIBS)
 # Check out section 5
 
 # set by configure
-GSL_CFLAGS = -I/usr/include
-GSL_LIBS = -L/usr/lib -lgsl -lgslcblas -lm
+GSL_CFLAGS = @GSL_CFLAGS@
+GSL_LIBS = @GSL_LIBS@
 # combine with standard arguments for R
 PKG_CPPFLAGS = $(GSL_CFLAGS)
 PKG_LIBS = $(GSL_LIBS)
