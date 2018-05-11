@@ -1,3 +1,7 @@
+# This file together with `../configure.in` generates `Makevars`
+# Do not edit `Makevars` by hand.
+# Instead, edit this file and `../configure.in`
+
 # Quicker Compiles
 VER=
 CCACHE=ccache

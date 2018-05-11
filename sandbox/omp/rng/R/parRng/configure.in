@@ -1,0 +1,13 @@
+#!/bin/sh
+
+# This file together with `src/Makevars.in` generates `src/Makevars`
+# Do not edit `src/Makevars` by hand.
+# Instead, edit this file and `src/Makevars.in`
+
+GSL_CFLAGS=`Rscript -e "RcppGSL:::CFlags()"`
+GSL_LIBS=`Rscript -e "RcppGSL:::LdFlags()"`
+
+sed -e "s|@GSL_LIBS@|${GSL_LIBS}|" \
+  -e "s|@GSL_CFLAGS@|${GSL_CFLAGS}|" \
+  src/Makevars.in > src/Makevars
+
