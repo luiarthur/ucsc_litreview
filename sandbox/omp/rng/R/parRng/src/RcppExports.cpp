@@ -7,19 +7,20 @@
 using namespace Rcpp;
 
 // parRngTest
-void parRngTest(int N, int NUM_THREADS);
-RcppExport SEXP _parRng_parRngTest(SEXP NSEXP, SEXP NUM_THREADSSEXP) {
+void parRngTest(int N, int NUM_THREADS, int m);
+RcppExport SEXP _parRng_parRngTest(SEXP NSEXP, SEXP NUM_THREADSSEXP, SEXP mSEXP) {
 BEGIN_RCPP
     Rcpp::RNGScope rcpp_rngScope_gen;
     Rcpp::traits::input_parameter< int >::type N(NSEXP);
     Rcpp::traits::input_parameter< int >::type NUM_THREADS(NUM_THREADSSEXP);
-    parRngTest(N, NUM_THREADS);
+    Rcpp::traits::input_parameter< int >::type m(mSEXP);
+    parRngTest(N, NUM_THREADS, m);
     return R_NilValue;
 END_RCPP
 }
 
 static const R_CallMethodDef CallEntries[] = {
-    {"_parRng_parRngTest", (DL_FUNC) &_parRng_parRngTest, 2},
+    {"_parRng_parRngTest", (DL_FUNC) &_parRng_parRngTest, 3},
     {NULL, NULL, 0}
 };
 
