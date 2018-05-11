@@ -21,14 +21,20 @@ val parrSmall = arrSmall.par
 
 
 def updatePar(arr:ParArray[Float], i:Int) {
-  var x = ThreadLocalRandom.current().nextGaussian
-  x /= sqrt(i+1)
-  x += 2
+  var x = 0.0
+  (1 to 10000).foreach { j => 
+    x = ThreadLocalRandom.current().nextGaussian
+    x /= sqrt(i+1)
+    x += 2
+  }
   arr(i) = x.toFloat
 }
 
 def update(arr:Array[Float], i:Int) {
-  var x = ThreadLocalRandom.current().nextGaussian
+  var x = 0.0
+  (1 to 10000).foreach{ j =>
+    x = ThreadLocalRandom.current().nextGaussian
+  }
   x /= sqrt(i+1)
   x += 2
   arr(i) = x.toFloat
@@ -56,6 +62,10 @@ timer(s"do something $nSmall times in sequence:\t") {
 }
 
 timer(s"do something $nBig times in parallel:\t") {
+  (0 until nBig).par.foreach{ i => update(arrBig, i) }
+}
+
+timer(s"do something $nBig times in parallel (v2):\t") {
   (0 until nBig).par.foreach{ i => updatePar(parrBig, i) }
 }
 
