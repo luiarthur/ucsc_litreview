@@ -38,6 +38,8 @@
 - [x] in W%, add one decimal
 - [x] simulation data 
 - [ ] [Parallel Random Number Generation][13]
+    - possible with gsl
+    - possible in java / scala / kotlin with `ThreadLocalRandom`
 - [ ] use ggplot for images?
 
 ## Timeline
