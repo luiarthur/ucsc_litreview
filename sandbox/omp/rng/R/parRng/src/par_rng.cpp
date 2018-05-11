@@ -1,11 +1,10 @@
-#include <gsl/gsl_rng.h>
 #include <RcppGSL.h>
+#include <gsl/gsl_rng.h>
 
 #include <omp.h>
 
 #include "my_timer.h"
 
-using namespace RcppGSL;
 
 double runif(gsl_rng* rng) {
   return gsl_rng_uniform(rng);
