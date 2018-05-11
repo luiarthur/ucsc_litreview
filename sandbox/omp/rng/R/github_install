@@ -1,0 +1,7 @@
+#!/bin/bash
+
+SUBDIR="sandbox/omp/rng/R/parRng"
+REPO="luiarthur/ucsc_litreview"
+
+time R -q -e "devtools::install_github('$REPO', subdir='$SUBDIR')"
+
