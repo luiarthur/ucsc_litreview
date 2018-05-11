@@ -4,7 +4,7 @@
 \alias{parRngTest}
 \title{parRngTest}
 \usage{
-parRngTest(N = 100000L, NUM_THREADS = 8L)
+parRngTest(N = 10000L, NUM_THREADS = 8L)
 }
 \description{
 parRngTest

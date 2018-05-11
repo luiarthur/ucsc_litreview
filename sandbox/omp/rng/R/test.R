@@ -1,3 +1,3 @@
 library(parRng)
 
-parRngTest(N=50000, NUM_THREADS=4)
+parRngTest(N=10000, NUM_THREADS=8)

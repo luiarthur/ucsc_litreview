@@ -3,7 +3,7 @@
 
 #' parRngTest
 #' @export
-parRngTest <- function(N = 100000L, NUM_THREADS = 8L) {
+parRngTest <- function(N = 10000L, NUM_THREADS = 8L) {
     invisible(.Call('_parRng_parRngTest', PACKAGE = 'parRng', N, NUM_THREADS))
 }
 

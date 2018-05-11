@@ -7,16 +7,12 @@
 #include "my_timer.h"
 
 
-double runif(gsl_rng* rng) {
-  return gsl_rng_uniform(rng);
-}
-
 void big_function(gsl_rng* rng) {
   const double x=396124121;
   double y;
   for (int i=0; i<10000; i++) {
-    //y = runif(rng);
-    gsl_ran_gamma(rng, 2, 3);
+    //y = gsl_rng_uniform(rng);
+    y = gsl_ran_gaussian(rng, 3) + 2;
     //if (i==0) std::cout << y << std::endl;
   }
 }
@@ -45,7 +41,7 @@ void serial_rng(gsl_rng* rng, int N) {
 //' parRngTest
 //' @export
 // [[Rcpp::export]]
-void parRngTest(int N=100000, int NUM_THREADS=8) {
+void parRngTest(int N=10000, int NUM_THREADS=8) {
 
   // Create an array equal to the number of threads for rng
   gsl_rng* rngs[NUM_THREADS];
