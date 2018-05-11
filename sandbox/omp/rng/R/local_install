@@ -1,0 +1,14 @@
+#!/bin/bash
+
+MODEL_NAME="parRng"
+
+### Generate the docs ###
+rm -f ${MODEL_NAME}/NAMESPACE
+R -q -e "roxygen2::roxygenise('${MODEL_NAME}');Rcpp::compileAttributes('${MODEL_NAME}');"
+R -q -e "roxygen2::roxygenise('${MODEL_NAME}');Rcpp::compileAttributes('${MODEL_NAME}');"
+
+### Install Package Locally ###
+rm -f ${MODEL_NAME}/src/*.{so,o}
+time R CMD INSTALL --no-multiarch ${MODEL_NAME}
+echo
+

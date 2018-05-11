@@ -1,0 +1,13 @@
+Package: parRng
+Type: Package
+Title: Parallel RNG Test
+Version: 1.0
+Date: 2018-05-10
+Author: Arthur Lui
+Maintainer: Arthur Lui <luiarthur@gmail.com>
+Description: Testing parallel RNG from GSL
+License: GPL (>= 2)
+Imports: Rcpp (>= 0.12.16)
+LinkingTo: Rcpp, RcppGSL
+RoxygenNote: 6.0.1
+
