@@ -1,5 +1,6 @@
 #include <RcppGSL.h>
 #include <gsl/gsl_rng.h>
+#include <gsl/gsl_randist.h>
 
 #include <omp.h>
 
@@ -14,7 +15,8 @@ void big_function(gsl_rng* rng) {
   const double x=396124121;
   double y;
   for (int i=0; i<10000; i++) {
-    y = runif(rng);
+    //y = runif(rng);
+    gsl_ran_gamma(rng, 2, 3);
     //if (i==0) std::cout << y << std::endl;
   }
 }
