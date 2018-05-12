@@ -271,36 +271,59 @@ on a variety of techniques including hierarchical clustering methods , k-means,
 density-based clustering methods, model-based clustering methods,
 nearest-neighbor methods, and self-organizing maps. Each method exhibits their
 own strengths.
-% FLOWSOM
-For example, FlowSOM \citep{van2015flowsom} uses a
-self-organizing map to reduce the dimensionality of and cluster flow cytometry
-data. Self-organizing maps are trained using unsupervised neural networks to
-obtain a low-dimensional representation of the input space of the data. Since
-neural networks are capable of learning non-linear functions, it may be
-considered a nonlinear generalization of principal components analysis
-\citep{yin2008learning}. In the FlowSOM implementation, the input space is
-projected into a two-dimensional space and can be conveniently visualized in a
-graph called a map. While self-organizing graphs depend on users to specify the
-number of clusters, FlowSOM can automatically learn the number of clusters in
-the data.  Among existing methods FlowSOM is considered the fastest and most
-flexible at finding subpopulations in cytometry data. However, it does not
-provide any measures of uncertainty about the learned clusters.
 % kmeans
-This is a common trait among the clustering methods used in analyzing
-cytometry data. K-means, while fast, memory-efficient, and intuitive, produces
+In K-mean, one of the most well known clustering methods, observations are
+iteratively grouped into clusters based on their proximity to the $K$
+centroids, and then the centroids are updated based on the newly formed
+clusters. This method, while fast, memory-efficient, and intuitive, produces
 only point estimates of clusters. In addition, the number of clusters needs to
 be predetermined.
+%This is a common trait among the clustering methods used in analyzing cytometry
+%data.
 % hclust
-Hierarchical clustering implementations typically suffer from
-memory-related bottlenecks for large datasets. Memory-efficient implementations
-suited for large datasets have been implemented in the statistical programming
-language R by \citep{linderman2013package}, making it a viable candidate method
-for cytometry data. In hierarchical clustering, no assumptions about the 
-number of clusters are made, and the final output is a dendrogram, which
-can then be cut at different levels to produce clusters. But again, they
-do not provide uncertainty estimates.
+In hierarchical clustering, no assumptions about the number of clusters are
+made, and the final output is a dendrogram, which can then be cut at different
+levels, forming clusters. However, these dendrograms are typically cut based on
+some visual criteria, which can be cumbersome.  Hierarchical clustering
+implementations also typically suffer from memory-related bottlenecks for large
+datasets.  Memory-efficient implementations suited for such datasets have been
+implemented in the statistical programming language R by
+\citep{linderman2013package}, making it a viable candidate method for cytometry
+data. But again, they do not provide uncertainty estimates.
+% FLOWSOM
+Some methods, like FlowSOM \citep{van2015flowsom}, are able to learn the number
+of clusters in the data, while also allowing the number of clusters to be
+explicitly specified.  FlowSOM uses a self-organizing map (SOM) to reduce the
+dimensionality of cytometry data, and cluster them accordingly. Self-organizing
+maps are trained using unsupervised neural networks to obtain a low-dimensional
+representation of the input space. Since neural networks are capable of
+learning non-linear functions, SOMs may be considered a nonlinear
+generalization of principal components analysis \citep{yin2008learning}. In the
+FlowSOM implementation, the input space is projected onto a two-dimensional
+space and can be conveniently visualized in a graph called a map.
+Among existing methods FlowSOM is considered the fastest and most flexible at
+finding subpopulations in cytometry data. However, it does not quantify
+uncertainty about the learned clusters.
 %% TODO: Write about density-based, model-based, and nearest neighbors.
+% density-based. DBSCAN \citep{ester1996density}
+Another class of methods where the number of clusters does not need to be
+specified beforehand is density-based clustering methods. The earliest of these
+methods include DBSCAN \citep{ester1996density}. In density-based
+clustering, clusters are formed when regions are densely occupied by
+observations. Points from dense clusters that are near enough (according to
+some predetermined proximity metric and threshold) are grouped into the
+cluster. Points that are considered far from dense regions are classified as
+outliers. In general, density-based methods can produce clusters that take on
+very flexible shapes. But again, no uncertainty estimates are produced for
+these clusters. In addition, older implementations like DBSCAN can be
+computationally inefficient, having a worst-case complexity of
+$\mathcal{O}(n^2)$ (due to the computation and storage of the distance matrix). 
 % density-based. ClusterX @chen2016cytofkit 
+ClusterX \citep{chen2016cytofkit} is a density-based clustering method used for
+cytometry data. It alleviates some computational and memory burdens by using a
+split-apply-combine strategy where the data are first split into smaller 
+manageable chunks so as to compute a smaller distance matrix, and ...TODOTODO...
+
 % model-based. flowClust
 % nearest neighbors. phenograph
 % 
