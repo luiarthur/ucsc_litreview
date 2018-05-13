@@ -289,7 +289,16 @@ implementations also typically suffer from memory-related bottlenecks for large
 datasets.  Memory-efficient implementations suited for such datasets have been
 implemented in the statistical programming language R by
 \citep{linderman2013package}, making it a viable candidate method for cytometry
-data. But again, they do not provide uncertainty estimates.
+data.
+% nearest neighbors. phenograph @levine2015data
+Nearest-neighbor clustering methods like PhenoGraph \citep{levine2015data}
+similarly attempt to reduce the computational costs of hierarchical clustering
+methods by merging clusters by following paths in the nearest neighborhood
+graph of clusters.
+%
+These mentioned hierarchical clustering methods do not provide uncertainty
+estimates.
+%
 % FLOWSOM
 Some methods, like FlowSOM \citep{van2015flowsom}, are able to learn the number
 of clusters in the data, while also allowing the number of clusters to be
@@ -322,11 +331,29 @@ $\mathcal{O}(n^2)$ (due to the computation and storage of the distance matrix).
 ClusterX \citep{chen2016cytofkit} is a density-based clustering method used for
 cytometry data. It alleviates some computational and memory burdens by using a
 split-apply-combine strategy where the data are first split into smaller 
-manageable chunks so as to compute a smaller distance matrix, and ...TODOTODO...
-
-% model-based. flowClust
-% nearest neighbors. phenograph
+manageable chunks so as to compute a smaller distance matrix. Parameters
+are computed for each small chunk and the results are combined. 
+%
+% model-based. flowClust @lo2009flowclust. 
+%%%% - Uses mixture of t-dist on box-cox-transformed data
+%%%% - model is fit using EM.
+%%%% - Model is fit K times, each time with different number of clusters
+%%%%      - using BIC, the number of clusters is chose
+%%%% - slower. Where FlowSOM takes seconds, this could take hours to get about the same performance
+Another clustering approach is model-based clustering, the most popular of
+which is the finite gaussian mixture model. To account for irregular shapes and
+the presence of outliers in cytometry data, \cite{lo2009flowclust} developed
+flowClust, which first applies a Box-Cox transformation to the data, and then
+uses a mixture of t-distributions to cluster the transformed data.  The
+expectation-maximization (EM) algorithm \citep{dempster1997maximum} can be used
+to learn the parameters in this model.
+%Model-based clustering algorithms are
+%among the best performing algorithms used in cytometry data analysis, but they
+%can be much slower to train. For instance, flowClust may take hours to train in
+%order to get the same performance as FlowSOM when it is only trained for
+%seconds.
 % 
+
 In addition to the lack of uncertainty measurements, the methods used above do
 not directly address missing values. Instead, missing values need to be
 pre-imputed to produce a complete dataset which is then used for analyses.
