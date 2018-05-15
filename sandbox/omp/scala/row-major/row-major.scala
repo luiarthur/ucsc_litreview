@@ -41,32 +41,28 @@ object RowMajor {
     }
   }
 
-  case class MatDouble (dat: Array[Array[Double]], rows:Int, cols:Int)
-  extends Mat[Double](dat, rows, cols) {
+  case class MatDouble (dat: Array[Array[Double]], rows:Int, cols:Int) extends Mat[Double](dat, rows, cols) {
     def this(rows:Int, cols:Int) {
       this(Array.ofDim[Double](rows, cols), rows, cols)
     }
     def cp() = new MatDouble(dat.map{_.clone}, rows, cols)
   }
 
-  case class MatFloat (dat: Array[Array[Float]], rows:Int, cols:Int)
-  extends Mat[Float](dat, rows, cols) {
+  case class MatFloat (dat: Array[Array[Float]], rows:Int, cols:Int) extends Mat[Float](dat, rows, cols) {
     def this(rows:Int, cols:Int) {
       this(Array.ofDim[Float](rows, cols), rows, cols)
     }
     def cp() = new MatFloat(dat.map{_.clone}, rows, cols)
   }
 
-  case class MatInt (dat: Array[Array[Int]], rows:Int, cols:Int)
-  extends Mat[Int](dat, rows, cols) {
+  case class MatInt (dat: Array[Array[Int]], rows:Int, cols:Int) extends Mat[Int](dat, rows, cols) {
     def this(rows:Int, cols:Int) {
       this(Array.ofDim[Int](rows, cols), rows, cols)
     }
     def cp() = new MatInt(dat.map{_.clone}, rows, cols)
   }
 
-  case class MatShort (dat: Array[Array[Short]], rows:Int, cols:Int)
-  extends Mat[Short](dat, rows, cols) {
+  case class MatShort (dat: Array[Array[Short]], rows:Int, cols:Int) extends Mat[Short](dat, rows, cols) {
     def this(rows:Int, cols:Int) {
       this(Array.ofDim[Short](rows, cols), rows, cols)
     }
