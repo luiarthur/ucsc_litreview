@@ -401,22 +401,22 @@ z_{jk} \mid \pi_k &\sim \text{Bernoulli}(v_k),~ k=1, \ldots, K~\mbox{ and } j=1,
 \label{eq:ibp}
 \end{align}
 The marginal limiting distribution of $\Z$ defines an IBP as $K \rightarrow
-\infty$ and dropping all columns with all 0s, that is,  \(Z \sim
-\text{IBP}(\alpha)\). Under the IBP, an object can take a set of latent
-features and is expected to have  \(\alpha\)
-active features.
+\infty$ and dropping all columns with all 0's, that is,  \(Z \sim
+\text{IBP}(\alpha)\).
+%Under the IBP, an object can take a set of latent features and is expected to
+%have  \(\alpha\) active features.
+Under the IBP, each row has an expected row sum of $\alpha$.
 %
-{\tt active means?}
+%{\tt active means?}
 %
-The number of columns taken by at least one object (i.e., $\sum_{j=1}^J z_{jk} >0$) is random
-and it can be shown that the number of such columns follows
-\(\text{Poisson}(\alpha \sum_{j=1}^J j^{-1})\).   A prior distribution can be
-placed on \(\alpha\) to reflect uncertainty. A gamma prior is popular for
-$\alpha$ due to conjugacy.  \cite{teh2007stick} represented the IBP using the
-stick-breaking construction similar to the stick-breaking representation of the
-Dirichlet process (DP).  \cite{williamson2010dependent} developed a dependent
-IBP (dIBP) to induce correlations between objects and to model multiple
-$\Z$s that can be dependent.
+It can be shown that the number of non-zero columns in $Z$ has a Poisson
+distribution with mean $\alpha \sum_{j=1}^J j^{-1}$. Hence, a prior
+distribution can be placed on \(\alpha\) to reflect uncertainty of the number
+of latent features. A gamma prior is popular for $\alpha$ due to conjugacy.
+\cite{teh2007stick} represented the IBP using the stick-breaking construction
+similar to the stick-breaking representation of the Dirichlet process (DP).
+\cite{williamson2010dependent} developed a dependent IBP (dIBP) to induce
+correlations between objects and to model multiple $\Z$s that can be dependent.
 
 {\tt need to include Tamara's papers on feature allocation model, my papers on
   tumor heterogeneity. 

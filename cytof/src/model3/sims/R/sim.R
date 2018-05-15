@@ -456,28 +456,28 @@ sink(fileDest('pz0_missing_y.txt'))
 print(round(t(pz0_missy),2))
 sink()
 
-### Density of positive data and posterior predictive ###
+### Density of observed data and posterior predictive for observed data ###
 pdf(fileDest('pp_obs.pdf'))
 par(mfrow=c(4,2))
-thresh = -0
 for (i in 1:I) for (j in 1:J) {
-  yij = postpred_yij(out, i, j)
-  while (length(which(yij > thresh)) < 3) {
-    yij = postpred_yij(out, i, j)
-  }
+  yij = postpred_yij_obs(out, i, j)
 
-  pp_den = density(yij[yij > thresh])
-  dat_den = density(y[[i]][which(y[[i]][,j] > thresh) ,j])
+  pp_den = density(yij)
+  dat_den = density(y[[i]][which(!is.na(y[[i]][,j])) ,j])
   h = max(pp_den$y, dat_den$y)
 
-  plot(dat_den, bty='n', col='grey', lwd=2, ylim=c(0,h), fg='grey',
-       main=paste0('positive y: i=',i,', j=',j), xlim=c(thresh,7*1.2))
+  xmag = 7
+  plot(dat_den, bty='n', col='grey', lwd=2, ylim=c(0,h*1.5), fg='grey',
+       main=paste0('Observed y: i=',i,', j=',j), xlim=c(-xmag,xmag) * 1.2)
   lines(pp_den, col='blue', lwd=2)
 
   msg = paste0('P(Z=0) for missing y: ', round(pz0_missy[i,j],2))
-  x_pos = 7 * .8
-  y_pos = h / 2
+  x_pos = xmag * .6
+  y_pos = h * 1.3
   text(x_pos, y_pos, msg)
 }
 par(mfrow=c(1,1))
 dev.off()
+
+
+

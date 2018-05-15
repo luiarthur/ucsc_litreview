@@ -84,6 +84,10 @@ std::vector<List> fit_cytof_cpp(
   // loglike
   std::vector<double> ll;
 
+  // eta_obs
+  arma::cube eta_0_obs(I, J, get_L0(init)); // I x J x L0
+  arma::cube eta_1_obs(I, J, get_L1(init)); // I x J x L1
+
   // assign function
   auto assign_to_out = [&](const State &state, int i) {
     // update loglike
@@ -97,6 +101,9 @@ std::vector<List> fit_cytof_cpp(
         missing_y_mean[s] += state.missing_y[s] / B;
       }
 
+      // Update eta_obs
+      update_eta_obs(eta_0_obs, eta_1_obs, state, data);
+
       // TODO: profile the speed of these operations
       out[i - burn] = List::create(
         Named("beta_0") = state.beta_0 + 0,
@@ -109,6 +116,8 @@ std::vector<List> fit_cytof_cpp(
         Named("s") = state.s + 0,
         Named("eta_0") = state.eta_0 + 0,
         Named("eta_1") = state.eta_1 + 0,
+        Named("eta_0_obs") = eta_0_obs + 0, // remove in production?
+        Named("eta_1_obs") = eta_1_obs + 0, // remove in production?
         Named("v") = state.v + 0,
         Named("alpha") = state.alpha + 0,
         Named("nu") = state.nu + 0,
