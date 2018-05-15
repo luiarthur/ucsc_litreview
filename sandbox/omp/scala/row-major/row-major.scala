@@ -33,6 +33,25 @@ object RowMajor {
         }
       }
     }
+    def foreachPcol(f: (Int,Int) => Unit) {
+      dat.indices.foreach{ r =>
+        dat.head.indices.par.foreach { c =>
+          f(r,c)
+        }
+      }
+    }
+    def foreachPall(f: (Int,Int) => Unit) {
+      (0 until (rows * cols)).par.foreach { z =>
+        val r = z / cols
+        val c = z % cols
+        f(r,c)
+      }
+      //dat.indices.par.foreach{ r =>
+      //  dat.head.indices.par.foreach { c =>
+      //    f(r,c)
+      //  }
+      //}
+    }
 
     override def toString():String = {
       val dims = s"${nrows} x ${cols} matrix"
@@ -78,16 +97,39 @@ object RowMajor {
     val mat = timer("Creating Matrix: ") { new MatFloat(N,J) }
     println(mat)
 
-    timer("Row-traversal: ") { // faster
+    timer("Row-traversal (parallel): ") { // faster
       mat.foreachProw{ (r,c) => 
         mat.update(r, c, ThreadLocalRandom.current.nextGaussian.toShort + 1)
       }
     }
 
-    timer("Column-traversal: ") { // slower
+    timer("Row-traversal (sequential): ") { // slower
       mat.foreach{ (r,c) => 
         mat.update(r, c, ThreadLocalRandom.current.nextGaussian.toShort + 1)
       }
     }
+
+    timer("Col-traversal (parallel): ") { // slower
+      mat.dat.head.indices.par.foreach{ c =>
+        mat.dat.indices.foreach{ r =>
+          mat.update(r, c, ThreadLocalRandom.current.nextGaussian.toShort + 1)
+        }
+      }
+    }
+
+    timer("Col-traversal (sequential): ") { // slower
+      mat.dat.head.indices.foreach{ c =>
+        mat.dat.indices.foreach{ r =>
+          mat.update(r, c, ThreadLocalRandom.current.nextGaussian.toShort + 1)
+        }
+      }
+    }
+
+    timer("Row-traversal (Parallel-all): ") { // slower
+      mat.foreachPall{ (r,c) => 
+        mat.update(r, c, ThreadLocalRandom.current.nextGaussian.toShort + 1)
+      }
+    }
+
   }
 }
