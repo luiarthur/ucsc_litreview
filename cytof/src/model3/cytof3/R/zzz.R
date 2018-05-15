@@ -1,4 +1,5 @@
 #' @useDynLib cytof3
+#' @import float
 #' @import rcommon
 #' @import foreach
 #' @import doMC

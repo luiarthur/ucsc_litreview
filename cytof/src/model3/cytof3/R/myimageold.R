@@ -3,9 +3,8 @@ my.image.old <- function(Z,col=grey(seq(1,0,len=12)),fg='grey',
                          truncate=TRUE,
                          rm0Cols=FALSE,
                          addLegend=FALSE,nticks=11,mn=0,mx=1,...) {
-  #' Old way of plotting images
+  #' Old way of plotting images (deprecated)
   #' @export
-  #' @deprecated
 
   if (rm0Cols) {
     Z <- Z[, which(colSums(Z) > 0)]

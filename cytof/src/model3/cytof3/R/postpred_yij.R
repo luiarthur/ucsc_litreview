@@ -21,7 +21,7 @@ postpred_yij_obs = function(out, i, j) {
     mus_z = if (z_jk == 0) o$mus_0 else o$mus_1
     sig2_z = if (z_jk == 0) o$sig2_0[i,] else o$sig2_1[i,]
     Lz = length(mus_z)
-    l = sample(1:Lz, 1, prob=eta_z)
+    l = ifelse(sum(eta_z) > 0, sample(1:Lz, 1, prob=eta_z), sample(1:Lz, 1))
     rnorm(1, mus_z[l], sqrt(sig2_z[l]))
   })
 }

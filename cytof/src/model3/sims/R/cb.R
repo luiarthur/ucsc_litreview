@@ -117,7 +117,9 @@ st = system.time(
                        use_repulsive=TRUE)
 )
 print(st)
+out = shrinkOut(out)
 saveRDS(out, fileDest('out.rds'))
+out = unshrinkOut(out)
 
 B = length(out)
 
@@ -358,26 +360,21 @@ sink()
 ### Density of positive data and posterior predictive ###
 pdf(fileDest('pp_obs.pdf'))
 par(mfrow=c(4,2))
-thresh = 0
 for (i in 1:I) for (j in 1:J) {
-  cat(i,j, '\n')
-  yij = postpred_yij(out, i, j)
-  while (length(which(yij > thresh)) < 3) {
-    yij = postpred_yij(out, i, j)
-  }
-  pp_den = density(yij[yij > thresh])
+  yij = postpred_yij_obs(out, i, j)
 
-  dat_den = density(y[[i]][which(y[[i]][,j] > thresh) ,j])
+  pp_den = density(yij)
+  dat_den = density(y[[i]][which(!is.na(y[[i]][,j])) ,j])
   h = max(pp_den$y, dat_den$y)
 
-  plot(pp_den, bty='n', col='blue', lwd=2, ylim=c(0,h), fg='grey',
-       main=paste0('positive y: i=',i,', j=',j),
-       xlim=c(thresh*1.1,dat_lim[2]*1.2))
-  lines(dat_den, col='grey', lwd=2)
+  xmag = 7
+  plot(dat_den, bty='n', col='grey', lwd=2, ylim=c(0,h*1.5), fg='grey',
+       main=paste0('Observed y: i=',i,', j=',j), xlim=c(-xmag,xmag) * 1.2)
+  lines(pp_den, col='blue', lwd=2)
 
   msg = paste0('P(Z=0) for missing y: ', round(pz0_missy[i,j],2))
-  x_pos = dat_lim[2] * .8
-  y_pos = h / 2
+  x_pos = xmag * .6
+  y_pos = h * 1.3
   text(x_pos, y_pos, msg)
 }
 par(mfrow=c(1,1))

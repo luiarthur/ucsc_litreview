@@ -186,22 +186,44 @@ outcomes.
 
 
 \section{Introduction}
-Clinical application of natural killer (NK) cells %as immunotherapeutic agents against leukemia
-recently has emerged as a powerful treatment modality for advanced cancers refractory to conventional therapies \citep{rezvani2015application}. % and intensely investigated.
+Clinical application of natural killer (NK) cells
+%as immunotherapeutic agents against leukemia
+recently has emerged as a powerful treatment modality for advanced cancers
+refractory to conventional therapies \citep{rezvani2015application}. 
+%and intensely investigated.
 %NK cells, the third lymphocyte lineage, % preceded by T cells and B cells,
 %play critical roles in the immune response to certain %virus infected cells and
 %transformed tumor cells.
-NK cells play a critical role in cancer immune surveillance and are the first line of defense against viruses and transformed tumor cells.
-They have the intrinsic ability to infiltrate cancer tissue and their presence in the tumor is reported to be associated with better clinical outcomes \citep{suck2016natural}.  %NK cells develop in the bone marrow and are ``educated'' during their development to ensure not to attack normal self cells whiling rapidly killing tumor or virally infected cells.
+NK cells play a critical role in cancer immune surveillance and are the first
+line of defense against viruses and transformed tumor cells.  They have the
+intrinsic ability to infiltrate cancer tissue and their presence in the tumor
+is reported to be associated with better clinical outcomes
+\citep{suck2016natural}.  
+%NK cells develop in the bone marrow and are ``educated'' during their development to ensure not to attack normal self cells whiling rapidly killing tumor or virally infected cells.
 % (called self-tolerance).
 %During the development,
-Drs. Thall and Rezvani, collaborators at UT MD Anderson Cancer Center, have conducted clinical trials to study potential clinical efficacy of umbilical cord blood (UCB) transplantation as a therapy for leukemia.  UCB has become an established source of hematopoietic stem cells for transplantation. UCB NK cell therapy has the advantages of low risk of viral transmission from donor to recipient \citep{sarvaria2017umbilical}. In the trials, leukemia patients received UCB cell transplants. % after irradiation therapy.  %Some characteristics of the patients such as their survival after the treatment are recorded.
-During follow up, samples were taken at multiple time points from each patient.  Samples from %In addition, peripheral blood samples from
-healthy subjects and cord blood samples also were collected for comparison to leukemia patient samples.
-The samples were processed and expressions of 32 NK cell-associated cell surface protein markers, %in individual cells of the samples
-measured for individual cells in the samples using mass cytometry.
-Their primary research goal is to understand phenotypes and functions structured across heterogeneous NK cells. % based on the markers' expression levels.
-Better understanding of the characteristics of NK cells is crucial to estimate the true potential of NK cell therapies against cancer.  %for cancer immunotherapy. %against leukemia and possibly also against solid tumors.
+Drs. Thall and Rezvani, collaborators at UT MD Anderson Cancer Center, have
+conducted clinical trials to study potential clinical efficacy of umbilical
+cord blood (UCB) transplantation as a therapy for leukemia.  UCB has become an
+established source of hematopoietic stem cells for transplantation. UCB NK cell
+therapy has the advantages of low risk of viral transmission from donor to
+recipient \citep{sarvaria2017umbilical}. In the trials, leukemia patients
+received UCB cell transplants.
+% after irradiation therapy.  %Some characteristics of the patients such as their survival after the treatment are recorded.
+During follow up, samples were taken at multiple time points from each patient.
+Samples from
+%In addition, peripheral blood samples from
+healthy subjects and cord blood samples also were collected for comparison to
+leukemia patient samples.  The samples were processed and expressions of 32 NK
+cell-associated cell surface protein markers,
+%in individual cells of the samples
+measured for individual cells in the samples using mass cytometry.  Their
+primary research goal is to understand phenotypes and functions structured
+across heterogeneous NK cells.
+% based on the markers' expression levels.
+Better understanding of the characteristics of NK cells is crucial to estimate
+the true potential of NK cell therapies against cancer.
+%for cancer immunotherapy. %against leukemia and possibly also against solid tumors.
 
 
 
@@ -440,7 +462,7 @@ correlations between objects and to model multiple $\Z$s that can be dependent.
 
 {\tt please include more. for example, XY's JASA paper develops a fast
 computational method for feature allocation models.  It is something that we
-need to know.  }
+need to know.}
 
 The IBP has been extended so that the feature allocation matrix may contain
 integer values beyond 0 and 1 by replacing the Bernoulli distribution with an
@@ -454,8 +476,8 @@ been applied in topic modeling and computer vision
 \subsection{Proposed Projects}
 {\tt include a short summary of all three projects and explain how your report
 will be organized in the later part.}
-
-We propose Bayesian feature allocation models to study NK cell populations in our motivating data;
+We propose Bayesian feature allocation models to study NK cell populations in
+our motivating data;
 \begin{itemize}
 \item \underline{Project 1:}
 
@@ -464,7 +486,9 @@ We propose Bayesian feature allocation models to study NK cell populations in ou
 \item \underline{Project 3:}
 
 \end{itemize} 
-The remainder of the document is organized as follows. Sections~\ref{sec:proj1}-\ref{sec:proj3} describe the proposed projects. Section~\ref{sec:time} discusses a plan to progress the projects.  
+The remainder of the document is organized as follows.
+Sections~\ref{sec:proj1}-\ref{sec:proj3} describe the proposed projects.
+Section~\ref{sec:time} discusses a plan to progress the projects.  
 
 
 
@@ -562,12 +586,20 @@ the model in \eqref{eq:y-gam} and \eqref{eq:gam} is equivalent to the model in
 \eqref{eq:y-mix}.  
 
 We next build a model for the missingness mechanism.
-%{\tt explain our approach for missing in few sentences.}
-To build the mechanism, we incorporate information provided by a subject scientist that a marker expression level is
-recorded as ``missing'' when a maker in a cell has a very weak signal, strongly implying that the marker is not expressed. % from cells for a marker are extremely weak.  
-We take an empirical approach by assuming that the distribution of the values with $m_{inj}=1$ is similar to the distribution of observed $y$ below 0. We then let the probability of $y$ being missing depend on its unobserved value of $y$.  % and assume   % use observed values of $y$ to elicit the probability of $y$ being missing, $\Prob(m_{inj}=1 \mid y_{inj})$ as a function of $y$.  %In addition, we will impose the restriction that extremely low
-%expression values have low prior probability. This ensures that parameters in
-%the sampling density will not be unnecessarily inflated.
+To build the mechanism, we incorporate information provided by a subject
+scientist that a marker expression level is recorded as ``missing'' when a
+maker in a cell has a very weak signal, strongly implying that the marker is
+not expressed.
+% from cells for a marker are extremely weak.  
+We take an empirical approach by assuming that the distribution of the values
+with $m_{inj}=1$ is similar to the distribution of observed $y$ below 0. We
+then let the probability of $y$ being missing depend on its unobserved value of
+$y$.
+% and assume   % use observed values of $y$ to elicit the probability of $y$
+% being missing, $\Prob(m_{inj}=1 \mid y_{inj})$ as a function of $y$.  %In
+% addition, we will impose the restriction that extremely low
+% expression values have low prior probability. This ensures that parameters in
+% the sampling density will not be unnecessarily inflated.
 %
 Given
 \(y_{inj}\), we consider a selection function for \(m_{inj}\); for
@@ -581,10 +613,20 @@ Given
 \end{align}
 where \(c_0\) and \(c_1\) are real constants, $\beta_{0i} \in \mathbb{R}$ , and
 $\beta_{1i} > 0$.
-%{\tt say something like it is ``untestable'' but take this approach by
-%incorporating our input from biologists}
 
-{\tt include a figure showing what the function looks like. }
+%{\tt include a figure showing what the function looks like. }
+Figure \ref{fig:prob-miss-eg} shows an example missing mechanism. We desire the
+missing mechanism have a peak in the middle so as discourage extremely large
+and extremely small values from being classified as observed. This helps to
+control the size of the scale parameter in the mixture of Normals used in the
+data density.
+\beginmyfig
+\includegraphics[scale=.5]{img/prob_miss_example.pdf}
+\caption{Example missing mechanism. The blue points serve as guides in
+determining a missing mechanism. Values for $\beta$ and $c$ can be solved for
+through a system of equations.}
+\label{fig:prob-miss-eg}
+\endmyfig
 
 Note that the assumptions for the distribution of the unobserved data are
 untestable. However, we can incorporate input from biologists through informed
@@ -614,9 +656,6 @@ have noted that the Jeffreys' prior for correlation matrices is $p(\Gamma)
 \propto \abs{\Gamma}^{-(J+1)/2}$.  \cite{zhang2006sampling} presents more
 generalized and flexible priors which can be reduced to the two previous priors
 as special cases.
-%
-%{\tt discuss a bit models for correlation matrix.  I will send you some
-%references on models for correlation matrix.}
 %
 We let $\alpha \sim \G(a_\alpha, b_\alpha)$ with mean $a_\alpha/b_\alpha$.  
 
@@ -662,8 +701,6 @@ for each $(i, j)$. So for \(i=1, \ldots, I\), \(n=1, \ldots, N_i\) and \(j=1,
 
 
 \paragraph*{Parameters for Missingness Mechanism}
-%{\tt explain what you do for missingness mechanism.}
-%
 A prior distribution over the missing mechanism can be specified through
 placing priors on the parameters $\beta_{0i}$ and $\beta_{1i}$. 
 %
@@ -710,9 +747,6 @@ Summarizing the joint posterior distribution $p(\btheta \mid \y, \m)$ is
 challenging, especially for $\Z$, $\bw$ and $\lambda$, possibly due to a
 label switching problem.
 %
-%{\tt Include David's approach here and explain his
-%approach.  Also explain why we include $w$ in the adjacency matrix, which is
-%different from David's approach. }
 We use a method based on sequentially-allocated latent structure optimization
 (SALSO) \citep{salso} to find point estimates for $\Z$, $\bm W$, and $\lambda$.
 SALSO first constructs $A(\bZ)=\{A_{j,j'}\}$, the $J \times J$ pairwise allocation matrix corresponding to a binary matrix
@@ -770,7 +804,10 @@ We conducted a simulation study to  to evaluate the performance of the proposed 
 %and the results of the analysis on the simulated data using the proposed model.
 %
 %\subsubsection{Data Simulation}
-To simulate data, we assume $J=32$ markers and let the numbers of cells in samples $N_i=30000$, 20000 and 10000, $i=1, 2, 3$ for three samples ($I=3$).  We let the true number of latent cell types $K^\true=10$.  We specified $\bZ^\true$ and $\bw^\true_i$, $i=1,2,3$ as follows;
+To simulate data, we assume $J=32$ markers and let the numbers of cells in
+samples $N_i=30000$, 20000 and 10000, $i=1, 2, 3$ for three samples ($I=3$).
+We let the true number of latent cell types $K^\true=10$.  We specified
+$\bZ^\true$ and $\bw^\true_i$, $i=1,2,3$ as follows;
 %
 {\tt give specific distributions used for $\bw$ and explain the details.} 
 %
@@ -1594,13 +1631,13 @@ $(c_0, p_0)$, and $(c_\text{high}, p_\text{high})$, and then
 solve for $\beta_0$, $\beta_1$, and $c_1$. Figure \ref{fig:prob-miss-eg} shows
 an example missing mechanism where $(c_\text{low}, p_\text{low}) = (-6,0.1)$,
 $(c_0, p_0)=(-2,.99)$, and $(c_\text{high}, p_\text{high}) = (-1,0.01)$.
-\beginmyfig
-\includegraphics[scale=.5]{img/prob_miss_example.pdf}
-\caption{Example missing mechanism. The blue points serve as guides in
-determining a missing mechanism. Values for $\beta$ and $c$ can be solved for
-through a system of equations.}
-\label{fig:prob-miss-eg}
-\endmyfig
+%\beginmyfig
+%\includegraphics[scale=.5]{img/prob_miss_example.pdf}
+%\caption{Example missing mechanism. The blue points serve as guides in
+%determining a missing mechanism. Values for $\beta$ and $c$ can be solved for
+%through a system of equations.}
+%\label{fig:prob-miss-eg}
+%\endmyfig
 
 Through simple algebra, we can solve for $\beta$ and $c_0$ as follows:
 \begin{align*}

@@ -11,6 +11,7 @@ Depends: RcppTN
 Remotes: luiarthur/rcommon.git
 Imports:
   Rcpp (>= 0.12.10),
+  float,
   rcommon,
   gtools,
   foreach,

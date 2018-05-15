@@ -158,6 +158,8 @@ locked$nu =TRUE # TODO: make random?
 init$nu = 1.0   # TODO: make random?
 
 #locked$s = TRUE
+#locked$lam =TRUE
+#locked$Z =TRUE
 #locked$sig2_0 = TRUE # TODO: Can I make this random?
 #locked$sig2_1 = TRUE # TODO: Can I make this random?
 
@@ -172,7 +174,9 @@ for (i in 1:I) init$missing_y[[i]][is.na(y[[i]])] = prior$c0
 
 ### Save Checkpoint###
 #save(prior, init, locked, dat, file=fileDest('dat.rda'))
+dat = shrinkDat(dat)
 save.image(file=fileDest('checkpoint.rda'))
+dat = unshrinkDat(dat)
 
 ### Start MCMC ###
 st = system.time(
@@ -185,7 +189,9 @@ st = system.time(
 print(st)
 #saveRDS(out, fileDest('out.rds'))
 #save.session(file=fileDest('checkpoint.rda'))
+out = shrinkOut(out)
 save.image(file=fileDest('checkpoint.rda'))
+out = unshrinkOut(out)
 
 B = length(out)
 
@@ -478,6 +484,3 @@ for (i in 1:I) for (j in 1:J) {
 }
 par(mfrow=c(1,1))
 dev.off()
-
-
-
