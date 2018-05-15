@@ -8,50 +8,29 @@ object RowMajor {
   }
 
 
-  /**
-  abstract class MatGeneric(rows:Int, cols:Int) {
-    type T <: AnyVal
-    val data:Array[Array[T]]
+  abstract class Mat(rows:Int, cols:Int) {
+    type T
+    val dat: Array[Array[T]]
+
+    def nrows():Int = dat.size
+    def ncols():Int = dat.head.size
+    def at(row:Int, col:Int):T = dat(row)(col)
+    def update(row:Int, col:Int, x:T):Unit = {dat(row)(col) = x}
     def foreach(f: (Int,Int) => Unit) {
-      data.indices.foreach{ r =>
-        data.head.indices.foreach{ c => 
+      dat.indices.foreach{ r =>
+        dat.head.indices.foreach { c =>
           f(r,c)
         }
       }
     }
+    //def cp(): Array[Array[T]] = dat.map(_.clone)
   }
 
-  case class MatFloat(rows:Int, cols:Int) extends MatGeneric(rows, cols){
-    type T = Float; val data = Array.ofDim[T](rows, cols)
-  }
-  case class MatDouble(rows:Int, cols:Int) extends MatGeneric(rows, cols){
-    type T = Double; val data = Array.ofDim[T](rows, cols)
-  }
-  case class MatShort(rows:Int, cols:Int) extends MatGeneric(rows, cols){
-    type T = Short; val data = Array.ofDim[T](rows, cols)
-  }
-  case class MatInt(rows:Int, cols:Int) extends MatGeneric(rows, cols){
-    type T = Int; val data = Array.ofDim[T](rows, cols)
-  }
-  case class MatLong(rows:Int, cols:Int) extends MatGeneric(rows, cols){
-    type T = Long; val data = Array.ofDim[T](rows, cols)
+  case class MatDouble (rows:Int, cols:Int) extends Mat(rows, cols) {
+    type T = Double
+    val dat = Array.ofDim[T](rows, cols)
   }
 
-  val mi = MatFloat(3,5)
-  mi.foreach{ (r,c) => mi.data.update(r,c,1)}
-
-  case class Mat(rows:Int, cols:Int) {
-    type T
-    val data = Array.ofDim[T](rows, cols)
-    def foreach(f: (r:Int, c:Int) => Unit) {
-      data.indices.foreach{ r =>
-        data.head.indices.foreach{ c => 
-          f(data(r)(c))
-        }
-      }
-    }
-  }
-  **/
 
   def nrows[T <: AnyVal](m:Array[Array[T]]):Int = m.size
   def ncols[T <: AnyVal](m:Array[Array[T]]):Int = m.head.size
@@ -64,33 +43,31 @@ object RowMajor {
   }
   def cpMat[T <: AnyVal](m: Array[Array[T]]) = m.map(_.clone)
 
-  val x = cpMat(arr)
-  val x = arr.map(_.clone)
 
   val N = 10000
-  val J = 1000
-  val arr = timer() {Array.ofDim[Float](N,J)}
-  timer("Row Major: ") { // faster
-    foreach(arr, (r,c) => arr(r)(c) += 1)
-  }
-
-
-  timer("Row Major: ") { // faster
-    arr.indices.foreach{ n =>
-      arr.head.indices.foreach{ j => 
-        arr(n)(j) += 1
-      }
-    }
-  }
-
-  timer("Col Major: ") { // slower
-    arr.head.indices.foreach{ j =>
-      arr.indices.foreach{ n => 
-        arr(n)(j) += 1
-      }
-    }
-  }
-
+  val J = 10000
+  //val arr = timer("Creating Matrix: ") {Array.ofDim[Float](N,J)}
+  //val x = cpMat(arr).toArray
   def main(args: Array[String]) {
+    val arr = timer("Creating Matrix: ") { MatDouble(N,J) }
+
+    timer("Row-traversal: ") { // faster
+      //foreach(arr, (r,c) => arr(r)(c) += 1)
+
+      //arr.foreach( (r,c) => arr.update(r,c, arr.at(r,c) + 1) )
+      arr.dat.indices.foreach{ n =>
+        arr.dat.head.indices.foreach{ j => 
+          arr.dat(n)(j) += 1
+        }
+      }
+    }
+
+    timer("Column-traversal: ") { // slower
+      arr.dat.head.indices.foreach{ j =>
+        arr.dat.indices.foreach{ n => 
+          arr.dat(n)(j) += 1
+        }
+      }
+    }
   }
 }
