@@ -18,7 +18,7 @@
 - [ ] compare against FlowSOM
     - Mention other methods in literature review
 - [ ] why is beta1 so strange?
-- [ ] Change missing mechanism and use slice sampling
+- [ ] Change missing mechanism and use [slice sampling][14]
     - use quadratic missing mechanism -> more intuitive
     - b0 controls location
     - b1 controls width
@@ -108,3 +108,4 @@ Goal: Advancement by week of **4 June, 2018**.
 [11]: http://probability.ca/jeff/ftpdir/adaptex.pdf
 [12]: https://arxiv.org/pdf/1204.5243.pdf
 [13]: https://www.r-bloggers.com/parallel-random-number-generation-using-trng/
+[14]: https://deepblue.lib.umich.edu/bitstream/handle/2027.42/74035/1467-9868.00179.pdf?sequence=1

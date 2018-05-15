@@ -367,7 +367,7 @@ which is the finite gaussian mixture model. To account for irregular shapes and
 the presence of outliers in cytometry data, \cite{lo2009flowclust} developed
 flowClust, which first applies a Box-Cox transformation to the data, and then
 uses a mixture of t-distributions to cluster the transformed data.  The
-expectation-maximization (EM) algorithm \citep{dempster1997maximum} can be used
+expectation-maximization (EM) algorithm \citep{dempster1977maximum} can be used
 to learn the parameters in this model.
 %Model-based clustering algorithms are
 %among the best performing algorithms used in cytometry data analysis, but they
@@ -1212,34 +1212,92 @@ to be similar, and sometimes repeated. This can be remedied using a repulsive
 mixture prior and will be included in Project 2.
 
 \section{Project 2: Repulsive Feature Allocation Model}\label{sec:proj2}
-In Project 1, we use a FAM to learn the latent cell-types present in the
-samples. We observed that at times, the recovered latent cell-type matrix
+In Project 1, we used a FAM to learn the latent cell-types present in the
+samples.  We observed that at times, the recovered latent cell-type matrix
 contained duplicated cell-types. This unnecessarily assigns substantial
-probability to redundant features. We therefore propose applying some
-constraints the latent cell-type matrix so that in the prior, no cell-types can
-be repeated. Moreover, cell-types that are more distinct are preferred over
-cell-types that are very similar. We will extend the ideas by
+probability to redundant features.
+
+Using Project 1 as a starting point, the purpose of this project is two-fold.
+Our first objective is to compare the NK-cell subpopulations in cord-blood
+samples and healthy-patient samples. We will do this by extending the model in
+Project 1 to include an indicator variable which learns whether a batch of
+samples is composed of a particular cell-type. We will also supply a covariate
+which indicates whether samples come from cord-blood cells or healthy patients. 
+%
+Our second objective is to model the NK-cell subpopulations in a way such that
+the learned cell-types are distinct. To this end, we propose applying
+constraints to the prior distribution for the latent cell-type matrix so that
+no cell-type can be repeated apriori. We will extend the ideas by
 \cite{petralia2012repulsive} to create a repulsive feature allocation model
-(rep-FAM). This model will 
-%TODO
+(rep-FAM). The remainder of this section will outline key components of this
+project and provide a simulation study showing gains from replacing the IBP
+prior with a rep-FAM prior for the latent feature allocation matrix $\bZ$.
 
+\subsection{Model}
+Since the model proposed in this project is heavily based on that in Project 1,
+we will only outline the components that are different from Project 1.
 
+This model will directly affect only the parameters $(\lambda, \bW, \bZ, H, v,
+\alpha)$ from the previous model. In addition, two sets of new parameters
+$\delta$ and $\pi$ will be introduced. The sampling model remains unchanged.
+Consequently, we will only present the changes to the affected parameters. 
+
+\textbf{Latent cell phenotypes:} We propose the rep-FAM distribution as
+follows.  Let $v = (v_1, ..., v_K)$ where $v_k \in (0,1)$. In addition, let
+$C_\phi(\cdot)$ be a function of only distance, given $\phi$, such that
+$C_\phi(0)=1$ and $\lim_{d\rightarrow\infty}C_\phi(d) = 0$. If a random
+binary matrix with fixed dimensions $(J\times K)$ is said to be distributed
+rep-FAM with parameters $v$ and $C$ (i.e. if $\bZ \sim \text{rep-FAM}$), then
+$$
+P(\bZ \mid v, C) \propto \prod_{k=1}^K  \bc{\prod_{j=1}^J v_k^{z_{jk}}(1-v_k)^{1-z_{jk}}} \times
+\prod_{k_1=1}^{K-1}\prod_{k_2=k_1+1}^{K} \p{1 - C_\phi\p{\sum_{j=1}^J \abs{z_{jk_1} - z_{jk_2}}}}.
+$$
+The function $C_\phi(\cdot)$ can be interpreted as a proximity function. A
+suitable form is $C_\phi(d) = \exp\p{-d/\phi}$. This is the form we will use
+for our simulation study. We place a prior on $v$ just as we did previously so
+that $v_k \mid \alpha \sim \Be(\alpha, 1)$ for $k\in\bc{1,...,K}$ and $\alpha
+\sim \Gamma(a_\alpha, b_\alpha)$. Notice that $v_k$ has a conjugate prior.
+The selection of $\phi$ requires some sensitivity analysis, but for now we
+will fix $\phi=1$. Also note that the matrix-parameter $H$ in the previous
+model is no longer in the model under this construction.
+
+As in the previous model, the $K$ cell phenotypes are shared across samples,
+but their relative weights may vary across samples. Let $\tilde w_{ik}$ denote
+the relative abundance of phenotype $k$ in sample $i$ such that $\tilde w_{ik}
+> 0$.  Additionally, let $\tilde w_{ik} \ind \text{Gamma}(a_W/K, 1)$, for
+$a_W>0$.  Let $x_i$ be an indicator for sample $i$ such that $x_i=1$ if sample
+$i$ is a cord blood sample and $x_i=0$ if sample $i$ is a sample from a healthy
+patient. We will say that sample $i$ belongs to a healthy patient batch if
+$x_i=0$, and sample $i$ belongs to a cord-blood batch if $x_i=1$.
+Let $\delta_{rk}$ be an indicator variable denoting whether batch $r$ contains
+cell-type $k$, for $r\in\bc{0,1}$. Note that by learning $\delta_{rk}$ we
+are, in a sense, performing feature selection. As a prior distribution for
+$\delta_{rk}$, we propose $\delta_{rk} \mid \pi_{rk} \sim
+\Bern(\pi_{rk})$, with $\pi_{rk} \sim \text{Beta}(a_\pi, b_\pi)$. Finally, let
+$w_{ik}$ denote the normalized relative abundance of phenotype $k$ in 
+sample $i$. Deterministically, we compute 
+$$ w_{ik} :=
+\begin{cases}
+  \ds\frac{\tilde w_{ik} \delta_{x_i k}}{\sum_{\ell=1}^K\tilde w_{i\ell} \delta_{x_i \ell}}, &
+  \text{if } \sum_{\ell=1}^K\tilde w_{i\ell} \delta_{x_i \ell} > 0 \\
+  0, & \text{otherwise}. \\
+\end{cases}
+$$
+Note that if $\delta_{x_i k} = 1$ for all $k\in\bc{1,...,K}$, then the
+distribution of $\bm w_i$ reduces to $\Dir_K(a_W/K,...,a_W/K)$.
+
+%TODO: HERE
+\subsection{Simulation Study}
+TODO. Show difference between IBP and rep-FAM.
 
 \section{Project 3: Covariate-Dependent Feature Allocation Model}\label{sec:proj3}
-%Let $\bx_i$ a vector of covariates of subject $i$ and $t$ time after receiving
-%a treatment.  We extend the model by letting $\bw_i$ a function of $\bx_i$ and
-%$t$ and jointly analyze samples of subjects collected at different time
-%points. While all samples share $\bZ$ (common cell phenotypes), phenotype
-%abundances $\bw(\bx_i, t)$ are sample specific and depend on covariates and
-%time points.  We also let $w_k(\bx_i, t)$ exactly equal to zero for some
-%phenotypes. 
-
-We extend the model by letting phenotype abundances $\bw=(w_1, \ldots, w_K)$ a
-function of time $t$ after treatment and jointly analyze samples of a subject
+% TODO
+We extend the model by letting phenotype abundances $\bw=(w_1, \ldots, w_K)$ be
+a function of time $t$ after treatment and jointly analyze samples of a subject
 collected at different time points. While all samples share $\bZ$ (common cell
 phenotypes), phenotype abundances $\bw_{t_i, k}$, $i=1, \ldots, I$ are
-dependent through time.  We also let $w_{t_i,k}$ exactly equal to zero for some
-phenotypes. Let $\xi_{t_1,1}=1$ and assume $\xi_{t_1,k} =
+dependent through time.  We also let $w_{t_i,k}$ exactly equal to zero for
+some phenotypes. Let $\xi_{t_1,1}=1$ and assume $\xi_{t_1,k} =
 \max(\xi^\prime_{t_1,k}, 0)$, $k=1, \ldots, K$, where $\xi^\prime_{t_1,k} \iid
 \N(0, s^2_1)$. We then normalize $w^\prime_{t_1,k}$,  $w_{t_1,k} =
 \xi_{t_1,k}/\sum_{k^\prime=1}^K \xi_{t_1, k^\prime}$, $k=1, \ldots, K$. For
@@ -1257,7 +1315,7 @@ g_{t_i,k}$ where $g_{t_i, k} \iid \N(0, s^2)$.
 
 
 \section{Timeline}\label{sec:time}
-
+%TODO
 
 
 \bibliography{litreview.bib}
