@@ -114,7 +114,7 @@ st = system.time(
   out <- fit_cytof_cpp(y, B=2000, burn=1000, prior=prior, locked=locked,
                        init=init, print_freq=1, show_timings=FALSE,
                        normalize_loglike=TRUE, joint_update_freq=0, ncore=1,
-                       use_repulsive=TRUE)
+                       use_repulsive=FALSE)
 )
 print(st)
 out = shrinkOut(out)
