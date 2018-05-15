@@ -1,3 +1,5 @@
+import java.util.concurrent._
+
 object RowMajor {
   def timer[R](msg: String="")(block: => R): R = {  
     val t0 = System.nanoTime()
@@ -8,10 +10,11 @@ object RowMajor {
   }
 
 
-  abstract class Mat(rows:Int, cols:Int) {
-    type T
-    val dat: Array[Array[T]]
-
+  abstract class Mat[T](dat: Array[Array[T]], rows:Int, cols:Int) {
+    // Implement the following:
+    //def this(rows:Int, cols:Int): this.type
+    def cp()
+    
     def nrows():Int = dat.size
     def ncols():Int = dat.head.size
     def at(row:Int, col:Int):T = dat(row)(col)
@@ -23,50 +26,71 @@ object RowMajor {
         }
       }
     }
-    //def cp(): Array[Array[T]] = dat.map(_.clone)
-  }
-
-  case class MatDouble (rows:Int, cols:Int) extends Mat(rows, cols) {
-    type T = Double
-    val dat = Array.ofDim[T](rows, cols)
-  }
-
-
-  def nrows[T <: AnyVal](m:Array[Array[T]]):Int = m.size
-  def ncols[T <: AnyVal](m:Array[Array[T]]):Int = m.head.size
-  def foreach[T <: AnyVal](m:Array[Array[T]], f: (Int,Int) => Unit):Unit = {
-    m.indices.foreach{ r =>
-      m.head.indices.foreach{ c =>
-        f(r,c)
+    def foreachProw(f: (Int,Int) => Unit) {
+      dat.indices.par.foreach{ r =>
+        dat.head.indices.foreach { c =>
+          f(r,c)
+        }
       }
     }
+
+    override def toString():String = {
+      val dims = s"${nrows} x ${cols} matrix"
+      val arr = "TODO: Print part of the matrix"
+      dims + "\n" + arr
+    }
   }
-  def cpMat[T <: AnyVal](m: Array[Array[T]]) = m.map(_.clone)
+
+  case class MatDouble (dat: Array[Array[Double]], rows:Int, cols:Int)
+  extends Mat[Double](dat, rows, cols) {
+    def this(rows:Int, cols:Int) {
+      this(Array.ofDim[Double](rows, cols), rows, cols)
+    }
+    def cp() = new MatDouble(dat.map{_.clone}, rows, cols)
+  }
+
+  case class MatFloat (dat: Array[Array[Float]], rows:Int, cols:Int)
+  extends Mat[Float](dat, rows, cols) {
+    def this(rows:Int, cols:Int) {
+      this(Array.ofDim[Float](rows, cols), rows, cols)
+    }
+    def cp() = new MatFloat(dat.map{_.clone}, rows, cols)
+  }
+
+  case class MatInt (dat: Array[Array[Int]], rows:Int, cols:Int)
+  extends Mat[Int](dat, rows, cols) {
+    def this(rows:Int, cols:Int) {
+      this(Array.ofDim[Int](rows, cols), rows, cols)
+    }
+    def cp() = new MatInt(dat.map{_.clone}, rows, cols)
+  }
+
+  case class MatShort (dat: Array[Array[Short]], rows:Int, cols:Int)
+  extends Mat[Short](dat, rows, cols) {
+    def this(rows:Int, cols:Int) {
+      this(Array.ofDim[Short](rows, cols), rows, cols)
+    }
+    def cp() = new MatShort(dat.map{_.clone}, rows, cols)
+  }
 
 
-  val N = 10000
-  val J = 10000
-  //val arr = timer("Creating Matrix: ") {Array.ofDim[Float](N,J)}
-  //val x = cpMat(arr).toArray
+
+
   def main(args: Array[String]) {
-    val arr = timer("Creating Matrix: ") { MatDouble(N,J) }
+    val N = 10000
+    val J = 10000
+    val mat = timer("Creating Matrix: ") { new MatFloat(N,J) }
+    println(mat)
 
     timer("Row-traversal: ") { // faster
-      //foreach(arr, (r,c) => arr(r)(c) += 1)
-
-      //arr.foreach( (r,c) => arr.update(r,c, arr.at(r,c) + 1) )
-      arr.dat.indices.foreach{ n =>
-        arr.dat.head.indices.foreach{ j => 
-          arr.dat(n)(j) += 1
-        }
+      mat.foreachProw{ (r,c) => 
+        mat.update(r, c, ThreadLocalRandom.current.nextGaussian.toShort + 1)
       }
     }
 
     timer("Column-traversal: ") { // slower
-      arr.dat.head.indices.foreach{ j =>
-        arr.dat.indices.foreach{ n => 
-          arr.dat(n)(j) += 1
-        }
+      mat.foreach{ (r,c) => 
+        mat.update(r, c, ThreadLocalRandom.current.nextGaussian.toShort + 1)
       }
     }
   }

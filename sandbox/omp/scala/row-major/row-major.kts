@@ -1,5 +1,6 @@
 import java.util.Random
 import java.io.*
+import java.util.concurrent.*
 
 fun <R>timer(block: () -> R):R {
   val t0 = System.nanoTime()
@@ -56,7 +57,7 @@ class MatShort constructor(rows:Int, cols:Int) : Mat<ShortArray, Short> {
 val N = 10000
 val J = 10000
 
-print("Create matrix: "); val mat = timer { MatFloat(N, J) }
+print("Create matrix: "); val mat = timer { MatDouble(N, J) }
 println("nrows: ${mat.nrows()}")
 println("ncols: ${mat.ncols()}")
 
@@ -65,8 +66,8 @@ print("Row-traverse: ")
 timer{
   for(r in mat.dat.indices) {
     for (c in mat.dat.first().indices) {
-      mat.update(r, c, mat.at(r,c) + 1)
-      //mat.update(r, c, (mat.at(r,c) + 1).toShort())
+      //mat.update(r, c, mat.at(r,c) + 1)
+      mat.update(r, c, ThreadLocalRandom.current().nextGaussian())
     }
   }
 }
@@ -76,8 +77,8 @@ print("Col-traverse: ")
 timer{
   for (c in mat.dat.first().indices) {
     for(r in mat.dat.indices) {
-      mat.update(r, c, (mat.at(r,c) + 1))
-      //mat.update(r, c, (mat.at(r,c) + 1).toShort())
+      //mat.update(r, c, (mat.at(r,c) + 1))
+      mat.update(r, c, ThreadLocalRandom.current().nextGaussian())
     }
   }
 }
