@@ -5,7 +5,7 @@
 \title{Adding a vertical color bar}
 \usage{
 color.bar(col, zlim = range(col), ticks = seq(zlim[1], zlim[2], len =
-  length(col)), digits = 1, title = "")
+  length(col)), digits = 1, title = "", cex)
 }
 \description{
 Adding a vertical color bar

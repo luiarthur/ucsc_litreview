@@ -45,3 +45,10 @@ plot(py[[i]]$x[which(lami %in% bigK),1:2],
 #table(lamToChar(lam[[i]])) / sum(table(lamToChar(lam[[i]])))
 #round(out[[idx_best[i]]]$W[i,], 4)
 
+
+### Q hist (Histogram of P(Z=0) for missing y) ###
+pdf(filedest('pz0_missy.pdf'))
+hist(pz0_missy, main='',
+     xlab='histogram: posterior probability of z=0 for missing y',
+     col='grey', border='white', prob=false)
+dev.off()

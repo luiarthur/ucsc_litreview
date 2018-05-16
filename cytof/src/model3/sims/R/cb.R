@@ -1,5 +1,5 @@
 ### GLOBALS ###
-OUTDIR = '../out/cb_locked_beta1_K20_repulsive/'
+OUTDIR = '../out/cb_locked_beta1_K20/'
 ### END OF GLOBALS ###
 
 library(rcommon)
@@ -18,6 +18,7 @@ y = y_orig
 missing_prop = round(get_missing_prop(y),4)
 sink(fileDest('missing_prop.txt'))
 print(missing_prop)
+print(sapply(y, NROW))
 sink()
 #y = preimpute(y_orig, .01)
 #y = y_orig
@@ -335,13 +336,20 @@ dev.off()
 #  Sys.sleep(.1)
 #}
 
-png(fileDest('YZ%03d.png'), height=500, width=500)
-fy = function(lami) {
-  abline(h=cumsum(table(lami))+.5, lwd=1, col='white', lty=2)
-  axis(4, at=cumsum(table(lami))+.5, col=NA, col.ticks=1, cex.axis=.0001)
-}
+#fy = function(lami) {
+#  abline(h=cumsum(table(lami))+.5, lwd=1, col='white', lty=2)
+#  axis(4, at=cumsum(table(lami))+.5, col=NA, col.ticks=1, cex.axis=.0001)
+#}
+#source('../../cytof3/R/myimage.R')
+#source('../../cytof3/R/yZ.R')
+#source('../../cytof3/R/yZ_inspect.R')
+mult=1; png(fileDest('YZ%03d.png'), height=700*mult, width=500*mult,
+            type='quartz')#, family=X11Fonts()$Arial)
 for (i in 1:I) {
-  yZ_inspect(out, y, zlim=dat_lim, i=i, thresh=.9, fy=fy)
+  #yZ_inspect(out, y, zlim=dat_lim, i=i, thresh=.9, fy=fy)
+  yZ_inspect(out, y, zlim=c(-2,2), i=i, thresh=.9, na.color='black',
+             cex.z.b=1.5, cex.z.lab=1.5, cex.z.l=1.5, cex.z.r=1.5,
+             cex.y.ylab=1.5, cex.y.xaxs=1.4, cex.y.yaxs=1.4, cex.y.leg=1.5)
 }
 dev.off()
 
@@ -382,4 +390,11 @@ for (i in 1:I) for (j in 1:J) {
   text(x_pos, y_pos, msg)
 }
 par(mfrow=c(1,1))
+dev.off()
+
+### Q hist (Histogram of P(Z=0) for missing y) ###
+pdf(fileDest('pz0_missy.pdf'))
+hist(pz0_missy, main='',
+     xlab='Histogram: Posterior Probability of Z=0 for missing y',
+     col='grey', border='white', prob=FALSE)
 dev.off()

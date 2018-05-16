@@ -10,7 +10,7 @@ yZ_inspect(out, y, zlim, i, thresh = 0.7, col = list(blueToRed(),
   abline(h = cumsum(table(lami)) + 0.5, lwd = 3, col = "yellow", lty = 1)    
   axis(4, at = cumsum(table(lami)) + 0.5, col = NA, col.ticks = 1, cex.axis =
   1e-04) }, fZ = function(Z) abline(v = 1:NCOL(Z) + 0.5, h = 1:NROW(Z) + 0.5,
-  col = "grey"))
+  col = "grey"), ...)
 }
 \arguments{
 \item{fy}{function to execute after making y image}

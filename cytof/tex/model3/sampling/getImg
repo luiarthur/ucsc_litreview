@@ -33,4 +33,5 @@ for i in $I; do
 done
 cp ${simImgPath}/${cbSimName}/"pp_obs.pdf" $cbOutdir
 cp ${simImgPath}/${cbSimName}/"y_hist.pdf" $cbOutdir
+cp ${simImgPath}/${cbSimName}/"pz0_missy.pdf" $cbOutdir
 

@@ -42,6 +42,11 @@ I=3; J=32; N=c(3,2,1)*N_degree; K=10
 dat = sim_dat(I=I, J=J, N=N, K=K, L0=3, L1=4, Z=genZ(J,K,.6),
               miss_mech_params(c(-7, -3, -1), c(.1, .99, .001)))
 y = dat$y
+missing_prop = round(get_missing_prop(y),4)
+sink(fileDest('missing_prop.txt'))
+print(missing_prop)
+print(sapply(y, NROW))
+sink()
 
 
 pdf(fileDest('Z_true.pdf'))
@@ -429,18 +434,27 @@ dev.off()
 #}
 
 # TODO: Test this with simulation data
-png(fileDest('YZ%03d.png'), height=500, width=500)
-#png('YZ%03d.png', height=500, width=500)
-fy = function(lami) {
-  abline(h=cumsum(table(lami))+.5, lwd=3, col='yellow', lty=1)
-  axis(4, at=cumsum(table(lami))+.5, col=NA, col.ticks=1, cex.axis=.0001)
-}
+#png(fileDest('YZ%03d.png'), height=500, width=500)
+##png('YZ%03d.png', height=500, width=500)
+#fy = function(lami) {
+#  abline(h=cumsum(table(lami))+.5, lwd=3, col='yellow', lty=1)
+#  axis(4, at=cumsum(table(lami))+.5, col=NA, col.ticks=1, cex.axis=.0001)
+#}
+#for (i in 1:I) {
+#  yZ_inspect(out, y, zlim=dat_lim, i=i, thresh=.9, na.color='black', fy=fy)
+#  #yZ_inspect(out, last(out)$missing_y_mean, zlim=dat_lim, i=i, thresh=.9)
+#  #yZ_inspect_old(out, y, dat_lim=dat_lim, i=i, thresh=.05)
+#}
+#dev.off()
+mult=1; png(fileDest('YZ%03d.png'), height=700*mult, width=500*mult,
+            type='quartz')#, family=X11Fonts()$Arial)
 for (i in 1:I) {
-  yZ_inspect(out, y, zlim=dat_lim, i=i, thresh=.9, na.color='black', fy=fy)
-  #yZ_inspect(out, last(out)$missing_y_mean, zlim=dat_lim, i=i, thresh=.9)
-  #yZ_inspect_old(out, y, dat_lim=dat_lim, i=i, thresh=.05)
+  yZ_inspect(out, y, zlim=dat_lim, i=i, thresh=.9, na.color='black',
+             cex.z.b=1.5, cex.z.lab=1.5, cex.z.l=1.5, cex.z.r=1.5,
+             cex.y.ylab=1.5, cex.y.xaxs=1.4, cex.y.yaxs=1.4, cex.y.leg=1.5)
 }
 dev.off()
+
 
 
 #my.image(last(out)$Z)
@@ -483,4 +497,11 @@ for (i in 1:I) for (j in 1:J) {
   text(x_pos, y_pos, msg)
 }
 par(mfrow=c(1,1))
+dev.off()
+
+### Q hist (Histogram of P(Z=0) for missing y) ###
+pdf(fileDest('pz0_missy.pdf'))
+hist(pz0_missy, main='',
+     xlab='Histogram: Posterior Probability of Z=0 for missing y',
+     col='grey', border='white', prob=FALSE)
 dev.off()

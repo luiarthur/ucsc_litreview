@@ -46,7 +46,7 @@ color.bar.horiz <- function(colorVec, mn, mx=-mn, nticks=length(colorVec)-1,
 #}
 
 color.bar <- function(col, zlim=range(col), ticks=seq(zlim[1], zlim[2], len=length(col)),
-                      digits=1, title='') {
+                      digits=1, title='', cex) {
   #' Adding a vertical color bar
   #' @export
 
@@ -70,7 +70,8 @@ color.bar <- function(col, zlim=range(col), ticks=seq(zlim[1], zlim[2], len=leng
        col=col, border=NA)
 
   ### Add axis labels ###
-  axis(2, at=(ybottom+ytop)/2, labels=round(ticks,digits), las=1, col.ticks='grey', col=NA)
+  axis(2, at=(ybottom+ytop)/2, labels=round(ticks,digits), las=1, 
+       col.ticks='grey', col=NA, cex.axis=cex)
   #axis(2, range(ticks), labels=FALSE, lwd.ticks=0, fg='grey')
   #axis(4, range(ticks), labels=FALSE, lwd.ticks=0, fg='grey')
   segments(x0=0, x1=0, y0=ybottom[1], y1=ytop[n], col='grey')
