@@ -1211,7 +1211,7 @@ When applied to real cord blood data, we find that the cell-types learned tend
 to be similar, and sometimes repeated. This can be remedied using a repulsive
 mixture prior and will be included in Project 2.
 
-\section{Project 2: Repulsive Feature Allocation Model}\label{sec:proj2}
+\section{Project 2: Covariate-dependent Repulsive Feature Allocation Model}\label{sec:proj2}
 In Project 1, we used a FAM to learn the latent cell-types present in the
 samples.  We observed that at times, the recovered latent cell-type matrix
 contained duplicated cell-types. This unnecessarily assigns substantial
@@ -1249,17 +1249,17 @@ $C_\phi(0)=1$ and $\lim_{d\rightarrow\infty}C_\phi(d) = 0$. If a random
 binary matrix with fixed dimensions $(J\times K)$ is said to be distributed
 rep-FAM with parameters $v$ and $C$ (i.e. if $\bZ \sim \text{rep-FAM}$), then
 $$
-P(\bZ \mid v, C) \propto \prod_{k=1}^K  \bc{\prod_{j=1}^J v_k^{z_{jk}}(1-v_k)^{1-z_{jk}}} \times
+P(\bZ \mid v, C_\phi) \propto \prod_{k=1}^K  \bc{\prod_{j=1}^J v_k^{z_{jk}}(1-v_k)^{1-z_{jk}}} \times
 \prod_{k_1=1}^{K-1}\prod_{k_2=k_1+1}^{K} \p{1 - C_\phi\p{\sum_{j=1}^J \abs{z_{jk_1} - z_{jk_2}}}}.
 $$
 The function $C_\phi(\cdot)$ can be interpreted as a proximity function. A
 suitable form is $C_\phi(d) = \exp\p{-d/\phi}$. This is the form we will use
 for our simulation study. We place a prior on $v$ just as we did previously so
 that $v_k \mid \alpha \sim \Be(\alpha, 1)$ for $k\in\bc{1,...,K}$ and $\alpha
-\sim \Gamma(a_\alpha, b_\alpha)$. Notice that $v_k$ has a conjugate prior.
-The selection of $\phi$ requires some sensitivity analysis, but for now we
-will fix $\phi=1$. Also note that the matrix-parameter $H$ in the previous
-model is no longer in the model under this construction.
+\sim \Gamma(a_\alpha, b_\alpha)$. Notice that $v_k$ has a conjugate prior.  The
+selection of the range parameter $\phi$ requires some sensitivity analysis, but
+for now we will fix $\phi=1$. Also note that the matrix-parameter $H$ in the
+previous model is no longer in the model under this construction.
 
 As in the previous model, the $K$ cell phenotypes are shared across samples,
 but their relative weights may vary across samples. Let $\tilde w_{ik}$ denote
@@ -1290,28 +1290,47 @@ distribution of $\bm w_i$ reduces to $\Dir_K(a_W/K,...,a_W/K)$.
 \subsection{Simulation Study}
 TODO. Show difference between IBP and rep-FAM.
 
-\section{Project 3: Covariate-Dependent Feature Allocation Model}\label{sec:proj3}
+
+\section{Project 3: Time-Dependent (Repulsive?) Feature Allocation Model}\label{sec:proj3}
 % TODO
-We extend the model by letting phenotype abundances $\bw=(w_1, \ldots, w_K)$ be
-a function of time $t$ after treatment and jointly analyze samples of a subject
-collected at different time points. While all samples share $\bZ$ (common cell
-phenotypes), phenotype abundances $\bw_{t_i, k}$, $i=1, \ldots, I$ are
-dependent through time.  We also let $w_{t_i,k}$ exactly equal to zero for
-some phenotypes. Let $\xi_{t_1,1}=1$ and assume $\xi_{t_1,k} =
-\max(\xi^\prime_{t_1,k}, 0)$, $k=1, \ldots, K$, where $\xi^\prime_{t_1,k} \iid
-\N(0, s^2_1)$. We then normalize $w^\prime_{t_1,k}$,  $w_{t_1,k} =
-\xi_{t_1,k}/\sum_{k^\prime=1}^K \xi_{t_1, k^\prime}$, $k=1, \ldots, K$. For
-time points $t_i$, $i=2, \ldots, t_I$, we assume $\xi_{t_i,k} =
-\max(\xi^\prime_{t_i,k}, 0)$, $k, \ldots, K$ with $\xi^\prime_{t_i,k} =
-f_k(t_i)$ and let $w_{t_i,k} = \xi_{t_i,k}/\sum_{k^\prime=1}^K
-\xi_{t_i,k^\prime}$ similar to $w_{t_1,k}$.  For example, a quadratic function
-in time $t$, $f_k(t) = \xi_{t_1,k} + \beta_{k1}t + \beta_{k2}t^2$ can be used.
-$\xi_{t_1,k}$ is the baseline unnormalized baseline abundance for phenotype $k$
-and ($\beta_{k1}, \beta_{k2}$) explain change in unnormalized abundance over
-time. Alternatively, we can let $\xi^\prime_{t_i,k} = \xi^\prime_{t_{i-1},k} +
+In addition to being provided with samples from cord-blood and healthy
+patients, we are also provided with longitudinal samples collected from
+patients.  We desire to model the abundance of cell-types over time. Based on
+this premise, we will extend the model from Project 1 by letting phenotype
+abundances $\bw=(w_1, \ldots, w_K)$ be a function of time $(t)$ after
+treatment, and jointly analyze samples of a subject collected at different time
+points.  While all samples share $\bZ$ (common cell phenotypes), phenotype
+abundances $\bw_{t_i, k}$, $i=1, \ldots, I$ may change over time in a
+time-dependent manner.
+
+As in Project 2, we will also allow $w_{t_i,k}$ the possibility of being
+exactly zero for some phenotypes, but our approach in obtaining this objective
+will vary slightly to accommodate modeling over time. We will first describe
+how we model the abundance vector for the first time-point $(\bw_{t_1})$.
+
+For $k=1,\ldots,K$, let $w_{t_1,k} = \xi_{t_1,k}/\sum_{\ell=1}^K
+\xi_{t_1, \ell}$ where $\xi_{t_1,1}=1$ and $\xi_{t_1,k} =
+\max(\xi^\prime_{t_1,k}, 0)$, for $k\ge 2$. We model $\xi^\prime_{t_1,k} \iid
+\N(0, s^2_1)$, for $k\ge 2$.  Note that for identifiability, $\xi_{t_1,k}$ is
+set to 1. The purpose of $\xi_{t_1,k}$ is to perform feature selection at time
+$t_i$. $\xi_{t_1,k} > 0$ yields $w_{t_1,k} >0$, which indicates that cell-type
+$k$ is present at time $t_1$. Similarly, $\xi_{t_1,k} = 0$ yields $w_{t_1,k}
+=0$, which indicates that cell-type $k$ is absent at time $t_1$. 
+
+For time points $t_i$, for $i=2, \ldots, I$, we assume $\xi_{t_i,k} =
+\max(\xi^\prime_{t_i,k}, 0)$, for $k=1, \ldots, K$ with $\xi^\prime_{t_i,k} =
+f_k(t_i)$ and let $w_{t_i,k} = \xi_{t_i,k}/\sum_{\ell=1}^K \xi_{t_i,\ell}$ as
+in computing $w_{t_1,k}$. $f_k(t_i)$ is a random quantity which relates the
+previous abundance levels for phenotype $k$ to the that of the current
+time-point. One choice for $f_k(t_i)$ is a quadratic function in time $t$,
+$f_k(t) = \xi^\prime_{t_1,k} + \beta_{k1}t + \beta_{k2}t^2$, where
+$\xi_{t_1,k}$ can be interpreted as the baseline unnormalized abundance for
+phenotype $k$ and ($\beta_{k1}, \beta_{k2}$) explain change in unnormalized
+abundance over time. Alternatively, we can model the change in abundance
+through a random walk by letting $f_k(t_i) = \xi^\prime_{t_{i-1},k} +
 g_{t_i,k}$ where $g_{t_i, k} \iid \N(0, s^2)$.
 
-
+Finally, as in Project 2, we will model $\bZ$ with a rep-FAM distribution???
 
 
 \section{Timeline}\label{sec:time}
