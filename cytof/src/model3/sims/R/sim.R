@@ -446,7 +446,7 @@ dev.off()
 #  #yZ_inspect_old(out, y, dat_lim=dat_lim, i=i, thresh=.05)
 #}
 #dev.off()
-mult=1; png(fileDest('YZ%03d.png'), height=700*mult, width=500*mult,
+mult=1; png(fileDest('YZ%03d.png'), height=600*mult, width=500*mult,
             type='quartz')#, family=X11Fonts()$Arial)
 for (i in 1:I) {
   yZ_inspect(out, y, zlim=dat_lim, i=i, thresh=.9, na.color='black',

@@ -343,13 +343,14 @@ dev.off()
 #source('../../cytof3/R/myimage.R')
 #source('../../cytof3/R/yZ.R')
 #source('../../cytof3/R/yZ_inspect.R')
-mult=1; png(fileDest('YZ%03d.png'), height=700*mult, width=500*mult,
+mult=1; png(fileDest('YZ%03d.png'), height=600*mult, width=500*mult,
             type='quartz')#, family=X11Fonts()$Arial)
 for (i in 1:I) {
   #yZ_inspect(out, y, zlim=dat_lim, i=i, thresh=.9, fy=fy)
   yZ_inspect(out, y, zlim=c(-2,2), i=i, thresh=.9, na.color='black',
              cex.z.b=1.5, cex.z.lab=1.5, cex.z.l=1.5, cex.z.r=1.5,
-             cex.y.ylab=1.5, cex.y.xaxs=1.4, cex.y.yaxs=1.4, cex.y.leg=1.5)
+             cex.y.ylab=1.5, cex.y.xaxs=1.4, cex.y.yaxs=1.4, cex.y.leg=1.5,
+             prop_lower_panel=.3)
 }
 dev.off()
 
