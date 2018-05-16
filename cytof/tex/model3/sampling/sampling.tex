@@ -1058,31 +1058,54 @@ Figure \ref{fig:sim-post-Z} summarizes the posterior inference for the simulated
 %representation of the data $y$ sorted by a point-estimate of their cell-types,
 %for each sample.  These figures are supplemented by a point-estimate of $\Z$
 %and $W$. 
-The bottom of each panel illustrates $\hat{\bZ}_i$ with $\hat{\bw}_i$ in percentages on the right side. Among $K=XX$ (give number) phenotypes, phenotypes having large $\hat{w}_{ik}$ that make up more than 90\% of cells are included in the plots of $\hat{\bZ}_i$.    Comparing their truth in Figure~\ref{fig:sim-Z}, $\hat{\bZ}_i$ and $\hat{\bw}_i$ are very close to $\bZ^\true$ and $\bw_i^\true$ for all sample. Note that the phenotype labels do not match in the figures due to the fact that the model for $\bZ$ is invariant under relabelling of the phenotyps. For example, phenotype 1 in $\bZ^\true$ has $w^\true_{ik}=23.6\%$ for sample 1.  That phenotype is shown as phenotype 8 in the very bottom of $\hat{\bZ}_i$ with $\hat{w}_{ik}=24\%$.   %Phenotypes with small $w^\true_{ik}$ are not well captured in $\hat{\bZ}_i$.  For example, cell type 7 ($k=7$) with $w^\true_{1k}=4.5\%$ is not well identified.  On the other hand, it is well captured for sample 2 since $w^\true_{27}=14.8\%$ in the truth. 
-The heatmaps of observed $y$ arranged according to $\hat{\lambda}_{in}$ shows that the expression patterns in $y$ are well explained by $\hat{\bZ}_i$ and $\hat{\bw}_i$.  The top of each panel has a heatmap of $y$ rearranged by their $\hat{\lambda}_{in}$, with red, blue and white colors for large, small and missing values, respectively.  The horizontal dotted lines separate cells based on $\hat{\lambda}_{in}$.  It shows that the estimated phenotypes capture the expression patterns of $y$ well.    
+The bottom of each panel illustrates $\hat{\bZ}_i$ with $\hat{\bw}_i$ in
+percentages on the right side. Among $K=XX$ (give number) phenotypes,
+phenotypes having large $\hat{w}_{ik}$ that make up more than 90\% of cells are
+included in the plots of $\hat{\bZ}_i$.    Comparing their truth in
+Figure~\ref{fig:sim-Z}, $\hat{\bZ}_i$ and $\hat{\bw}_i$ are very close to
+$\bZ^\true$ and $\bw_i^\true$ for all sample. Note that the phenotype labels do
+not match in the figures due to the fact that the model for $\bZ$ is invariant
+under relabelling of the phenotyps. For example, phenotype 1 in $\bZ^\true$ has
+$w^\true_{ik}=23.6\%$ for sample 1.  That phenotype is shown as phenotype 8 in
+the very bottom of $\hat{\bZ}_i$ with $\hat{w}_{ik}=24\%$.
+%Phenotypes with small $w^\true_{ik}$ are not well captured in $\hat{\bZ}_i$.  For example, cell type 7 ($k=7$) with $w^\true_{1k}=4.5\%$ is not well identified.  On the other hand, it is well captured for sample 2 since $w^\true_{27}=14.8\%$ in the truth. 
+The heatmaps of observed $y$ arranged according to $\hat{\lambda}_{in}$ shows
+that the expression patterns in $y$ are well explained by $\hat{\bZ}_i$ and
+$\hat{\bw}_i$.  The top of each panel has a heatmap of $y$ rearranged by their
+$\hat{\lambda}_{in}$, with red, blue and white colors for large, small and
+missing values, respectively.  The horizontal dotted lines separate cells based
+on $\hat{\lambda}_{in}$.  It shows that the estimated phenotypes capture the
+expression patterns of $y$ well.    
 
 %%%%%%%%%%%%%%%%%%%%%%%%
 \begin{figure}[th!]
   \begin{center}
 \begin{tabular}{cc}
-\includegraphics[scale=.48]{img/sim/YZ001.png}&
-\includegraphics[scale=.48]{img/sim/YZ002.png}\\
+\includegraphics[scale=.4]{img/sim/YZ001.png}&
+\includegraphics[scale=.4]{img/sim/YZ002.png}\\
 (a) Sample 1 & (b) Sample 2\\
-\includegraphics[scale=.48]{img/sim/YZ003.png}&\\
+\includegraphics[scale=.4]{img/sim/YZ003.png}&\\
 (c) Sample 3 & \\
   \end{tabular}
  \end{center}
  \vspace{-0.05in}
-\caption{[Simulation]  Heatmaps of $y$ for simulated data. Cells and markers are in rows and columns, respectively. Each column contains the expression levels of a
-marker for all cells in the sample. High expression levels are red, low expression levels are blue, missing values are white.   Cells are rearranged by their posterior estimate of phenotype indicator, $\hat{\lambda}_{in}$.   Horizontal lines separate cells in different estimated phenotypes.
-% TODO
-{\tt make it more visible. TODO}
-%
-At the bottom of each panel, the transpose of $\hat{\Z}_i$ and $\hat{\bw}_i$ are provided for each sample. We include phenotypes having large $\hat{w}_{ik}$ to explain at least 90\% of the cells in a sample.
-% TODO
-{\tt make the figures more visible.  the resolution seems not high enough
-especially for $\bw$. TODO}
-%
+  {\small
+  \caption{[Simulation]  Heatmaps of $y$ for simulated data. Cells and markers
+  are in rows and columns, respectively. Each column contains the expression
+  levels of a marker for all cells in the sample. High expression levels are
+  red, low expression levels are blue, missing values are white.   Cells are
+  rearranged by their posterior estimate of phenotype indicator,
+  $\hat{\lambda}_{in}$.   Horizontal lines separate cells in different
+  estimated phenotypes.
+  % TODO
+  {\tt make it more visible. TODO}
+  %
+  At the bottom of each panel, the transpose of $\hat{\Z}_i$ and $\hat{\bw}_i$ are provided for each sample. We include phenotypes having large $\hat{w}_{ik}$ to explain at least 90\% of the cells in a sample.
+  % TODO
+  {\tt make the figures more visible.  the resolution seems not high enough
+  especially for $\bw$. TODO}
+  %
+}
 }
 \label{fig:sim-post-Z}
 \end{figure}
