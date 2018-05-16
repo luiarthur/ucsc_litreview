@@ -18,7 +18,7 @@ reorder_lami = function(ord, lami, using_zero_index=TRUE) {
 
 yZ = function(yi, Zi, Wi, cell_types_i, zlim=c(-4,4),
               using_zero_index=TRUE, na.color='transparent',
-              thresh=0.8, col=list(blueToRed(), greys(10))[[1]],
+              thresh=0.8, col=list(blueToRed(7), greys(10))[[1]],
               prop_lower_panel=.3, decimals_W=1,
               fy=function(lami) {
                 abline(h=cumsum(table(lami))+.5, lwd=3, col='yellow', lty=1)

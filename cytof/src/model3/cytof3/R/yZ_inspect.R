@@ -8,7 +8,7 @@ greys = function(n=10) {
 #' @param fZ function to execute after making Z image
 #' @export
 yZ_inspect = function(out, y, zlim, i, thresh=0.7, 
-                      col=list(blueToRed(), greys(10))[[1]],
+                      col=list(blueToRed(7), greys(10))[[1]],
                       prop_lower_panel=.3, is.postpred=FALSE,
                       decimals_W=1, na.color='transparent',
                       fy=function(lami) {
