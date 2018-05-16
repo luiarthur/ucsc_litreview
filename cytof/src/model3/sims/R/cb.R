@@ -15,6 +15,10 @@ fileDest = function(filename) paste0(OUTDIR, filename)
 y_orig = readRDS('../data/cytof_cb.rds')
 #y = resample(y_orig, prop=.01)
 y = y_orig
+missing_prop = round(get_missing_prop(y),4)
+sink(fileDest('missing_prop.txt'))
+print(missing_prop)
+sink()
 #y = preimpute(y_orig, .01)
 #y = y_orig
 
@@ -101,8 +105,8 @@ locked$beta_1 = TRUE # TODO: Can I make this random?
 
 
 ### kmeans
-preimpute_y = preimpute(y)
-init$missing_y = preimpute_y
+#preimpute_y = preimpute(y)
+#init$missing_y = preimpute_y
 #Y = do.call(rbind, preimpute_y)
 #Z_est_kmeans = kmeans(Y, centers=10)
 #my.image(unique(Z_est_kmeans$centers > 0))

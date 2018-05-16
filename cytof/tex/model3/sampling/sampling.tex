@@ -440,61 +440,113 @@ similar to the stick-breaking representation of the Dirichlet process (DP).
 \cite{williamson2010dependent} developed a dependent IBP (dIBP) to induce
 correlations between objects and to model multiple $\Z$s that can be dependent.
 
+%% TODO
+%{\tt need to include Tamara's papers on feature allocation model, my papers on
+%  tumor heterogeneity. 
+%
+%\begin{itemize}
+%\item ``Feature allocations, probability functions, and paintboxes.'',
+%  ``Combinatorial clustering and the beta negative binomial process.'' etc by
+%  Tamara \url{http://www.tamarabroderick.com/papers.html}
+%
+%\item ``Bay- clone: Bayesian nonparametric inference of tumor subclones using
+%  ngs data'' by Subhajit et al.
+% 
+%\item YX's works: ``Bayesian Inference for Latent Biologic Structure with
+%  Determinantal Point Processes'', "MAD Bayes for Tumor Heterogeneity Feature
+%  Allocation with Exponential Family Sampling"
+%  \url{http://www.ams.jhu.edu/~yxu70/pub.html}.
+%
+%\item There could be more.  Please search for those.
+%\end{itemize}
+%}
+
 % TODO
-{\tt need to include Tamara's papers on feature allocation model, my papers on
-  tumor heterogeneity. 
+%{\tt please include more. for example, XY's JASA paper develops a fast
+%computational method for feature allocation models.  It is something that we
+%need to know.}
 
-\begin{itemize}
-\item ``Feature allocations, probability functions, and paintboxes.'',
-  ``Combinatorial clustering and the beta negative binomial process.'' etc by
-  Tamara \url{http://www.tamarabroderick.com/papers.html}
+\cite{broderick2015combinatorial} first coined the term "feature allocation
+model". Just as the class of probability distributions over partitions of a
+dataset has been characterized through exchangeable partition probability
+functions, they developed theory for an exchangeable feature probability
+function for certain feature allocation models. Under their framework,
+many other extensions of the IBP can be proposed.
 
-\item ``Bay- clone: Bayesian nonparametric inference of tumor subclones using
-  ngs data'' by Subhajit et al.
- 
-\item YX's works: ``Bayesian Inference for Latent Biologic Structure with
-  Determinantal Point Processes'', "MAD Bayes for Tumor Heterogeneity Feature
-  Allocation with Exponential Family Sampling"
-  \url{http://www.ams.jhu.edu/~yxu70/pub.html}.
+The IBP as a prior distribution in feature allocation models has been
+successfully applied in diverse areas. \cite{lee2016bayesian} model
+tumor-sample heterogeneity through a finite categorical IBP placed on an
+integer matrix describing the numbers of variant alleles at a loci (row) for a
+given subclone (column). A prior distribution is placed on the number of
+subclones. These parameters are learned jointly through MCMC.  Building on this
+work, \cite{xu2015mad} proposed a general class of feature allocation model for
+exponential family sampling distributions for modeling tumor heterogeneity.
+They note that a computational challenge in sampling from the joint posterior
+in such models involves implementing reversible-jump
+\citep{green1995reversible} for transdimensional MCMC. They avoid this by
+proposing an MAP-based small-variance asymptotic approximation for any
+exponential family likelihood with an IBP feature allocation prior to learn the
+feature allocation matrix. The learned feature allocation matrix is then used
+to fix the dimensions of a subsequent MCMC conditioned on the number of
+features estimated. This method is orders magnitudes faster than
+reversible-jump implementations.
 
-\item There could be more.  Please search for those.
-\end{itemize}
-}
+Still along the subject of tumor-heterogeneity modeling,
+\cite{sengupta2014bayclone} proposed a categorical variant of the IBP so that
+the feature allocation matrix may contain integer values beyond binary values.
+They demonstrate how to obtain posterior estimates of the feature allocation
+matrix. They also show suggest a method for selecting the number of features so
+as to avoid reversible jump.
 
-% TODO
-{\tt please include more. for example, XY's JASA paper develops a fast
-computational method for feature allocation models.  It is something that we
-need to know.}
+\cite{broderick2013feature} developed the beta-negative binomial process for
+admixtures, where observations are represented multiple times across several
+latent features. This is another extension of the IBP where
+infinite-dimensional priors are proposed for vectors of counts. They develop
+some computationally efficient algorithms that rely on Gibbs sampling for 
+posterior sampling. They applied their methods in some simulation studies 
+involving topic modeling and computer vision.
 
-The IBP has been extended so that the feature allocation matrix may contain
-integer values beyond 0 and 1 by replacing the Bernoulli distribution with an
-integer-supported distribution \citep{broderick2013feature}. Such models have
-been applied in topic modeling and computer vision
-\cite{broderick2015combinatorial} as well as in the study of tumor sub-clones
-\citep{sengupta2014bayclone}.
-%The IBP has been successfully applied in feature
-%allocation models to study tumor heterogeneity \citep{lee2016bayesian}, 
+
+
+% \cite{lee2016bayesian}  % tumor hetero
+% \cite{xu2015mad} % MAD Bayes. tumor hetero. Fast MAP est.
 
 \subsection{Proposed Projects}
-% TODO
-{\tt include a short summary of all three projects and explain how your report
-will be organized in the later part.}
-We propose Bayesian feature allocation models to study NK cell populations in
-our motivating data;
+% TODO. Done
+%{\tt include a short summary of all three projects and explain how your report
+%will be organized in the later part.}
+We propose the following Bayesian feature allocation models to study NK cell
+populations in our motivating data.
 \begin{itemize}
 \item \underline{Project 1:}
+We first develop a model to study the composition of cell-types across several
+blood samples. We will model the latent cell-types with an IBP prior.
+Additionally, to account for missing marker-expression data missing not at
+random, we propose a mechanism for imputing missing observations. We will
+demonstrate how to do posterior inference and discuss results from simulation
+studies and a real cord-blood data analysis.
 
 \item \underline{Project 2:}
+Building on Project 1, we extend our model so as to compare the NK-cell
+subpopulations present in cord-blood samples and health-patient samples.
+We will also replace the IBP prior distribution on the latent cell-type
+matrix with a repulsive feature allocation model so as to induce 
+features that are distinct from one another. Results from a simulation study
+highlighting the key differences between modeling with an IBP and a rep-FAM
+will be included. An analysis based on the provided dataset will be done.
 
 \item \underline{Project 3:}
+We desire to study the change in the abundance of cell-types in a patient's
+blood samples collected over time. To this end, we will propose a
+time-dependent feature allocation model to model this change. Simulation
+studies and an analysis based on longitudinal data from patients will be
+conducted.
 
 \end{itemize} 
 The remainder of the document is organized as follows.
 Sections~\ref{sec:proj1}-\ref{sec:proj3} describe the proposed projects.
 Section~\ref{sec:time} discusses a plan to progress the projects.  
-
-
-
+The Appendix A contains details for posterior computations in Project 1.
 
 
 \section{Project 1: Bayesian Feature Allocation Model for Heterogeneous Cell Populations Using Mass Cytometry}\label{sec:proj1}
@@ -502,25 +554,43 @@ Section~\ref{sec:time} discusses a plan to progress the projects.
 % {\tt short intro for project 1}
 
 % TODO
-{\tt expand} 
+%{\tt expand} 
 
 In this project, we analyze marker expression data from a CyTOF analysis of
-blood samples from patients. Each sample consists of tens of thousands of cells
-and records expression levels for 32 NK-cell markers. High marker expression
-levels correspond to the expression of that marker, while low marker expression
-levels and missing values correspond to non-expression. For a given cell, the
-expression of certain markers corresponds to a phenotype. We are interested in
-identifying phenotypes that occur frequently within each sample. This is
-important to practitioners because NK-cell diversity is known to be affect
-immunity against infectious diseases. We therefore propose modelling marker
-expression levels with a flexible mixture model, and the latent cell-type
-structure with a latent feature allocation model.
+patient blood samples. Each sample consists of tens of thousands of cells and
+records expression levels for 32 NK-cell markers. High marker expression levels
+correspond to the expression of that marker, while low marker expression levels
+and missing values correspond to non-expression. One challenge in modeling
+cytometry data is the prevalence of data missing not at random. When expression
+levels for a marker in a given cell are very weak, cytometry devices are not
+able to register a signal, yielding missing values. \cite{franks2016non}
+provide a brief overview of typical approaches to imputing data missing not at
+random, including a computationally efficient method and intuitive model
+representation (Tukey's representation) based only on the observed data. 
+However, our model is not able to take advantage of these efficiencies 
+as the parameters are entangled with the missingness of the data.
+We will therefore use a simpler selection factorization
+\citep{rubin1974characterizing} representation in modeling the missing data.
 
+For a given cell, the expression of certain markers corresponds to a phenotype.
+We are interested in identifying phenotypes that occur frequently within each
+sample. This is important to practitioners because NK-cell diversity is known
+to be affect immunity against infectious diseases. 
 
+Clustering methods previously proposed to analyze cytometry data focus on
+producing point estimates, convenient two-dimensional graphics, and
+computational efficiency. But little work has been done in terms of uncertainty
+quantification for the learned clusters and their abundance.  We therefore
+propose a fully Bayesian model to model marker expression levels with a
+flexible mixture model, and the latent cell-type structure with a latent
+feature allocation model.
 
-% TODO
-{\tt include some references on missing value modeling. Alex's paper and
-Rubin's old papers.}  
+We will provide results to a simulation study and an analysis of real cytometry
+data.
+
+% TODO. Done
+%{\tt include some references on missing value modeling. Alex's paper and
+%Rubin's old papers.}  
 
 
 
@@ -814,8 +884,16 @@ samples $N_i=30000$, 20000 and 10000, $i=1, 2, 3$ for three samples ($I=3$).
 We let the true number of latent cell types $K^\true=10$.  We specified
 $\bZ^\true$ and $\bw^\true_i$, $i=1,2,3$ as follows;
 %
-% TODO
-{\tt give specific distributions used for $\bw$ and explain the details.} 
+% TODO. DONE
+%{\tt give specific distributions used for $\bw$ and explain the details.} 
+% Simulating Z
+We first simulated $\bZ^\true$ by setting $\bZ^\true_{jk}=1$ with probability
+0.5 for $j=1,...,J$ and $k=1,...,K$. If any column in $\bZ^\true$ is a column
+of only 0's, the entire matrix is re-sampled.
+% Simulating W
+We then simulated $\bw^\true_i$ from a Dirichlet distribution with parameters
+being some permutation of (1,..,K). This encourages the simulated values
+in $\bw^\true_i$ to contain large as well as small values.
 %
 Figure \ref{fig:sim-Z} shows the transpose of $\bZ^\true$ and $\bw^\true_i$ for
 the samples. In each panel, the cell types ($\bZ^\true$) are rearranged using
@@ -825,13 +903,20 @@ $L^{1, \true}=4$. We set values for $\sigma^{\star 2, \true}_{0i\ell}$,
 $\sigma^{\star 2,\true}_{1i\ell}$, $\mu^{\star, \true}_{0\ell}$ and
 $\mu^{\star, \true}_{1\ell}$ using empirical values from CB data.
 %
-%TODO
-{\tt The specified values are .... give the details.}
+%TODO. Done
+%{\tt The specified values are .... give the details.}
+The particular values we used for the means  were $\mu^{\star, \true}_{0} =
+(-1, -3, -5)$ and $\mu^{\star, \true}_{1} = (1, 2.33, 3.67, 5)$. All
+$\sigma^{\star 2, \true}_{z\ell}$ were fixed at $0.1$.
 %
  We simulated $\bet_{0ij}^\true$ and $\bet_{1ij}^\true$, $i=1,2,3$ and $j=1, \ldots, J$ similar to $\bw^\true_i$;
 %
-% TODO
-{\tt give specific distributions used for $\bet$ and explain the details.} 
+% TODO. Done
+%{\tt Give specific distributions used for $\bet$ and explain the details.} 
+We simulated $\bet_{0ij}^\true$ from a Dirichlet distribution with
+parameters being some permutation of $(1,...,L^0)$. Similarly, 
+$\bet_{1ij}^\true$ was simulated from a Dirichlet distribution with
+parameters being some permutation of $(1,...,L^1)$.
 %
 We then simulated latent phenotype indicators $\lambda_{in}^\true$ using
 $\bw_i^\true$ and conditional on $z^\true_{j,\lambda_{in}^\true}$ generated
@@ -840,12 +925,18 @@ $y_{inj}$ from a mixture model, $\sum_{\ell=1}^{L^{0,\true}}
 \true}_{0i\ell}$ or $\sum_{\ell=1}^{L^{1,\true}}
 \eta^\true_{1ij}\cdot\N(\mu^{\star, \true}_{1\ell}, \sigma^{\star 2,
 \true}_{1i\ell})$.   Finally, probabilistically let some of the $y_{inj}$
-missing as follows; we simulated a proportion $p_{ij}$ of missing for marker
+missing as follows; simulate a proportion $p_{ij}$ of missing for marker
 $j$ in sample $i$, from a uniform distribution between 0 and  $\sum_k
-w^\true_{ik}(1-z^\true_{jk})$, sample $p_{ij}\times N_i$ cells  without
+w^\true_{ik}(1-z^\true_{jk})$, sample $p_{ij}\times N_i$ cells without
 replacement with probability proportional to
-% TODO
-{\tt give the function used}.
+% TODO. DONE
+%{\tt give the function used}.
+$$
+\begin{cases}
+  \text{logistic}\p{4.6 - 0.42(y_{inj}+3)^2}, & \text{if } y_{inj} < -3 \\
+  \text{logistic}\p{4.6 - 0.42\sqrt{y_{inj}+3}}, & \text{otherwise.} \\
+\end{cases}
+$$
 %
 Under the true missingness mechanism, $y$ taking a negative value has a larger
 chance to be missing, while $y$ with a positive value has only slight chance of
@@ -926,18 +1017,38 @@ respectively.
 
 %\subsubsection{Results}
 To fit the proposed model, we fix the hyperparameters as
-% TODO
-{\tt include details. also explain how you specified missing mechanism empirically Value for $K$ used for fitting? values of $L^0$ and $L^1$ used for fitting??}.
+% TODO.
+%{\tt include details. also explain how you specified missing mechanism
+%empirically Value for $K$ used for fitting? values of $L^0$ and $L^1$ used for
+%fitting??}.
+$(K=12, L^0=5, L^1=5)$. In addition, we fixed $c_0=-2.5$, which was
+the mean of the observed data having negative values.
+%and the prior means for $\beta_{0i}$ and $\beta_{1i}$ were determined based on 
 %
 We fixed $\Gamma=\bI_J$. $J\times J$ identity matrix, and $\beta_{1i}$ for
 simplification. To run the MCMC simulation, we initialized the parameters
-% TODO
-{\tt explain how}.
+as follows.
+% TODO {\tt explain how}
+Missing values are initialized at $c_0$. $\lambda_{in}$ is sampled uniformly
+from $\bc{1,...,K}$. $\gamma_{inj}$ is sampled uniformly from
+$\bc{1,...,\min(L^0,L^1)}$. $v_k$ is initialized at $1/K$. $H_{jk}$ is randomly
+sampled from a standard Normal distribution. $\bZ$ is computed according
+to the initialized $H$ and $v$. All other parameters are initialized at
+their prior means.
+%
+In the future, better starting values may be provided by using the cluster
+labels provided by FlowSOM for $\lambda$. Using the estimated cluster labels,
+an estimated cluster mean for each group can be computed. Those cluster means
+(each of dimensions $J$) can be converted into a binary vector such that if
+element $j$ in the cluster mean is positive, then element $j$ in the binary
+vector will be 1, and 0 otherwise. An estimate for $\bZ$ can be obtained by 
+concatenating all these binary vectors. An estimate for $\bw_i$ can be
+obtained by computing the relative frequency of the cluster labels.
 %
 We then implemented posterior inference using MCMC simulation
 over 3,000 iterations, discarding the first 1,000 iterations as burn-in.
-% TODO
-{\tt no thinning?}  
+% TODO. Right, no thinning.
+%{\tt no thinning?}  
 %
 
 
@@ -965,12 +1076,12 @@ The heatmaps of observed $y$ arranged according to $\hat{\lambda}_{in}$ shows th
 \caption{[Simulation]  Heatmaps of $y$ for simulated data. Cells and markers are in rows and columns, respectively. Each column contains the expression levels of a
 marker for all cells in the sample. High expression levels are red, low expression levels are blue, missing values are white.   Cells are rearranged by their posterior estimate of phenotype indicator, $\hat{\lambda}_{in}$.   Horizontal lines separate cells in different estimated phenotypes.
 % TODO
-{\tt make it more visible}
+{\tt make it more visible. TODO}
 %
 At the bottom of each panel, the transpose of $\hat{\Z}_i$ and $\hat{\bw}_i$ are provided for each sample. We include phenotypes having large $\hat{w}_{ik}$ to explain at least 90\% of the cells in a sample.
 % TODO
 {\tt make the figures more visible.  the resolution seems not high enough
-especially for $\bw$}
+especially for $\bw$. TODO}
 %
 }
 \label{fig:sim-post-Z}
@@ -998,15 +1109,19 @@ especially for $\bw$}
 %\endmyfig
 
 % TODO
-{\tt 
+{\tt TODO.
 \begin{itemize}
-\item as we discussed, include posterior prob that a maker is not expressed if it is missing and posterior distributions of $y_{inj}$ for observed ones for each $(i,j)$.
+\item as we discussed, include posterior prob that a maker is not expressed if
+  it is missing and posterior distributions of $y_{inj}$ for observed ones for
+  each $(i,j)$. (I have this, just waiting for graphs.)
 
-\item comparison of posterior predictive distribution to density estimates of observed $y$.
+\item comparison of posterior predictive distribution to density estimates of
+  observed $y$. (I have this, just waiting for graphs.)
 
 \item comparison
 
-\item sensitivity analysis ($K$ larger than $K^\true$ and smaller than $K^\true$.
+\item sensitivity analysis ($K$ larger than $K^\true$ and smaller than
+  $K^\true$. (I do not have this for smaller $K$...)
 
 \end{itemize}
 }
@@ -1032,7 +1147,7 @@ expression levels are blue, missing values are white.   Cells are rearranged
 by their posterior estimate of phenotype indicator, $\hat{\lambda}_{in}$.
 Horizontal lines separate cells in different estimated phenotypes.
 % TODO
-{\tt make it more visible}
+{\tt TODO: make it more visible}
 %
 At the bottom of each panel, the transpose of $\hat{\Z}_i$
 and $\hat{\bw}_i$ are provided for each sample. We include phenotypes having
@@ -1043,13 +1158,25 @@ large $\hat{w}_{ik}$ to explain at least 90\% of the cells in a sample.}
 
 %%% cb-proj1 %%%
 \subsection{Cord Blood Data}
-We fit the proposed model to a real data set comprising
-cord-blood samples from three patients ($I=3$), with sample sizes $N=(41474,
-10454, 5177)$, for $J=32$ markers. The heatmaps in Figure \ref{fig:cb-post-Z} illustrates heatmaps of observed expression levels $y_{inj}$.  Markers and cells are in columns and rows, respectively. The values are rescaled for illustration.  Red, blue and white colors represent high expression level, low expression level and missing values, respectively.  From the figure, expression levels of some markers are missing in most of cells, e.g, marker CD25 (column 9) in all samples.
-% TODO
-{\tt give a short summary about \% of missing values for $(i,j)$}
+We fit the proposed model to a real data set comprising cord-blood samples from
+three patients ($I=3$), with sample sizes $N=(41474, 10454, 5177)$, for $J=32$
+markers. The heatmaps in Figure \ref{fig:cb-post-Z} illustrates heatmaps of
+observed expression levels $y_{inj}$.  Markers and cells are in columns and
+rows, respectively. The values are rescaled for illustration.  Red, blue and
+white colors represent high expression level, low expression level and missing
+values, respectively.  From the figure, expression levels of some markers are
+missing in most cells, e.g, marker CD25 (column 9) is missing in more than 80\%
+of cells in all samples.
 %
-From the provided information on the missingness mechanism, the marker is likely not to be expressed in most of NK cell phenotypes.   
+%From the provided information on the missingness mechanism, the marker is
+%likely not to be expressed in most NK cell phenotypes.   
+% TODO
+%{\tt give a short summary about \% of missing values for $(i,j)$}
+In each sample, the proportion of missing values in each marker can be as low
+as 0.1\% and as high as 80\%.  
+The median proportion of missing values across markers in sample 1 is 22\%.
+The median proportion of missing values across markers in sample 2 is 17\%.
+The median proportion of missing values across markers in sample 3 is 18\%.
 %shows the data. 
 %Each panel in the figure represents a different sample.  Each column in the
 %panels contains the expression levels of a marker across all cells in the
@@ -1059,10 +1186,13 @@ From the provided information on the missingness mechanism, the marker is likely
 
 We used hyperparameters similar to those in the simulation studies.
 % TODO
-{\tt used similar hyperparameters?  check if this is right}
+%{\tt used similar hyperparameters?  check if this is right}. Yes
 %
-2000 samples from the posterior distribution were obtained after a burn-in period of 1000 iterations. The results are summarized in Figure
-\ref{fig:cb-post-Z}.  Point estimates $\hat{\bZ}_i$ and $\hat{\bw}_i$ are obtained using the method in \S~\ref{sampling-via-mcmc}. % illustrated at the bottom of each panel.   
+2000 samples from the posterior distribution were obtained after a burn-in
+period of 1000 iterations. The results are summarized in Figure
+\ref{fig:cb-post-Z}.  Point estimates $\hat{\bZ}_i$ and $\hat{\bw}_i$ are
+obtained using the method in \S~\ref{sampling-via-mcmc}.
+% illustrated at the bottom of each panel.   
 Plots of $\hat{\bZ}_i$ are given with corresponding $\hat{\bw}_i$ at the bottom
 of the panels.  From the estimated weights $\hat{\bw}_i$ the samples have some
 common phenotypes such as phenotypes 17, 15 and 18.  In particular, phenotype
@@ -1072,7 +1202,8 @@ across samples.  For example, phenotype 7 has the second largest $\hat{w}_i$ in
 samples 2 and 3. Specifically, 22.4\% and 13.5\% of the cells in samples 2 and
 3, respectively possess phenotype 7, but only
 % TODO
-{\tt XXX  Give a number here} \%
+%{\tt XXX  Give a number here} \%
+1.87\%
 %
 of the cells in sample 1 has the phenotype.  Similarly, phenotype 18 is more
 prevalent in sample 1.  $\hat{w}_{ik}$ for the phenotype is 17.4\%, 4.7\%,
@@ -1108,30 +1239,40 @@ estimates of underlying cell subpopluations.
 
 To assess model fit, we compare the posterior predictive distribution of
 $y_{inj}$ with $m_{inj}=0$ (observed) to the distribution of observed data.
-Figure XX illustrates comparison of posterior predictive distributions (grey
+% TODO
+Figure XX 
+%%
+illustrates comparison of posterior predictive distributions (grey
 lines) to kernel density estimates (blue lines) of observed $y_{inj}$ for some
-selected ($i,j)$. The fit is  reasonably good for (... ) in panels (a)-(c).
+selected ($i,j)$.
+% TODO
+The fit is  reasonably good for (... ) in panels (a)-(c).
 For (...), the fit is poor possibly because the number of observations is small
-% TODO
-{\tt ??? is this what you meant? or something different???}
 %
-$y$ is missing for most of cells.  The plot also shows a posterior probability
-that a marker is expressed for phenotypes possessed by cells in a sample,
-$\hat{q}_1=\Prob(z_{j \lambda_{in}}=1 \mid \by, \bf m)$ for each ($i,j)$. When
-observed $y_{inj}$ is larger for many cells, $\hat{q}_1$ is expected to be
-large.  We also compute $\hat{q}_2=\Prob(z_{j \lambda_{in}}=0 \mid \by, \bf m)$
-for $(i,n,j)$ with $m_{inj}=1$ (missing), posterior probability that a cell
-with missing value for marker $j$ has a phenotype for which the marker is not
-expressed.  Figure~XXX illustrates a histogram of $\hat{q}_2$ for all $(i, n,
-j)$.  Recall that the assumption made for the missingness mechanism is
-non-testable.   The figure shows that when a cell has a missing value for a
-marker, the marker is not expressed in the phenotype that the cell possesses,
-which complies with the subject knowledge provided by biologists.  
+% TODO
+%{\tt ??? is this what you meant? or something different???}. YES.
+%
+and $y$ is missing for most of cells.  The plot also shows a posterior
+probability that a marker is expressed for phenotypes possessed by cells in a
+sample, $\hat{q}_1=\Prob(z_{j \lambda_{in}}=1 \mid \by, \bf m)$ for each
+($i,j)$. When observed $y_{inj}$ is larger for many cells, $\hat{q}_1$ is
+expected to be large.  We also compute $\hat{q}_2=\Prob(z_{j \lambda_{in}}=0
+\mid \by, \bf m)$ for $(i,n,j)$ with $m_{inj}=1$ (missing), posterior
+probability that a cell with missing value for marker $j$ has a phenotype for
+which the marker is not expressed. 
+% TODO
+Figure~XXX 
+%
+illustrates a histogram of $\hat{q}_2$ for all $(i, n, j)$.  Recall that the
+assumption made for the missingness mechanism is non-testable.   The figure
+shows that when a cell has a missing value for a marker, the marker is not
+expressed in the phenotype that the cell possesses, which complies with the
+subject knowledge provided by biologists.  
 
 
 
 % TODO
-{\tt 
+{\tt  TODO
 \begin{itemize}
 \item make plots as described above.
 \item comparison??
@@ -1196,20 +1337,37 @@ which complies with the subject knowledge provided by biologists.
 \subsection{Conclusions}
 
 % TODO
-{\tt expand}
+%{\tt expand}
 
 We have proposed a Bayesian feature allocation model for studying NK-cell
-diversity from mass cytometry data. We used a simulation study to show that our
-model is able to recover the true latent feature allocation matrix generating
-the observed data. Through providing an informed prior distribution on the
-missing mechanism, we are able to reasonably impute missing values to obtain a
-full dataset
-% TODO
-{\tt did not show specifically this point}.
+diversity from mass cytometry data in the presence of missing data. We used a
+simulation study to show that our model is able to recover the true latent
+feature allocation matrix generating the observed data. We are also able to
+learn the true abundance of cell-types when many observations are available. 
 %
-When applied to real cord blood data, we find that the cell-types learned tend
-to be similar, and sometimes repeated. This can be remedied using a repulsive
-mixture prior and will be included in Project 2.
+Assumptions about the missing mechanism are untestable. But through providing
+an informed prior distribution on the missing mechanism, we are able to impute
+data missing not at random such that most of the imputed values are correspond
+to the non-expression of markers. This is consistent with what scientists
+believe about precision of the cytometry devices.
+%
+While not explicitly shown, the posterior variance for $Z$ can be computed
+easily from the posterior samples of $Z$ when $K$ is fixed. This will help in
+quantifying uncertainty about the learned NK-cell subpopulations. 
+%
+A comparison of our model to FlowSOM remains to be conducted. 
+%
+
+When applied to real cord blood data, we find that the cell-types learned by
+the model tend to be similar, and sometimes repeated. This can be remedied
+using a repulsive mixture prior and will be included in Project 2. Moreover,
+the ideas in this project may be extended to account for sample-specific
+covariates and time-dependency across samples. These will be explored in
+Projects 2 and 3.
+
+
+
+
 
 \section{Project 2: Covariate-dependent Repulsive Feature Allocation Model}\label{sec:proj2}
 In Project 1, we used a FAM to learn the latent cell-types present in the

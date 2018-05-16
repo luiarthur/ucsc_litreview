@@ -13,7 +13,7 @@ gen_default_init = function(prior) {
 
   y_init = lapply(y, function(yi) {
     idx = which(is.na(yi), arr=TRUE)
-    yi[idx] = -1
+    yi[idx] = prior$c0
     yi
   })
    
