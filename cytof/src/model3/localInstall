@@ -7,6 +7,12 @@ rm -f ${MODEL_NAME}/NAMESPACE
 R -q -e "roxygen2::roxygenise('${MODEL_NAME}');Rcpp::compileAttributes('${MODEL_NAME}');"
 R -q -e "roxygen2::roxygenise('${MODEL_NAME}');Rcpp::compileAttributes('${MODEL_NAME}');"
 
+### Clean reuibld [-c] ###
+#while getopts ":c" opt
+#do
+#  rm -f ${MODEL_NAME}/src/*.{so,o}
+#done
+
 ### Install Package Locally ###
 rm -f ${MODEL_NAME}/src/*.{so,o}
 time R CMD INSTALL --no-multiarch ${MODEL_NAME}

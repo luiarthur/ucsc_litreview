@@ -8,7 +8,8 @@
  *
  * TIME_CODE(true, "This is the elapsed time: ", int x = 100)
  *
- * If show_time = true, then the timings will show. Otherwise, the times will not show.
+ * If show_time = true, then the timings will show.
+ * Otherwise, the times will not show.
  */
 
 #ifndef MY_TIMER_H
