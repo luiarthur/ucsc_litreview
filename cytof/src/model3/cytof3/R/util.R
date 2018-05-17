@@ -24,3 +24,5 @@ matApply = function(mat_ls, f) {
 }
 
 println = function(x, ...) cat(x, ..., "\n")
+
+compress = function(x) float::dbl(float::fl(x))
