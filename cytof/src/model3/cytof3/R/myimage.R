@@ -46,7 +46,7 @@ color.bar.horiz <- function(colorVec, mn, mx=-mn, nticks=length(colorVec)-1,
 #}
 
 color.bar <- function(col, zlim=range(col), ticks=seq(zlim[1], zlim[2], len=length(col)),
-                      digits=1, title='', cex) {
+                      digits=1, title='', cex=1) {
   #' Adding a vertical color bar
   #' @export
 
