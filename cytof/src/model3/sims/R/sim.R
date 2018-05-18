@@ -26,6 +26,7 @@ N_degree = getOrFail(opt$N, opt_parser)
 NCORES = getOrFail(opt$ncores, opt_parser)
 B = getOrFail(opt$B, opt_parser)
 BURN = getOrFail(opt$burn, opt_parser)
+K_MCMC = getOrFail(opt$K_MCMC, opt_parser)
 USE_REPULSIVE = getOrFail(opt$use_repulsive, opt_parser)
 println("Use repulsive: ", USE_REPULSIVE)
 ### END OF GLOBALS ###
@@ -86,7 +87,7 @@ for (i in 1:I) {
 }
 dev.off()
 
-prior = gen_default_prior(y, K=20, L0=5, L1=5)
+prior = gen_default_prior(y, K=K_MCMC, L0=5, L1=5)
 
 # Are these good priors?
 prior$psi_0 = -2
