@@ -10,7 +10,7 @@ NCORES=1
 B=2000
 BURN=1000
 USE_REPULSIVE="FALSE"
-K="3 10 20"
+K="5 10 20"
 
 ### Environment Variables ###
 export OPENBLAS_NUM_THREADS=1
