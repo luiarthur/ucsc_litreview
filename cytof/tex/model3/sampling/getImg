@@ -9,6 +9,14 @@ cbSimName="cb_locked_beta1_K20/"
 cbOutdir="img/cb/"
 mkdir -p $cbOutdir
 
+fsSimName="../../../src/FlowSOM/out/"
+fsOutdir="img/FlowSOM/"
+mkdir -p $fsOutdir
+
+ksenSimName="sim_locked_beta1_K20_N500_sensK"
+ksenOutdir="img/ksen/"
+mkdir -p $ksenOutdir
+
 I="1 2 3"
 for i in $I; do
   #pdfPage ${imgPath}/${simName}/"Z_true_byW.pdf" $i
@@ -35,4 +43,18 @@ cp ${simImgPath}/${cbSimName}/"pp_obs.pdf" $cbOutdir
 cp ${simImgPath}/${cbSimName}/"y_hist.pdf" $cbOutdir
 cp ${simImgPath}/${cbSimName}/"pz0_missy.pdf" $cbOutdir
 cp ${simImgPath}/${cbSimName}/"pp_obs_i"*".pdf" $cbOutdir
+
+
+### FlowSOM ###
+cp ${fsSimName}/"compareClus.pdf" $fsOutdir
+I="1 2 3"
+for i in $I; do
+  cp ${fsSimName}/"YZ00${i}_FlowSOM.png" $fsOutdir
+done
+
+### K sensitivity ###
+K="5 10 20"
+for k in $K; do
+  cp ${simImgPath}/${ksenSimName}${k}/"YZ001.png" $ksenOutdir/"YZ001_K${k}.png"
+done
 

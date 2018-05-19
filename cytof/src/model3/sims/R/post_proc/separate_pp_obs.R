@@ -83,11 +83,12 @@ apply(idx_some, 1, function(indices) {
 
   pz0 = paste0('posterior prob. of non-expression for missing y: ', 100*round(pz0_missy[i,j],2), '%')
   pm = paste0('proportion of data missing: ', 100*round(miss_prop[j,i],4), '%')
+  zjk_mean = compute_zjk_mean(out, i, j)
+  pz1 = paste0('posterior prob. of expression for y: ', 100*round(zjk_mean,4), '%')
 
-  x_pos = xmag * .1
-  y_pos = h * 1.2
-  text(x_pos, y_pos, pz0, cex=1.3)
-  text(x_pos, h * 1.05, pm, cex=1.3)
+  text(xmag * .1, y=h * 1.20, pz0, cex=1.3)
+  text(xmag * .1, y=h * (1.20+1.05)/2, pz1, cex=1.3)
+  text(xmag * .1, y=h * 1.05, pm, cex=1.3)
   dev.off()
 })
 
@@ -117,9 +118,10 @@ dev.off()
 
 ### Q hist (Histogram of P(Z=0) for missing y) ###
 pdf(fileDest('pz0_missy.pdf'))
-hist(pz0_missy, main='',
-     xlab='histogram of missing y',
-     col='grey', border='white', prob=FALSE)
+hist(pz0_missy, main='', xlim=0:1,
+     xlab='posterior prob. of non-expression for missing y',
+     col='grey', border='white', prob=FALSE,
+     cex.lab=1.5, cex.axis=1.5)
 dev.off()
 
 

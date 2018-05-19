@@ -1139,22 +1139,18 @@ not expressed within each sample $i$ and marker $j$. This quantity should be 1
 because we desire that the missing values should correspond to non-expression.
 
 % TODO
-{\tt TODO.
-\begin{itemize}
+%{\tt TODO.
+%\begin{itemize}
 %\item as we discussed, include posterior prob that a maker is not expressed if
 %  it is missing and posterior distributions of $y_{inj}$ for observed ones for
 %  each $(i,j)$. (I have this, just waiting for graphs.)
-
 %\item comparison of posterior predictive distribution to density estimates of
 %  observed $y$. (I have this, just waiting for graphs.)
-
 %\item comparison between FlowSOM
-
-\item sensitivity analysis ($K$ larger than $K^\true$ and smaller than
-  $K^\true$. (I do not have this for smaller $K$...)
-
-\end{itemize}
-}
+%\item sensitivity analysis ($K$ larger than $K^\true$ and smaller than
+%  $K^\true$. (I do not have this for smaller $K$...)
+%\end{itemize}
+%}
 
 We compare our method with FlowSOM as it is the fastest and tends to have good
 performance in a variety of situations \citep{weber2016comparison}.
@@ -1229,6 +1225,25 @@ large $\hat{w}_{ik}$ to explain at least 90\% of the cells in a sample.}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
+\textbf{Sensitivity to Specified $K$}
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[th!]
+\begin{center}
+  \begin{tabular}{cc}
+  \includegraphics[scale=.4]{img/ksen/YZ001_K5.png}&
+  \includegraphics[scale=.4]{img/ksen/YZ001_K10.png}\\
+  {\small (a)} & {\small (b)} \\
+  \includegraphics[scale=.4]{img/ksen/YZ001_K20.png}&
+  {\small (c)} \\
+  \end{tabular}
+\end{center}
+\vspace{-0.05in}
+\caption{TODO: [K-sensitivity] Add a caption}
+\label{fig:ksen-post-Z}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 %%% cb-proj1 %%%
 \subsection{Cord Blood Data}
 We fit the proposed model to a real data set comprising cord-blood samples from
@@ -1257,14 +1272,11 @@ The median proportion of missing values across markers in sample 3 is 18\%.
 %and missing values are white.
 
 
-We used hyperparameters similar to those in the simulation studies.
-% TODO
-%{\tt used similar hyperparameters?  check if this is right}. Yes
-%
-2000 samples from the posterior distribution were obtained after a burn-in
-period of 1000 iterations. The results are summarized in Figure
-\ref{fig:cb-post-Z}.  Point estimates $\hat{\bZ}_i$ and $\hat{\bw}_i$ are
-obtained using the method in \S~\ref{sampling-via-mcmc}.
+We used hyperparameters similar to those in the simulation studies.  2000
+samples from the posterior distribution were obtained after a burn-in period of
+1000 iterations. The results are summarized in Figure \ref{fig:cb-post-Z}.
+Point estimates $\hat{\bZ}_i$ and $\hat{\bw}_i$ are obtained using the method
+in \S~\ref{sampling-via-mcmc}.
 % illustrated at the bottom of each panel.   
 Plots of $\hat{\bZ}_i$ are given with corresponding $\hat{\bw}_i$ at the bottom
 of the panels.  From the estimated weights $\hat{\bw}_i$ the samples have some
@@ -1273,24 +1285,20 @@ common phenotypes such as phenotypes 17, 15 and 18.  In particular, phenotype
 samples 1, 2 and 3, respectively.  $\hat{\bw}_i$ also shows heterogeneity
 across samples.  For example, phenotype 7 has the second largest $\hat{w}_i$ in
 samples 2 and 3. Specifically, 22.4\% and 13.5\% of the cells in samples 2 and
-3, respectively possess phenotype 7, but only
-% TODO
-%{\tt XXX  Give a number here} \%
-1.87\%
-%
-of the cells in sample 1 has the phenotype.  Similarly, phenotype 18 is more
-prevalent in sample 1.  $\hat{w}_{ik}$ for the phenotype is 17.4\%, 4.7\%,
-3.0\% in samples 1, 2 and 3, respectively.  Phenotypes 7 and 18 are different
-dominantly for expression of markers 17, 18 and 19 corresponding to EOMES, GrA
-(granzyme A) and GrB (granzyme B).  Also, note that some phenotypes are very
-similar, for example, phenotypes 2 and 18 in panel (a).  It may be because
-independence across columns under the prior model for $\bZ$ allows identical
-columns with positive probability.  For the heatmaps on the top of the panels,
-$y_{inj}$ are sorted by a posterior estimate $\hat{\lambda}_{in}$ of their cell
-phenotypes. The horizontal dotted lines separate cells using
-$\hat{\lambda}_{in}$.  From the heatmaps, the cells having a phenotype have
-similar expression patterns, implying that the model provides reasonable
-estimates of underlying cell subpopluations.
+3, respectively possess phenotype 7, but only 1.87\% of the cells in sample 1
+has the phenotype.  Similarly, phenotype 18 is more prevalent in sample 1.
+$\hat{w}_{ik}$ for the phenotype is 17.4\%, 4.7\%, 3.0\% in samples 1, 2 and 3,
+respectively.  Phenotypes 7 and 18 are different dominantly for expression of
+markers 17, 18 and 19 corresponding to EOMES, GrA (granzyme A) and GrB
+(granzyme B).  Also, note that some phenotypes are very similar, for example,
+phenotypes 2 and 18 in panel (a).  It may be because independence across
+columns under the prior model for $\bZ$ allows identical columns with positive
+probability.  For the heatmaps on the top of the panels, $y_{inj}$ are sorted
+by a posterior estimate $\hat{\lambda}_{in}$ of their cell phenotypes. The
+horizontal dotted lines separate cells using $\hat{\lambda}_{in}$.  From the
+heatmaps, the cells having a phenotype have similar expression patterns,
+implying that the model provides reasonable estimates of underlying cell
+subpopulations.
 
 %does k
 %But it should be noted that
@@ -1328,52 +1336,70 @@ $y_{inj}$ for some selected $(i,j)$.
   \end{tabular}
 \end{center}
 \vspace{-0.05in}
-\caption{[CB Data]  Heatmaps of $y$ for the samples. Cells and markers are in
-rows and columns, respectively. Each column contains the expression levels of
-a marker for all cells in the sample. High expression levels are red, low
-expression levels are blue, missing values are white.   Cells are rearranged
-by their posterior estimate of phenotype indicator, $\hat{\lambda}_{in}$.
-Horizontal lines separate cells in different estimated phenotypes.
-At the bottom of each panel, the transpose of $\hat{\Z}_i$
-and $\hat{\bw}_i$ are provided for each sample. We include phenotypes having
-large $\hat{w}_{ik}$ to explain at least 90\% of the cells in a sample.}
+\caption{TODO: pp for observed, for some $(i,j)$. Add a caption}
 \label{fig:cb-pp-obs-some}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%
-% TODO
-The fit is  reasonably good for the observed data in panels (a), (c), and (d).
+The fit is reasonably good for the observed data in panels (a), (c), and (d).
 For panel (b), the fit is poor possibly because the proportion of missing data
-is extremely high (70\%).
-%
-% TODO (fix grammar)
-TODO
-%
-and $y$ is missing for most of cells.  The plot also shows a posterior
-probability that a marker is expressed for phenotypes possessed by cells in a
-sample, $\hat{q}_1=\Prob(z_{j \lambda_{in}}=1 \mid \by, \bf m)$ for each
-($i,j)$. When observed $y_{inj}$ is larger for many cells, $\hat{q}_1$ is
-expected to be large.  We also compute $\hat{q}_2=\Prob(z_{j \lambda_{in}}=0
-\mid \by, \bf m)$ for $(i,n,j)$ with $m_{inj}=1$ (missing), posterior
-probability that a cell with missing value for marker $j$ has a phenotype for
-which the marker is not expressed. 
-% TODO
-TODO
-Figure~XXX 
-%
-illustrates a histogram of $\hat{q}_2$ for all $(i, n, j)$.  Recall that the
-assumption made for the missingness mechanism is non-testable.   The figure
-shows that when a cell has a missing value for a marker, the marker is not
-expressed in the phenotype that the cell possesses, which complies with the
-subject knowledge provided by biologists.  
+is extremely high (70\%).  The plot also shows a posterior probability that a
+marker is expressed for phenotypes possessed by cells in a sample,
+$\hat{q}_1=\Prob(z_{j \lambda_{in}}=1 \mid \by, \bf m)$ for each ($i,j)$. When
+observed $y_{inj}$ is larger for many cells, $\hat{q}_1$ is expected to be
+large.  We also compute $\hat{q}_2=\Prob(z_{j \lambda_{in}}=0 \mid \by, \bf m)$
+for $(i,n,j)$ with $m_{inj}=1$ (missing), posterior probability that a cell
+with missing value for marker $j$ has a phenotype for which the marker is not
+expressed.  Figure \ref{fig:hist-pz0-missy} illustrates a histogram of
+$\hat{q}_2$ for all $(i, n, j)$.  Recall that the assumption made for the
+missingness mechanism is non-testable.   The figure shows that when a cell has
+a missing value for a marker, the marker is not expressed in the phenotype that
+the cell possesses, which complies with the subject knowledge provided by
+biologists. 
 
-
+\begin{figure}
+\begin{center}
+  \includegraphics[scale=0.5]{img/cb/pz0_missy.pdf}
+  \caption{TODO: [post. prob of non-expression for missing y] write a caption}
+  \label{fig:hist-pz0-missy}
+\end{center}
+\end{figure}
 
 % TODO
-{\tt  TODO
-\begin{itemize}
-\item make plots as described above.
-\item comparison??
-\end{itemize} }
+%{\tt  TODO: comparison??}
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}
+\begin{center}
+  \begin{tabular}{cc}
+  \includegraphics[scale=.4]{img/FlowSOM/YZ001_FlowSOM.png}&
+  \includegraphics[scale=.4]{img/FlowSOM/YZ002_FlowSOM.png}\\
+  (a) Sample 1 & (b) Sample 2 \\
+  \includegraphics[scale=.4]{img/FlowSOM/YZ003_FlowSOM.png} &\\
+  (c) Sample 3 & \\
+  \end{tabular}
+\end{center}
+\vspace{-0.05in}
+\caption{TODO: [CB data analyzed using FlowSOM]  Heatmaps of $y$ for the samples
+  sorted by phenotype abundance within each sample. Cells and markers are in
+  rows and columns, respectively. Each column contains the expression levels of
+  a marker for all cells in the sample. High expression levels are red, low
+  expression levels are blue, missing values are white.  Cells are rearranged
+  by their posterior estimate of phenotype indicator, $\hat{\lambda}_{in}$.
+  Horizontal lines separate cells in different estimated phenotypes.  At the
+  bottom of each panel, the transpose of $\hat{\Z}_i$ and $\hat{\bw}_i$ are
+  provided for each sample. We include phenotypes having large $\hat{w}_{ik}$
+  to explain at least 90\% of the cells in a sample.}
+\label{fig:fs-post-Z}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{figure}
+\begin{center}
+\includegraphics[scale=0.5]{img/FlowSOM/compareClus.pdf}
+\caption{TODO: [Comparing FlowSOM phenotypes to FAM] write a caption}
+\label{fig:fs-fam-compare}
+\end{center}
+\end{figure}
+
 
 %We check the posterior probabilities that a 
 

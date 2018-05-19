@@ -394,14 +394,13 @@ dev.off()
 
 
 ### PP 
-compute_zjk_mean= function(out, i, j) {
-  B = length(out)
-  zjk = sapply(out, function(o) {
-    k = sample(1:prior$K, 1, prob=o$W[i,])
-    o$Z[j,k]
-  })
-  mean(zjk)
-}
+#compute_zjk_mean= function(out, i, j) {
+#  zjk = sapply(out, function(o) {
+#    k = sample(1:prior$K, 1, prob=o$W[i,])
+#    o$Z[j,k]
+#  })
+#  mean(zjk)
+#}
 
 
 ### Y aggregate last ###
