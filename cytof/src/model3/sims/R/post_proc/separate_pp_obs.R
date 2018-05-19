@@ -7,6 +7,7 @@ SOME = 4
 
 args = commandArgs(trailingOnly=TRUE)
 OUTDIR = ifelse(length(args) == 0, '../../out/cb_locked_beta1_K20/', args[1])
+OUTDIR = paste0(OUTDIR, '/')
 y = readRDS('../../data/cytof_cb.rds')
 
 miss_prop = get_missing_prop(y)
