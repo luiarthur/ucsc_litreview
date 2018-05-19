@@ -34,4 +34,5 @@ done
 cp ${simImgPath}/${cbSimName}/"pp_obs.pdf" $cbOutdir
 cp ${simImgPath}/${cbSimName}/"y_hist.pdf" $cbOutdir
 cp ${simImgPath}/${cbSimName}/"pz0_missy.pdf" $cbOutdir
+cp ${simImgPath}/${cbSimName}/"pp_obs_i"*".pdf" $cbOutdir
 

@@ -1312,20 +1312,41 @@ estimates of underlying cell subpopluations.
 
 To assess model fit, we compare the posterior predictive distribution of
 $y_{inj}$ with $m_{inj}=0$ (observed) to the distribution of observed data.
+Figure \ref{fig:cb-pp-obs-some} illustrates comparison of posterior predictive
+distributions (grey lines) to kernel density estimates (blue lines) of observed
+$y_{inj}$ for some selected $(i,j)$.
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[th!]
+\begin{center}
+  \begin{tabular}{cc}
+  \includegraphics[scale=.4]{img/cb/pp_obs_i1_j1.pdf}&
+  \includegraphics[scale=.4]{img/cb/pp_obs_i1_j2.pdf}\\
+  {\small (a) Sample 1, marker 1} & {\small (b) Sample 1, marker 2} \\
+  \includegraphics[scale=.4]{img/cb/pp_obs_i2_j22.pdf}&
+  \includegraphics[scale=.4]{img/cb/pp_obs_i3_j19.pdf}\\
+  {\small (c) Sample 2, marker 22} & {\small (d) Sample 3, marker 19} \\
+  \end{tabular}
+\end{center}
+\vspace{-0.05in}
+\caption{[CB Data]  Heatmaps of $y$ for the samples. Cells and markers are in
+rows and columns, respectively. Each column contains the expression levels of
+a marker for all cells in the sample. High expression levels are red, low
+expression levels are blue, missing values are white.   Cells are rearranged
+by their posterior estimate of phenotype indicator, $\hat{\lambda}_{in}$.
+Horizontal lines separate cells in different estimated phenotypes.
+At the bottom of each panel, the transpose of $\hat{\Z}_i$
+and $\hat{\bw}_i$ are provided for each sample. We include phenotypes having
+large $\hat{w}_{ik}$ to explain at least 90\% of the cells in a sample.}
+\label{fig:cb-pp-obs-some}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%
 % TODO
-TODO
-Figure XX 
-%%
-illustrates comparison of posterior predictive distributions (grey
-lines) to kernel density estimates (blue lines) of observed $y_{inj}$ for some
-selected ($i,j)$.
-% TODO
-TODO
-The fit is  reasonably good for (... ) in panels (a)-(c).
-For (...), the fit is poor possibly because the number of observations is small
+The fit is  reasonably good for the observed data in panels (a), (c), and (d).
+For panel (b), the fit is poor possibly because the proportion of missing data
+is extremely high (70\%).
 %
-% TODO
-%{\tt ??? is this what you meant? or something different???}. YES.
+% TODO (fix grammar)
+TODO
 %
 and $y$ is missing for most of cells.  The plot also shows a posterior
 probability that a marker is expressed for phenotypes possessed by cells in a
@@ -2058,6 +2079,9 @@ p_{inj}
 Note that \(f_{inj}\) is a function of \(y_{inj}\) and should be
 computed accordingly.
 
+
+%\end{document}
+
 \section{Posterior Predictive for Observed CB Data \label{sec:cb-pp-observed}}
 \foreach \ppp in {1,...,12}{
   \beginmyfig
@@ -2081,22 +2105,5 @@ computed accordingly.
   The grey lines are the density of observed data.}
   \endmyfig
 }
-
-
-\end{document}
-
-
-
-%%% TODO %%%
-% Remove these graphs.
-% Put only a couple of these subgraphs in the main report.
-
-\newpage
-
-%%% Many Graphs 
-%\section{Posterior Predictive for Positive values of CB data \label{sec:cb-pp}}
-%\foreach \ppp in {1,...,12}{
-%  \beginmyfig \includegraphics[page=\ppp]{img/cb/pp_obs.pdf} \endmyfig
-%}
 
 \end{document}
