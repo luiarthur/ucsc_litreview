@@ -344,7 +344,7 @@ dev.off()
 #source('../../cytof3/R/yZ.R')
 #source('../../cytof3/R/yZ_inspect.R')
 mult=1; png(fileDest('YZ%03d.png'), height=600*mult, width=500*mult,
-            type='quartz')#, family=X11Fonts()$Arial)
+            type='Xlib')#, family=X11Fonts()$Arial)
 for (i in 1:I) {
   #yZ_inspect(out, y, zlim=dat_lim, i=i, thresh=.9, fy=fy)
   yZ_inspect(out, y, zlim=c(-2,2), i=i, thresh=.9, na.color='black',

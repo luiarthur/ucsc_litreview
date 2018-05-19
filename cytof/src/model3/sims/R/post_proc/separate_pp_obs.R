@@ -8,17 +8,20 @@ SOME = 4
 args = commandArgs(trailingOnly=TRUE)
 OUTDIR = ifelse(length(args) == 0, '../../out/cb_locked_beta1_K20/', args[1])
 OUTDIR = paste0(OUTDIR, '/')
-y = readRDS('../../data/cytof_cb.rds')
-
-miss_prop = get_missing_prop(y)
+OUTDIR_NEW=OUTDIR
+y = NULL
 
 fileDest = function(filename) paste0(OUTDIR, filename)
 
-out = if (grepl('cb',OUTDIR)) {
-  unshrinkOut(readRDS(fileDest('out.rds'))) 
+if (grepl('cb',OUTDIR)) {
+  y = readRDS('../../data/cytof_cb.rds')
+  out = unshrinkOut(readRDS(fileDest('out.rds'))) 
 } else {
   load(fileDest('checkpoint.rda'))
+  OUTDIR=OUTDIR_NEW
 }
+
+miss_prop = get_missing_prop(y)
 
 B = length(out)
 prior = last(out)$prior
@@ -47,7 +50,7 @@ sink()
 
 set.seed(4)
 idx = which(pz0_missy > -Inf, arr.ind=T)
-idx_min = which(pz0_missy == min(pz0_missy), arr.ind=TRUE)
+idx_min = which(pz0_missy == min(pz0_missy), arr.ind=TRUE)[1,]
 idx_max = which(pz0_missy == max(pz0_missy), arr.ind=TRUE)[1,]
 
 rec.find.idx = function(idx_some=matrix(1, SOME, 2)) {
@@ -121,8 +124,9 @@ dev.off()
 
 
 ### Plot YZ Images ###
-mult=1; png(fileDest('YZ%03d.png'), height=600*mult, width=500*mult,
-            type='quartz')#, family=X11Fonts()$Arial)
+#mult=1; png(fileDest('YZ%03d.png'), height=600*mult, width=500*mult,
+#            type='quartz')#, family=X11Fonts()$Arial)
+mult=1; png(fileDest('YZ%03d.png'), height=600*mult, width=500*mult, type='Xlib')
 for (i in 1:I) {
   yZ_inspect(out, y, zlim=c(-3,3), i=i, thresh=.9, na.color='black',
              cex.z.b=1.5, cex.z.lab=1.5, cex.z.l=1.5, cex.z.r=1.5,
