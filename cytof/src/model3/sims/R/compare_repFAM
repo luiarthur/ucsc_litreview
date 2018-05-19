@@ -1,0 +1,29 @@
+#!/bin/bash
+
+### PARAMETERS FOR PARALLEL JOB ###
+MAX_CORES=4
+
+### Rscript Params ###
+N=500
+NCORES=1
+B=2000
+BURN=1000
+K=20
+RFAM="FALSE TRUE"
+
+### Environment Variables ###
+export OPENBLAS_NUM_THREADS=1
+
+for rfam in $RFAM; do
+  ### Simulation Study ###
+  i=$((i+1)) 
+
+  # ADD BACKSLASH AT THE END!
+  outdir="../out/sim_locked_beta_K20_N${N}_repFam-${rfam}/"
+
+  mkdir -p $outdir
+  cmd="Rscript sim.R --N=$N --ncores=$NCORES --B=$B --burn=$BURN -o $outdir --K_MCMC=20 --use_repulsive=$rfam"
+  cmd="$cmd > ${outdir}log.txt"
+  sem -j $MAX_CORES $cmd
+  echo "Simulation $i: $outdir"
+done

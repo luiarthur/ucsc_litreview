@@ -1591,8 +1591,7 @@ how we model the abundance vector for the first time-point $(\bw_{t_1})$.
 
 For $k=1,\ldots,K$, let $w_{t_1,k} = \xi_{t_1,k}/\sum_{\ell=1}^K
 \xi_{t_1, \ell}$ where $\xi_{t_1,1}=1$ and $\xi_{t_1,k} =
-\max(\xi^\prime_{t_1,k}, 0)$, for $k\ge 2$. We model $\xi^\prime_{t_1,k} \iid
-\N(0, s^2_1)$, for $k\ge 2$.  Note that for identifiability, $\xi_{t_1,k}$ is
+\max(\xi^\prime_{t_1,k}, 0)$, for $k\ge 2$. We model $\xi^\prime_{t_1,k} \iid \N(0, s^2_1)$, for $k\ge 2$.  Note that for identifiability, $\xi_{t_1,k}$ is
 set to 1. The purpose of $\xi_{t_1,k}$ is to perform feature selection at time
 $t_i$. $\xi_{t_1,k} > 0$ yields $w_{t_1,k} >0$, which indicates that cell-type
 $k$ is present at time $t_1$. Similarly, $\xi_{t_1,k} = 0$ yields $w_{t_1,k}
@@ -2106,30 +2105,29 @@ Note that \(f_{inj}\) is a function of \(y_{inj}\) and should be
 computed accordingly.
 
 
-%\end{document}
-
-\section{Posterior Predictive for Observed CB Data \label{sec:cb-pp-observed}}
-\foreach \ppp in {1,...,12}{
-  \beginmyfig
-  \includegraphics[page=\ppp]{img/cb/pp_obs.pdf}
-  \caption{Posterior predictive for observed CB data for each ($i,j$) pair. Included
-  in the figures are the posterior probability that missing value in sample $i$ for
-  marker $j$ are not expressed. We expect this value to be high. The blue lines 
-  are the posterior predictive density for the observed data.
-  The grey lines are the density of observed data.}
-  \endmyfig
-}
-
-\section{Posterior Predictive for Observed Simulated Data \label{sec:sim-pp-observed}}
-\foreach \ppp in {1,...,12}{
-  \beginmyfig
-  \includegraphics[page=\ppp]{img/sim/pp_obs.pdf}
-  \caption{Posterior predictive for observed simulated data for each ($i,j$) pair. Included
-  in the figures are the posterior probability that missing value in sample $i$ for
-  marker $j$ are not expressed. We expect this value to be high. The blue lines 
-  are the posterior predictive density for the observed data.
-  The grey lines are the density of observed data.}
-  \endmyfig
-}
-
 \end{document}
+
+%\section{Posterior Predictive for Observed CB Data \label{sec:cb-pp-observed}}
+%\foreach \ppp in {1,...,12}{
+%  \beginmyfig
+%  \includegraphics[page=\ppp]{img/cb/pp_obs.pdf}
+%  \caption{Posterior predictive for observed CB data for each ($i,j$) pair. Included
+%  in the figures are the posterior probability that missing value in sample $i$ for
+%  marker $j$ are not expressed. We expect this value to be high. The blue lines 
+%  are the posterior predictive density for the observed data.
+%  The grey lines are the density of observed data.}
+%  \endmyfig
+%}
+%
+%\section{Posterior Predictive for Observed Simulated Data \label{sec:sim-pp-observed}}
+%\foreach \ppp in {1,...,12}{
+%  \beginmyfig
+%  \includegraphics[page=\ppp]{img/sim/pp_obs.pdf}
+%  \caption{Posterior predictive for observed simulated data for each ($i,j$) pair. Included
+%  in the figures are the posterior probability that missing value in sample $i$ for
+%  marker $j$ are not expressed. We expect this value to be high. The blue lines 
+%  are the posterior predictive density for the observed data.
+%  The grey lines are the density of observed data.}
+%  \endmyfig
+%}
+%\end{document}
