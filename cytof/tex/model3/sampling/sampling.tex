@@ -1,7 +1,7 @@
 \documentclass[12pt,]{article}
 
 %{{{1
-\usepackage{lmodern}
+%\usepackage{lmodern}
 \usepackage{amssymb,amsmath}
 %\usepackage{ifxetex,ifluatex}
 %\usepackage{fixltx2e} % provides \textsubscript
@@ -58,6 +58,7 @@
 \usepackage{bm}
 \usepackage{bbm}
 \usepackage{graphicx}
+
 \newcommand{\norm}[1]{\left\lVert#1\right\rVert}
 \newcommand{\p}[1]{\left(#1\right)}
 \newcommand{\bk}[1]{\left[#1\right]}
@@ -94,6 +95,7 @@
 \def\G{\text{Ga}}
 \def\IG{\text{Inverse-Gamma}}
 \def\Dir{\text{Dirichlet}}
+\def\Ber{\text{Ber}}
 \def\Be{\text{Be}}
 \def\lin{\lambda_{in}}
 \def\btheta{\bm{\theta}}
@@ -168,10 +170,10 @@ simultaneously (1) characterize NK cell phenotypes based on expression /
 non-expression of surface markers, (2) estimate compositions of the samples
 based on the identified phenotypes, and (3) infer associations of subjects'
 covariates, with the composition of the identified phenotypes in the samples.
-The conventional Indian buffet process (IBP), one of the most popular feature
-allocation models, is first utilized to model cell phenotypes. Non-ignorable
+The conventional Indian buffet process (IBP), one of the most popular FAMs, is 
+first utilized to model cell phenotypes. Non-ignorable
 missing data that is present due to technical artifacts in mass cytometry are
-accounted for using an informed prior missing mechanism. The repulsive FAM
+accounted for by using an informed prior missing mechanism. The repulsive FAM
 (rep-FAM) is next proposed.  In contrast with the IBP, the rep-FAM produces a
 parsimonious representation of phenotypes by discouraging the creation of
 redundant phenotypes, and can thus improve inference on phenotypes.  Further
@@ -257,27 +259,46 @@ the true potential of NK cell therapies against cancer.
 %cells their importance is therefore necessary.
 
 
-Advances in cytometry has led to more research and greater understanding  of
+
+Advances in cytometry have led to more research and greater understanding  of
 natural killer (NK) cells and how their diversity impacts immunity against the
-development of tumors and other viral diseases. Flow cytometry (developed by
-Wallace Coulter in the 1950's) is a laser-based biophysical technology which is
-sometimes used for biomarker detection. It is regularly used to diagnose health
-disorders like cancer. Cytometry has advanced over the years.
-Fluorescence-based flow cytometry, which makes use of fluorescent dyes and
-lasers that emit light at specific wavelengths, is one such advancement that
-has been mainstream for several decades \citep{herzenberg2002history}.  In recent
-years, a new technique called Cytometry at time-of-flight (CyTOF) has surfaced.
+development of tumors and other viral diseases.  Flow cytometry has been routinely used for single-cell analysis in cellular and clinical immunology. One of primary interest in cytometry data analysis is to identify different cell types in a heterogeneous population and measure their abundances.  Cell types are characterized by their distinct expression patterns of multivariate protein markers and expression patterns can be related to differentiation of cells and their biological function.  
+%Flow cytometry (developed by
+%Wallace Coulter in the 1950's) is a laser-based biophysical technology which is
+%sometimes used for biomarker detection. It is regularly used to diagnose health
+%disorders like cancer. Cytometry has advanced over the years.
+%Fluorescence-based flow cytometry, which makes use of fluorescent dyes and
+%lasers that emit light at specific wavelengths, is one such advancement that
+%has been mainstream for several decades \citep{herzenberg2002history}.  
+In recent years, a new cytometry technique, Cytometry at Time-Of-Flight (CyTOF, also known as mass cytometry) has surfaced.
 It makes use of time-of-flight mass spectrometry, where sophisticated devices
 are used to accelerate, separate, and identify ions by mass. This new method
-enables analyses of multiple parameters to be done in less time
+enables to detect a greater number of parameters (biological phenotypic or functional markers), up to 40 parameters for a cell, in less time and in a higher resolution
 \citep{cheung2011screening}. 
 %Through CyTOF, scientists have been able to better understand natural killer
 %(NK) cells \citep{horowitz2013genetic}. 
-A major challenge in understanding mass cytometry data is developing efficient
-inferential frameworks that can handle their complexity. These data are often
-high-dimensional and noisy. Hence, many existing computational methods for
-analyzing cytometry data use dimension reduction techniques and/or
-clustering-based approaches.
+A major challenge in understanding mass cytometry data is to develop efficient
+inferential frameworks that can handle their complexity. One of traditional methods is manual ``gating'', which is the sequential identification and refinement of clusters of homogeneous cells using a set of markers. However, it has several serious shortcomings such as inherent subjectivity of manual analysis and being unscalable for multiparameter data. While the manual gating is still popular in practice, many computational methods that automatically identify cell clusters have been proposed to analyze high-dimensional cytometry data.  
+%These data are often
+%high-dimensional and noisy. Hence, many 
+Many of existing automated analysis methods use dimension reduction techniques and/or
+clustering methods such as density-based clustering methods, model-based clustering methods, and self-organizing maps.
+% FLOWSOM
+For example, FlowSOM in \cite{van2015flowsom} uses a self-organizing map (SOM), an unsupervised neural network technique, for clustering and dimension reduction. A low-dimensional
+representation of the input space is obtained using unsupervised neural networks for easy visualization in a graph called a map.  FlowSOM is fast and can be used as a starting point for a manual gating or as a visualization tool after a gating.
+Other common approaches are density-based clustering methods including DBSCAN \citep{ester1996density} and ClusterX \citep{chen2016cytofkit} and  model-based clustering methods including flowClust \citep{lo2009flowclust} and BayesFlow \citep{johnsson2016bayesflow}.
+Density-based clustering methods, DBSCAN and ClusterX form clusters when regions are densely occupied by
+observations. Observations from dense clusters that are near enough according to
+some predetermined proximity metric and threshold are grouped, while observations that are considered far from dense regions are classified as outliers. Density-based methods can produce clusters that take on flexible shapes. FlowClust clusters Box-Cox transformed data using a mixture of t-distributions and provides parameter estimates through expectation-maximization (EM) algorithm. BayesFlow developed a Bayesian hierarchical model to cluster cells through a Gaussian mixture model.  \cite{weber2016comparison} performed a study to compare freely available clustering methods for high-dimensional cytometry data.  They analyzed six publicly available cytometry datasets and compared identified cell subpopulations to cell population identities known from expert manual gating. 
+
+
+Existing methods, while promising, have fallen short at providing comprehensive inference on the underlying cell phenotypes in cell populations.  Many of them do not properly handle large sample-to-sample variations and abnormalities due to technical artifacts in cytometry data and do not provide uncertainty measurements for resulting inferences.  Expression levels in different samples can significantly vary due to technical variation and most of existing methods often analyze samples separately.  Observations can also be missing due to some technical limitations when markers are not expressed.  Existing methods often ignore missing data or use pre-imputed data.  More importantly, exiting methods do not directly model the underlying cell types.  They rather identify cell clusters based on similarities in expression patterns and determine cell types based on identified clusters. When cells have the same expression pattern but with different expression levels due to some experimental noise, they can be grouped in different clusters although they are likely to have a cell type.  We will utilize Bayesian feature allocation models (FAMs) embedded with clustering
+capabilities as our main tools to directly model cell types. FAM will provide solid foundations to an effective way of revealing the underlying cell phenotypes. We also propose mechanisms for imputing missing values within the
+models. The proposed models will efficiently provide a full model-based and probabilistic inference with honest uncertainty quantification.
+
+
+ 
+
 %{\tt introduce some existing approaches.  Explain a bit the methods
 %that we will use for comparison.  State limitations of existing methods.  Are
 %they Bayesian?  Are they modeling phenotypes like our $\Z$.  Emphasize that our
@@ -287,75 +308,75 @@ clustering-based approaches.
 %{\tt include several examples of existing methods. explain what they do and
 %produce for inference. explain what they miss.}
 %
-To better understand the properties of these different methods, 
-\cite{weber2016comparison} performed a study which compares freely available
-clustering methods for high-dimensional cytometry data. These methods are based
-on a variety of techniques including hierarchical clustering methods , k-means,
-density-based clustering methods, model-based clustering methods,
-nearest-neighbor methods, and self-organizing maps. Each method exhibits their
-own strengths.
+%To better understand the properties of these different methods, 
+%\cite{weber2016comparison} performed a study which compares freely available
+%clustering methods for high-dimensional cytometry data. These methods are based
+%on a variety of techniques including hierarchical clustering methods , k-means,
+%density-based clustering methods, model-based clustering methods,
+%nearest-neighbor methods, and self-organizing maps. Each method exhibits their
+%own strengths.
 % kmeans
-In K-mean, one of the most well known clustering methods, observations are
-iteratively grouped into clusters based on their proximity to the $K$
-centroids, and then the centroids are updated based on the newly formed
-clusters. This method, while fast, memory-efficient, and intuitive, produces
-only point estimates of clusters. In addition, the number of clusters needs to
-be predetermined.
+%In K-mean, one of the most well known clustering methods, observations are
+%iteratively grouped into clusters based on their proximity to the $K$
+%centroids, and then the centroids are updated based on the newly formed
+%clusters. This method, while fast, memory-efficient, and intuitive, produces
+%only point estimates of clusters. In addition, the number of clusters needs to
+%be predetermined.
 %This is a common trait among the clustering methods used in analyzing cytometry
 %data.
 % hclust
-In hierarchical clustering, no assumptions about the number of clusters are
-made, and the final output is a dendrogram, which can then be cut at different
-levels, forming clusters. However, these dendrograms are typically cut based on
-some visual criteria, which can be cumbersome.  Hierarchical clustering
-implementations also typically suffer from memory-related bottlenecks for large
-datasets.  Memory-efficient implementations suited for such datasets have been
-implemented in the statistical programming language R by
-\citep{linderman2013package}, making it a viable candidate method for cytometry
-data.
+%In hierarchical clustering, no assumptions about the number of clusters are
+%made, and the final output is a dendrogram, which can then be cut at different
+%levels, forming clusters. However, these dendrograms are typically cut based on
+%some visual criteria, which can be cumbersome.  Hierarchical clustering
+%implementations also typically suffer from memory-related bottlenecks for large
+%datasets.  Memory-efficient implementations suited for such datasets have been
+%implemented in the statistical programming language R by
+%\citep{linderman2013package}, making it a viable candidate method for cytometry
+%data.
 % nearest neighbors. phenograph @levine2015data
-Nearest-neighbor clustering methods like PhenoGraph \citep{levine2015data}
-similarly attempt to reduce the computational costs of hierarchical clustering
-methods by merging clusters by following paths in the nearest neighborhood
-graph of clusters.
+%Nearest-neighbor clustering methods like PhenoGraph \citep{levine2015data}
+%similarly attempt to reduce the computational costs of hierarchical clustering
+%methods by merging clusters by following paths in the nearest neighborhood
+%graph of clusters.
 %
-These mentioned hierarchical clustering methods do not provide uncertainty
-estimates.
+%These mentioned hierarchical clustering methods do not provide uncertainty
+%estimates.
 %
 % FLOWSOM
-Some methods, like FlowSOM \citep{van2015flowsom}, are able to learn the number
-of clusters in the data, while also allowing the number of clusters to be
-explicitly specified.  FlowSOM uses a self-organizing map (SOM) to reduce the
-dimensionality of cytometry data, and cluster them accordingly. Self-organizing
-maps are trained using unsupervised neural networks to obtain a low-dimensional
-representation of the input space. Since neural networks are capable of
-learning non-linear functions, SOMs may be considered a nonlinear
-generalization of principal components analysis \citep{yin2008learning}. In the
-FlowSOM implementation, the input space is projected onto a two-dimensional
-space and can be conveniently visualized in a graph called a map.
-Among existing methods FlowSOM is considered the fastest and most flexible at
-finding subpopulations in cytometry data. However, it does not quantify
-uncertainty about the learned clusters.
+%Some methods, like FlowSOM \citep{van2015flowsom}, are able to learn the number
+%of clusters in the data, while also allowing the number of clusters to be
+%explicitly specified.  FlowSOM uses a self-organizing map (SOM) to reduce the
+%dimensionality of cytometry data, and cluster them accordingly. Self-organizing
+%maps are trained using unsupervised neural networks to obtain a low-dimensional
+%representation of the input space. Since neural networks are capable of
+%learning non-linear functions, SOMs may be considered a nonlinear
+%generalization of principal components analysis \citep{yin2008learning}. In the
+%FlowSOM implementation, the input space is projected onto a two-dimensional
+%space and can be conveniently visualized in a graph called a map.
+%Among existing methods FlowSOM is considered the fastest and most flexible at
+%finding subpopulations in cytometry data. However, it does not quantify
+%uncertainty about the learned clusters.
 %% Write about density-based, model-based, and nearest neighbors.
 % density-based. DBSCAN \citep{ester1996density}
-Another class of methods where the number of clusters does not need to be
-specified beforehand is density-based clustering methods. The earliest of these
-methods include DBSCAN \citep{ester1996density}. In density-based
-clustering, clusters are formed when regions are densely occupied by
-observations. Points from dense clusters that are near enough (according to
-some predetermined proximity metric and threshold) are grouped into the
-cluster. Points that are considered far from dense regions are classified as
-outliers. In general, density-based methods can produce clusters that take on
-very flexible shapes. But again, no uncertainty estimates are produced for
-these clusters. In addition, older implementations like DBSCAN can be
-computationally inefficient, having a worst-case complexity of
-$\mathcal{O}(n^2)$ (due to the computation and storage of the distance matrix). 
+%Another class of methods where the number of clusters does not need to be
+%specified beforehand is density-based clustering methods. The earliest of these
+%methods include DBSCAN \citep{ester1996density}. In density-based
+%clustering, clusters are formed when regions are densely occupied by
+%observations. Points from dense clusters that are near enough (according to
+%some predetermined proximity metric and threshold) are grouped into the
+%cluster. Points that are considered far from dense regions are classified as
+%outliers. In general, density-based methods can produce clusters that take on
+%very flexible shapes. But again, no uncertainty estimates are produced for
+%these clusters. In addition, older implementations like DBSCAN can be
+%computationally inefficient, having a worst-case complexity of
+%$\mathcal{O}(n^2)$ (due to the computation and storage of the distance matrix). 
 % density-based. ClusterX @chen2016cytofkit 
-ClusterX \citep{chen2016cytofkit} is a density-based clustering method used for
-cytometry data. It alleviates some computational and memory burdens by using a
-split-apply-combine strategy where the data are first split into smaller 
-manageable chunks so as to compute a smaller distance matrix. Parameters
-are computed for each small chunk and the results are combined. 
+%ClusterX \citep{chen2016cytofkit} is a density-based clustering method used for
+%cytometry data. It alleviates some computational and memory burdens by using a
+%split-apply-combine strategy where the data are first split into smaller 
+%manageable chunks so as to compute a smaller distance matrix. Parameters
+%are computed for each small chunk and the results are combined. 
 %
 % model-based. flowClust @lo2009flowclust. 
 %%%% - Uses mixture of t-dist on box-cox-transformed data
@@ -363,13 +384,13 @@ are computed for each small chunk and the results are combined.
 %%%% - Model is fit K times, each time with different number of clusters
 %%%%      - using BIC, the number of clusters is chose
 %%%% - slower. Where FlowSOM takes seconds, this could take hours to get about the same performance
-Another clustering approach is model-based clustering, the most popular of
-which is the finite gaussian mixture model. To account for irregular shapes and
-the presence of outliers in cytometry data, \cite{lo2009flowclust} developed
-flowClust, which first applies a Box-Cox transformation to the data, and then
-uses a mixture of t-distributions to cluster the transformed data.  The
-expectation-maximization (EM) algorithm \citep{dempster1977maximum} can be used
-to learn the parameters in this model.
+%Another clustering approach is model-based clustering, the most popular of
+%which is the finite gaussian mixture model. To account for irregular shapes and
+%the presence of outliers in cytometry data, \cite{lo2009flowclust} developed
+%flowClust, which first applies a Box-Cox transformation to the data, and then
+%uses a mixture of t-distributions to cluster the transformed data.  The
+%expectation-maximization (EM) algorithm \citep{dempster1977maximum} can be used
+%to learn the parameters in this model.
 %Model-based clustering algorithms are
 %among the best performing algorithms used in cytometry data analysis, but they
 %can be much slower to train. For instance, flowClust may take hours to train in
@@ -377,26 +398,17 @@ to learn the parameters in this model.
 %seconds.
 % 
 
-In addition to the lack of uncertainty measurements, the methods used above do
-not directly address missing values. Instead, missing values need to be
-pre-imputed to produce a complete dataset which is then used for analyses.
-%
-To overcome the limitations of existing methods, we propose developing novel
-Bayesian feature allocation models (FAMs) embedded with clustering
-capabilities. We also propose mechanisms for imputing missing values within the
-models we develop.
 
-
-\subsection{Literature Review: Feature Allocation Models}\label{literature-review}
-In the motivating data, one of the main inferential goals is  to learn a latent
-structure of predominant cell phenotypes, where cell phenotype are composed of
+\subsection{Review: Feature Allocation Models}\label{literature-review}
+In the motivating dataset, one of the main inferential goals is  to learn a latent
+structure of predominant NK cell phenotypes, where cell phenotype are defined based on
 distinct expression combinations of the markers. Specifically, phenotype $k$ is
 represented by a $J$-dim binary vector, $\bm z_k=(z_{1k}, \ldots, z_{Jk})$,
 with $J$ denoting the number of markers, where $z_{jk}$ equals 1 if marker $j$
 is expressed in phenotype $k$, and 0 otherwise.  Let $\bZ$ denote a $J \times
-K$ binary matrix by letting columns represent phenotypes.  \(2^J\) different
+K$ binary matrix by letting columns represent $K$ different phenotypes.  \(2^J\) different
 phenotypes can be constructed for \(J\) markers.  One may consider a \(J \times
-2^J\) binary matrix that includes all possible phenotypes generated by the
+2^J\) binary matrix, with $K=2^J$, that includes all possible phenotypes generated by the
 \(J\) markers. It is computationally infeasible even when \(J\) is moderately
 large. Taking a Bayesian approach, we consider a prior probability model over
 binary matrices
@@ -404,8 +416,9 @@ binary matrices
 and learn the predominant ones in posterior that  generate observed data.
 %For computational efficiency, we require a flexible prior which will also
 %learn the number of cell-types \((K)\). 
-These models are called latent feature allocation models. In feature allocation
-models, rows and columns correspond to objects and features, respectively (in
+These models are called latent feature allocation models (FAMs). In FAMs, rows 
+and columns correspond to objects and features, respectively 
+(in the culinary metaphor of FAMs, customers and dishes, respectively, and in
 our applications, markers and phenotypes, respectively). Similar to our
 construction of phenotypes, if object $j$ takes feature $k$, the corresponding
 $z_{jk}$ takes the value 1. Otherwise, it takes 0.  One of popular models for
@@ -433,13 +446,26 @@ Under the IBP, each row has an expected row sum of $\alpha$.
 %{\tt active means?}
 %
 It can be shown that the number of non-zero columns in $Z$ has a Poisson
-distribution with mean $\alpha \sum_{j=1}^J j^{-1}$. Hence, a prior
+distribution with mean $\alpha \sum_{j=1}^J j^{-1}$. A prior
 distribution can be placed on \(\alpha\) to reflect uncertainty of the number
-of latent features. A gamma prior is popular for $\alpha$ due to conjugacy.
+of latent features. A gamma prior is popular for $\alpha$ due to its conjugacy.
 \cite{teh2007stick} represented the IBP using the stick-breaking construction
 similar to the stick-breaking representation of the Dirichlet process (DP).
 \cite{williamson2010dependent} developed a dependent IBP (dIBP) to induce
-correlations between objects and to model multiple $\Z$s that can be dependent.
+correlations between objects and to model multiple $\Z$'s that can be dependent.
+\cite{broderick2015combinatorial} first coined the term ``feature allocation
+model". Just as the class of probability distributions over partitions of a
+dataset has been characterized through exchangeable partition probability
+functions, they developed theory for an exchangeable feature probability
+function for certain feature allocation models. Under their framework,
+many other extensions of the IBP can be proposed. \cite{broderick2013feature} developed the beta-negative binomial process for
+admixtures, where observations are represented multiple times across several
+latent features. This is another extension of the IBP, where
+infinite-dimensional priors are proposed for vectors of counts. They develop
+some computationally efficient algorithms that rely on Gibbs sampling for 
+posterior sampling. They applied their methods in some simulation studies 
+involving topic modeling and computer vision.
+
 
 %% TODO
 %{\tt need to include Tamara's papers on feature allocation model, my papers on
@@ -467,45 +493,33 @@ correlations between objects and to model multiple $\Z$s that can be dependent.
 %computational method for feature allocation models.  It is something that we
 %need to know.}
 
-\cite{broderick2015combinatorial} first coined the term "feature allocation
-model". Just as the class of probability distributions over partitions of a
-dataset has been characterized through exchangeable partition probability
-functions, they developed theory for an exchangeable feature probability
-function for certain feature allocation models. Under their framework,
-many other extensions of the IBP can be proposed.
 
-The IBP as a prior distribution in feature allocation models has been
-successfully applied in diverse areas. \cite{lee2016bayesian} model
-tumor-sample heterogeneity through a finite categorical IBP placed on an
-integer matrix describing the numbers of variant alleles at a loci (row) for a
-given subclone (column). A prior distribution is placed on the number of
+The IBP as a prior distribution in FAMs has been
+successfully applied in diverse areas. \cite{lee2015bayesian} modeled
+tumor-sample heterogeneity through a finite IBP using DNA sequencing data.  
+They used $\bZ$ to describe latent haplotypes. A prior distribution is placed 
+on the number of
 subclones. These parameters are learned jointly through MCMC.  Building on this
 work, \cite{xu2015mad} proposed a general class of feature allocation model for
 exponential family sampling distributions for modeling tumor heterogeneity.
 They note that a computational challenge in sampling from the joint posterior
-in such models involves implementing reversible-jump
-\citep{green1995reversible} for transdimensional MCMC. They avoid this by
+in such models involves implementing reversible jump MCMC
+\citep{green1995reversible} for transdimensional move. They avoid this by
 proposing an MAP-based small-variance asymptotic approximation for any
 exponential family likelihood with an IBP feature allocation prior to learn the
 feature allocation matrix. The learned feature allocation matrix is then used
 to fix the dimensions of a subsequent MCMC conditioned on the number of
 features estimated. This method is orders magnitudes faster than
-reversible-jump implementations.
-
-Still along the subject of tumor-heterogeneity modeling,
-\cite{sengupta2014bayclone} proposed a categorical variant of the IBP so that
+reversible-jump implementations. 
+\cite{sengupta2014bayclone} and \cite{lee2016bayesian} proposed a categorical 
+variant of the IBP for tumor-heterogeneity modeling so that
 the feature allocation matrix may contain integer values beyond binary values.
-They demonstrate how to obtain posterior estimates of the feature allocation
-matrix. They also show suggest a method for selecting the number of features so
+They demonstrated how to obtain posterior estimates of the feature allocation
+matrix. They also developed a computational method to allow a random number of features so
 as to avoid reversible jump.
 
-\cite{broderick2013feature} developed the beta-negative binomial process for
-admixtures, where observations are represented multiple times across several
-latent features. This is another extension of the IBP where
-infinite-dimensional priors are proposed for vectors of counts. They develop
-some computationally efficient algorithms that rely on Gibbs sampling for 
-posterior sampling. They applied their methods in some simulation studies 
-involving topic modeling and computer vision.
+
+
 
 
 
@@ -516,78 +530,85 @@ involving topic modeling and computer vision.
 % TODO. Done
 %{\tt include a short summary of all three projects and explain how your report
 %will be organized in the later part.}
-We propose the following Bayesian feature allocation models to study NK cell
-populations in our motivating data.
+We propose the following projects to study NK cell phenotypes using mass cytometry data. 
 \begin{itemize}
 \item \underline{Project 1:}
-We first develop a model to study the composition of cell-types across several
-blood samples. We will model the latent cell-types with an IBP prior.
-Additionally, to account for missing marker-expression data missing not at
-random, we propose a mechanism for imputing missing observations. We will
-demonstrate how to do posterior inference and discuss results from simulation
-studies and a real cord-blood data analysis.
+We first develop a model to study the composition of cell populations in multiple samples.
+%ell-types across several
+%blood samples. 
+The model directly characterize latent cell pheotypes with an IBP prior and 
+clusters individual cells based on identified cell types. 
+The model also includes a mechanism for imputing missing observations to account 
+for missing marker-expression data missing not at
+random. We demonstrate the developed model with simulation studies and an 
+analysis of a real cord-blood dataset.
 
 \item \underline{Project 2:}
-Building on Project 1, we extend our model so as to compare the NK-cell
-subpopulations present in cord-blood samples and health-patient samples.
-We will also replace the IBP prior distribution on the latent cell-type
-matrix with a repulsive feature allocation model so as to induce 
-features that are distinct from one another. Results from a simulation study
-highlighting the key differences between modeling with an IBP and a rep-FAM
-will be included. An analysis based on the provided dataset will be done.
+Building on Project 1, we extend our model so as to compare the composition of 
+the NK cell
+populations present in cord blood samples and samples taken from healthy subjects.
+We develop a repulsive FAM (rep-FAM) that discourages cell phenotypes that are similar, and replace the IBP prior distribution with the rep-FAM to obtain parsimonious representation of the underlying cell population structures in different samples.  We examine the properties of the proposed rep-FAM and compare to those of the IBP.  Results from a simulation study
+highlighting the key differences between an IBP and a rep-FAM are presented.  An analysis based on a real dataset will be performed.
 
 \item \underline{Project 3:}
-We desire to study the change in the abundance of cell-types in a patient's
+We desire to study the change in the abundance of cell phenotypes in patient's
 blood samples collected over time. To this end, we will propose a
-time-dependent feature allocation model to model this change. Simulation
-studies and an analysis based on longitudinal data from patients will be
+FAMs with a regression to model associations between time and cell type abundances.  Simulation studies and an analysis based on longitudinal data from patients will be
 conducted.
 
 \end{itemize} 
 The remainder of the document is organized as follows.
-Sections~\ref{sec:proj1}-\ref{sec:proj3} describe the proposed projects.
-Section~\ref{sec:time} discusses a plan to progress the projects.  
-The Appendix A contains details for posterior computations in Project 1.
+\S~\ref{sec:proj1} and \S!\ref{sec:proj3} describe the proposed projects.
+\S~\ref{sec:time} discusses a plan to progress the projects.  
+Appendix A contains details for posterior computations in Project 1.
 
 
-\section{Project 1: Bayesian Feature Allocation Model for Heterogeneous Cell Populations Using Mass Cytometry}\label{sec:proj1}
+
+\section{Project 1: Bayesian Feature Allocation Model for Heterogeneous Cell Populations}\label{sec:proj1}
 \subsection{Introduction}
 % {\tt short intro for project 1}
 
 % TODO
 %{\tt expand} 
 
-In this project, we analyze marker expression data from a CyTOF analysis of
-patient blood samples. Each sample consists of tens of thousands of cells and
-records expression levels for 32 NK-cell markers. High marker expression levels
-correspond to the expression of that marker, while low marker expression levels
-and missing values correspond to non-expression. One challenge in modeling
-cytometry data is the prevalence of data missing not at random. When expression
-levels for a marker in a given cell are very weak, cytometry devices are not
-able to register a signal, yielding missing values. \cite{franks2016non}
+In this project, we develop a Bayesian FAM, combined with clustering to characterize underlying cell repertoire structures using mass cytometry data. Samples in cytometry data consist of tens of thousands of cells and expression levels of a set of markers are recorded for individual cells. Large and small observed expression levels may imply expression and no expression of the markers, respectively.  A phenotype is defined by its unique subset of expressed markers and a repertoire in a sample can be described as a collection of cells possessing different phenotypes.  One of primary research goals is to characterize underlying cell phenotypes in samples based on observed expression levels and differentiate the samples based on the identified phenotypes.  Many of existing methods proposed to analyze cytometry data use clustering approaches to identify cell subpopulations based on their expression levels of the makers.  They often focus on
+producing point estimates of inferred subpopulations, convenient two-dimensional visualization of multivariate expression data, and
+computational efficiency. 
+While encouraging, many of existing methods fail to provide direct inference on latent cell types.  Under the clustering methods, cells having the same set of expressed markers but with observed expression levels different due to technical variability in an experiment, can be grouped in different clusters. That is, cells in different clusters can be characterized as a cell phenotype. Most of them are also algorithmic methods and do not produce uncertainty
+quantification for the learned clusters and their abundances in samples. 
+To address the problem of characterizing underlying cell repertoire structures, 
+we use a IBP, one of the most popular FAMs and directly model expression patterns of latent cell types.   Individual cells in a sample possess cell types and the proportions of cell types differ in samples. In other words, individual cells will be connected to the identified phenotypes via clustering, with cluster probabilities varying between samples.  We further model observed marker expression levels with
+flexible mixture models to effectively accommodate variability in expression levels within cells having a cell type.  Another challenge in analyzing 
+cytometry data is data missing not at random. When a marker in a cell is not expressed, cytometry devices are not
+able to register a signal and fail to record expression levels, yielding missing values. \cite{franks2016non}
 provide a brief overview of typical approaches to imputing data missing not at
 random, including a computationally efficient method and intuitive model
 representation (Tukey's representation) based only on the observed data. 
-However, our model is not able to take advantage of these efficiencies 
-as the parameters are entangled with the missingness of the data.
-We will therefore use a simpler selection factorization
-\citep{rubin1974characterizing} representation in modeling the missing data.
+In our application, the parameters are entangled with the missingness of the data and we model missing data through a selection factorization representation \citep{rubin1974characterizing}, rather than through Tukey's representation. 
 
-For a given cell, the expression of certain markers corresponds to a phenotype.
-We are interested in identifying phenotypes that occur frequently within each
-sample. This is important to practitioners because NK-cell diversity is known
-to be affect immunity against infectious diseases. 
 
-Clustering methods previously proposed to analyze cytometry data focus on
-producing point estimates, convenient two-dimensional graphics, and
-computational efficiency. But little work has been done in terms of uncertainty
-quantification for the learned clusters and their abundance.  We therefore
-propose a fully Bayesian model to model marker expression levels with a
-flexible mixture model, and the latent cell-type structure with a latent
-feature allocation model.
+In remainder of the section, we will present the proposed statistical model in \S~\ref{prob-model}, simulation studies in \S~\ref{sec:CB-sim}, analysis of real mass cytometry data in \S~\ref{sec:CB-real} and some concluding remarks in \S~\ref{sec:CB-conc}.
 
-We will provide results to a simulation study and an analysis of real cytometry
-data.
+
+
+%Each sample consists of tens of thousands of cells and
+%records expression levels for 32 NK-cell markers. High marker expression levels
+%correspond to the expression of that marker, while low marker expression levels  correspond to non-expression. 
+
+%For a given cell, the expression of certain markers corresponds to a phenotype.
+%We are interested in identifying phenotypes that occur frequently within each
+%sample. This is important to practitioners because NK-cell diversity is known
+%to be affect immunity against infectious diseases. 
+
+% We therefore
+%propose a fully Bayesian model to model marker expression levels with a
+%flexible mixture model, and the latent cell-type structure with a latent
+%feature allocation model.
+
+%we analyze marker expression data from a CyTOF analysis of
+%patient blood samples. 
+% We will provide results to a simulation study and an analysis of real cytometry
+%data.
 
 % TODO. Done
 %{\tt include some references on missing value modeling. Alex's paper and
@@ -595,9 +616,9 @@ data.
 
 
 
-\subsection{Model}\label{prob-model}
+\subsection{Probability Model}\label{prob-model}
 \subsubsection{Sampling Model} 
-Samples are taken from \(I\) subjects, \(i = 1,2,...,I\). Sample \(i\)
+$I$ samples are taken from subjects, \(i = 1,2,...,I\). Sample \(i\)
 consists of \(N_i\) cells, \(n=1, \ldots, N_i\) and for each cell,
 expression levels of \(J\) markers are measured. Let
 \(\tilde{y}_{inj} \in \mathbb{R}^+\) represent the raw measurement of an
@@ -681,11 +702,11 @@ Given
 \(y_{inj}\), we consider a selection function for \(m_{inj}\); for
 \(i=1, \ldots, I\), \(n=1, \ldots, N_i\) and \(j=1, \ldots, J\),
 \begin{align}
-  m_{inj} \mid p_{inj} &\ind \Bern(p_{inj}) \nonumber \\
+  m_{inj} \mid p_{inj} &\ind \Bern(p_{inj}) \label{eq:missing} \\
   \logit(p_{inj}) &= \begin{cases}
   \beta_{0i} - \beta_{1i}(y_{inj}-c_0)^2, & \text{if } y_{inj} < c_0\nonumber, \\
   \beta_{0i} - \beta_{1i}c_1\p{y_{inj}-c_0}^{1/2}, & \text{otherwise}, \nonumber \\
-  \end{cases} \label{eq:missing}
+  \end{cases} 
 \end{align}
 where \(c_0\) and \(c_1\) are real constants, $\beta_{0i} \in \mathbb{R}$ , and
 $\beta_{1i} > 0$.
@@ -695,19 +716,21 @@ Figure \ref{fig:prob-miss-eg} shows an example missing mechanism. We desire the
 missing mechanism have a peak in the middle so as discourage extremely large
 and extremely small values from being classified as observed. This helps to
 control the size of the scale parameter in the mixture of Normals used in the
-data density.
-\beginmyfig
+data density. Note that the assumptions for the distribution of the unobserved data are
+untestable. However, we can incorporate input from biologists through informed
+prior specifications. Prior uncertainty can then be directly propagated to the
+posterior distribution for the missing mechanism.
+
+\begin{figure}[th!]
+\begin{center}
 \includegraphics[scale=.5]{img/prob_miss_example.pdf}
 \caption{Example missing mechanism. The blue points serve as guides in
 determining a missing mechanism. Values for $\beta$ and $c$ can be solved for
 through a system of equations.}
 \label{fig:prob-miss-eg}
-\endmyfig
+\end{center}
+\end{figure}
 
-Note that the assumptions for the distribution of the unobserved data are
-untestable. However, we can incorporate input from biologists through informed
-prior specifications. Prior uncertainty can then be directly propagated to the
-posterior distribution for the missing mechanism.
 
 
 \subsubsection{Priors}\label{priors}
@@ -819,22 +842,17 @@ conveniently, a metropolis step can be used.
 Details of the posterior simulation are described in Appendix A. 
 
 
+
 Summarizing the joint posterior distribution $p(\btheta \mid \y, \m)$ is
-challenging, especially for $\Z$, $\bw$ and $\lambda$, possibly due to a
-label switching problem.
-%
-We use a method based on sequentially-allocated latent structure optimization
-(SALSO) \citep{salso} to find point estimates for $\Z$, $\bm W$, and $\lambda$.
-SALSO first constructs $A(\bZ)=\{A_{j,j'}\}$, the $J \times J$ pairwise allocation matrix corresponding to a binary matrix
-$\bZ$, where  $A_{j,j'} = \sum_{k=1}^K \Ind{Z_{j,k}=1}\Ind{Z_{j',k}=1}$, $1\leq j, j^\prime \leq J$ is the number of features that markers $j$ and $j'$ share. It then uses posterior samples of $\bZ$ and finds a point estimate $\hat{\bZ}$ that minimizes the sum of elementwise squared distances, 
-%
+challenging.  Especially, posterior summary of $\bw$ and $\bm \lambda$ are dependent on $\bZ$. We use a method based on sequentially-allocated latent structure optimization
+(SALSO) \citep{salso} to find point estimates for $\Z$, $\bm W$, and $\lambda$.  SALSO first constructs $A(\bZ)=\{A_{j,j'}\}$, the $J \times J$ pairwise allocation matrix corresponding to a binary matrix $\bZ$, where  $A_{j,j'} = \sum_{k=1}^K \mathbb{I}(Z_{j,k}=1)\mathbb{I}(Z_{j',k}=1), 1\leq j, j^\prime \leq J$ is the number of features that markers $j$ and $j'$ share. It then uses posterior samples of $\bZ$ and finds a point estimate $\hat{\bZ}$ that minimizes the sum of elementwise squared distances, 
 \begin{eqnarray*}
 \text{argmin}_Z\sum_{j=1}^J\sum_{j'=1}^J(A(\bZ)_{j,j'} - \bar{A}_{j,j'})^2
 \label{eq:salso}
 \end{eqnarray*}
 %
 where $\hat A$ is the pairwise allocation matrix averaged over all posterior
-samples of $Z$. %Thus in the current application, $A_{j,j'} = \sum_{k=1}^K
+samples of $Z$.  %Thus in the current application, $A_{j,j'} = \sum_{k=1}^K
 %\Ind{Z_{j,k}=1}\Ind{Z_{j',k}=1}$ is the number of times that marker $j$ and
 %marker $j'$ share a feature. 
 %
@@ -858,10 +876,10 @@ Eq\eqref{eq:myZ} places greater weight on phenotypes that are more prevalent in 
 
 %%% sim-study-proj1 %%%
 %%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[th!]
+\begin{figure}[t!]
   \begin{center}
 \begin{tabular}{c}
-\includegraphics{img/sim/Z_true_all.pdf}
+\includegraphics[scale=.8]{img/sim/Z_true_all.pdf}
   \end{tabular}
  \end{center}
  \vspace{-0.05in}
@@ -871,17 +889,17 @@ Eq\eqref{eq:myZ} places greater weight on phenotypes that are more prevalent in 
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-\subsection{Simulation Study} %%% Change name to Simulation Study?
+\subsection{Simulation Study}\label{sec:CB-sim} %%% Change name to Simulation Study?
 We conducted a simulation study to  to evaluate the performance of the proposed model and compare to those of some existing methods.
 %
 %To understand the strengths and limitations of the proposed model, a
 %simulation study was conducted. The study generated data that resemble the
-%cord-blood (CB) CyTOF data. This section details the data-simulation strategy
+%cord blood (CB) CyTOF data. This section details the data-simulation strategy
 %and the results of the analysis on the simulated data using the proposed model.
 %
 %\subsubsection{Data Simulation}
-To simulate data, we assume $J=32$ markers and let the numbers of cells in
-samples $N_i=30000$, 20000 and 10000, $i=1, 2, 3$ for three samples ($I=3$).
+To simulate data, we assume $J=32$ markers and three samples ($I=3$) and let the numbers of cells in
+samples $N_i=30000$, 20000 and 10000, $i=1, 2, 3$.
 We let the true number of latent cell types $K^\true=10$.  We specified
 $\bZ^\true$ and $\bw^\true_i$, $i=1,2,3$ as follows;
 %
@@ -900,17 +918,12 @@ Figure \ref{fig:sim-Z} shows the transpose of $\bZ^\true$ and $\bw^\true_i$ for
 the samples. In each panel, the cell types ($\bZ^\true$) are rearranged using
 $w_{ik}^\true$.  Three and four mixture components were used for non-expressed
 and expressed marker expression levels, respectively, $L^{0, \true}=3$ and
-$L^{1, \true}=4$. We set values for $\sigma^{\star 2, \true}_{0i\ell}$,
-$\sigma^{\star 2,\true}_{1i\ell}$, $\mu^{\star, \true}_{0\ell}$ and
-$\mu^{\star, \true}_{1\ell}$ using empirical values from CB data.
+$L^{1, \true}=4$. We set values for $\mu^{\star, \true}_{0\ell}$ and
+$\mu^{\star, \true}_{1\ell}$ using empirical values from CB data; $\mu^{\star, \true}_{0} =
+(-1, -3, -5)$ and $\mu^{\star, \true}_{1} = (1, 2.33, 3.67, 5)$. 
+$\sigma^{\star 2, \true}_{0i\ell}$ and $\sigma^{\star 2,\true}_{1i\ell}$ were fixed at $0.1$ for all $i$ and $\ell$.
 %
-%TODO. Done
-%{\tt The specified values are .... give the details.}
-The particular values we used for the means  were $\mu^{\star, \true}_{0} =
-(-1, -3, -5)$ and $\mu^{\star, \true}_{1} = (1, 2.33, 3.67, 5)$. All
-$\sigma^{\star 2, \true}_{z\ell}$ were fixed at $0.1$.
-%
- We simulated $\bet_{0ij}^\true$ and $\bet_{1ij}^\true$, $i=1,2,3$ and $j=1, \ldots, J$ similar to $\bw^\true_i$;
+We simulated $\bet_{0ij}^\true$ and $\bet_{1ij}^\true$, $i=1,2,3$ and $j=1, \ldots, J$ similar to $\bw^\true_i$;
 %
 % TODO. Done
 %{\tt Give specific distributions used for $\bet$ and explain the details.} 
@@ -923,7 +936,7 @@ We then simulated latent phenotype indicators $\lambda_{in}^\true$ using
 $\bw_i^\true$ and conditional on $z^\true_{j,\lambda_{in}^\true}$ generated
 $y_{inj}$ from a mixture model, $\sum_{\ell=1}^{L^{0,\true}}
 \eta^\true_{0ij}\cdot\N(\mu^{\star, \true}_{0\ell}, \sigma^{\star 2,
-\true}_{0i\ell}$ or $\sum_{\ell=1}^{L^{1,\true}}
+\true}_{0i\ell})$ or $\sum_{\ell=1}^{L^{1,\true}}
 \eta^\true_{1ij}\cdot\N(\mu^{\star, \true}_{1\ell}, \sigma^{\star 2,
 \true}_{1i\ell})$.   Finally, probabilistically let some of the $y_{inj}$
 missing as follows; simulate a proportion $p_{ij}$ of missing for marker
@@ -1018,39 +1031,21 @@ respectively.
 
 %\subsubsection{Results}
 To fit the proposed model, we fix the hyperparameters as
-% TODO.
-%{\tt include details. also explain how you specified missing mechanism
-%empirically Value for $K$ used for fitting? values of $L^0$ and $L^1$ used for
-%fitting??}.
 $(K=12, L^0=5, L^1=5)$. In addition, we fixed $c_0=-2.5$, which was
 the mean of the observed data having negative values.
-%and the prior means for $\beta_{0i}$ and $\beta_{1i}$ were determined based on 
-%
-We fixed $\Gamma=\bI_J$. $J\times J$ identity matrix, and $\beta_{1i}$ for
+We fixed $\Gamma=\bI_J$, $J\times J$ identity matrix, and $\beta_{1i}$ for
 simplification. To run the MCMC simulation, we initialized the parameters
-as follows.
-% TODO {\tt explain how}
+as follows;
 Missing values are initialized at $c_0$. $\lambda_{in}$ is sampled uniformly
 from $\bc{1,...,K}$. $\gamma_{inj}$ is sampled uniformly from
 $\bc{1,...,\min(L^0,L^1)}$. $v_k$ is initialized at $1/K$. $H_{jk}$ is randomly
-sampled from a standard Normal distribution. $\bZ$ is computed according
+sampled from the standard normal distribution. $\bZ$ is computed according
 to the initialized $H$ and $v$. All other parameters are initialized at
 their prior means.
-%
-In the future, better starting values may be provided by using the cluster
-labels provided by FlowSOM for $\lambda$. Using the estimated cluster labels,
-an estimated cluster mean for each group can be computed. Those cluster means
-(each of dimensions $J$) can be converted into a binary vector such that if
-element $j$ in the cluster mean is positive, then element $j$ in the binary
-vector will be 1, and 0 otherwise. An estimate for $\bZ$ can be obtained by 
-concatenating all these binary vectors. An estimate for $\bw_i$ can be
-obtained by computing the relative frequency of the cluster labels.
-%
+Initial values of $\lambda_{in}$ are used to initialize $\mu^{\star}_{0\ell}$, $\mu^{\star}_{1\ell}$, $\bZ$ and $\bw_i$.
 We then implemented posterior inference using MCMC simulation
 over 3,000 iterations, discarding the first 1,000 iterations as burn-in.
-% TODO. Right, no thinning.
-%{\tt no thinning?}  
-%
+We diagnose convergence and mixing of the described posterior MCMC simulation using trace plots. We found no evidence of practical convergence problems. 
 
 
 Figure \ref{fig:sim-post-Z} summarizes the posterior inference for the
@@ -1085,7 +1080,7 @@ expression patterns of $y$ well.
 
 %%%%%%%%%%%%%%%%%%%%%%%%
 %\begin{figure}[H]
-\begin{figure}[th!]
+\begin{figure}%[th!]
   \begin{center}
   \begin{tabular}{cc}
   \includegraphics[scale=.4]{img/sim/YZ001.png}&
@@ -1131,12 +1126,12 @@ expression patterns of $y$ well.
 %\label{fig:sim-post-Z}
 %\endmyfig
 
-Appendix \ref{sec:sim-pp-observed} contains the posterior predictive of the
-observed simulated data for each sample $i$ and marker $j$. The blue lines are
-the posterior predictives and the grey lines are the observed data density. The
-text in the graphs are the posterior probabilities that the missing values are
-not expressed within each sample $i$ and marker $j$. This quantity should be 1
-because we desire that the missing values should correspond to non-expression.
+%Appendix \ref{sec:sim-pp-observed} contains the posterior predictive of the
+%observed simulated data for each sample $i$ and marker $j$. The blue lines are
+%the posterior predictives and the grey lines are the observed data density. The
+%text in the graphs are the posterior probabilities that the missing values are
+%not expressed within each sample $i$ and marker $j$. This quantity should be 1
+%because we desire that the missing values should correspond to non-expression.
 
 % TODO
 %{\tt TODO.
@@ -1201,7 +1196,7 @@ feature allocation model. High F-scores and low elapsed times are desirable.}
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[th!]
+\begin{figure}%[th!]
 \begin{center}
   \begin{tabular}{cc}
   \includegraphics[scale=.4]{img/cb/YZ001.png}&
@@ -1227,7 +1222,7 @@ large $\hat{w}_{ik}$ to explain at least 90\% of the cells in a sample.}
 
 \textbf{Sensitivity to Specified $K$}
 %%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[th!]
+\begin{figure}%[th!]
 \begin{center}
   \begin{tabular}{cc}
   \includegraphics[scale=.4]{img/ksen/YZ001_K5.png}&
@@ -1245,13 +1240,13 @@ large $\hat{w}_{ik}$ to explain at least 90\% of the cells in a sample.}
 
 
 %%% cb-proj1 %%%
-\subsection{Cord Blood Data}
-We fit the proposed model to a real data set comprising cord-blood samples from
-three patients ($I=3$), with sample sizes $N=(41474, 10454, 5177)$, for $J=32$
+\subsection{Cord Blood Data}\label{sec:CB-real}
+We fit the proposed model to a real data set comprising cord blood samples from
+three patients ($I=3$), with the number of cells $N=(41474, 10454, 5177)$ for $J=32$
 markers. The heatmaps in Figure \ref{fig:cb-post-Z} illustrates heatmaps of
 observed expression levels $y_{inj}$.  Markers and cells are in columns and
-rows, respectively. The values are rescaled for illustration.  Red, blue and
-white colors represent high expression level, low expression level and missing
+rows, respectively. The values are rescaled for better illustration.  Red, blue and
+white colors represent high expression levels, low expression levels and missing
 values, respectively.  From the figure, expression levels of some markers are
 missing in most cells, e.g, marker CD25 (column 9) is missing in more than 80\%
 of cells in all samples.
@@ -1262,9 +1257,9 @@ of cells in all samples.
 %{\tt give a short summary about \% of missing values for $(i,j)$}
 In each sample, the proportion of missing values in each marker can be as low
 as 0.1\% and as high as 80\%.  
-The median proportion of missing values across markers in sample 1 is 22\%.
-The median proportion of missing values across markers in sample 2 is 17\%.
-The median proportion of missing values across markers in sample 3 is 18\%.
+Median proportions of missing values across markers are 22\%, 17\% and 18\% in the samples, respectively.
+%The median proportion of missing values across markers in sample 2 is 17\%.
+%The median proportion of missing values across markers in sample 3 is 18\%.
 %shows the data. 
 %Each panel in the figure represents a different sample.  Each column in the
 %panels contains the expression levels of a marker across all cells in the
@@ -1324,7 +1319,7 @@ Figure \ref{fig:cb-pp-obs-some} illustrates comparison of posterior predictive
 distributions (grey lines) to kernel density estimates (blue lines) of observed
 $y_{inj}$ for some selected $(i,j)$.
 %%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[th!]
+\begin{figure}%[th!]
 \begin{center}
   \begin{tabular}{cc}
   \includegraphics[scale=.4]{img/cb/pp_obs_i1_j1.pdf}&
@@ -1457,12 +1452,12 @@ biologists.
 %levels are high.
 
 
-\subsection{Conclusions}
+\subsection{Conclusions}\label{sec:CB-conc}
 
 % TODO
 %{\tt expand}
 
-We have proposed a Bayesian feature allocation model for studying NK-cell
+We proposed a Bayesian FAM to study NK-cell
 diversity from mass cytometry data in the presence of missing data. We used a
 simulation study to show that our model is able to recover the true latent
 feature allocation matrix generating the observed data. We are also able to
@@ -1474,8 +1469,8 @@ data missing not at random such that most of the imputed values are correspond
 to the non-expression of markers. This is consistent with what scientists
 believe about precision of the cytometry devices.
 %
-While not explicitly shown, the posterior variance for $Z$ can be computed
-easily from the posterior samples of $Z$ when $K$ is fixed. This will help in
+While not explicitly shown, the posterior variance for $\bZ$ can be computed
+easily from the posterior samples of $\bZ$ when the number of cell types $K$ is fixed. This will help in
 quantifying uncertainty about the learned NK-cell subpopulations. 
 %
 A comparison of our model to FlowSOM remains to be conducted. 
@@ -1483,140 +1478,182 @@ A comparison of our model to FlowSOM remains to be conducted.
 
 When applied to real cord blood data, we find that the cell-types learned by
 the model tend to be similar, and sometimes repeated. This can be remedied
-using a repulsive mixture prior and will be included in Project 2. Moreover,
-the ideas in this project may be extended to account for sample-specific
-covariates and time-dependency across samples. These will be explored in
-Projects 2 and 3.
+using a repulsive FAM and will be included in Project 2. %Moreover, the ideas in this project may be extended to account for sample-specific
+%covariates and time-dependency across samples. These will be explored in
+%Projects 2 and 3.
 
 
 
 
 
-\section{Project 2: Covariate-dependent Repulsive Feature Allocation Model}\label{sec:proj2}
-In Project 1, we used a FAM to learn the latent cell-types present in the
-samples.  We observed that at times, the recovered latent cell-type matrix
-contained duplicated cell-types. This unnecessarily assigns substantial
-probability to redundant features.
+\section{Project 2: Repulsive Feature Allocation Model}\label{sec:proj2}
+\subsection{Introduction}
+In project 2, we propose a repulsive FAM (rep-FAM), where repulsion discourages
+similar features. The traditional IBP assumes a priori independence between
+features and may yield redundant features. Thus, the independence assumption
+may not be desirable in many applications.  The concept of repulsion is
+introduced to penalize creating similar features, resulting in a more
+parsimonious representation of the underlying structures.  The property of
+inducing parsimony can be more critical for analyzing heterogeneous samples
+collected from different backgrounds, such as joint analysis of cord blood
+samples and samples collected from healthy subjects.  Different approaches for
+repulsive models have been developed mostly in the context of mixture models
+\citep{petralia2012repulsive, quinlan2017parsimonious, xie2017bayesian,
+quinlan2017density}.  Independent priors for component specific parameters in a
+mixture are commonly assumed, for example, Dirichlet process mixture model,
+where the atoms are iid from the baseline distribution and mixture weights are
+constructed through stick-breaking. The independence assumption produces
+redundant mixture components located close together, resulting in overfitting.
+To separate mixture components, the repulsive models include a repulsion
+function and assume a joint model for all component specific parameters.  The
+models smoothly push the components apart based on pairwise distances through
+some repulsion parameters, resulting in well separated clusters.  Different
+from the others, \cite{xu2016bayesian} used the determinantal point process
+(DPP) for repulsive mixture models and feature allocation model.  We exploit
+the repulsive mixture model developed in \cite{quinlan2017density} to create
+repulsive features.  The rep-FAM explicitly incorporates a model for the
+repulsion that penalizes inclusion of similar features. Properties of the
+proposed rep-FAM is explored through simulation studies and compared to the
+IBP.   In addition, the model is further extended to let samples possess a
+subset of cell phenotypes. In our applications, some cell phenotypes can only
+be present in cord blood samples or healthy subject samples, while some cell
+types are shared by both.  By letting abundances exactly zero for some
+phenotypes, different sets of phenotypes can be used to describe samples.  The
+remainder of this section will outline the proposed rep-FAM in
+\S~\ref{sec:rep-model} and present simulation studies to examine the rep-FAM
+and comparison to the IBP in \S~\ref{sec:rep-sim}.
 
-Using Project 1 as a starting point, the purpose of this project is two-fold.
-Our first objective is to compare the NK-cell subpopulations in cord-blood
-samples and healthy-patient samples. We will do this by extending the model in
-Project 1 to include an indicator variable which learns whether a batch of
-samples is composed of a particular cell-type. We will also supply a covariate
-which indicates whether samples come from cord-blood cells or healthy patients. 
-%
-Our second objective is to model the NK-cell subpopulations in a way such that
-the learned cell-types are distinct. To this end, we propose applying
-constraints to the prior distribution for the latent cell-type matrix so that
-no cell-type can be repeated apriori. We will extend the ideas by
-\cite{petralia2012repulsive} to create a repulsive feature allocation model
-(rep-FAM). The remainder of this section will outline key components of this
-project and provide a simulation study showing gains from replacing the IBP
-prior with a rep-FAM prior for the latent feature allocation matrix $\bZ$.
 
-\subsection{Model}
-Since the model proposed in this project is heavily based on that in Project 1,
-we will only outline the components that are different from Project 1.
+{\tt Read all references on repulsive models that I sent and find more and read them as well.  }
 
-This model will directly affect only the parameters $(\lambda, \bW, \bZ, H, v,
-\alpha)$ from the previous model. In addition, two sets of new parameters
-$\delta$ and $\pi$ will be introduced. The sampling model remains unchanged.
-Consequently, we will only present the changes to the affected parameters. 
 
-\textbf{Latent cell phenotypes:} We propose the rep-FAM distribution as
-follows.  Let $v = (v_1, ..., v_K)$ where $v_k \in (0,1)$. In addition, let
-$C_\phi(\cdot)$ be a function of only distance, given $\phi$, such that
-$C_\phi(0)=1$ and $\lim_{d\rightarrow\infty}C_\phi(d) = 0$. If a random
-binary matrix with fixed dimensions $(J\times K)$ is said to be distributed
-rep-FAM with parameters $v$ and $C$ (i.e. if $\bZ \sim \text{rep-FAM}$), then
-$$
-P(\bZ \mid v, C_\phi) \propto \prod_{k=1}^K  \bc{\prod_{j=1}^J v_k^{z_{jk}}(1-v_k)^{1-z_{jk}}} \times
-\prod_{k_1=1}^{K-1}\prod_{k_2=k_1+1}^{K} \p{1 - C_\phi\p{\sum_{j=1}^J \abs{z_{jk_1} - z_{jk_2}}}}.
-$$
-The function $C_\phi(\cdot)$ can be interpreted as a proximity function. A
-suitable form is $C_\phi(d) = \exp\p{-d/\phi}$. This is the form we will use
-for our simulation study. We place a prior on $v$ just as we did previously so
-that $v_k \mid \alpha \sim \Be(\alpha, 1)$ for $k\in\bc{1,...,K}$ and $\alpha
-\sim \Gamma(a_\alpha, b_\alpha)$. Notice that $v_k$ has a conjugate prior.  The
-selection of the range parameter $\phi$ requires some sensitivity analysis, but
-for now we will fix $\phi=1$. Also note that the matrix-parameter $H$ in the
-previous model is no longer in the model under this construction.
 
-As in the previous model, the $K$ cell phenotypes are shared across samples,
-but their relative weights may vary across samples. Let $\tilde w_{ik}$ denote
-the relative abundance of phenotype $k$ in sample $i$ such that $\tilde w_{ik}
-> 0$.  Additionally, let $\tilde w_{ik} \ind \text{Gamma}(a_W/K, 1)$, for
-$a_W>0$.  Let $x_i$ be an indicator for sample $i$ such that $x_i=1$ if sample
-$i$ is a cord blood sample and $x_i=0$ if sample $i$ is a sample from a healthy
-patient. We will say that sample $i$ belongs to a healthy patient batch if
-$x_i=0$, and sample $i$ belongs to a cord-blood batch if $x_i=1$.
-Let $\delta_{rk}$ be an indicator variable denoting whether batch $r$ contains
-cell-type $k$, for $r\in\bc{0,1}$. Note that by learning $\delta_{rk}$ we
-are, in a sense, performing feature selection. As a prior distribution for
-$\delta_{rk}$, we propose $\delta_{rk} \mid \pi_{rk} \sim
-\Bern(\pi_{rk})$, with $\pi_{rk} \sim \text{Beta}(a_\pi, b_\pi)$. Finally, let
-$w_{ik}$ denote the normalized relative abundance of phenotype $k$ in 
-sample $i$. Deterministically, we compute 
-$$ w_{ik} :=
-\begin{cases}
-  \ds\frac{\tilde w_{ik} \delta_{x_i k}}{\sum_{\ell=1}^K\tilde w_{i\ell} \delta_{x_i \ell}}, &
-  \text{if } \sum_{\ell=1}^K\tilde w_{i\ell} \delta_{x_i \ell} > 0 \\
-  0, & \text{otherwise}. \\
-\end{cases}
-$$
-Note that if $\delta_{x_i k} = 1$ for all $k\in\bc{1,...,K}$, then the
-distribution of $\bm w_i$ reduces to $\Dir_K(a_W/K,...,a_W/K)$.
+
+\subsection{Probability Model}\label{sec:rep-model}
+Similar to the notation in \S~\ref{prob-model}, suppose that $I$ samples are
+taken from subjects, \(i = 1,2,...,I\). Sample \(i\)
+consists of \(N_i\) cells, \(n=1, \ldots, N_i\) and for each cell,
+expression levels of \(J\) markers are measured.  We introduce $x_i$ to denote covariates for sample $i$.  In our data of cord blood samples and healthy subject samples, let $x_i=0$ or 1 if sample $i$ is a cord blood sample or a healthy subject sample, respectively.  We also let transformed observed expression levels $y_{inj}$ of marker $j$ in cell $n$ for sample $i$ and its binary missingness indicator $m_{inj}$, where $m_{inj} = 0$ if $y_{inj}$ is observed and $m_{inj} = 1$ otherwise.  We assume the sampling distributions in \eqref{eq:y-mix} and \eqref{eq:missing} for $y_{inj}$ and $m_{inj}$.
+
+\paragraph*{Repulsive Feature Allocation Model:} Recall that $J\times K$ binary
+matrix $\bZ$ characterizes $K$ different cell phenotypes.  Let $v_k \mid \alpha
+\iid \Be(\alpha, 1)$, $k=1, \ldots, K.$ We define a joint distribution of
+$\bZ=[\bz_1, \ldots, z_K]$;
+\begin{eqnarray}
+P(\bZ \mid v, C_\phi) \propto \prod_{k=1}^K  \bc{\prod_{j=1}^J
+v_k^{z_{jk}}(1-v_k)^{1-z_{jk}}} \times
+\prod_{k_1=1}^{K-1}\prod_{k_2=k_1+1}^{K} \left\{1 - C_\phi\p{\rho(\bz_{k_1}, \bz_{k_2})}\right\},  \label{eq:rep-FAM}
+\end{eqnarray}
+where $\rho(\bz_{k_1}, \bz_{k_2})$ measure distance between columns $k_1$ and
+$k_2$, $k_1 \neq k_2$ and $C_\phi(\cdot)$ is a continuous nondecreasing
+function in distance with $C_\phi(0)=1$ and
+$\lim_{d\rightarrow\infty}C_\phi(d)= 0$. For a distance metric, we use
+$\rho(\bz_{k_1}, \bz_{k_2})=\sum_{j=1}^J \abs{z_{jk_1} - z_{jk_2}}$, the number
+of discordance between columns $k_1$ and $k_2$.  The function $C_\phi(\cdot)$
+can be interpreted as a proximity function. A suitable form is $C_\phi(d) =
+\exp\p{-d/\phi}$. \cite{quinlan2017parsimonious} showed that the model in
+\eqref{eq:rep-FAM} has a finite normalizing constant and the distribution is
+proper.  Under the model in \eqref{eq:rep-FAM}, probability 0 is assigned to
+$\bZ$ having identical columns.  For matrices $\bZ$ that have the same number
+of 0's and 1's, $\bZ$ with similar columns has a smaller probability since
+$C_\phi(\cdot)$ is decreasing in distance. $C_\phi(\cdot)$ smoothly penalizes
+any $\bZ$ having similar columns in prior and can remove redundant columns in
+posterior inference. Note that different from the IBP, under the model in
+\eqref{eq:rep-FAM}, $\Prob(z_{jk}=1) \neq v_k$ due to the repulsive function.
+We place a prior on $\alpha$, $\alpha \sim \Gamma(a_\alpha, b_\alpha)$
+
+
+\paragraph*{Feature Selection} We assume that cord blood samples ($x_i=0$) and
+healthy subject samples ($x_i=1$) can have a distinct set of cell phenotypes.
+We introduce binary indicators, $\delta_{xk}\in \{0, 1\}$, $x=0,1$ and
+$k=1,\ldots, K$ to indicate whether samples with $x$ possess  phenotype $k$
+($\delta_{xk}=1$) or do not possess ($\delta_{xk}=0$). Assume $\delta_{xk} \ind
+\Ber(p_{x})$ and $p_x \iid \Be(a_p, b_p)$.  Let unnormalized cell phenotype
+abundances $\tilde w_{ik} \ind \G(a_W/K, 1)$, $i=1, \ldots, I$ and $k=1,
+\ldots, K$ and we define relative abundances in sample $i$ having $x_i$ as 
+$
+w_{ik} =\tilde w_{ik} \delta_{x_i k}/\sum_{\ell=1}^K\tilde w_{i\ell} \delta_{x_i \ell}.
+$
+Relative abundance $w_{ik}$ is exactly zero for $\delta_{x_ik}=0$. Samples
+having $x$ have the same subset of phenotypes but can have different relative
+abundances over the selected phenotypes. Phenotypes with
+$\delta_{0k}=\delta_{1k}=1$ appear in all samples, while some present in only
+one type of samples.   Feature selection by $\delta_{xk}$ efficiently
+facilitates joint analysis of samples obtained from different sources. The
+model also allows phenotypes absent in all samples, implying that some
+phenotypes are not used to describe any cells, providing more parsimonious
+representation of cell populations in samples. The probability models for the
+other parameters remain unchanged as in \S~\ref{prob-model}.  
+
+
 
 %TODO: HERE
-\subsection{Simulation Study}
+\subsection{Simulation Study}~\label{sec:rep-sim}
 TODO. Show difference between IBP and rep-FAM.
 
 
-\section{Project 3: Time-Dependent (Repulsive?) Feature Allocation Model}\label{sec:proj3}
+\section{Project 3: Feature Allocation Model with Regression for Abundances of Features}\label{sec:proj3}
 % TODO
-In addition to being provided with samples from cord-blood and healthy
-patients, we are also provided with longitudinal samples collected from
-patients.  We desire to model the abundance of cell-types over time. Based on
-this premise, we will extend the model from Project 1 by letting phenotype
-abundances $\bw=(w_1, \ldots, w_K)$ be a function of time $(t)$ after
-treatment, and jointly analyze samples of a subject collected at different time
-points.  While all samples share $\bZ$ (common cell phenotypes), phenotype
-abundances $\bw_{t_i, k}$, $i=1, \ldots, I$ may change over time in a
-time-dependent manner.
+In Project 3, we further extend the proposed FAM to analyze samples taken at
+multiple time points from a patient after NK cell infusion. Suppose $I$ samples
+are taken at time points $t_1, \ldots, t_I$.   As a NK cell population evolves
+over time, samples may have different sets of cell phenotypes with different
+abundances.    We achieve this goal by letting phenotype abundances
+$\bw_{t}=(w_{t1}, \ldots, w_{tK})$ be a function of time $(t)$ after treatment.
+Inferred $\bw(t)$ reflects the evolutionary process of cell subpopulation
+expansion over time.   $\bZ$ includes all phenotypes that can be possessed in a
+sample and different composition of NK cell populations in different samples is
+modeled through  phenotype abundances $w_{t_i, k}$, $i=1, \ldots, I$ that
+change over time in a time-dependent manner.
 
-As in Project 2, we will also allow $w_{t_i,k}$ the possibility of being
-exactly zero for some phenotypes, but our approach in obtaining this objective
-will vary slightly to accommodate modeling over time. We will first describe
-how we model the abundance vector for the first time-point $(\bw_{t_1})$.
 
-For $k=1,\ldots,K$, let $w_{t_1,k} = \xi_{t_1,k}/\sum_{\ell=1}^K
-\xi_{t_1, \ell}$ where $\xi_{t_1,1}=1$ and $\xi_{t_1,k} =
-\max(\xi^\prime_{t_1,k}, 0)$, for $k\ge 2$. We model $\xi^\prime_{t_1,k} \iid \N(0, s^2_1)$, for $k\ge 2$.  Note that for identifiability, $\xi_{t_1,k}$ is
-set to 1. The purpose of $\xi_{t_1,k}$ is to perform feature selection at time
-$t_i$. $\xi_{t_1,k} > 0$ yields $w_{t_1,k} >0$, which indicates that cell-type
-$k$ is present at time $t_1$. Similarly, $\xi_{t_1,k} = 0$ yields $w_{t_1,k}
-=0$, which indicates that cell-type $k$ is absent at time $t_1$. 
+Similar to the model in \S~\ref{sec:proj2}, let $\xi_{t_1,k}$ represent
+unnormalized abundance of phenotype $k$ in sample 1 collected at time $t_1$ and
+we obtain relative abundances by rescaling $w_{t_1,k}=
+\xi_{t_1,k}/\sum_{\ell=1}^K \xi_{t_1, \ell}$.  We fix $\xi_{t_1,1}=a$ a
+positive arbitrary number, to avoid potential identifiability issue and let
+$\xi_{t_1,k} = \max(\xi^\prime_{t_1,k}, 0)$, for $k\ge 2$, where
+$\xi^\prime_{t_1,k} \iid \N(0, s^2_1)$.  Since $\xi_{t_1, 1}$ is fixed at
+$a>0$, phenotype 1 is present in sample 1 and its relative abundance is
+determined by $\xi_{t_1, 2}, \ldots, \xi_{t_1, K}$.  For any phenotype with
+$\xi^\prime_{t_1, k} < 0$, $k=2, \ldots, K$, its relative abundance is zero and
+the phenotype is absent.  That is, sample 1 can have a subset of $K$ phenotypes
+and if the cells in sample 1 has the same phenotype, the phenotype is set to be
+phenotype 1. Values of $a$ and $s^2_1$ need to be jointly calibrated. For the
+remaining samples, we assume $\xi_{t_i,k} = \max(\xi^\prime_{t_i,k}, 0)$, $i=2,
+\ldots, I$ and $k=1, \ldots, K$ with $\xi^\prime_{t_i,k} = \xi^\prime_{t_1, k}
++ f_k(t_i)$. $f_k(t)$ is a function of time and phenotype specific.
+$\xi^\prime_{t_1, k}$ is served as a baseline abundance of phenotype $k$ and
+$f_k(t)$ explains how abundance of phenotype $k$ changes over time.
+Depending on $f_k(t)$, samples may have different subsets of phenotypes.
+Various functions can be used for $f_k(t)$.  One choice for $f_k(t_i)$ is a
+quadratic function in time $t$, $f_k(t) = \xi^\prime_{t_1,k} + \beta_{k1}t +
+\beta_{k2}t^2$, possibly with some constraints on $\beta_{k1}$ and
+$\beta_{k2}.$  For example, if $\beta_{k2} \leq 0$, the mean abundance of a
+phenotype cannot bounce up.  We will further investigate to accommodate
+biological knowledge on dynamics of cell populations in the model for $\bw$ and
+potentially in the model for $\bZ$.   
 
-For time points $t_i$, for $i=2, \ldots, I$, we assume $\xi_{t_i,k} =
-\max(\xi^\prime_{t_i,k}, 0)$, for $k=1, \ldots, K$ with $\xi^\prime_{t_i,k} =
-f_k(t_i)$ and let $w_{t_i,k} = \xi_{t_i,k}/\sum_{\ell=1}^K \xi_{t_i,\ell}$ as
-in computing $w_{t_1,k}$. $f_k(t_i)$ is a random quantity which relates the
-previous abundance levels for phenotype $k$ to the that of the current
-time-point. One choice for $f_k(t_i)$ is a quadratic function in time $t$,
-$f_k(t) = \xi^\prime_{t_1,k} + \beta_{k1}t + \beta_{k2}t^2$, where
-$\xi_{t_1,k}$ can be interpreted as the baseline unnormalized abundance for
-phenotype $k$ and ($\beta_{k1}, \beta_{k2}$) explain change in unnormalized
-abundance over time. Alternatively, we can model the change in abundance
-through a random walk by letting $f_k(t_i) = \xi^\prime_{t_{i-1},k} +
-g_{t_i,k}$ where $g_{t_i, k} \iid \N(0, s^2)$.
+%For time points $t_i$, for $i=2, \ldots, I$, we assume $\xi_{t_i,k} =
+%\max(\xi^\prime_{t_i,k}, 0)$, for $k=1, \ldots, K$ with $\xi^\prime_{t_i,k} =
+%f_k(t_i)$ and let $w_{t_i,k} = \xi_{t_i,k}/\sum_{\ell=1}^K \xi_{t_i,\ell}$ as
+%in computing $w_{t_1,k}$. $f_k(t_i)$ is a random quantity which relates the
+%previous abundance levels for phenotype $k$ to the that of the current
+%time-point. One choice for $f_k(t_i)$ is a quadratic function in time $t$,
+%$f_k(t) = \xi^\prime_{t_1,k} + \beta_{k1}t + \beta_{k2}t^2$, where
+%$\xi_{t_1,k}$ can be interpreted as the baseline unnormalized abundance for
+%phenotype $k$ and ($\beta_{k1}, \beta_{k2}$) explain change in unnormalized
+%abundance over time. Alternatively, we can model the change in abundance
+%through a random walk by letting $f_k(t_i) = \xi^\prime_{t_{i-1},k} +
+%g_{t_i,k}$ where $g_{t_i, k} \iid \N(0, s^2)$.
 
-Finally, as in Project 2, we will model $\bZ$ with a rep-FAM distribution???
+%Finally, as in Project 2, we will model $\bZ$ with a rep-FAM distribution???
 
 
 \section{Timeline}\label{sec:time}
 %TODO
 
-
+%\bibliographystyle{natbib}
 \bibliography{litreview.bib}
 
 
@@ -2131,3 +2168,5 @@ computed accordingly.
 %  \endmyfig
 %}
 %\end{document}
+
+%THIS IS MY NEW DOC

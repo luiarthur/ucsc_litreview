@@ -1,4 +1,4 @@
-sampling.pdf
+sampling*.pdf
 *.log
 *.aux
 *.nav
