@@ -22,7 +22,7 @@ for rfam in $RFAM; do
   outdir="../out/sim_locked_beta_K20_N${N}_repFam-${rfam}/"
 
   mkdir -p $outdir
-  cmd="Rscript sim.R --N=$N --ncores=$NCORES --B=$B --burn=$BURN -o $outdir --K_MCMC=20 --use_repulsive=$rfam"
+  cmd="Rscript sim.R --N=$N --ncores=$NCORES --B=$B --burn=$BURN -o $outdir --K_MCMC=20 --K_TRUE=3 --use_repulsive=$rfam"
   cmd="$cmd > ${outdir}log.txt"
   sem -j $MAX_CORES $cmd
   echo "Simulation $i: $outdir"

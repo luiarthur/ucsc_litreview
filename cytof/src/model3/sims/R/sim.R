@@ -27,6 +27,7 @@ NCORES = getOrFail(opt$ncores, opt_parser)
 B = getOrFail(opt$B, opt_parser)
 BURN = getOrFail(opt$burn, opt_parser)
 K_MCMC = getOrFail(opt$K_MCMC, opt_parser)
+K_TRUE = getOrFail(opt$K_TRUE, opt_parser)
 USE_REPULSIVE = getOrFail(opt$use_repulsive, opt_parser)
 println("Use repulsive: ", USE_REPULSIVE)
 ### END OF GLOBALS ###
@@ -38,7 +39,7 @@ system(paste0('cp sim.R ', OUTDIR))
 fileDest = function(filename) paste0(OUTDIR, filename)
 
 dat_lim=c(-3,3)
-I=3; J=32; N=c(3,2,1)*N_degree; K=10
+I=3; J=32; N=c(3,2,1)*N_degree; K=K_TRUE
 
 dat = sim_dat(I=I, J=J, N=N, K=K, L0=3, L1=4, Z=genZ(J,K,.6),
               miss_mech_params(c(-7, -3, -1), c(.1, .99, .001)))
