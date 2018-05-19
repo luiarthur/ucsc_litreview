@@ -5,7 +5,6 @@ library(cytof3)
 set.seed(1)
 SOME = 4
 
-
 args = commandArgs(trailingOnly=TRUE)
 OUTDIR = ifelse(length(args) == 0, '../../out/cb_locked_beta1_K20/', args[1])
 y = readRDS('../../data/cytof_cb.rds')
@@ -14,7 +13,12 @@ miss_prop = get_missing_prop(y)
 
 fileDest = function(filename) paste0(OUTDIR, filename)
 
-out = unshrinkOut(readRDS(fileDest('out.rds')))
+out = if (grepl('cb',OUTDIR)) {
+  unshrinkOut(readRDS(fileDest('out.rds'))) 
+} else {
+  load(fileDest('checkpoint.rda'))
+}
+
 B = length(out)
 prior = last(out)$prior
 
@@ -34,6 +38,9 @@ for (i in 1:I) for (j in 1:J) {
   pz0_missy_ij_mean = mean(pz0_missy_ij)
   pz0_missy[i,j] = pz0_missy_ij_mean
 }
+sink(fileDest('pz0_missing_y.txt'))
+print(round(t(pz0_missy),2))
+sink()
 
 ### Density of positive data and posterior predictive ###
 
@@ -80,10 +87,44 @@ apply(idx_some, 1, function(indices) {
   dev.off()
 })
 
+### Density of observed data and posterior predictive for observed data ###
+pdf(fileDest('pp_obs.pdf'))
+par(mfrow=c(4,2))
+for (i in 1:I) for (j in 1:J) {
+  yij = postpred_yij_obs(out, i, j)
+
+  pp_den = density(yij)
+  dat_den = density(y[[i]][which(!is.na(y[[i]][,j])) ,j])
+  h = max(pp_den$y, dat_den$y)
+
+  xmag = 7
+  plot(dat_den, bty='n', col='grey', lwd=2, ylim=c(0,h*1.5), fg='grey',
+       main=paste0('Observed y: i=',i,', j=',j), xlim=c(-xmag,xmag) * 1.2)
+  lines(pp_den, col='blue', lwd=2)
+
+  msg = paste0('P(Z=0) for missing y: ', round(pz0_missy[i,j],2))
+  x_pos = xmag * .6
+  y_pos = h * 1.3
+  text(x_pos, y_pos, msg)
+}
+par(mfrow=c(1,1))
+dev.off()
+
 
 ### Q hist (Histogram of P(Z=0) for missing y) ###
 pdf(fileDest('pz0_missy.pdf'))
 hist(pz0_missy, main='',
      xlab='histogram of missing y',
      col='grey', border='white', prob=FALSE)
+dev.off()
+
+
+### Plot YZ Images ###
+mult=1; png(fileDest('YZ%03d.png'), height=600*mult, width=500*mult,
+            type='quartz')#, family=X11Fonts()$Arial)
+for (i in 1:I) {
+  yZ_inspect(out, y, zlim=dat_lim, i=i, thresh=.9, na.color='black',
+             cex.z.b=1.5, cex.z.lab=1.5, cex.z.l=1.5, cex.z.r=1.5,
+             cex.y.ylab=1.5, cex.y.xaxs=1.4, cex.y.yaxs=1.4, cex.y.leg=1.5)
+}
 dev.off()
