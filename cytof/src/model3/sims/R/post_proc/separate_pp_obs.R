@@ -34,7 +34,9 @@ pz0_missy = matrix(NA, I, J)
 f = function(i,j,b) {
   lami = out[[b]]$lam[[i]] + 1
   lami = lami[which(is.na(y[[i]][,j]))]
-  mean(out[[b]]$Z[j,lami] == 0)
+  if (length(lami) == 0) 0 else {
+    mean(out[[b]]$Z[j,lami] == 0)
+  }
 }
 for (i in 1:I) for (j in 1:J) {
   println(i,j)
