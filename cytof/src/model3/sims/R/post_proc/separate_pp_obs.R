@@ -124,7 +124,7 @@ dev.off()
 mult=1; png(fileDest('YZ%03d.png'), height=600*mult, width=500*mult,
             type='quartz')#, family=X11Fonts()$Arial)
 for (i in 1:I) {
-  yZ_inspect(out, y, zlim=dat_lim, i=i, thresh=.9, na.color='black',
+  yZ_inspect(out, y, zlim=c(-3,3), i=i, thresh=.9, na.color='black',
              cex.z.b=1.5, cex.z.lab=1.5, cex.z.l=1.5, cex.z.r=1.5,
              cex.y.ylab=1.5, cex.y.xaxs=1.4, cex.y.yaxs=1.4, cex.y.leg=1.5)
 }
