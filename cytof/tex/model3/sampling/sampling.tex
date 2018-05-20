@@ -297,7 +297,7 @@ computational methods that automatically identify cell clusters have been
 proposed to analyze high-dimensional cytometry data.  
 %These data are often
 %high-dimensional and noisy. Hence, many 
-Many of existing automated analysis methods use dimension reduction techniques
+Many existing automated analysis methods use dimension reduction techniques
 and/or clustering methods such as density-based clustering methods, model-based
 clustering methods, and self-organizing maps.
 % FLOWSOM
@@ -308,26 +308,43 @@ using unsupervised neural networks for easy visualization in a graph called a
 map.  FlowSOM is fast and can be used as a starting point for a manual gating
 or as a visualization tool after a gating.  Other common approaches are
 density-based clustering methods including DBSCAN \citep{ester1996density} and
-ClusterX \citep{chen2016cytofkit} and  model-based clustering methods including
+ClusterX \citep{chen2016cytofkit}, and  model-based clustering methods including
 flowClust \citep{lo2009flowclust} and BayesFlow \citep{johnsson2016bayesflow}.
-Density-based clustering methods, DBSCAN and ClusterX form clusters when
-regions are densely occupied by observations. Observations from dense clusters
-that are near enough according to some predetermined proximity metric and
-threshold are grouped, while observations that are considered far from dense
-regions are classified as outliers. Density-based methods can produce clusters
-that take on flexible shapes. FlowClust clusters Box-Cox transformed data using
-a mixture of t-distributions and provides parameter estimates through
-expectation-maximization (EM) algorithm. BayesFlow developed a Bayesian
-hierarchical model to cluster cells through a Gaussian mixture model.
-\cite{weber2016comparison} performed a study to compare freely available
-clustering methods for high-dimensional cytometry data.  They analyzed six
-publicly available cytometry datasets and compared identified cell
+Density-based clustering methods like DBSCAN and ClusterX form clusters in data
+when regions are densely occupied by observations. Observations from dense
+clusters that are near-together enough according to some predetermined
+proximity metric and threshold are grouped, while observations that are
+considered far from dense regions are classified as outliers. Density-based
+methods can produce clusters that take on flexible shapes. FlowClust clusters
+Box-Cox transformed data using a mixture of t-distributions and provides
+parameter estimates through expectation-maximization (EM) algorithm. BayesFlow
+developed a Bayesian hierarchical model to cluster cells through a Gaussian
+mixture model.  \cite{weber2016comparison} performed a study to compare freely
+available clustering methods for high-dimensional cytometry data.  They
+analyzed six publicly available cytometry datasets and compared identified cell
 subpopulations to cell population identities known from expert manual gating. 
 
 
-Existing methods, while promising, have fallen short at providing comprehensive inference on the underlying cell phenotypes in cell populations.  Many of them do not properly handle large sample-to-sample variations and abnormalities due to technical artifacts in cytometry data and do not provide uncertainty measurements for resulting inferences.  Expression levels in different samples can significantly vary due to technical variation and most of existing methods often analyze samples separately.  Observations can also be missing due to some technical limitations when markers are not expressed.  Existing methods often ignore missing data or use pre-imputed data.  More importantly, exiting methods do not directly model the underlying cell types.  They rather identify cell clusters based on similarities in expression patterns and determine cell types based on identified clusters. When cells have the same expression pattern but with different expression levels due to some experimental noise, they can be grouped in different clusters although they are likely to have a cell type.  We will utilize Bayesian feature allocation models (FAMs) embedded with clustering
-capabilities as our main tools to directly model cell types. FAM will provide solid foundations to an effective way of revealing the underlying cell phenotypes. We also propose mechanisms for imputing missing values within the
-models. The proposed models will efficiently provide a full model-based and probabilistic inference with honest uncertainty quantification.
+Existing methods, while promising, have fallen short at providing comprehensive
+inference on the underlying cell phenotypes in cell populations.  Many of them
+do not properly handle large sample-to-sample variations and abnormalities due
+to technical artifacts in cytometry data, and do not provide uncertainty
+measurements for resulting inferences.  Expression levels in different samples
+can significantly vary due to technical variation and most existing methods
+often analyze samples separately.  Moreover, observations can be missing due to
+technical limitations when markers are not expressed.  Existing methods often
+ignore missing data or use pre-imputed data.  More importantly, existing methods
+do not directly model the underlying cell-types.  Rather, they identify cell
+clusters based on similarities in expression patterns and determine cell types
+based on identified clusters. When cells have the same expression pattern but
+different expression levels due to experimental noise, they can be grouped into
+different clusters although they are likely to be of the same cell type.  We
+will utilize Bayesian feature allocation models (FAMs) embedded with clustering
+capabilities as our main tools to directly model cell types. FAMs will provide
+a solid foundation to an effective way of revealing the underlying cell
+phenotypes. We also propose mechanisms for imputing missing values within the
+models. The proposed models will efficiently provide a full model-based and
+probabilistic inference with honest uncertainty quantification.
 
 
 %{\tt introduce some existing approaches.  Explain a bit the methods
