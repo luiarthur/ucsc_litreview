@@ -152,14 +152,14 @@
 
 \begin{abstract}
 \noindent
-Bayesian feature allocation models (FAMs) embedded with
-clustering are developed to analyze mass cytometry data, with primary aim to
-characterize underlying cell repertoire structures.   Cell repertoires in
+Bayesian feature allocation models (FAMs) embedded with clustering capabilities
+are developed to analyze mass cytometry data, with a primary aim of
+characterizing underlying cell repertoire structures.   Cell repertoires in
 samples are heterogeneous. Each repertoire consists of a collection of cells
 possessing different phenotypes that can be characterized by differences in
 expression levels of cell surface markers.  In particular, mass cytometry data
 collected to study the clinical efficacy of natural killer (NK) cells as
-immunotherapeutic agents against leukemia is considered. NK cells play a
+immunotherapeutic agents against leukemia are considered. NK cells play a
 critical role in cancer immune surveillance and are the first line of defense
 against viruses and transformed tumor cells.  The data includes expression
 levels of 32 surface markers on each of thousands of cells from multiple
@@ -168,21 +168,22 @@ surveillance.  A key conceptual shift compared with existing approaches is to
 explicitly characterize latent cell phenotypes through a FAM.  The models
 simultaneously (1) characterize NK cell phenotypes based on expression /
 non-expression of surface markers, (2) estimate compositions of the samples
-based on the identified phenotypes, and (3) infer associations of subjects'
-covariates, with the composition of the identified phenotypes in the samples.
-The conventional Indian buffet process (IBP), one of the most popular FAMs, is 
-first utilized to model cell phenotypes. Non-ignorable
-missing data that is present due to technical artifacts in mass cytometry are
-accounted for by using an informed prior missing mechanism. The repulsive FAM
-(rep-FAM) is next proposed.  In contrast with the IBP, the rep-FAM produces a
-parsimonious representation of phenotypes by discouraging the creation of
-redundant phenotypes, and can thus improve inference on phenotypes.  Further
-extensions to incorporate subject-based covariates are discussed to provide
-inferences on phenotypes potentially associated with positive clinical
-outcomes.  
+based on the identified phenotypes, and (3) infer associations between
+subject-covariates and the composition of the identified phenotypes in the
+samples.  The conventional Indian buffet process (IBP), one of the most popular
+FAMs, is first utilized to model cell phenotypes. Non-ignorable missing data
+that is present due to technical artifacts in mass cytometry are accounted for
+by using an informed prior missing mechanism. The repulsive FAM (rep-FAM) is
+next proposed.  In contrast with the IBP, the rep-FAM produces a parsimonious
+representation of phenotypes by discouraging the creation of redundant
+phenotypes, and can thus improve inference on phenotypes.  Further extensions
+to incorporate subject-based covariates are discussed to provide inferences on
+phenotypes potentially associated with positive clinical outcomes.  
 
 %\noindent
-%{\em Keywords:} ~  Count data, Laplace prior, Metagenomics, Microbiome, Regularizing prior, Process convolution,  Negative binomial model, Next-generation sequencing
+%{\em Keywords:} ~  Count data, Laplace prior, Metagenomics, Microbiome,
+%Regularizing prior, Process convolution,  Negative binomial model,
+%Next-generation sequencing
 \end{abstract}
 
 
@@ -191,7 +192,7 @@ outcomes.
 \section{Introduction}
 Clinical application of natural killer (NK) cells
 %as immunotherapeutic agents against leukemia
-recently has emerged as a powerful treatment modality for advanced cancers
+has recently emerged as a powerful treatment modality for advanced cancers
 refractory to conventional therapies \citep{rezvani2015application}. 
 %and intensely investigated.
 %NK cells, the third lymphocyte lineage, % preceded by T cells and B cells,
@@ -199,8 +200,8 @@ refractory to conventional therapies \citep{rezvani2015application}.
 %transformed tumor cells.
 NK cells play a critical role in cancer immune surveillance and are the first
 line of defense against viruses and transformed tumor cells.  They have the
-intrinsic ability to infiltrate cancer tissue and their presence in the tumor
-is reported to be associated with better clinical outcomes
+intrinsic ability to infiltrate cancer tissue and their presence in tumors is
+reported to be associated with better clinical outcomes
 \citep{suck2016natural}.  
 %NK cells develop in the bone marrow and are ``educated'' during their
 %development to ensure not to attack normal self cells whiling rapidly killing
@@ -208,27 +209,26 @@ is reported to be associated with better clinical outcomes
 % (called self-tolerance).
 %During the development,
 Drs. Thall and Rezvani, collaborators at UT MD Anderson Cancer Center, have
-conducted clinical trials to study potential clinical efficacy of umbilical
+conducted clinical trials to study the potential clinical efficacy of umbilical
 cord blood (UCB) transplantation as a therapy for leukemia.  UCB has become an
 established source of hematopoietic stem cells for transplantation. UCB NK cell
-therapy has the advantages of low risk of viral transmission from donor to
+therapy has the advantage of low risk of viral transmission from donor to
 recipient \citep{sarvaria2017umbilical}. In the trials, leukemia patients
 received UCB cell transplants.
-% after irradiation therapy.  %Some characteristics of the patients such as their survival after the treatment are recorded.
-During follow up, samples were taken at multiple time points from each patient.
-Samples from
-%In addition, peripheral blood samples from
-healthy subjects and cord blood samples also were collected for comparison to
-leukemia patient samples.  The samples were processed and expressions of 32 NK
-cell-associated cell surface protein markers,
-%in individual cells of the samples
+% after irradiation therapy.  %Some characteristics of the patients such as
+% their survival after the treatment are recorded.
+During follow-ups, samples were taken at multiple time points from each patient.
+Samples from healthy subjects and cord blood samples also were collected for
+comparison to leukemia patient samples.  The samples were processed and
+expression levels of 32 NK-cell-associated cell surface protein markers were
 measured for individual cells in the samples using mass cytometry.  Their
 primary research goal is to understand phenotypes and functions structured
 across heterogeneous NK cells.
 % based on the markers' expression levels.
-Better understanding of the characteristics of NK cells is crucial to estimate
-the true potential of NK cell therapies against cancer.
-%for cancer immunotherapy. %against leukemia and possibly also against solid tumors.
+Better understanding of the characteristics of NK cells is crucial to
+estimating the true potential of NK cell therapies against cancer.
+%for cancer immunotherapy. %against leukemia and possibly also against solid
+%tumors.
 
 
 
@@ -262,15 +262,15 @@ the true potential of NK cell therapies against cancer.
 
 
 
-Advances in cytometry have led to more research and greater understanding  of
-natural killer (NK) cells and how their diversity impacts immunity against the
-development of tumors and other viral diseases.  Flow cytometry has been
-routinely used for single-cell analysis in cellular and clinical immunology.
-One of primary interest in cytometry data analysis is to identify different
-cell types in a heterogeneous population and measure their abundances.  Cell
-types are characterized by their distinct expression patterns of multivariate
-protein markers and expression patterns can be related to differentiation of
-cells and their biological function.  
+Advances in cytometry have led to more research and greater understanding of NK
+cells and how their diversity impacts immunity against the development of
+tumors and other viral diseases.  Flow cytometry has been routinely used for
+single-cell analysis in cellular and clinical immunology.  A primary
+interest in cytometry data analysis is to identify different cell types in a
+heterogeneous population and measure their abundance.  Cell-types are
+characterized by their distinct expression patterns of multivariate protein
+markers, and expression patterns can be affected by cell composition and
+biological function.
 %Flow cytometry (developed by
 %Wallace Coulter in the 1950's) is a laser-based biophysical technology which is
 %sometimes used for biomarker detection. It is regularly used to diagnose health
@@ -278,24 +278,23 @@ cells and their biological function.
 %Fluorescence-based flow cytometry, which makes use of fluorescent dyes and
 %lasers that emit light at specific wavelengths, is one such advancement that
 %has been mainstream for several decades \citep{herzenberg2002history}.  
-In recent years, a new cytometry technique, Cytometry at Time-Of-Flight (CyTOF, also known as mass cytometry) has surfaced.
-It makes use of time-of-flight mass spectrometry, where sophisticated devices
-are used to accelerate, separate, and identify ions by mass. This new method
-enables to detect a greater number of parameters (biological phenotypic or
-functional markers), up to 40 parameters for a cell, in less time and in a
-higher resolution
+In recent years, a new cytometry technique, Cytometry at time-of-flight (CyTOF,
+also known as mass cytometry) has surfaced.  It makes use of time-of-flight
+mass spectrometry, where sophisticated devices are used to accelerate,
+separate, and identify ions by mass. This new method enables the detection of a
+greater number of parameters (biological, phenotypic, or functional markers), up
+to 40 parameters for a cell, in less time and at a higher resolution
 \citep{cheung2011screening}. 
 %Through CyTOF, scientists have been able to better understand natural killer
 %(NK) cells \citep{horowitz2013genetic}. 
-A major challenge in understanding mass cytometry data is to develop efficient
-inferential frameworks that can handle their complexity. One of traditional
-methods is manual ``gating'', which is the sequential identification and
-refinement of clusters of homogeneous cells using a set of markers. However, it
-has several serious shortcomings such as inherent subjectivity of manual
-analysis and being unscalable for multiparameter data. While the manual gating
-is still popular in practice, many computational methods that automatically
-identify cell clusters have been proposed to analyze high-dimensional cytometry
-data.  
+Efficient inferential frameworks are required to understand complex cytometry
+data.  Manual ``gating'' is a traditional method in this realm in which
+homogeneous cell-clusters are sequentially identified and refined using a set
+of markers.  However, it has several serious shortcomings including its
+inherent subjectivity as it requires manual analysis, and being unscalable for
+multiparameter data.  While manual gating is still popular in practice, many
+computational methods that automatically identify cell clusters have been
+proposed to analyze high-dimensional cytometry data.  
 %These data are often
 %high-dimensional and noisy. Hence, many 
 Many of existing automated analysis methods use dimension reduction techniques
@@ -1275,7 +1274,7 @@ feature allocation model. High F-scores and low elapsed times are desirable.}
 
 
 \subsubsection{Sensitivity to Specified $K$}\label{sec:ksens}
-To assess the FAM's sensitivity the specification of $K$, which determines the
+To assess the FAMs sensitivity the specification of $K$, which determines the
 dimensions of the latent feature matrix $\bZ$, the model was fit three times
 more with different specifications of $K$. First, data was simulated using the
 procedure outlined previously using $N=(1500, 600, 300)$ with the same
