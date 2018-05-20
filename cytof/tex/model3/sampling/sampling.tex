@@ -828,18 +828,18 @@ We let $\alpha \sim \text{Gamma}(a_\alpha, b_\alpha)$ with mean $a_\alpha/b_\alp
 The $K$ cell phenotypes are common in all samples but the relative weights vary
 across samples. Let $w_{ik}$ denote an abundance level of phenotype $k$ in
 sample $i$.  We assume independent Dirichlet priors for $\bw_i=(w_{i1},
-\ldots, w_{iK})$ given $K$, $\bw_{i} \mid K \iid \Dir_K(d/K)$. For latent
+\ldots, w_{iK})$ given $K$, $\bw_{i} \mid K \iid \Dir_K(d/K)$. For the latent
 cell phenotype indicators, we let $p(\lin=k \mid \bm \bw_i) = w_{ik}$.
 
 \paragraph*{Parameters in the Mixture for $y$}
 In \eqref{eq:y-mix}, normal mixture models are assumed for $y_{inj}$. The mean
-expression level of maker $j$ in cell $n$ is determined by its phenotype
-$\lambda_{in}$.  In particular, if the marker is not expressed in the cell
-type, $z_{j \lambda_{in}}=0$, its mean expression level is below the cutoff,
-that is, a negative value.  If the marker is expressed $z_{j \lambda_{in}}=1$,
-the expression of marker $j$ take a positive value.   Recall that
-$\mus_{0\ell}$, $\ell=1, \ldots, L^0$ are mixture locations for $z_{j
-\lambda_{in}}=0$ and $\mus_{1\ell}$, $\ell=1, \ldots, L^1$ for $z_{j
+expression level of marker $j$ of sample $i$ in cell $n$ is determined by its
+phenotype $\lambda_{in}$.  In particular, if the marker is not expressed in the
+cell type (i.e. $z_{j \lambda_{in}}=0$), its mean expression level is below the
+cutoff, that is, a negative value.  If the marker is expressed (i.e. $z_{j
+\lambda_{in}}=1$), the expression level of marker $j$ takes a positive value.
+Recall that $\mus_{0\ell}$, $\ell=1, \ldots, L^0$ are mixture locations for
+$z_{j \lambda_{in}}=0$ and $\mus_{1\ell}$, $\ell=1, \ldots, L^1$ for $z_{j
 \lambda_{in}}=1$.  We assume 
 \begin{align*}
 \mus_{0\ell} \mid \psi_0, \tau^2_0 &\iid \N_-(\psi_0, \tau^2_0), ~~~ \ell \in \bc{1,...,L^0}, \\
@@ -854,12 +854,13 @@ and also vary across samples. We let, for \(i=1, \ldots, I\),
 \sigma^2_{0i\ell} \mid s_i &\ind \IG(a_\sigma, s_i), ~~~ \ell \in \bc{1,...,L^0}, \\
 \sigma^2_{1i\ell} \mid s_i &\ind \IG(a_\sigma, s_i), ~~~ \ell \in \bc{1,...,L^1}.  
 \end{align*}
-We also assume $s_i \iid \G(a_s, b_s)$, $i \in \bc{1,...,I}$, with mean
-\(a_s/b_s\). Lastly, we consider a model for mixture weights $\bm\eta^0_{ij}$
-and $\bm\eta^1_{ij}$. To flexibly model the distribution of $y$, we assume for
-a marker in a sample have two sets of it own weights, one for each value of
-$z$, $\bm\eta^0_{ij}$ and $\bm\eta^1_{ij}$, for each $(i, j)$. So for \(i=1,
-\ldots, I\), \(n=1, \ldots, N_i\) and \(j=1, \ldots, J\),
+We also assume $s_i \iid \text{Gamma}(a_s, b_s)$, $i \in \bc{1,...,I}$, with
+mean \(a_s/b_s\). Lastly, we consider a model for the mixture weights
+$\bm\eta^0_{ij}$ and $\bm\eta^1_{ij}$. To flexibly model the distribution of
+$y_{inj}$, we assume for a marker $j$ in a sample $i$, that $y_{inj}$ has two
+sets of weights -- one for each value of $z \in \bc{0,1}$. That is,
+$\bm\eta^0_{ij}$ and $\bm\eta^1_{ij}$, for each $(i, j)$. So for $i=1,
+\ldots, I$, $n=1, \ldots, N_i$ and $j=1, \ldots, J$,
 \begin{align*}
 \bm\eta^0_{ij} &\iid \Dir_{L^0}(a_{\eta^0}/L^0), \\
 \bm\eta^1_{ij} &\iid \Dir_{L^1}(a_{\eta^1}/L^1). 
@@ -873,19 +874,19 @@ placing priors on the parameters $\beta_{0i}$ and $\beta_{1i}$.
 We assume that $\beta_{0i} \iid \N(m_{\beta_0}, s^2_{\beta_0})$ and $\beta_{1i}
 \iid \N_+(m_{\beta_1}, s^2_{\beta_1})$, $i=1, \ldots, I$.  We use data to
 specify the values of the fixed hyperparameters, $m_{\beta_0}$ and
-$m_{\beta_1}$. We let $s^2_{\beta_0}$ and $s^2_{\beta_1}$ be small to induce a
+$m_{\beta_1}$. We let $s^2_{\beta_0}$ and $s^2_{\beta_1}$ be small to induce an
 informative prior for $\beta_{0i}$ and $\beta_{1i}$. One way of determining
 priors for the parameters in the missing mechanism is described in detail in 
-the derivation of the full conditionals for $\beta$ in the appendix.
+the derivation of the full conditionals for $\beta$ in Appendix A.
 
 
 
 \subsubsection{Posterior Computation}\label{sampling-via-mcmc}
-Let \(\btheta=\{\bZ, \bw, \bm \mu^\star_0, \bm \mu^\star_1, \bm \sigma^2_{0i},
+Let $\btheta=\bc{\bZ, \bw, \bm \mu^\star_0, \bm \mu^\star_1, \bm \sigma^2_{0i},
 \bm \sigma^2_{1i}, \bm \eta^0, \bm \eta^1, \bm \lambda, \bm \gamma, \bm v, \bm
-h, \bm \beta_0, \bm \beta_1\}\) represent all random parameters.  Let \(\y\)
-and \(\m\) denote all \(y_{inj}\) and \(m_{inj}$ for all \((i,n,j)\),
-respectively. The joint posterior distribution is 
+h, \bm \beta_0, \bm \beta_1, \alpha}$ represent all random parameters.  Let
+\(\y\) and $\m$ denote $y_{inj}$ and $m_{inj}$ for all $(i,n,j)$, respectively.
+The joint posterior distribution is 
 \begin{align*}
 p(\btheta \mid \y, \m) &\propto 
 p(\btheta) \prod_{i,n,j} p(m_{inj} \mid y_{inj}, \btheta) p(y_{inj} \mid \btheta) \nonumber\\
@@ -900,23 +901,30 @@ p(\btheta)
 %\(\gamma\) is \begin{align} p(y_{inj} \mid \btheta) = \sum_{k=1}^K W_{ik}
 %\sum_{\ell=1}^{L^{Z_{jk}}} \eta^{Z_{jk}}_{ijl} \cdot \N(y_{inj} \mid
 %\mu^\star_{Z_{jk}, \ell}, {\sigma^2}^\star_{i,Z_{jk},\ell}).  \end{align}
-Posterior simulation can be done via Gibbs sampling by repeatedly updating each
-parameter one at a time until convergence. Parameter updates are made by
-sampling from it full conditional distribution. Where this cannot be done
-conveniently, a metropolis step can be used.  Details of the posterior
+Posterior simulation can be done via Gibbs sampling by repeatedly and
+sequentially updating each parameter until convergence. Parameter updates are
+made by sampling from its full conditional distribution. Where this cannot be
+done conveniently, a Metropolis step can be used.  Details for the posterior
 simulation are described in Appendix A. 
 
 
 Summarizing the joint posterior distribution $p(\btheta \mid \y, \m)$ is
-challenging.  Especially, posterior summary of $\bw$ and $\bm \lambda$ are
-dependent on $\bZ$. We use a method based on sequentially-allocated latent
-structure optimization (SALSO) \citep{salso} to find point estimates for $\Z$,
-$\bm W$, and $\lambda$.  SALSO first constructs $A(\bZ)=\{A_{j,j'}\}$, the $J
-\times J$ pairwise allocation matrix corresponding to a binary matrix $\bZ$,
-where  $A_{j,j'} = \sum_{k=1}^K \mathbb{I}(Z_{j,k}=1)\mathbb{I}(Z_{j',k}=1),
-1\leq j, j^\prime \leq J$ is the number of features that markers $j$ and $j'$
-share. It then uses posterior samples of $\bZ$ and finds a point estimate
-$\hat{\bZ}$ that minimizes the sum of element-wise squared distances, 
+challenging, especially for $\Z$, which may be susceptible to label switching
+problems common in mixture models. Note also that the posterior distributions
+of $\Z$ is dependent on those of $\bw$ and $\bm \lambda$. To summarize the
+posterior distribution of $(\Z,\bW,\lambda)$ with point estimates, we use a
+method based on sequentially-allocated latent structure optimization (SALSO)
+\citep{salso} for summarizing random samples over partitions. To summarize
+random feature allocation matrices, SALSO first constructs
+$A(\bZ)=\{A_{j,j'}\}$, the $J \times J$ pairwise allocation matrix
+corresponding to a binary matrix $\bZ$, where  
+$$
+A_{j,j'} = \sum_{k=1}^K \mathbb{I}(Z_{j,k}=1)\mathbb{I}(Z_{j',k}=1),
+~~~\text{for } 1\leq j, j^\prime \leq J,
+$$
+is the number of features that markers $j$ and $j'$ share. It then uses
+constrained optimization to find a point estimate $\hat{\bZ}$ that
+minimizes the sum of the element-wise squared distances, 
 \begin{eqnarray*}
 \text{argmin}_Z\sum_{j=1}^J\sum_{j'=1}^J(A(\bZ)_{j,j'} - \bar{A}_{j,j'})^2
 \label{eq:salso}
@@ -927,13 +935,13 @@ samples of $Z$.  %Thus in the current application, $A_{j,j'} = \sum_{k=1}^K
 %\Ind{Z_{j,k}=1}\Ind{Z_{j',k}=1}$ is the number of times that marker $j$ and
 %marker $j'$ share a feature. 
 %
-We extend SALSO to point estimates for each sample $i$, $\hat{\bZ}_i$ by
-incorporating $\bw_i$. That is, we consider the sum of elementwise squared
-distances weighted by $\bw_i$.  We use posterior Monte Carlo samples to
-posterior point estimates $\hat{\Z}_i$, $\hat{\bm W}_i$ and
-$\hat{\lambda}_{in}$, $i=1, \ldots, I$ and $n=1, \ldots, N_i$ as follows;
-suppose we obtain \(B\) posterior samples simulated from the posterior
-distribution of \(\theta\). For each posterior sample of \(\Z\) and \(\bw_i\),
+We extend SALSO to find point estimates for each sample $i$, $\hat{\bZ}_i$ by
+incorporating $\bw_i$. Specifically, we consider the sum of element-wise squared
+distances weighted by $\bw_i$.  We use posterior Monte Carlo samples to obtain
+posterior point estimates $(\hat{\Z}_i$, $\hat{\bm W}_i)$ and
+$\hat{\lambda}_{in}$, for $i=1, \ldots, I$ and $n=1, \ldots, N_i$ as follows.
+Suppose we obtain \(B\) posterior samples simulated from the posterior
+distribution of \(\btheta\). For each posterior sample of \(\Z\) and \(\bw_i\),
 we compute a $J \times J$ adjacency matrix, \(\bm A_i^{(b)}
 =\{A^{(b)}_{i,j,j'}\}\), where 
 %
@@ -948,11 +956,11 @@ B\).  We report a posterior point estimate of $\Z_i$ by choosing
 \hat{\bm Z}_i = \text{argmin}_{\bm Z} \sum_{j,j'} (A_{i,j,j'}^{(b)} - \bar
 A_{i,j,j'})^2).\label{eq:myZ}
 \end{eqnarray}
-Conditioning on $\hat{\Z}_i$, we report posterior point estimates $\hat{\bw}_i$
-and $\hat{\lambda}_{in}$.
+If $\hat{\Z}_i = Z^{(b)}$, then we report the posterior point estimates
+$\hat{\bw}_i=\bw_i^{(b)}$ and $\hat{\lambda}_{in}=\lambda_{in}^{(b)}$.
 %Note that in our adaptation, we weight
 %the adjacency counts by the sample-specific weight for each latent feature.
-Equation (\eqref{eq:myZ}) places greater weight on phenotypes that are more
+Equation \eqref{eq:myZ} places greater weight on phenotypes that are more
 prevalent in samples, and down-weights phenotypes having small $w_{ik}$ for
 $\hat{\bZ}_i$.
 
