@@ -15,6 +15,8 @@ best_lam.K20 = sapply(1:I, function(i) out[[ best_idx[i] ]]$lam[[i]])
 
 true_lam = dat$lam
 
-FMeasure(unlist(true_lam), unlist(best_lam.K5))
-FMeasure(unlist(true_lam), unlist(best_lam.K10))
-FMeasure(unlist(true_lam), unlist(best_lam.K20))
+FM = c("K5"=FMeasure(unlist(true_lam), unlist(best_lam.K5)),
+       "K10"=FMeasure(unlist(true_lam), unlist(best_lam.K10)),
+       "K20"=FMeasure(unlist(true_lam), unlist(best_lam.K20)))
+
+print(FM)

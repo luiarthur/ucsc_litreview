@@ -46,10 +46,10 @@ cp ${simImgPath}/${cbSimName}/"pp_obs_i"*".pdf" $cbOutdir
 
 
 ### FlowSOM ###
-cp ${fsSimName}/"compareClus.pdf" $fsOutdir
+cp ${fsSimName}/"compareClus_FlowSOM_CB.pdf" $fsOutdir
 I="1 2 3"
 for i in $I; do
-  cp ${fsSimName}/"YZ00${i}_FlowSOM.png" $fsOutdir
+  cp ${fsSimName}/"YZ00${i}_FlowSOM_CB.png" $fsOutdir
 done
 
 ### K sensitivity ###

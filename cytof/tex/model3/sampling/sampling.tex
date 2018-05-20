@@ -1273,42 +1273,6 @@ our method, which will be considered in future research.
 feature allocation model. High F-scores and low elapsed times are desirable.}
 \end{table}
 
-% TODO
-%{\tt  TODO: comparison??}
-%%%%%%%%%%%%%%%%%%%%%%%%
-\begin{figure}[H]
-\begin{center}
-  \begin{tabular}{cc}
-  \includegraphics[scale=.4]{img/FlowSOM/YZ001_FlowSOM.png}&
-  \includegraphics[scale=.4]{img/FlowSOM/YZ002_FlowSOM.png}\\
-  (a) Sample 1 & (b) Sample 2 \\
-  \includegraphics[scale=.4]{img/FlowSOM/YZ003_FlowSOM.png} &\\
-  (c) Sample 3 & \\
-  \end{tabular}
-\end{center}
-\vspace{-0.05in}
-\caption{TODO: [CB data analyzed using FlowSOM]  Heatmaps of $y$ for the samples
-  sorted by phenotype abundance within each sample. Cells and markers are in
-  rows and columns, respectively. Each column contains the expression levels of
-  a marker for all cells in the sample. High expression levels are red, low
-  expression levels are blue, missing values are white.  Cells are rearranged
-  by their posterior estimate of phenotype indicator, $\hat{\lambda}_{in}$.
-  Horizontal lines separate cells in different estimated phenotypes.  At the
-  bottom of each panel, the transpose of $\hat{\Z}_i$ and $\hat{\bw}_i$ are
-  provided for each sample. We include phenotypes having large $\hat{w}_{ik}$
-  to explain at least 90\% of the cells in a sample.}
-\label{fig:fs-post-Z}
-\end{figure}
-%%%%%%%%%%%%%%%%%%%%%%%%%
-
-\begin{figure}
-\begin{center}
-\includegraphics[scale=0.5]{img/FlowSOM/compareClus.pdf}
-\caption{TODO: [Comparing FlowSOM phenotypes to FAM] write a caption}
-\label{fig:fs-fam-compare}
-\end{center}
-\end{figure}
-
 
 \subsubsection{Sensitivity to Specified $K$}\label{sec:ksens}
 To assess the FAM's sensitivity the specification of $K$, which determines the
@@ -1467,7 +1431,7 @@ $y_{inj}$ for some selected $(i,j)$.
   \end{tabular}
 \end{center}
 \vspace{-0.05in}
-\caption{TODO: pp for observed, for some $(i,j)$. Add a caption}
+\caption{TODO: [?] pp for observed, for some $(i,j)$. Add a caption}
 \label{fig:cb-pp-obs-some}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1492,6 +1456,43 @@ biologists.
   \includegraphics[scale=0.5]{img/cb/pz0_missy.pdf}
   \caption{TODO: [post. prob of non-expression for missing y] write a caption}
   \label{fig:hist-pz0-missy}
+\end{center}
+\end{figure}
+
+% TODO
+%{\tt  TODO: comparison to FlowSOM??}
+\subsection{Comparing FlowSOM and FAM for CB Data}
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[H]
+\begin{center}
+  \begin{tabular}{cc}
+  \includegraphics[scale=.4]{img/FlowSOM/YZ001_FlowSOM_CB.png}&
+  \includegraphics[scale=.4]{img/FlowSOM/YZ002_FlowSOM_CB.png}\\
+  (a) Sample 1 & (b) Sample 2 \\
+  \includegraphics[scale=.4]{img/FlowSOM/YZ003_FlowSOM_CB.png} &\\
+  (c) Sample 3 & \\
+  \end{tabular}
+\end{center}
+\vspace{-0.05in}
+\caption{TODO: [CB data analyzed using FlowSOM]  Heatmaps of $y$ for the samples
+  sorted by phenotype abundance within each sample. Cells and markers are in
+  rows and columns, respectively. Each column contains the expression levels of
+  a marker for all cells in the sample. High expression levels are red, low
+  expression levels are blue, missing values are white.  Cells are rearranged
+  by their posterior estimate of phenotype indicator, $\hat{\lambda}_{in}$.
+  Horizontal lines separate cells in different estimated phenotypes.  At the
+  bottom of each panel, the transpose of $\hat{\Z}_i$ and $\hat{\bw}_i$ are
+  provided for each sample. We include phenotypes having large $\hat{w}_{ik}$
+  to explain at least 90\% of the cells in a sample.}
+\label{fig:fs-post-Z}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\begin{figure}
+\begin{center}
+\includegraphics[scale=0.5]{img/FlowSOM/compareClus_FlowSOM_CB.pdf}
+\caption{TODO: [Comparing FlowSOM phenotypes to FAM] write a caption}
+\label{fig:fs-fam-compare}
 \end{center}
 \end{figure}
 

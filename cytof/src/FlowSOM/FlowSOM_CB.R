@@ -52,7 +52,7 @@ print(runtime)
 fSOM.clus = fSOM$meta[fSOM$FlowSOM$map$mapping[,1]]
 
 mult=1
-png('out/YZ%03d_FlowSOM.png', height=600*mult, width=500*mult, type='Xlib')
+png('out/YZ%03d_FlowSOM_CB.png', height=600*mult, width=500*mult, type='Xlib')
 for (i in 1:I) {
   clus = as.numeric(fSOM.clus)[idx[i,1]:idx[i,2]]
   print(length(unique(clus))) # Number of clusters learned
@@ -90,7 +90,7 @@ plot(pY$x[,c(1,2)], col=rgba(cy.c,.3), pch=16, main='FAM', yaxt='n', ylab='')
 par(mfrow=c(1,1), mar=c(5,4,4,1)+.1)
 
 ### Plot Cumulative Proportion by Clusters ###
-pdf('out/compareClus.pdf')
+pdf('out/compareClus_FlowSOM_CB.pdf')
 plot(cy.c.cs, type='o', col=rgba('blue', .5), fg='grey', ylim=0:1,
      xlab='cell-types', cex.lab=1.4, cex.axis=1.5,
      ylab='cumulative  proportion', lwd=5)
