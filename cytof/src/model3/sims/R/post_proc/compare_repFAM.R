@@ -29,12 +29,12 @@ nRepeatedPosCols.fam = sapply(Z.fam, repeatedPosCols)
 
 
 # Plots
-par(mfrow=c(1,2))
-plot(table(nRepeatedCols.fam) / sum(table(nRepeatedCols.fam)), ylim=0:1,
-     ylab='proportion')
-plot(table(nRepeatedPosCols.fam) / sum(table(nRepeatedPosCols.fam)), ylim=0:1,
-     ylab='proportoin')
-par(mfrow=c(1,1))
+#par(mfrow=c(1,2))
+#plot(table(nRepeatedCols.fam) / sum(table(nRepeatedCols.fam)), ylim=0:1,
+#     ylab='proportion')
+#plot(table(nRepeatedPosCols.fam) / sum(table(nRepeatedPosCols.fam)), ylim=0:1,
+#     ylab='proportoin')
+#par(mfrow=c(1,1))
 
 table(nRepeatedPosCols.fam) / sum(table(nRepeatedPosCols.fam))
 

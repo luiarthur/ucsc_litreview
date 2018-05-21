@@ -1,0 +1,11 @@
+#!/bin/bash
+
+echo "Generating plots for rep-FAM (Proj2)..."
+./compare_repFAM
+
+
+echo "Generating plots for IBP K-sensitivity analysis (Proj1)..."
+Rscript ksens.R
+
+echo "Generating separate figures for posterior predictive (Proj1)..."
+./sep_pp_obs
