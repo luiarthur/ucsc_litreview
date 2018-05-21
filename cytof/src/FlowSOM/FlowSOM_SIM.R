@@ -87,7 +87,7 @@ rgba = function(col, a=1) {
 ### Compute F Measure to measure how good the clustering is to truth ###
 best_idx = sapply(1:I, function(i) estimate_ZWi_index(out,i))
 cytof3.clus.ls = lapply(1:I, function(i) out[[best_idx[i]]]$lam[[i]])
-fs.clus.ls = sapply(fs.est, function(e) e$clus)
+fs.clus.ls = lapply(1:I, function(i) fs.clus[idx_lower[i]:idx_upper[i]])
 true.clus.ls = dat$lam
 
 FM = sapply(1:I, function(i) {
@@ -111,12 +111,12 @@ ps = prcomp(Y_tilde)$sd
 pY = prcomp(Y_tilde)$x[,1:2]
 fs.c = relabel_clusters(fs.clus)
 cy.c = relabel_clusters(unlist(cytof3.clus.ls))
-par(mfrow=c(2,2))
-plot(pY, main="FlowSOM Clusters", col=rgba(fs.c, .1), pch=16) # appears to be 8 clusters
-plot(pY, main="Cytof3 Clusters", col=rgba(cy.c, .1), pch=16) # appears to be 8 clusters
-plot(pY, main="Data: First two PC", pch=16, col=rgba('steelblue',.1)) # appears to be 8 clusters
-plot(pY, main="Differences", col=ifelse(abs(fs.c-cy.c)==0, 'transparent', 'red'), pch=16)
-par(mfrow=c(1,1))
+#par(mfrow=c(2,2))
+#plot(pY, main="FlowSOM Clusters", col=rgba(fs.c, .1), pch=16) # appears to be 8 clusters
+#plot(pY, main="Cytof3 Clusters", col=rgba(cy.c, .1), pch=16) # appears to be 8 clusters
+#plot(pY, main="Data: First two PC", pch=16, col=rgba('steelblue',.1)) # appears to be 8 clusters
+#plot(pY, main="Differences", col=ifelse(abs(fs.c-cy.c)==0, 'transparent', 'red'), pch=16)
+#par(mfrow=c(1,1))
 
 ### FMeasure (F1 score) ###
 # 2 / (1/precision + 1/recall)
