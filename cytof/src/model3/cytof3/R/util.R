@@ -28,3 +28,11 @@ println = function(x, ...) cat(x, ..., "\n")
 compress = function(x) float::dbl(float::fl(x))
 
 "%+%" = function(a,b) paste0(a,b)
+
+
+rgba = function(col, a=1) {
+  sapply(col, function(co) {
+    RGB = col2rgb(co) / 255
+    rgb(RGB[1], RGB[2], RGB[3], a)
+  })
+}

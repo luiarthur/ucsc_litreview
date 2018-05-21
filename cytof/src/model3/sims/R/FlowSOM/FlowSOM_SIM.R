@@ -10,9 +10,10 @@ library(cytof3)
 source('est_Z_from_clusters.R')
 set.seed(3)
 
-#DATDIR = '../model3/sims/data/cytof_cb.rds'
-#y = readRDS(DATDIR)
-cytof3.results = '../model3/sims/out/sim_locked_beta1_K20_N10000/checkpoint.rda'
+OUT_SIM  = '../../out/'
+OUT_FLOW = OUT_SIM %+% 'FlowSOM/'
+
+cytof3.results = OUT_SIM %+% '/sim_locked_beta1_K20_N10000/checkpoint.rda'
 load(cytof3.results)
 
 ### Indices for each sample ###
@@ -63,7 +64,7 @@ fs.clus = as.numeric(fSOM.clus)
 #}
 
 mult=1
-png('out/YZ%03d_FlowSOM.png', height=600*mult, width=500*mult, type='Xlib')
+png(OUT_FLOW %+% 'YZ%03d_FlowSOM.png', height=600*mult, width=500*mult, type='Xlib')
 for (i in 1:I) {
   clus = fs.clus[idx[i,1]:idx[i,2]]
   print(length(unique(clus))) # Number of clusters learned
@@ -141,7 +142,7 @@ fs.c.cs = cumsum(table(fs.c) / sum(table(fs.c)))
 #par(mfrow=c(1,1), mar=c(5,4,4,1)+.1)
 
 ### Plot Cumulative Proportion by Clusters ###
-pdf('out/compareClus_FlowSOM.pdf')
+pdf(OUT_FLOW %+% 'compareClus_FlowSOM.pdf')
 plot(cy.c.cs, type='o', col=rgba('blue', .5), fg='grey', ylim=0:1,
      xlab='cell-types', cex.lab=1.4, cex.axis=1.5,
      ylab='cumulative  proportion', lwd=5)

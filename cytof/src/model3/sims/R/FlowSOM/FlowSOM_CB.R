@@ -8,12 +8,11 @@ library(rcommon)
 library(cytof3)
 source('est_Z_from_clusters.R')
 set.seed(3)
-OUT_FLOW = '../../out/FlowSOM/'
-OUT_SIM  = 
+OUT_SIM  = '../../out/'
+OUT_FLOW = OUT_SIM %+% 'FlowSOM/'
 DAT_DIR  = '../../data/cytof_cb.rds'
-system(paste0('mkdir -p ', OUTDIR_ORIG, 'FlowSOM/')
 
-y = readRDS(DATDIR)
+y = readRDS(DAT_DIR)
 N = sapply(y, NROW)
 J = NCOL(y[[1]])
 I = length(y)
@@ -55,7 +54,7 @@ print(runtime)
 fSOM.clus = fSOM$meta[fSOM$FlowSOM$map$mapping[,1]]
 
 mult=1
-png('out/YZ%03d_FlowSOM_CB.png', height=600*mult, width=500*mult, type='Xlib')
+png(OUT_FLOW %+% 'YZ%03d_FlowSOM_CB.png', height=600*mult, width=500*mult, type='Xlib')
 for (i in 1:I) {
   clus = as.numeric(fSOM.clus)[idx[i,1]:idx[i,2]]
   print(length(unique(clus))) # Number of clusters learned
@@ -74,7 +73,7 @@ pY = prcomp(Y_tilde)
 cumsum(pY$sd^2 / sum(pY$sd^2))
 
 ### Cytof3 ###
-out = readRDS('../../out/cb_locked_beta1_K20/out.rds')
+out = readRDS(OUT_SIM %+% '/cb_locked_beta1_K20/out.rds')
 best_idx = sapply(1:I, function(i) estimate_ZWi_index(out, i))
 best_lam = sapply(1:I, function(i) out[[best_idx[i]]]$lam[[i]])
 cy.c = relabel_clusters(unlist(best_lam))
@@ -85,15 +84,15 @@ fs.c = relabel_clusters(as.integer(fSOM.clus))
 cy.c.cs = cumsum(table(cy.c) / sum(table(cy.c)))
 fs.c.cs = cumsum(table(fs.c) / sum(table(fs.c)))
 
-par(mfrow=c(1,2), mar=c(5,4,4,0)+.1)
-# appears to be 3 clusters
-plot(pY$x[,c(1,2)], col=rgba(fs.c,.3), pch=16, main='FlowSOM')
-par(mar=c(5,2,4,1)+.1)
-plot(pY$x[,c(1,2)], col=rgba(cy.c,.3), pch=16, main='FAM', yaxt='n', ylab='')
-par(mfrow=c(1,1), mar=c(5,4,4,1)+.1)
+#par(mfrow=c(1,2), mar=c(5,4,4,0)+.1)
+## appears to be 3 clusters
+#plot(pY$x[,c(1,2)], col=rgba(fs.c,.3), pch=16, main='FlowSOM')
+#par(mar=c(5,2,4,1)+.1)
+#plot(pY$x[,c(1,2)], col=rgba(cy.c,.3), pch=16, main='FAM', yaxt='n', ylab='')
+#par(mfrow=c(1,1), mar=c(5,4,4,1)+.1)
 
 ### Plot Cumulative Proportion by Clusters ###
-pdf('out/compareClus_FlowSOM_CB.pdf')
+pdf(OUT_FLOW %+% 'compareClus_FlowSOM_CB.pdf')
 plot(cy.c.cs, type='o', col=rgba('blue', .5), fg='grey', ylim=0:1,
      xlab='cell-types', cex.lab=1.4, cex.axis=1.5,
      ylab='cumulative  proportion', lwd=5)
