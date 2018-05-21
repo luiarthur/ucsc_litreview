@@ -4,7 +4,7 @@
 \alias{matApply}
 \title{Apply a function to a list of matrices}
 \usage{
-matApply(mat_ls, f)
+matApply(mat_ls, f, ...)
 }
 \description{
 Apply a function to a list of matrices

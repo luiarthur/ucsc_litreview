@@ -17,10 +17,10 @@ gamma_params = function(m, v) {
 }
 
 
-matApply = function(mat_ls, f) {
+matApply = function(mat_ls, f, ...) {
   #' Apply a function to a list of matrices
   #' @export
-  apply(simplify2array(mat_ls), 1:2, f)
+  apply(simplify2array(mat_ls), 1:2, f, ...)
 }
 
 println = function(x, ...) cat(x, ..., "\n")
