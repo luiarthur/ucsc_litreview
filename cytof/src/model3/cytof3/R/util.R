@@ -26,3 +26,5 @@ matApply = function(mat_ls, f, ...) {
 println = function(x, ...) cat(x, ..., "\n")
 
 compress = function(x) float::dbl(float::fl(x))
+
+"%+%" = function(a,b) paste0(a,b)
