@@ -1,5 +1,7 @@
 #!/bin/bash
 
+mkdir -p '../../out/FlowSOM/'
+
 echo "Running FlowSOM_CB.R..."
 Rscript FlowSOM_CB.R
 

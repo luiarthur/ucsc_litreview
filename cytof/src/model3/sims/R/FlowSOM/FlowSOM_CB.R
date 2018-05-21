@@ -8,8 +8,11 @@ library(rcommon)
 library(cytof3)
 source('est_Z_from_clusters.R')
 set.seed(3)
+OUT_FLOW = '../../out/FlowSOM/'
+OUT_SIM  = 
+DAT_DIR  = '../../data/cytof_cb.rds'
+system(paste0('mkdir -p ', OUTDIR_ORIG, 'FlowSOM/')
 
-DATDIR = '../model3/sims/data/cytof_cb.rds'
 y = readRDS(DATDIR)
 N = sapply(y, NROW)
 J = NCOL(y[[1]])
@@ -71,7 +74,7 @@ pY = prcomp(Y_tilde)
 cumsum(pY$sd^2 / sum(pY$sd^2))
 
 ### Cytof3 ###
-out = readRDS('../model3/sims/out/cb_locked_beta1_K20/out.rds')
+out = readRDS('../../out/cb_locked_beta1_K20/out.rds')
 best_idx = sapply(1:I, function(i) estimate_ZWi_index(out, i))
 best_lam = sapply(1:I, function(i) out[[best_idx[i]]]$lam[[i]])
 cy.c = relabel_clusters(unlist(best_lam))
