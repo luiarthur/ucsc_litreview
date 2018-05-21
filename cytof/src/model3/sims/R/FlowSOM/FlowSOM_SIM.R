@@ -54,8 +54,12 @@ print(tim)
 #PlotStars(fSOM$FlowSOM, backgroundValues = as.factor(fSOM$metaclustering))
 fSOM.clus = fSOM$meta[fSOM$FlowSOM$map$mapping[,1]]
 
+
 fs.est = as.list(1:I)
 fs.clus = as.numeric(fSOM.clus)
+### Kmeans ###
+#fs.clus = kmeans(Y_tilde, 10)$clus
+
 #for (i in 1:I) {
 #  clus = fs.clus[idx[i,1]:idx[i,2]]
 #  fs.est[[i]] = est_ZW_from_clusters(y_tilde[[i]], clus)
