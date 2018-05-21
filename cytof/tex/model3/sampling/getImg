@@ -9,7 +9,7 @@ cbSimName="cb_locked_beta1_K20/"
 cbOutdir="img/cb/"
 mkdir -p $cbOutdir
 
-fsSimName="../../../src/FlowSOM/out/"
+fsSimName="FlowSOM/"
 fsOutdir="img/FlowSOM/"
 mkdir -p $fsOutdir
 
@@ -46,10 +46,10 @@ cp ${simImgPath}/${cbSimName}/"pp_obs_i"*".pdf" $cbOutdir
 
 
 ### FlowSOM ###
-cp ${fsSimName}/"compareClus_FlowSOM_CB.pdf" $fsOutdir
+cp ${simImgPath}/${fsSimName}/"compareClus_FlowSOM_CB.pdf" $fsOutdir
 I="1 2 3"
 for i in $I; do
-  cp ${fsSimName}/"YZ00${i}_FlowSOM_CB.png" $fsOutdir
+  cp ${simImgPath}/${fsSimName}/"YZ00${i}_FlowSOM_CB.png" $fsOutdir
 done
 
 ### K sensitivity ###
