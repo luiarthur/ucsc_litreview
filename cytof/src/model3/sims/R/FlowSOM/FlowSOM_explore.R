@@ -120,7 +120,7 @@ if (TRUE) {
                   #sig=rep(c(.2, .1, .01, .1),2))
                   J=2,
                   mu=c(-2,-.5,.5, 2),
-                  sig=c(.2, .1, .01, .1))
+                  sig=c(.1, .1, .1, .1))
   fSOM = sim$fSOM
 
   # Version 1 # this is too good
