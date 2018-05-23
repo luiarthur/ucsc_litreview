@@ -25,12 +25,12 @@ sim.study = function(N=1000, J=2, mu=seq(-2,2,l=2^J), sig=.01, maxMeta=20) {
   println("Running FlowSOM...")
   tim = system.time({
     ## Version 1
-    #fSOM <- FlowSOM(ff.y, colsToUse = 1:J, maxMeta=maxMeta, seed = 42)
+    fSOM <- FlowSOM(ff.y, colsToUse = 1:J, maxMeta=maxMeta, seed = 42)
 
     # Version 2
-    fSOM = ReadInput(ff.y)
-    fSOM = BuildSOM(fSOM, colsToUse=1:J);
-    fSOM = BuildMST(fSOM)
+    #fSOM = ReadInput(ff.y)
+    #fSOM = BuildSOM(fSOM, colsToUse=1:J);
+    #fSOM = BuildMST(fSOM)
   })
   print(tim)
 
@@ -63,13 +63,13 @@ for (sig in c(.1, .5, 1, .01)) {
   #PlotStars(fSOM$FlowSOM, backgroundValues = as.factor(fSOM$metaclustering))
 
   # Version 1 # this is too good
-  #fSOM.clus = fSOM$meta[fSOM$FlowSOM$map$mapping[,1]]
+  fSOM.clus = fSOM$meta[fSOM$FlowSOM$map$mapping[,1]]
 
   ## Version 2  This is realistic
-  fSOM.clus = fSOM$map$mapping[, 1]
-  fSOM <- ConsensusClusterPlus::ConsensusClusterPlus(t(fSOM$map$codes), maxK=maxK, seed=42)
-  fSOM <- fSOM[[maxK]]$consensusClass
-  fSOM.clus = fSOM[fSOM.clus]
+  #fSOM.clus = fSOM$map$mapping[, 1]
+  #fSOM <- ConsensusClusterPlus::ConsensusClusterPlus(t(fSOM$map$codes), maxK=maxK, seed=42)
+  #fSOM <- fSOM[[maxK]]$consensusClass
+  #fSOM.clus = fSOM[fSOM.clus]
 
   ## Version 2.1 # this is too good
   #fSOM.clus = MetaClustering(fSOM$map$codes, "metaClustering_consensus", max=maxK)
