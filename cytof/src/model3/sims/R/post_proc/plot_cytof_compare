@@ -1,0 +1,34 @@
+#!/bin/bash
+
+### PARAMETERS FOR PARALLEL JOB ###
+i=0
+MAX_CORES=4
+
+### Rscript Params ###
+N=100
+NCORES=1
+B=2000
+BURN=1000
+USE_REPULSIVE="FALSE"
+
+### Environment Variables ###
+export OPENBLAS_NUM_THREADS=1
+
+### Simulation Study ###
+for n in $N; do
+  i=$((i+1)) 
+
+  # ADD BACKSLASH AT THE END!
+  outdir="../../out/sim_locked_beta_K20_N${N}/"
+
+  cmd="Rscript separate_pp_obs.R $outdir"
+  cmd="$cmd > ${outdir}/log_plots.txt"
+  sem -j $MAX_CORES $cmd
+  echo "Simulation $i: $outdir"
+done
+
+CURR_DIR = $PWD
+cd ../FlowSOM
+./gen_plots
+
+cd $CURR_DIR

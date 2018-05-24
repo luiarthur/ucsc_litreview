@@ -9,3 +9,6 @@ Rscript ksens.R
 
 echo "Generating separate figures for posterior predictive (Proj1)..."
 ./sep_pp_obs
+
+echo "Generating plots for cytof comparison (Proj1)..."
+./plot_cytof_compare
