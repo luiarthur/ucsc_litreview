@@ -6,9 +6,11 @@ getOpts = function() {
     make_option("--ncores", type='integer', default=1),
     make_option("--B", type='integer', default=2000),
     make_option("--burn", type='integer', default=1000),
+    make_option("--J", type='integer', default=32),
     make_option("--K_MCMC", type='integer', default=20),
     make_option("--K_TRUE", type='integer', default=10),
     make_option("--use_repulsive", type='logical', default=FALSE),
+    make_option("--repFAM_Test", type='logical', default=FALSE),
     make_option(c("--outdir", "-o"), type='character')
   )
 

@@ -18,6 +18,10 @@ ksenSimName="sim_locked_beta1_K20_N500_sensK"
 ksenOutdir="img/ksen/"
 mkdir -p $ksenOutdir
 
+repFamSimName="sim_rand_beta_K4_N500_repFam-"
+repFamOutdir="img/repFAM/"
+mkdir -p $repFamOutdir
+
 I="1 2 3"
 for i in $I; do
   #pdfPage ${imgPath}/${simName}/"Z_true_byW.pdf" $i
@@ -66,4 +70,8 @@ K="5 10 20"
 for k in $K; do
   cp ${simImgPath}/${ksenSimName}${k}/"YZ001.png" $ksenOutdir/"YZ001_K${k}.png"
 done
+
+
+### Repulsive FAM (repFAM) ###
+cp ${simImgPath}/${repFamSimName}"TRUE"/"YZ"*".png" $repFamOutdir
 

@@ -26,9 +26,11 @@ N_degree = getOrFail(opt$N, opt_parser)
 NCORES = getOrFail(opt$ncores, opt_parser)
 B = getOrFail(opt$B, opt_parser)
 BURN = getOrFail(opt$burn, opt_parser)
+J = getOrFail(opt$J, opt_parser)
 K_MCMC = getOrFail(opt$K_MCMC, opt_parser)
 K_TRUE = getOrFail(opt$K_TRUE, opt_parser)
 USE_REPULSIVE = getOrFail(opt$use_repulsive, opt_parser)
+repFAM_Test = getOrFail(opt$repFAM_Test, opt_parser)
 println("Use repulsive: ", USE_REPULSIVE)
 ### END OF GLOBALS ###
 
@@ -39,12 +41,20 @@ system(paste0('cp sim.R ', OUTDIR))
 fileDest = function(filename) paste0(OUTDIR, filename)
 
 dat_lim=c(-3,3)
-I=3; J=32; N=c(3,2,1)*N_degree; K=K_TRUE
+I=3; J=J; N=c(3,2,1)*N_degree; K=K_TRUE
+
+Z_repFAM = matrix(c(1,0,0,0,
+                    0,1,0,1,
+                    0,0,1,0,
+                    1,1,1,0,
+                    1,1,0,1), ncol=K_TRUE)
 
 dat = sim_dat(I=I, J=J, N=N, K=K, 
-              L0=3, L1=4, Z=genZ(J,K,.6),
-              sig2_0=matrix(runif(I*3, 0,.3), I, 3), sig2_1=matrix(runif(I*4,0,.3),I,4),
+              L0=3, L1=4, Z=if (repFAM_Test) Z_repFAM else genZ(J,K,.6),
+              sig2_0=matrix(runif(I*3, 0,.3), I, 3),
+              sig2_1=matrix(runif(I*4, 0,.3), I, 4),
               mus_0=c(-5,-2,-1), mus_1=c(1,2,4,5),
+              a_W=if(repFAM_Test) c(15,15,1,1) else 1:K, 
               miss_mech_params(c(-7, -3, -1), c(.1, .99, .001)))
 y = dat$y
 missing_prop = round(get_missing_prop(y),4)
