@@ -10,6 +10,8 @@ OUTDIR = ifelse(length(args) == 0, '../../out/cb_locked_beta1_K20/', args[1])
 OUTDIR = paste0(OUTDIR, '/')
 OUTDIR_NEW=OUTDIR
 y = NULL
+ZLIM=c(-5,5)
+COLOR = blueToRed(11)
 
 fileDest = function(filename) paste0(OUTDIR, filename)
 
@@ -132,7 +134,7 @@ dev.off()
 #            type='quartz')#, family=X11Fonts()$Arial)
 mult=1; png(fileDest('YZ%03d.png'), height=600*mult, width=500*mult, type='Xlib')
 for (i in 1:I) {
-  yZ_inspect(out, y, zlim=c(-3,3), i=i, thresh=.9, na.color='black',
+  yZ_inspect(out, y, zlim=ZLIM, i=i, thresh=.9, na.color='black', col=COLOR,
              cex.z.b=1.5, cex.z.lab=1.5, cex.z.l=1.5, cex.z.r=1.5,
              cex.y.ylab=1.5, cex.y.xaxs=1.4, cex.y.yaxs=1.4, cex.y.leg=1.5)
 }

@@ -16,14 +16,18 @@ reorder_lami = function(ord, lami, using_zero_index=TRUE) {
   lami_new
 }
 
+add.cut = function(clus) {
+  #' Add grid lines by cluster to a my.image image
+  #' @export
+  abline(h=cumsum(table(clus)) + .5, lwd=3, col='yellow')
+}
+
+
 yZ = function(yi, Zi, Wi, cell_types_i, zlim=c(-4,4),
               using_zero_index=TRUE, na.color='transparent',
               thresh=0.8, col=list(blueToRed(7), greys(10))[[1]],
               prop_lower_panel=.3, decimals_W=1,
-              fy=function(lami) {
-                abline(h=cumsum(table(lami))+.5, lwd=3, col='yellow', lty=1)
-                #axis(4, at=cumsum(table(lami))+.5, col=NA, col.ticks=1, cex.axis=.0001)
-              },
+              fy=add.cut,
               fZ=function(Z) abline(v=1:NCOL(Z)+.5, h=1:NROW(Z)+.5, col='grey'),
               cex.y.ylab=1,
               cex.y.yaxs=1,

@@ -123,12 +123,12 @@ prior$sig2_max = quantile(sig2_prior, .95)
 ### Missing Mechanism Prior ###
 
 # Missing Mechanism params
-mmp = miss_mech_params(y=c(-6, -2.5, -1.0), p=c(.1, .99, .01))
+mmp = miss_mech_params(y=c(-5, -2.5, -1.5), p=c(.1, .80, .01))
 
 prior$c0 = mmp['c0']
 prior$c1 = mmp['c1']
-prior$m_beta0 = mmp['b0']; prior$s2_beta0 = .001 
-prior$m_beta1 = mmp['b1']; prior$s2_beta1 = .001
+prior$m_beta0 = mmp['b0']; prior$s2_beta0 = 1 
+prior$m_beta1 = mmp['b1']; prior$s2_beta1 = .01
 prior$cs_beta0 = .1
 prior$cs_beta1 = .1
 
@@ -159,8 +159,8 @@ init$Z = compute_Z(H=init$H, v=init$v, G=prior$G)
 
 ### Fixed parameters ###
 locked = gen_default_locked(init)
-locked$beta_0 = TRUE # TODO: Can I make this random?
-locked$beta_1 = TRUE # TODO: Can I make this random?
+#locked$beta_0 = TRUE # TODO: Can I make this random?
+#locked$beta_1 = TRUE # TODO: Can I make this random?
 
 ### Fix nu?
 locked$nu =TRUE # TODO: make random?
@@ -375,7 +375,8 @@ beta_1 = t(sapply(out, function(o) o$beta_1))
 
 pdf(fileDest('miss_mech_posterior.pdf'))
 plot(0, 0, ylim=0:1, xlim=range(yy), type='n', ylab='Probability of missing',
-     bty='n', fg='grey', xlab='density', col='blue')
+     bty='n', fg='grey', xlab='density', col='blue', 
+     cex.lab=1.5, cex.axis=1.5)
 for (i in 1:I) {
   mm_post = sapply(1:B, function(b) 
                    prob_miss(yy, beta_0[b,i], beta_1[b,i], prior$c0, prior$c1))
