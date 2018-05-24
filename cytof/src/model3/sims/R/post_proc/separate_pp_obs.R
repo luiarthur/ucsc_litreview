@@ -91,8 +91,9 @@ apply(idx_some, 1, function(indices) {
   pz1 = paste0('posterior prob. of expression for y: ', 100*round(zjk_mean,4), '%')
 
   text(xmag * .1, y=h * 1.20, pz0, cex=1.3)
-  text(xmag * .1, y=h * (1.20+1.05)/2, pz1, cex=1.3)
-  text(xmag * .1, y=h * 1.05, pm, cex=1.3)
+  #text(xmag * .1, y=h * (1.20+1.05)/2, pz1, cex=1.3)
+  #text(xmag * .1, y=h * 1.05, pm, cex=1.3)
+  text(xmag * .1, y=h * 1.10, pm, cex=1.3)
   dev.off()
 })
 

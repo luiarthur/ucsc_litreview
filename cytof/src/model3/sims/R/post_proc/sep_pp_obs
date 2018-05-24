@@ -15,6 +15,12 @@ K="5 10 20"
 ### Environment Variables ###
 export OPENBLAS_NUM_THREADS=1
 
+### SIM ###
+outdir="../../out/sim_rand_beta_K20_N100/"
+cmd="Rscript separate_pp_obs.R $outdir"
+cmd="$cmd > ${outdir}/log_plots.txt"
+Rscript separate_pp_obs.R $outdir &
+
 ### Simulation Study ###
 for k in $K; do
   i=$((i+1)) 

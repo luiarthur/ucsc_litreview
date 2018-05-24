@@ -12,3 +12,7 @@ echo "Generating separate figures for posterior predictive (Proj1)..."
 
 echo "Generating plots for cytof comparison (Proj1)..."
 ./plot_cytof_compare
+
+echo "Generating plots for CB (Proj1)..."
+Rscript separate_pp_obs.R
+

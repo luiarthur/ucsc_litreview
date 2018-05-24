@@ -1,7 +1,8 @@
 #!/bin/bash
 
 simImgPath="../../../src/model3/sims/out/"
-simName="sim_locked_beta1_K20_N10000/"
+#simName="sim_locked_beta1_K20_N10000/"
+simName="sim_rand_beta_K20_N100/"
 outdir="img/sim/"
 mkdir -p $outdir
 
@@ -35,7 +36,7 @@ cp ${simImgPath}/${simName}/"pz0_missing_y.txt" $outdir
 
 #### CB ###
 cp ${simImgPath}/${cbSimName}/"YZ00"*".png" $cbOutdir
-cp ${simImgPath}/${cbSimName}/"Y00"*".png" $cbOutdir
+#cp ${simImgPath}/${cbSimName}/"Y00"*".png" $cbOutdir
 
 cp ${simImgPath}/${cbSimName}/"pp_obs.pdf" $cbOutdir
 cp ${simImgPath}/${cbSimName}/"y_hist.pdf" $cbOutdir
@@ -50,6 +51,8 @@ I="1 2 3"
 for i in $I; do
   cp ${simImgPath}/${fsSimName}/"YZ00${i}_FlowSOM_CB.png" $fsOutdir
 done
+### Timings ###
+cp ${simImgPath}/${fsSimName}/"timings_FlowSOM_vs_SIM.tex" $fsOutdir
 
 
 ### FlowSOM Breaks & FAM Wins %%%

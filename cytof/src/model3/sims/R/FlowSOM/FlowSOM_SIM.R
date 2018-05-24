@@ -68,7 +68,7 @@ fs.clus = as.numeric(fSOM.clus)
 #}
 
 mult=1
-png(OUT_FLOW %+% 'YZ%03d_FlowSOM_SIM.png', height=600*mult, width=500*mult, type='Xlib')
+png(OUT_FLOW %+% 'YZ%03d_FlowSOM_SIM.png', height=500*mult, width=500*mult, type='Xlib')
 #source("../../../cytof3/R/yZ.R")
 #source("../../../cytof3/R/myimage.R")
 for (i in 1:I) {
@@ -143,8 +143,14 @@ dev.off()
 
 
 # Timings: cytof3 (39h),  FlowSOM (13s)
-compare.results = cbind('F-score'=FM.all, 'Elapsed time'=c('13 seconds', '39 hours'))
-xtable(compare.results, dig=3)
+compare.results = cbind('F-score'=FM.all,
+                        'Elapsed time (seconds)'=c(tim[3], st[3]))
+
+sink(OUT_FLOW %+% 'timings_FlowSOM_vs_SIM.tex')
+xtab = xtable(compare.results, digits=c(0,3,0))
+print(xtab, floating=F)
+sink()
+
 
 
 ### Plot Comparison of Clusters ###

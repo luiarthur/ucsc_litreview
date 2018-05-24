@@ -54,15 +54,24 @@ print(runtime)
 fSOM.clus = fSOM$meta[fSOM$FlowSOM$map$mapping[,1]]
 
 mult=1
-png(OUT_FLOW %+% 'YZ%03d_FlowSOM_CB.png', height=600*mult, width=500*mult, type='Xlib')
+png(OUT_FLOW %+% 'YZ%03d_FlowSOM_CB.png', height=500*mult, width=500*mult,
+    type='Xlib')
 for (i in 1:I) {
   clus = as.numeric(fSOM.clus)[idx[i,1]:idx[i,2]]
   print(length(unique(clus))) # Number of clusters learned
-  est = est_ZW_from_clusters(y_tilde[[i]], clus, f=median)
-  yZ(yi=y[[i]], Zi=est$Z*1, Wi=est$W, cell_types_i=est$clus-1,
-     zlim=c(-3,3), na.color='black', thresh=.9, col=blueToRed(7),
-     cex.z.b=1.5, cex.z.lab=1.5, cex.z.l=1.5, cex.z.r=1.5,
-     cex.y.ylab=1.5, cex.y.xaxs=1.4, cex.y.yaxs=1.4, cex.y.leg=1.5)
+  #est = est_ZW_from_clusters(y_tilde[[i]], clus, f=median)
+  #yZ(yi=y[[i]], Zi=est$Z*1, Wi=est$W, cell_types_i=est$clus-1,
+  #   zlim=c(-3,3), na.color='black', thresh=.9, col=blueToRed(7),
+  #   cex.z.b=1.5, cex.z.lab=1.5, cex.z.l=1.5, cex.z.r=1.5,
+  #   cex.y.ylab=1.5, cex.y.xaxs=1.4, cex.y.yaxs=1.4, cex.y.leg=1.5)
+  clus = relabel_clusters(clus)
+  my.image(y[[i]][order(clus),], col=blueToRed(11), zlim=c(-5,5), addL=TRUE,
+           na.color='black', cex.y.leg=2, xlab='cell types',  ylab='cells',
+           cex.lab=1.5, cex.axis=1.5, xaxt='n',
+           f=function(z) {
+             add.cut(clus) 
+             axis(1, at=1:J, fg='grey', las=2, cex.axis=1.5)
+           })
 }
 dev.off()
 

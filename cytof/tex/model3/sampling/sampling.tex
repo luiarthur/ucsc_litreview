@@ -1007,10 +1007,10 @@ model and compare our model to some existing methods.
 %\subsubsection{Data Simulation}
 To simulate data, we assume the number of markers ($J$) to be 32, 
 the number of samples to be 3 $(I)$, and the number of cells in the sample to
-be $N=(30000, 20000, 10000)$.  We let the true number of latent cell types
+be $N=(300, 200, 100)$.  We let the true number of latent cell types
 $K^\true=10$.  We specified $\bZ^\true$ and $\bw^\true_i$, $i=1,2,3$ as
 follows; We first simulated $\bZ^\true$ by setting $\bZ^\true_{jk}=1$ with
-probability 0.5 for $j=1,...,J$ and $k=1,...,K$. If any column or row in
+probability 0.6 for $j=1,...,J$ and $k=1,...,K$. If any column or row in
 $\bZ^\true$ is respectively a column or row of only 0's, the entire matrix is
 re-sampled.
 % Simulating W
@@ -1022,10 +1022,10 @@ Figure \ref{fig:sim-Z} shows the transpose of $\bZ^\true$ and $\bw^\true_i$ for
 the samples. In each panel, the cell types ($\bZ^\true$) are sorted by
 $w_{ik}^\true$.  Three and four mixture components were used for non-expressed
 and expressed marker expression levels, respectively. That is, $L^{0, \true}=3$
-and $L^{1, \true}=4$. We set  $\mu^{\star, \true}_{0} = (-1, -3, -5)$ and
-$\mu^{\star, \true}_{1} = (1, 2.33, 3.67, 5)$. Values of $\sigma^{\star 2,
-\true}_{0i\ell}$ and $\sigma^{\star 2,\true}_{1i\ell}$ were fixed at $0.1$ for
-all $i$ and $\ell$.
+and $L^{1, \true}=4$. We set  $\mu^{\star, \true}_{0} = (-5, -2, -1)$ and
+$\mu^{\star, \true}_{1} = (1, 2, 4, 5)$. Values of $\sigma^{\star 2,
+\true}_{0i\ell}$ and $\sigma^{\star 2,\true}_{1i\ell}$ drawn 
+from a Uniform(0,~0.3) distribution for all $i$ and $\ell$.
 %
 We simulated $\bet_{0ij}^\true$ from a Dirichlet distribution with
 parameters being some permutation of $(1,...,L^0)$. Similarly, 
@@ -1129,7 +1129,17 @@ levels, low expression levels, and missing values, respectively.
 
 %\subsubsection{Results}
 To fit the proposed model, we fixed $(K=12, L^0=5,
-L^1=5)$. We used the mean of $y_{inj}$  having negative values to specify $c_0$ and let $c_0=-2.5$. \hh {\tt how about $c_1$?} \ech We fixed $\Gamma=\bI_J$, $J\times J$ identity matrix, and $\beta_{1i}$ \hh {\tt what value for $\beta_{1i}$?} \ech for simplification. \hh We specified the remaining fixed hypearparameters as follows; $a_\alpha$ $b_\alpha$, $\psi_0$, $\tau^2_0$, $\psi_1$, $\tau^2_1$, $a_\sigma$, $a_s$, $b_s$, $a_{\eta^0}$, $a_{\eta^1}$, $m_{\beta_0}$ and $s^2_{\beta_0}$. {\tt give specific numbers that you used.} \ech To run the MCMC simulation, we
+L^1=5)$. We used the mean of $y_{inj}$  having negative values to specify $c_0$
+and let $c_0=-2.5$ and $c_1=10.43$. We fixed $\Gamma=\bI_J$,
+$J\times J$ identity matrix for simplification. We specified the remaining fixed
+hyperparameters as follows:
+%
+$a_\alpha=3$ $b_\alpha=2$, $\psi_0=-2$, $\tau^2_0=0.09$, $\psi_1=2$,
+$\tau^2_1=0.09$, $a_\sigma=6$, $a_s=0.25$, $b_s=0.5$, $a_{\eta^0}=0.2$,
+$a_{\eta^1}=0.2$, $m_{\beta_0}=1.37$, $s^2_{\beta_0}=1$,
+$m_{\beta_1}=0.57$, and $s^2_{\beta_1}=0.01$.
+%
+To run the MCMC simulation, we
 initialized the parameters as follows. The missing values of $y_{inj}$ are
 initialized at $c_0$.  $\lambda_{in}$ is sampled uniformly from $\bc{1,...,K}$.
 $\gamma_{inj}$ is sampled uniformly from $\bc{1,...,\min(L^0,L^1)}$. $v_k$ is
@@ -1159,9 +1169,9 @@ in the plots of $\hat{\bZ}_i$. Compared to their truth in Figure~\ref{fig:sim-Z}
 $\hat{\bZ}_i$ and $\hat{\bw}_i$ are very close to $\bZ^\true$ and $\bw_i^\true$
 for all samples. Note that the phenotype labels do not match in the figures due
 to the fact that the model for $\bZ$ is invariant under relabelling of the
-phenotyps. For example, phenotype 1 in $\bZ^\true$ has $w^\true_{ik}=23.6\%$
-for sample 1.  That phenotype is shown as phenotype 8 in the very bottom of
-$\hat{\bZ}_i$ with $\hat{w}_{ik}=24\%$.
+phenotypes. For example, phenotype 3 in $\bZ^\true$ has $w^\true_{ik}=23.9\%$
+for sample 1.  That phenotype is shown as phenotype 16 in the very bottom of
+$\hat{\bZ}_i$ with $\hat{w}_{ik}=20.1\%$.
 %Phenotypes with small $w^\true_{ik}$ are not well captured in $\hat{\bZ}_i$.
 %For example, cell type 7 ($k=7$) with $w^\true_{1k}=4.5\%$ is not well
 %identified.  On the other hand, it is well captured for sample 2 since
@@ -1253,7 +1263,8 @@ expression patterns of $y$ well.
   {\small (c) Sample 3} &\\
   \end{tabular}
   \vspace{-0.05in}
-  \caption{\small[FlowSOM for Simulated Data] Heatmaps of $y_{inj}$ sorted by cluster label estimated by FlowSOM. {\tt remove the bottom plots and keep the heatmaps only} }
+  \caption{\small[FlowSOM for Simulated Data] Heatmaps of $y_{inj}$ sorted by
+  cluster label estimated by FlowSOM.}
   \label{fig:sim-FlowSOM-Z}
 \end{center}
 \end{figure}
@@ -1284,7 +1295,7 @@ But the true cell-type labels are not usually known in practice. In such cases,
 the F-score would not be a viable metric for assessing model-fit.  Table \ref{tab:fscores} shows the F-scores and the elapsed run-times for
 FlowSOM and our proposed FAM.  We see that the F-score for our model is 100\%,
 but the run-time is orders of magnitudes longer; while the FlowSOM model runs
-much quicker but is able to achieve a comparable F-score. This suggests much
+much quicker but achieves lower F-score of 0.837. This suggests much
 room for improvement in terms of computational efficiency in our method, which
 will be considered in future research.
 
@@ -1305,24 +1316,17 @@ will be considered in future research.
 %FAM. High F-scores and low elapsed times are desirable.}
 %\end{table}
 
-% latex table generated in R 3.4.4 by xtable 1.8-2 package
-% Wed May 23 21:21:58 2018
-\begin{table}[ht]
+\begin{table}[H]
 \centering
-\begin{tabular}{rll}
-  \hline
- & F-score & Elapsed time \\
-  \hline
-FlowSOM & 0.8373 & 13 seconds \\
-  FAM & 1 & 39 hours \\
-   \hline
-\end{tabular}
+\input{img/FlowSOM/timings_FlowSOM_vs_SIM.tex}
 \label{tab:fscores}
 \caption{Comparison of F-score and elapsed time for FlowSOM and our proposed
 FAM. High F-scores and low elapsed times are desirable.}
 \end{table}
 
-{\tt this make our method look really bad. it looks like there is no advantage of using our method. can you explain why? or cook some other small simulation study where our model works better?  }
+%{\tt this make our method look really bad. it looks like there is no advantage
+%of using our method. can you explain why? or cook some other small simulation
+%study where our model works better?  }
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%
@@ -1345,12 +1349,20 @@ FAM. High F-scores and low elapsed times are desirable.}
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
 \paragraph*{Sensitivity to Specified $K$}
-The value of $K$ determines the dimensions of the latent feature matrix $\bZ$ and cell phenotype abundance vectors $\bw_i$.  
-To assess the FAMs sensitivity to the specification of $K$, we kept most of the simulation set-up described earlier, except the number of cells, $N=(1500, 600, 300)$. We fit the proposed model with different specifications of $K$, $K=5, 10, \text{ and } 20$. Recall that $K^\true=10$ is used to simulate data.
-Figure \ref{fig:ksen-post-Z} summarizes the posterior estimates of $\bZ_i$
-and $y_{inj}$ rearranged by their estimated phenotypes for sample 1 ($i=1$) with the three values of $K$. It is clear from panel (a) that when $K=3$ (less than $K^\true$), the model compromises the true cell population structure and cells of different true phenotypes are forced to have those phenoytpe estimates. In particular, cells in estimated phenotype 5 show large variability in $y_{inj}$.  On the other hand, 
-from panels (b) and (c) when $K=20 \geq K^\true$, the predominant phenotypes
-are well recovered. 
+The value of $K$ determines the dimensions of the latent feature matrix $\bZ$
+and cell phenotype abundance vectors $\bw_i$.  To assess the FAMs sensitivity
+to the specification of $K$, we kept most of the simulation set-up described
+earlier, except the number of cells, $N=(1500, 600, 300)$. We fit the proposed
+model with different specifications of $K$, $K=5, 10, \text{ and } 20$. Recall
+that $K^\true=10$ is used to simulate data.  Figure \ref{fig:ksen-post-Z}
+summarizes the posterior estimates of $\bZ_i$ and $y_{inj}$ rearranged by their
+estimated phenotypes for sample 1 ($i=1$) with the three values of $K$. It is
+clear from panel (a) that when $K=3$ (less than $K^\true$), the model
+compromises the true cell population structure and cells of different true
+phenotypes are forced to have those phenotype estimates. In particular, cells
+in estimated phenotype 5 show large variability in $y_{inj}$.  On the other
+hand, from panels (b) and (c) when $K=20 \geq K^\true$, the predominant
+phenotypes are well recovered. 
 % F-scores:
 %The F-scores were computed for each of the models using the posterior estimate
 %for $\lambda$ as 0.607, 0.947, and 0.932 respectively for $K=5$, $K=10$, and
@@ -1482,14 +1494,33 @@ For the case in panel (b), the fit is deteriorated. Some bigger discrepancy betw
 We next check the model fit for missing data.  We compute $\hat{q}_{ij}= \sum_{n=1}^{N_i}\mathbb{I}(m_{inj}=1)\hat{\Prob}(z_{j \lambda_{in}}=0 \mid \by, {\bf m})/\sum_{n=1}^{N_i}\mathbb{I}  (m_{inj}=1)$
 for $(i,j)$, averaged posterior probability that a cell
 with missing value for marker $j$ has a phenotype for which the marker is not
-expressed in sample $i$.  That is, we examine how often a maker with expression level not observed was estimated as no expression. Values close to 1 for $\hat{q}$, implying that a maker is not expressed with high probability if its expression level is not observed, comply with our subject information.  For the four cases in the figure, $\hat{q}$ are 99\%, 100\%, 41\% and 100\%, respectively. While $\hat{q}$ is close to 1 for the three cases in (a), (b) and (d), $\hat{q}$ is small for the case of $i=2$ and $j=22$ in (c), possibly because many of observed values are around zero and the missing proportion is not large. Figure \ref{fig:hist-pz0-missy}(a) shows the posterior inference on the probability $p_{inj}$ of missing in \eqref{eq:missing} for the samples. \hh {\tt You made some figures before for $p_{imj}$.  Can you make a similar figure for the CB data analysis and include? Temporarily I included your old figure.  I think that it should have three red curves, one for each sample.}\ech   Figure \ref{fig:hist-pz0-missy}(b) illustrates a histogram of $\hat{q}$ for all $(i,j)$. The histogram is skewed such that there is a spike at 1, and
-most of the time our model learns that a marker is not expressed for missing
-observations.  %This complies with the subject knowledge provided by biologists. 
+expressed in sample $i$.  That is, we examine how often a maker with expression
+level not observed was estimated as no expression. Values close to 1 for
+$\hat{q}$, implying that a maker is not expressed with high probability if its
+expression level is not observed, comply with our subject information.  For the
+four cases in the figure, $\hat{q}$ are 99\%, 100\%, 41\% and 100\%,
+respectively. While $\hat{q}$ is close to 1 for the three cases in (a), (b) and
+(d), $\hat{q}$ is small for the case of $i=2$ and $j=22$ in (c), possibly
+because many of observed values are around zero and the missing proportion is
+not large. Figure \ref{fig:hist-pz0-missy}(a) shows the posterior inference on
+the probability $p_{inj}$ of missing in \eqref{eq:missing} for the samples.
+%
+%\hh {\tt You made some figures before for $p_{imj}$.  Can you make a similar
+%figure for the CB data analysis and include? Temporarily I included your old
+%figure.  I think that it should have three red curves, one for each
+%sample.}\ech
+% FIXME: I have this, but beta1 was fixed. I can run it again.
+%
+Figure \ref{fig:hist-pz0-missy}(b) illustrates a histogram of $\hat{q}$ for all
+$(i,j)$. The histogram is skewed such that there is a spike at 1, and most of
+the time our model learns that a marker is not expressed for missing
+observations.
+%This complies with the subject knowledge provided by biologists. 
 
 {\tt 
 \begin{itemize}
-\item check if $q$ is indexed by $i, j$.  I think it is.  if not, correct.  
-\item Remove ``posterior prob. of expression for y'' from the figure.
+%\item check if $q$ is indexed by $i, j$.  I think it is.  if not, correct.  
+%\item Remove ``posterior prob. of expression for y'' from the figure.
 \item No results from Flowsom??
 \end{itemize}
 }
@@ -1537,7 +1568,25 @@ observations.  %This complies with the subject knowledge provided by biologists.
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%%
 
-For comparison, we fit FlowSOM for the data. \hh Since FlowSOM does not account for different samples and missing values, we combined all $y_{inj}$ as in a sample and  set the missing values to be the minimum value of observed $y_{inj}$, similar to the simulation data analysis in \S~\ref{sec:CB-sim}.   {\tt revise to explain what you did} \ech  Cell clustering results under FlowSOM are summarized in Figure~\ref{fig:fs-post-Z}. \hh {\tt Like we discussed, remove the bottom plots and leave the heatmaps only}  \ech  FlowSOM identified {\tt three ??} cell clusters. The proportions of cells assigned to the clusters are (0.522, 0.47, ???), (0.565, 0.218, 0.192) and (0.579, 0.247, 0.162) for the three samples, respectively.  {\tt they don't add up to 1.  revise it accordingly.}  Heterogeneity between cells in an estimated cluster under FlowSOM is greater than that within an inferred cell phenotype under the proposed model in Figure~\ref{fig:cb-post-Z}.  In particular, in Figure~\ref{fig:cb-post-Z}, phenotype 20 has a very distinct expression pattern compared to the other phenotypes and its abundance estimates are $\hat{w}_{ik}=$ 15.1\%, 6.1\% and 7.6\% in the samples. On the other hand, those cells do not form a separate cell cluster under FlowSOM.   
+For comparison, we fit FlowSOM for the data. \hh Since FlowSOM does not account
+for different samples and missing values, we combined all $y_{inj}$ as in a
+sample and  set the missing values to be the minimum value of observed
+$y_{inj}$, similar to the simulation data analysis in \S~\ref{sec:CB-sim}.
+%
+{\tt revise to explain what you did} \ech
+%
+Cell clustering results under FlowSOM are summarized in
+Figure~\ref{fig:fs-post-Z}.  FlowSOM identified {\tt three ??} cell clusters.
+The proportions of cells assigned to the clusters are (0.522, 0.47, ???),
+(0.565, 0.218, 0.192) and (0.579, 0.247, 0.162) for the three samples,
+respectively.  {\tt they don't add up to 1.  revise it accordingly.}
+Heterogeneity between cells in an estimated cluster under FlowSOM is greater
+than that within an inferred cell phenotype under the proposed model in
+Figure~\ref{fig:cb-post-Z}.  In particular, in Figure~\ref{fig:cb-post-Z},
+phenotype 20 has a very distinct expression pattern compared to the other
+phenotypes and its abundance estimates are $\hat{w}_{ik}=$ 15.1\%, 6.1\% and
+7.6\% in the samples. On the other hand, those cells do not form a separate
+cell cluster under FlowSOM.   
 
 
 %
