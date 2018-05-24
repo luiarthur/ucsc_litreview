@@ -112,14 +112,13 @@ prior$nu_b = 1.5
 
 #prior$a_sig=3; prior$a_s=.04; prior$b_s=2
 # sig2 ~ IG(mean=.1, sd=.01)
-sig2_ab = invgamma_params(m=.2, sig=.01)
+sig2_ab = invgamma_params(m=.1, sig=.05)
 prior$a_sig=sig2_ab[1]
 s_ab = gamma_params(m=sig2_ab[2], v=1)
 prior$a_s=s_ab[1]; prior$b_s=s_ab[2]
-#prior$sig2_max = Inf # .8
-
 sig2_prior = 1 / rgamma(1000, prior$a_sig, rgamma(1000, prior$a_s, prior$b_s))
 #hist(sig2_prior)
+prior$sig2_max = quantile(sig2_prior, .95)
 
 ### Missing Mechanism Prior ###
 
@@ -150,8 +149,8 @@ set.seed(1)
 init = gen_default_init(prior)
 init$mus_0 = seq(-6,-.5, l=prior$L0)
 init$mus_1 = seq(.5, 6,  l=prior$L1)
-init$sig2_0 = matrix(.1, prior$I, prior$L0) # TODO: Did this work?
-init$sig2_1 = matrix(.1, prior$I, prior$L1) # TODO: Did this work?
+init$sig2_0 = matrix(.01, prior$I, prior$L0) # TODO: Did this work?
+init$sig2_1 = matrix(.01, prior$I, prior$L1) # TODO: Did this work?
 #init$Z = matrix(1, prior$J, prior$K)
 #init$H = matrix(-2, prior$J, prior$K)
 init$H = matrix(rnorm(prior$J*prior$K, 0, 2), prior$J, prior$K)
@@ -170,8 +169,8 @@ init$nu = 1.0   # TODO: make random?
 #locked$s = TRUE
 #locked$lam =TRUE
 #locked$Z =TRUE
-locked$sig2_0 = TRUE # TODO: Can I make this random?
-locked$sig2_1 = TRUE # TODO: Can I make this random?
+#locked$sig2_0 = TRUE # TODO: Can I make this random?
+#locked$sig2_1 = TRUE # TODO: Can I make this random?
 
 #locked$mus_0 = TRUE  # TODO: Can I make this random?
 #locked$mus_1 = TRUE  # TODO: Can I make this random?

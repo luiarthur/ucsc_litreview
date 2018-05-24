@@ -38,7 +38,7 @@ void update_sig2_zil(State &state, const Data &data, const Prior &prior, const S
   //        Is there a better solution to avoid large sig2?
   if (new_sig2_zil > prior.sig2_max) {
     //new_sig2_zil = prior.sig2_max + R::runif(0, .01);
-    new_sig2_zil = mcmc::rinvgamma(prior.a_sig, state.s[i]);
+    new_sig2_zil = mcmc::rinvgamma(prior.a_sig, state.s(i));
   }
 
   // This is the non-hacky stuff
