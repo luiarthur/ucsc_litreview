@@ -13,7 +13,7 @@ set.seed(3)
 OUT_SIM  = '../../out/'
 OUT_FLOW = OUT_SIM %+% 'FlowSOM/'
 
-cytof3.results = OUT_SIM %+% '/sim_locked_beta1_K20_N10000/checkpoint.rda'
+cytof3.results = OUT_SIM %+% '/sim_locked_beta_K20_N100/checkpoint.rda'
 load(cytof3.results)
 
 ### Indices for each sample ###
@@ -116,12 +116,14 @@ ps = prcomp(Y_tilde)$sd
 pY = prcomp(Y_tilde)$x[,1:2]
 fs.c = relabel_clusters(fs.clus)
 cy.c = relabel_clusters(unlist(cytof3.clus.ls))
-#par(mfrow=c(2,2))
-#plot(pY, main="FlowSOM Clusters", col=rgba(fs.c, .1), pch=16) # appears to be 8 clusters
-#plot(pY, main="Cytof3 Clusters", col=rgba(cy.c, .1), pch=16) # appears to be 8 clusters
-#plot(pY, main="Data: First two PC", pch=16, col=rgba('steelblue',.1)) # appears to be 8 clusters
-#plot(pY, main="Differences", col=ifelse(abs(fs.c-cy.c)==0, 'transparent', 'red'), pch=16)
-#par(mfrow=c(1,1))
+pdf(OUT_FLOW %+% 'compareClus_FlowSOM_pc2.pdf')
+par(mfrow=c(2,2))
+plot(pY, main="FlowSOM Clusters", col=rgba(fs.c, .5), pch=16) # appears to be 8 clusters
+plot(pY, main="FAM Clusters", col=rgba(cy.c, .5), pch=16) # appears to be 8 clusters
+plot(pY, main="Data: First two PC", pch=16, col=rgba('steelblue',.5)) # appears to be 8 clusters
+plot(pY, main="Differences", col=ifelse(abs(fs.c-cy.c)==0, 'transparent', 'red'), pch=16)
+par(mfrow=c(1,1))
+dev.off()
 
 ### FMeasure (F1 score) ###
 # 2 / (1/precision + 1/recall)
@@ -137,13 +139,6 @@ xtable(compare.results, dig=3)
 ### Plot Comparison of Clusters ###
 cy.c.cs = cumsum(table(cy.c) / sum(table(cy.c)))
 fs.c.cs = cumsum(table(fs.c) / sum(table(fs.c)))
-
-#par(mfrow=c(1,2), mar=c(5,4,4,0)+.1)
-## appears to be 3 clusters
-#plot(pY$x[,c(1,2)], col=rgba(fs.c,.3), pch=16, main='FlowSOM')
-#par(mar=c(5,2,4,1)+.1)
-#plot(pY$x[,c(1,2)], col=rgba(cy.c,.3), pch=16, main='FAM', yaxt='n', ylab='')
-#par(mfrow=c(1,1), mar=c(5,4,4,1)+.1)
 
 ### Plot Cumulative Proportion by Clusters ###
 pdf(OUT_FLOW %+% 'compareClus_FlowSOM.pdf')

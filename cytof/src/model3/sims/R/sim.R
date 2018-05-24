@@ -43,6 +43,7 @@ I=3; J=32; N=c(3,2,1)*N_degree; K=K_TRUE
 
 dat = sim_dat(I=I, J=J, N=N, K=K, 
               L0=3, L1=4, Z=genZ(J,K,.6),
+              sig2_0=matrix(runif(I*3, 0,.3), I, 3), sig2_1=matrix(runif(I*4,0,.3),I,4),
               mus_0=c(-5,-2,-1), mus_1=c(1,2,4,5),
               miss_mech_params(c(-7, -3, -1), c(.1, .99, .001)))
 y = dat$y
@@ -149,8 +150,8 @@ set.seed(1)
 init = gen_default_init(prior)
 init$mus_0 = seq(-6,-.5, l=prior$L0)
 init$mus_1 = seq(.5, 6,  l=prior$L1)
-init$sig2_0 = matrix(.5, prior$I, prior$L0) # TODO: Did this work?
-init$sig2_1 = matrix(.5, prior$I, prior$L1) # TODO: Did this work?
+init$sig2_0 = matrix(.1, prior$I, prior$L0) # TODO: Did this work?
+init$sig2_1 = matrix(.1, prior$I, prior$L1) # TODO: Did this work?
 #init$Z = matrix(1, prior$J, prior$K)
 #init$H = matrix(-2, prior$J, prior$K)
 init$H = matrix(rnorm(prior$J*prior$K, 0, 2), prior$J, prior$K)
@@ -169,8 +170,8 @@ init$nu = 1.0   # TODO: make random?
 #locked$s = TRUE
 #locked$lam =TRUE
 #locked$Z =TRUE
-#locked$sig2_0 = TRUE # TODO: Can I make this random?
-#locked$sig2_1 = TRUE # TODO: Can I make this random?
+locked$sig2_0 = TRUE # TODO: Can I make this random?
+locked$sig2_1 = TRUE # TODO: Can I make this random?
 
 #locked$mus_0 = TRUE  # TODO: Can I make this random?
 #locked$mus_1 = TRUE  # TODO: Can I make this random?
@@ -415,7 +416,7 @@ par(mfrow=c(4,2))
 for (i in 1:prior$I) for (j in 1:prior$J) {
   zjk_mean = compute_zjk_mean(out, i, j)
   plot_dat(out[[B]]$missing_y_mean, i, j, xlim=c(-8,8), lwd=1, col='red',
-           main=paste0('i: ', i,', j: ', j, ' (Z_ij mean: ', zjk_mean, ')'))
+           main=paste0('i: ', i,', j: ', j, ' (Z_ij mean: ', round(zjk_mean,4), ')'))
 
   lines(density(out[[B]]$missing_y[[i]][,j]), col='grey')
          
