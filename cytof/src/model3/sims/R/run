@@ -19,7 +19,7 @@ for n in $N; do
   i=$((i+1)) 
 
   # ADD BACKSLASH AT THE END!
-  outdir="../out/sim_locked_beta_K20_N${n}/"
+  outdir="../out/sim_rand_beta_K20_N${n}/"
 
   mkdir -p $outdir
   cmd="Rscript sim.R --N=$n --ncores=$NCORES --B=$B --burn=$BURN -o $outdir"
