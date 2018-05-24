@@ -1715,33 +1715,34 @@ may not be desirable in many applications.  The concept of repulsion is
 introduced to penalize creating similar features, resulting in a more
 parsimonious representation of the underlying structures.  The property of
 inducing parsimony can be more critical for analyzing heterogeneous samples
-collected from different backgrounds, for example, a joint analysis of cord blood
-samples and samples collected from healthy subjects.  Different approaches for
-repulsive models have been developed mostly in the context of mixture models
-\citep{petralia2012repulsive, quinlan2017parsimonious, xie2017bayesian,
-quinlan2017density}.  Independent priors for component specific parameters in a
-mixture are commonly assumed. For example, in a Dirichlet process mixture model,
-the atoms are iid draws from the baseline distribution and mixture weights are
-constructed through stick-breaking. The independence assumption can produce
-redundant mixture components located close together, resulting in over-fitting.
-To separate mixture components, the repulsive models include a repulsion
-function and assume a joint model for all component specific parameters.  The
-models smoothly push the components apart based on pairwise distances through
-some repulsion parameters, resulting in well separated clusters.
-\cite{xu2016bayesian} innovatively used the detrimental point process (DPP) for
-repulsive mixture models and feature allocation model.  We take a different approach to create
-repulsive features by exploiting
-repulsive mixture model developed in \cite{quinlan2017density}.  The rep-FAM explicitly incorporates a model for the
-repulsion that penalizes the inclusion of similar features, while DDP uses the determinant of a matrix as a repulsiveness metric. Properties of the
-proposed rep-FAM are explored through simulation studies and compared to the
-IBP. In addition, the model is further extended to let samples possess a
-subset of cell phenotypes. In our applications, some cell phenotypes can only
-be present in cord blood samples or healthy-subject samples, while some cell
-types are shared by both.  By letting abundances exactly be zero for some
-phenotypes, different sets of phenotypes can be used to describe samples.  The
-remainder of this section will outline the proposed rep-FAM in
-\S~\ref{sec:rep-model} and present simulation studies to compare the rep-FAM
-and to the IBP in \S~\ref{sec:rep-sim}.
+collected from different backgrounds, for example, a joint analysis of cord
+blood samples and samples collected from healthy subjects.  Different
+approaches for repulsive models have been developed mostly in the context of
+mixture models \citep{petralia2012repulsive, quinlan2017parsimonious,
+xie2017bayesian, quinlan2017density}.  Independent priors for component
+specific parameters in a mixture are commonly assumed. For example, in a
+Dirichlet process mixture model, the atoms are iid draws from the baseline
+distribution and mixture weights are constructed through stick-breaking. The
+independence assumption can produce redundant mixture components located close
+together, resulting in over-fitting.  To separate mixture components, the
+repulsive models include a repulsion function and assume a joint model for all
+component specific parameters.  The models smoothly push the components apart
+based on pairwise distances through some repulsion parameters, resulting in
+well separated clusters.  \cite{xu2016bayesian} innovatively used the
+detrimental point process (DPP) for repulsive mixture models and feature
+allocation model.  We take a different approach to create repulsive features by
+exploiting repulsive mixture model developed in \cite{quinlan2017density}.  The
+rep-FAM explicitly incorporates a model for the repulsion that penalizes the
+inclusion of similar features, while DDP uses the determinant of a matrix as a
+repulsiveness metric. Properties of the proposed rep-FAM are explored through
+simulation studies and compared to the IBP. In addition, the model is further
+extended to let samples possess a subset of cell phenotypes. In our
+applications, some cell phenotypes can only be present in cord blood samples or
+healthy-subject samples, while some cell types are shared by both.  By letting
+abundances exactly be zero for some phenotypes, different sets of phenotypes
+can be used to describe samples.  The remainder of this section will outline
+the proposed rep-FAM in \S~\ref{sec:rep-model} and present simulation studies
+to compare the rep-FAM and to the IBP in \S~\ref{sec:rep-sim}.
 
 
 % TODO: 
@@ -1831,8 +1832,64 @@ $\bZ$ in the IBP model includes repeated columns, while none of those in the
 rep-FAM model is repeated columns. 
 
 % TODO: HELP!
-A more detailed simulation study will be provided in the future.
+TODO:
 
+F-score for rep-FAM: \input{img/repFAM/fscore-rep-FAM.tex}.
+F-score for FAM: \input{img/repFAM/fscore-FAM.tex}.
+%repFAM
+%%%%%%%%%%%%%%%%%%%%%%%%
+%\begin{figure}%[th!]
+\begin{figure}[H]
+  \begin{center}
+  \begin{tabular}{cc}
+  \includegraphics[scale=.4]{img/repFAM/TRUE/YZ001.png}&
+  \includegraphics[scale=.4]{img/repFAM/TRUE/YZ002.png}\\
+  {\small (a) Sample 1} & {\small(b) Sample 2} \\
+  \includegraphics[scale=.4]{img/repFAM/TRUE/YZ003.png}&\\
+  {\small (c) Sample 3} & \\
+  \end{tabular}
+  \end{center}
+  \vspace{-0.05in}
+  \caption{\small[Rep-FAM Simulation]  Heatmaps of $y$ for simulated data.
+    Cells and markers are in rows and columns, respectively. Each column
+    contains the expression levels of a marker for all cells in the sample.
+    High expression levels are red, low expression levels are blue, missing
+    values are black.  Cells are rearranged by the corresponding posterior
+    estimate of their phenotype indicator, $\hat{\lambda}_{in}$.  Yellow
+    horizontal lines separate cells by different phenotypes.  At the bottom of
+    each panel, the transpose of $\hat{\Z}_i$ and $\hat{\bw}_i$ are provided
+    for each sample.  We include phenotypes having largest $\hat{w}_{ik}$ to
+    explain at least 90\% of the cells in a sample.}
+\label{fig:repFAM-TRUE-post-Z}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+%\begin{figure}%[th!]
+\begin{figure}[H]
+  \begin{center}
+  \begin{tabular}{cc}
+  \includegraphics[scale=.4]{img/repFAM/FALSE/YZ001.png}&
+  \includegraphics[scale=.4]{img/repFAM/FALSE/YZ002.png}\\
+  {\small (a) Sample 1} & {\small(b) Sample 2} \\
+  \includegraphics[scale=.4]{img/repFAM/FALSE/YZ003.png}&\\
+  {\small (c) Sample 3} & \\
+  \end{tabular}
+  \end{center}
+  \vspace{-0.05in}
+  \caption{\small[Rep-FAM Simulation (FAM)]  Heatmaps of $y$ for simulated data.
+    Cells and markers are in rows and columns, respectively. Each column
+    contains the expression levels of a marker for all cells in the sample.
+    High expression levels are red, low expression levels are blue, missing
+    values are black.  Cells are rearranged by the corresponding posterior
+    estimate of their phenotype indicator, $\hat{\lambda}_{in}$.  Yellow
+    horizontal lines separate cells by different phenotypes.  At the bottom of
+    each panel, the transpose of $\hat{\Z}_i$ and $\hat{\bw}_i$ are provided
+    for each sample.  We include phenotypes having largest $\hat{w}_{ik}$ to
+    explain at least 90\% of the cells in a sample.}
+\label{fig:repFAM-FALSE-post-Z}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%
 
 \section{Project 3: Feature Allocation Model with Regression for Abundances of
 Features}\label{sec:proj3}
@@ -1902,6 +1959,7 @@ Based on the projects listed above, we propose the following timeline.  {\tt inc
     \begin{tabular}{{| l | l |}}
     \hline Project & Academic Quarter \\
     \hline
+    Project 1  &   Fall 17 - Spring 18  \\
     Project 2  &   Fall 18 - Winter 19  \\
     Project 3  & Winter 19 - Spring 19  \\
     Thesis     & Spring 19 -   Fall 19  \\

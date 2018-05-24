@@ -18,9 +18,10 @@ ksenSimName="sim_locked_beta1_K20_N500_sensK"
 ksenOutdir="img/ksen/"
 mkdir -p $ksenOutdir
 
-repFamSimName="sim_rand_beta_K4_N500_repFam-"
+repFamSimName="sim_rand_beta_K10_N100_repFam-"
 repFamOutdir="img/repFAM/"
-mkdir -p $repFamOutdir
+mkdir -p $repFamOutdir/TRUE/
+mkdir -p $repFamOutdir/FALSE/
 
 I="1 2 3"
 for i in $I; do
@@ -73,5 +74,7 @@ done
 
 
 ### Repulsive FAM (repFAM) ###
-cp ${simImgPath}/${repFamSimName}"TRUE"/"YZ"*".png" $repFamOutdir
+cp ${simImgPath}/${repFamSimName}"TRUE"/"YZ"*".png" $repFamOutdir/TRUE
+cp ${simImgPath}/${repFamSimName}"FALSE"/"YZ"*".png" $repFamOutdir/FALSE
+cp ${simImgPath}/${repFamSimName}"TRUE"/*".tex" $repFamOutdir
 
