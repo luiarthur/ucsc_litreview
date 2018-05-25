@@ -169,32 +169,33 @@
 \begin{abstract}
 \noindent
 Bayesian feature allocation models (FAMs) embedded with clustering capabilities
-are developed to analyze mass cytometry data, with a primary aim of
-characterizing underlying cell repertoire structures.   Cell repertoires in
-samples are heterogeneous. Each repertoire consists of a collection of cells
-possessing different phenotypes that can be characterized by differences in
-expression levels of cell surface markers.  In particular, mass cytometry data
-collected to study the clinical efficacy of natural killer (NK) cells as
-immunotherapeutic agents against leukemia are considered. NK cells play a
-critical role in cancer immune surveillance and are the first line of defense
-against viruses and transformed tumor cells.  The data includes expression
-levels of 32 surface markers on each of thousands of cells from multiple
-samples. NK cell repertoires may affect both NK cell function and immune
-surveillance.  A key conceptual shift compared with existing approaches is to
-explicitly characterize latent cell phenotypes through a FAM.  The models
-simultaneously (1) characterize NK cell phenotypes based on expression /
-non-expression of surface markers, (2) estimate compositions of the samples
-based on the identified phenotypes, and (3) infer associations between
-subject-covariates and the composition of the identified phenotypes in the
-samples.  The conventional Indian buffet process (IBP), one of the most popular
-FAMs, is first utilized to model cell phenotypes. Non-ignorable missing data
-that is present due to technical artifacts in mass cytometry are accounted for
-by using an informed prior missing mechanism. The repulsive FAM (rep-FAM) is
-next proposed.  In contrast with the IBP, the rep-FAM produces a parsimonious
-representation of phenotypes by discouraging the creation of redundant
-phenotypes, and can thus improve inference on phenotypes.  Further extensions
-to incorporate subject-based covariates are discussed to provide inferences on
-phenotypes potentially associated with positive clinical outcomes.  
+are developed to analyze mass cytometry data, so as to characterize underlying
+cell repertoire structures. Cell repertoires in samples are heterogeneous. Each
+repertoire consists of a collection of cells possessing different phenotypes
+that can be characterized by differences in expression levels of cell surface
+markers.  In particular, mass cytometry data collected to study the clinical
+efficacy of natural killer (NK) cells as immunotherapeutic agents against
+leukemia are considered. NK cells play a critical role in cancer immune
+surveillance and are the first line of defense against viruses and transformed
+tumor cells.  The data of interest includes expression levels of 32 surface
+markers on each of thousands of cells from multiple samples. NK cell
+repertoires may affect both NK cell function and immune surveillance. We 
+present a key conceptual shift from existing approaches by explicitly
+characterizing latent cell phenotypes through a FAM. The models simultaneously
+(1) characterize NK cell phenotypes based on expression / non-expression of
+surface markers, (2) estimate compositions of the samples based on the
+identified phenotypes, and (3) infer associations between subject-covariates
+and the composition of the identified phenotypes in the samples.  The
+conventional Indian buffet process (IBP), one of the most popular FAMs, is
+first utilized to model cell phenotypes.  Non-ignorable missing data that is
+present due to technical artifacts in mass cytometry instruments are accounted
+for by using an informed prior missing mechanism. The repulsive FAM (rep-FAM)
+is next proposed.  In contrast to the IBP, the rep-FAM produces a
+parsimonious representation of the latent phenotypes by discouraging the
+creation of redundant phenotypes, and can thus improve inference on phenotypes.
+Further extensions to incorporate subject based covariates are discussed to
+provide inferences on phenotypes potentially associated with positive clinical
+outcomes.
 
 %\noindent
 %{\em Keywords:} ~  Count data, Laplace prior, Metagenomics, Microbiome,
@@ -1299,7 +1300,7 @@ the F-score would not be a viable metric for assessing model-fit.  Table
 \ref{tab:fscores} shows the F-scores and the elapsed run-times for FlowSOM and
 our proposed FAM.  We see that the F-score for our model is 1.00, but the
 run-time is orders of magnitudes longer; while the FlowSOM model runs much
-quicker but achieves lower F-score of 0.837. This suggests much room for
+quicker but attains a lower F-score of 0.837. This suggests much room for
 improvement in terms of computational efficiency in our method, which will be
 considered in future research.
 
@@ -1328,14 +1329,14 @@ considered in future research.
 FAM. High F-scores and low elapsed times are desirable.}
 \end{table}
 
-In some simulations, FlowSOM and FAM may produce the same clusters, and hence,
-yield the same F-score. Notably, this is true when the generated clusters in
-the simulated data are equidistant. This reveals a fundamental difference in
-our proposed FAM -- FAM directly models the latent phenotypes, whereas FlowSOM
-clusters observations based on some distance metric. Therefore, as illustrated,
-our proposed FAM may perform better at discovering latent phenotypes in data
-that comprises highly irregularly spaced clusters of cells at a computational
-cost.
+In some of our exploratory simulations, FlowSOM and FAM produced the same
+clusters, and hence, yield the same F-score. Notably, this is true when the
+generated clusters in the simulated data are equidistant. This reveals a
+fundamental difference in our proposed FAM -- FAM directly models the latent
+phenotypes, whereas FlowSOM clusters observations based on some distance
+metric. Therefore, as illustrated, our proposed FAM may perform better at
+discovering latent phenotypes in data that comprises irregularly spaced
+clusters of cells at a computational cost.
 
 
 %{\tt this make our method look really bad. it looks like there is no advantage
@@ -1346,11 +1347,12 @@ cost.
 \paragraph*{Sensitivity to Specified $K$}
 The value of $K$ determines the dimensions of the latent feature matrix $\bZ$
 and cell phenotype abundance vectors $\bw_i$.  To assess the FAMs sensitivity
-to the specification of $K$, we kept most of the simulation set-up described
-earlier, except the number of cells, $N=(1500, 600, 300)$. We fit the proposed
-model with different specifications of $K$, $K=5, 10, \text{ and } 20$. Recall
-that $K^\true=10$ is used to simulate data.  Figure \ref{fig:ksen-post-Z}
-summarizes the posterior estimates of $\bZ_i$ and $y_{inj}$ rearranged by their
+to the specification of $K$, we performed a simulation study keeping most of
+the simulation set-up described previously, except with the number of cells
+being $N=(1500, 600, 300)$. We fit the proposed model with different
+specifications of $K$, with $K=5, 10, \text{ and } 20$. Recall that
+$K^\true=10$ is used to simulate data.  Figure \ref{fig:ksen-post-Z} summarizes
+the posterior estimates of $\bZ_i$ and displays $y_{inj}$ rearranged by their
 estimated phenotypes for sample 1 ($i=1$) with the three values of $K$. It is
 clear from panel (a) that when $K=3$ (less than $K^\true$), the model
 compromises the true cell population structure and cells of different true
@@ -1557,7 +1559,7 @@ observations.
  \end{tabular}
   \caption{ (a) The posterior mean of probability $p_{inj}$ of missing with
     95\% credible interval for the three samples (red).  The blue curve
-    represents the prior mean of $p_{inj}$.   (b)Histogram of posterior
+    represents the prior mean of $p_{inj}$.   (b) Histogram of posterior
     probabilities $\hat{q}_{ij}$ of non-expression for missing for all $(i,j)$.
     The peak at the value of 1 suggests that most of the
     time, a marker is estimated as no expression if its expression level is
@@ -1894,11 +1896,11 @@ $w_{ik}^\true$ within each sample.}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%
 
-To fit the model proposed in Project 1 first with the IBP and repFAM prior. We
-used the same hyperparameters as in \S~\ref{sec:CB-sim}, with the only
-exception being $K$ was set to 10.
+We fit the model proposed in Project 1 with the IBP and rep-FAM priors. We used
+the same hyperparameters as in \S~\ref{sec:CB-sim}, with the only exception
+being $K$ was set to 10.
 %
-To run the MCMC simulation, we initialized the parameters as 
+We initialized the parameters for the MCMC simulation as outlined
 in \S~\ref{sec:CB-sim}.
 %
 We then implemented posterior inference using MCMC simulation over 3,000
@@ -1906,35 +1908,39 @@ iterations, discarding the first 1,000 iterations as burn-in.  We diagnose
 convergence and mixing of the described posterior MCMC simulation using trace
 plots. We found no evidence of practical convergence problems. 
 
-The posterior estimates for $\bZ$ and $\bW$ for the rep-FAM model are
-included in Figure \ref{fig:repFAM-TRUE-post-Z}, while those for the IBP model
-are included in Figure \ref{fig:repFAM-FALSE-post-Z}. The figures also include
-the heatmaps of $y$ for each sample $i$, rearranged by $\hat\lambda_{in}$.
-The posterior estimates for $\bZ$ and $\bW$ were similar to truth in both
-cases. However, in the posterior estimate of $\bZ$ for the IBP model, features
-are sometimes be repeated. For instance, sample 1, in panel (a), shows that
-features 10 and 7 are in fact duplicates and compose 46.3\% and 2.3\% of the
-data respectively. Additionally, sample 3, in panel (c), shows that features 
-5 and 6 are also duplicates. In sample 1 and sample 3, feature
-10 compose 46.3\% and 51.6\% of the data respectively, while feature 7
-composes 2.3\% and 1.1\% respectively in samples 1 and 3 respectively.
-These are cases where one feature has a strong presence in the sample, but 
-is duplicated. In sample 3, features 5 and 6 are also duplicates, but their
-presence is small in the sample, composing only 0.8\% and 0.5\% respectively.
-Note that $\hat\bZ$ in the rep-FAM does not contain duplicated features. This
-provides a more natural interpretation of $\bZ_i$ and $\bw_i$, and a more
-parsimonious representation of the cell types. Specifically, only four
-cell-types with positive weights are learned in rep-FAM, and the estimated cell
-types are the true cell types. In contrast, seven cell types are estimated
-with positive weights in the FAM, but some cell types are repeated.
+The posterior estimates for $\bZ$ and $\bW$ for the rep-FAM model are included
+in Figure \ref{fig:repFAM-TRUE-post-Z}, while those for the regular FAM (with
+the IBP prior) are included in Figure \ref{fig:repFAM-FALSE-post-Z}. The
+figures also include the heatmaps of $y$ for each sample $i$, with cells
+rearranged by $\hat\lambda_{in}$.  The posterior estimates for $\bZ$ and $\bW$
+were similar to the simulation truth in both cases. However, in the posterior
+estimate of $\bZ$ for the regular FAM, features are sometimes repeated. For
+instance, sample 1, in panel (a), shows that features 10 and 7 are in fact
+duplicates and compose 46.3\% and 2.3\% of the data respectively. Additionally,
+sample 3, in panel (c), shows that features 5 and 6 are also duplicates.
+%
+Feature 10 compose 46.3\% and 51.6\% of the data in samples 1 and 3
+respectively, while feature 7 composes 2.3\% and 1.1\% respectively in samples
+1 and 3 respectively.
+%
+These are cases where one feature has a strong presence
+in the sample, but is duplicated. In sample 3, features 5 and 6 are also
+duplicates, but their presence is small in the sample, composing only 0.8\% and
+0.5\% respectively.  Note that $\hat\bZ$ in the rep-FAM does not contain
+duplicated features. This provides a more natural interpretation of $\bZ_i$ and
+$\bw_i$, and a more parsimonious representation of the cell types.
+Specifically, posterior estimate $\hat\lambda_{in}$ contains only four
+cell-types in the rep-FAM, and the estimated cell types are the true cell
+types. In contrast, seven cell types are estimated in the FAM, but some cell
+types are repeated.
 %%
 %Figure \ref{fig:repFAM-clus-compare} shows the cumulative proportion of the
 %number of cell types. For the rep-FAM, the predominant cell type composes
 %50.67\% of the data across samples, while top two predominant cell types
 %compose 87.17\% of the data across samples.  For the FAM, the predominant cell
-%type composes 36.3\% of the data across samples, while top two predominant cell
-%types compose 68.17\% of the data across samples. Thus, we see infer that the
-%rep-FAM is learning cell types that are distinct.
+%type composes 36.3\% of the data across samples, while top two predominant
+%cell types compose 68.17\% of the data across samples. Thus, we see infer that
+%the rep-FAM is learning cell types that are distinct.
 %%
 
 
@@ -2012,8 +2018,8 @@ with positive weights in the FAM, but some cell types are repeated.
 %\end{center}
 %\end{figure}
 
-Finally the F-score was computed from $\hat\lin$ for each model. 
-The F-score for rep-FAM and FAM were \input{img/repFAM/fscore-rep-FAM.tex},
+The F-score was computed from $\hat\lambda_{in}$ for each model. 
+The F-score for rep-FAM and FAM were \input{img/repFAM/fscore-rep-FAM.tex}
 and \input{img/repFAM/fscore-FAM.tex} respectively. 
 
 We conclude that the rep-FAM may provide a more parsimonious representation of
