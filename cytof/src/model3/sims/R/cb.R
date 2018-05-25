@@ -95,8 +95,8 @@ init$Z = compute_Z(H=init$H, v=init$v, G=prior$G)
 
 ### Fixed parameters ###
 locked = gen_default_locked(init)
-locked$beta_0 = TRUE # TODO: Can I make this random?
-locked$beta_1 = TRUE # TODO: Can I make this random?
+#locked$beta_0 = TRUE # TODO: Can I make this random?
+#locked$beta_1 = TRUE # TODO: Can I make this random?
 
 #locked$s = TRUE
 #locked$sig2_0 = TRUE # TODO: Can I make this random?
