@@ -70,6 +70,39 @@ table(nRepeatedPosCols.fam) / sum(table(nRepeatedPosCols.fam))
 mean(sapply(Z.fam, repeats))
 mean(sapply(Z.fam, repeatsPos))
 
+### Plot Cumulative Proportion by Clusters ###
+cumprop.repFAM = cumsum(table(clus.repFAM) / sum(table(clus.repFAM)))
+cumprop.FAM = cumsum(table(clus.FAM) / sum(table(clus.FAM)))
+pdf(OUTDIR_repFAM_TRUE %+% 'compareClus.pdf')
+plot(cumprop.FAM, type='o', col=rgba('blue', .5), fg='grey', ylim=0:1,
+     xlab='cell types', cex.lab=1.4, cex.axis=1.5,
+     ylab='cumulative  proportion', lwd=5)
+lines(cumprop.repFAM, type='o', col=rgba('red', .5), lwd=5)
+abline(h=1:10 / 10, v=1:last(out)$prior$K, lty=2, col='grey')
+legend('bottomright', col=c('red', 'blue'), legend=c('rep-FAM', 'FAM'), cex=3,
+       lwd=5, bty='n')
+dev.off()
+
+
+### UQ on Z / W ###
+Z = lapply(out, function(o) o$Z)
+my.image(matApply(Z, mean), xlab='cell types', ylab='markers', col=greys(5), addL=TRUE)
+my.image(matApply(Z, sd),   xlab='cell types', ylab='markers', col=greys(4), addL=TRUE)
+
+W = lapply(out, function(o) o$W)
+cc=5; M = cbind(matrix(rep(1:3,cc), ncol=cc), 4)
+layout(M)
+my.image(matApply(W, quantile, .975), zlim=c(0,.4), xlab='cell types',
+         ylab='markers', col=greys(6), main='97.5% Quantile')
+my.image(matApply(W, mean), zlim=c(0,.4), xlab='cell types', ylab='markers',
+         col=greys(4), main='mean')
+my.image(matApply(W, quantile, .025), zlim=c(0,.4), xlab='cell types',
+         ylab='markers', col=greys(6), main='2.5% Quantile')
+color.bar(greys(5), zlim=c(0,.4), dig=3)
+par(mfrow=c(1,1))
+
+
+
 ### F-scores ##
 clus.true = relabel_clusters(unlist(dat$lam))
 FM = c('rep-FAM'=FMeasure(clus.true, clus.repFAM, silent=TRUE),

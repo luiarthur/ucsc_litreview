@@ -77,4 +77,6 @@ done
 cp ${simImgPath}/${repFamSimName}"TRUE"/"YZ"*".png" $repFamOutdir/TRUE
 cp ${simImgPath}/${repFamSimName}"FALSE"/"YZ"*".png" $repFamOutdir/FALSE
 cp ${simImgPath}/${repFamSimName}"TRUE"/*".tex" $repFamOutdir
+cp ${simImgPath}/${repFamSimName}"TRUE"/"Z_true_all.pdf" $repFamOutdir
+cp ${simImgPath}/${repFamSimName}"TRUE"/"compareClus.pdf" $repFamOutdir
 

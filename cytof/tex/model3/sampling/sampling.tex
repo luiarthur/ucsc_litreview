@@ -1139,19 +1139,18 @@ $\tau^2_1=0.09$, $a_\sigma=6$, $a_s=0.25$, $b_s=0.5$, $a_{\eta^0}=0.2$,
 $a_{\eta^1}=0.2$, $m_{\beta_0}=1.37$, $s^2_{\beta_0}=1$,
 $m_{\beta_1}=0.57$, and $s^2_{\beta_1}=0.01$.
 %
-To run the MCMC simulation, we
-initialized the parameters as follows. The missing values of $y_{inj}$ are
-initialized at $c_0$.  $\lambda_{in}$ is sampled uniformly from $\bc{1,...,K}$.
-$\gamma_{inj}$ is sampled uniformly from $\bc{1,...,\min(L^0,L^1)}$. $v_k$ is
-initialized at $1/K$. $H_{jk}$ is randomly sampled from the standard Normal
-distribution.  $\bZ$ is computed according to the initialized $H$ and $v$. All
-other parameters are initialized at their prior means.  Initial values of
-$\lambda_{in}$ are used to initialize $\mu^{\star}_{0\ell}$,
-$\mu^{\star}_{1\ell}$, $\bZ$ and $\bw_i$.  We then implemented posterior
-inference using MCMC simulation over 3,000 iterations, discarding the first
-1,000 iterations as burn-in.  We diagnose convergence and mixing of the
-described posterior MCMC simulation using trace plots. We found no evidence of
-practical convergence problems. 
+To run the MCMC simulation, we initialized the parameters as follows. The
+missing values of $y_{inj}$ are initialized at $c_0$.  $\lambda_{in}$ is
+sampled uniformly from $\bc{1,...,K}$.  $\gamma_{inj}$ is sampled uniformly
+from $\bc{1,...,\min(L^0,L^1)}$. $v_k$ is initialized at $1/K$. $H_{jk}$ is
+randomly sampled from the standard Normal distribution.  $\bZ$ is computed
+according to the initialized $H$ and $v$. All other parameters are initialized
+at their prior means.  Initial values of $\lambda_{in}$ are used to initialize
+$\mu^{\star}_{0\ell}$, $\mu^{\star}_{1\ell}$, $\bZ$ and $\bw_i$.  We then
+implemented posterior inference using MCMC simulation over 3,000 iterations,
+discarding the first 1,000 iterations as burn-in.  We diagnose convergence and
+mixing of the described posterior MCMC simulation using trace plots. We found
+no evidence of practical convergence problems. 
 
 
 Figure \ref{fig:sim-post-Z} summarizes the posterior inference for the
@@ -1398,7 +1397,7 @@ three patients ($I=3$), with the number of cells $N=(41474, 10454, 5177)$, for
 $J=32$ markers. The heatmaps in Figure \ref{fig:cb-post-Z} illustrate the
 observed expression levels $y_{inj}$.  Markers and cells are in columns and
 rows, respectively. 
-% Arthur: I haven't rescaled anything... Could you tell me what is confusing? Is it the legend or that the colors are binned?
+% 
 %The values are rescaled for better illustration.
 %
 Red, blue and black colors represent high expression levels, low expression
@@ -1433,8 +1432,9 @@ Also, note that some phenotypes are very similar. For example, phenotypes 8 and
 12 in panel (a).  A possible reason for this is that independence across
 columns under the prior model for $\bZ$ allows identical columns with positive
 probability.  For the heatmaps on the top of the panels, $y_{inj}$ are sorted
-by a posterior estimate $\hat{\lambda}_{in}$ of their cell phenotypes. The horizontal dotted lines separate cells using $\hat{\lambda}_{in}$.  From
-the heatmaps, the cells having a phenotype have similar expression patterns,
+by a posterior estimate $\hat{\lambda}_{in}$ of their cell phenotypes. The
+horizontal dotted lines separate cells using $\hat{\lambda}_{in}$.  From the
+heatmaps, the cells having a phenotype have similar expression patterns,
 implying that the model provides reasonable estimates of underlying cell
 subpopulations.
 %%%%%%%%%%%%%%%%%%%%%%%%
@@ -1494,8 +1494,11 @@ largest $\hat{w}_{ik}$ to explain at least 90\% of the cells in a sample.}
   \end{tabular}
 \end{center}
 \vspace{-0.05in}
-\caption{[CB Data] Comparison of posterior predictive distribution of $y_{inj}$ with $m_{inj}=0$ (observed data, blue) to their empirical distributions of observed data (grey) for some selected $(i,j)$.  An estimate of posterior probabilities of non-expression $\Prob(z_{j, \lambda_{in}}=0 \mid \by, \bm)$ averaged in a sample for
-  missing $y$ is shown in each panel.}
+\caption{[CB Data] Comparison of posterior predictive distribution of $y_{inj}$
+with $m_{inj}=0$ (observed data, blue) to their empirical distributions of
+observed data (grey) for some selected $(i,j)$.  An estimate of posterior
+probabilities of non-expression $\Prob(z_{j, \lambda_{in}}=0 \mid \by, \bm)$
+averaged in a sample for missing $y$ is shown in each panel.}
 \label{fig:cb-pp-obs-some}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1583,10 +1586,10 @@ minimum value of observed $y_{inj}$, as in the analysis of the simulated data
 in \S~\ref{sec:CB-sim}.
 %
 Cell clustering results under FlowSOM are summarized in
-Figure~\ref{fig:fs-post-Z}.  FlowSOM identified four cell clusters.
-The proportions of cells assigned to the clusters are (0.522, 0.47, 0.001, 0.006),
-(0.565, 0.218, 0.192, 0.025) and (0.579, 0.247, 0.162, 0.012) for the three samples,
-respectively.
+Figure~\ref{fig:fs-post-Z}.  FlowSOM identified four cell clusters.  The
+proportions of cells assigned to the clusters are (0.522, 0.47, 0.001, 0.006),
+(0.565, 0.218, 0.192, 0.025) and (0.579, 0.247, 0.162, 0.012) for the three
+samples, respectively.
 %
 Heterogeneity between cells in an estimated cluster under FlowSOM is greater
 than that within an inferred cell phenotype under the proposed model in
@@ -1701,9 +1704,6 @@ cell cluster under FlowSOM.
 
 \subsection{Conclusions}\label{sec:CB-conc}
 
-% TODO
-%{\tt expand}
-
 We have proposed a Bayesian FAM to study NK-cell diversity from mass cytometry
 data in the presence of missing data. We used a simulation study to show that
 our model is able to recover the true latent feature allocation matrix
@@ -1725,13 +1725,15 @@ A simulation study comparing our model to FlowSOM shows that in some
 scenarios, FlowSOM and our FAM can retrieve the same clusters, and have similar
 performance. FlowSOM is orders of magnitudes faster than our model.  But we are
 able to model the latent phenotype structure directly, whereas FlowSOM only
-implicitly models the latent phenotypes. In addition, no uncertainty estimates
-about the latent phenotypes can be made using FlowSOM.
+implicitly models the latent phenotypes. Our proposed FAM has may be
+more effective at discovering latent phenotypes in data that comprise highly
+irregularly spaced clusters of cells, at a computational cost.
+%In addition, no uncertainty estimates about the latent phenotypes can be made
+%using FlowSOM.
 %
-TODO: LEFT OFF HERE
-{\tt you did not show any uncertainty estimates for our method.  this sounds
-like our method really bad.  you may rewrite this or show when our method
-wins.}
+%{\tt you did not show any uncertainty estimates for our method.  this sounds
+%like our method really bad.  you may rewrite this or show when our method
+%wins.}
 %
 A sensitivity analysis for selecting the upper-bound for the number of latent
 features $K$ in the model suggests that it is preferable to make $K$ large
@@ -1862,22 +1864,89 @@ remain unchanged as in \S~\ref{prob-model}.
 
 
 %TODO: HERE
-\subsection{Simulation Study}~\label{sec:rep-sim}
-Data were simulated as outlined in \ref{sec:CB-sim}, for $N=(1500, 600, 300)$
-and $K=3$. The model from Project 1 was fit to the simulated data using the IBP
-prior and the rep-FAM prior for $\bZ$, with $K=20$ in both models.
-Hyperparameters similar to those in the previous simulation studies were used.
-2000 samples from the posterior distribution were obtained after a burn-in
-period of 1000 iterations.  The posterior estimates for $\bZ$ and $\bW$ were
-similar to the truth in both cases.  However, all of the posterior samples of
-$\bZ$ in the IBP model includes repeated columns, while none of those in the
-rep-FAM model is repeated columns. 
+\subsection{Simulation Study for Rep-FAM}~\label{sec:rep-sim}
+To better understand the behavior of the rep-FAM as a prior distribution for
+the feature allocation matrix in a FAM, we performed the following simulation
+study.
+
+Data were simulated as outlined in \ref{sec:CB-sim}, with the only differences 
+being the following. The number of observations for each sample are 
+$N=(300, 200, 100)$, the true number of latent features is $K^\true=4$, 
+the number of markers are $J=5$, a hand-picked $\bZ^\true$ was used, and the
+feature abundances $\bw_i^\true$ were simulated from a Dirichlet($15, 15, 1,
+1$), for each sample $i$.  The simulated $\bZ^\true$ and $\bW^\true$
+are shown in Figure \ref{fig:repFAM-sim-Z}.
+
+%%%%%%%%%%%%%%%%%%%%%%%%
+\begin{figure}[t!]
+  \begin{center}
+\begin{tabular}{c}
+\includegraphics[scale=.6]{img/repFAM/Z_true_all.pdf}
+  \end{tabular}
+ \end{center}
+ \vspace{-0.05in}
+\caption{The transpose of $\bZ^\true$ with markers in columns and latent
+phenotypes in rows. Black and white represents $z^\true_{jk}=1$ and 0,
+respectively. The phenotypes and $\bw^\true_i$ are shown on the left and
+right sides of each panel.  The phenotypes are arranged in order of
+$w_{ik}^\true$ within each sample.}
+\label{fig:repFAM-sim-Z}
+\end{figure}
+%%%%%%%%%%%%%%%%%%%%%%%%%
+
+To fit the model proposed in Project 1 first with the IBP and repFAM prior. We
+used the same hyperparameters as in \S~\ref{sec:CB-sim}, with the only
+exception being $K$ was set to 10.
+%
+To run the MCMC simulation, we initialized the parameters as 
+in \S~\ref{sec:CB-sim}.
+%
+We then implemented posterior inference using MCMC simulation over 3,000
+iterations, discarding the first 1,000 iterations as burn-in.  We diagnose
+convergence and mixing of the described posterior MCMC simulation using trace
+plots. We found no evidence of practical convergence problems. 
+
+The posterior estimates for $\bZ$ and $\bW$ for the rep-FAM model are
+included in Figure \ref{fig:repFAM-TRUE-post-Z}, while those for the IBP model
+are included in Figure \ref{fig:repFAM-FALSE-post-Z}. The figures also include
+the heatmaps of $y$ for each sample $i$, rearranged by $\hat\lambda_{in}$.
+The posterior estimates for $\bZ$ and $\bW$ were similar to truth in both
+cases. However, in the posterior estimate of $\bZ$ for the IBP model, features
+are sometimes be repeated. For instance, sample 1, in panel (a), shows that
+features 10 and 7 are in fact duplicates and compose 46.3\% and 2.3\% of the
+data respectively. Additionally, sample 3, in panel (c), shows that features 
+5 and 6 are also duplicates. In sample 1 and sample 3, feature
+10 compose 46.3\% and 51.6\% of the data respectively, while feature 7
+composes 2.3\% and 1.1\% respectively in samples 1 and 3 respectively.
+These are cases where one feature has a strong presence in the sample, but 
+is duplicated. In sample 3, features 5 and 6 are also duplicates, but their
+presence is small in the sample, composing only 0.8\% and 0.5\% respectively.
+Note that $\hat\bZ$ in the rep-FAM does not contain duplicated features. This
+provides a more natural interpretation of $\bZ_i$ and $\bw_i$, and a more
+parsimonious representation of the cell types. Specifically, only four
+cell-types with positive weights are learned in rep-FAM, and the estimated cell
+types are the true cell types. In contrast, seven cell types are estimated
+with positive weights in the FAM, but some cell types are repeated.
+%%
+%Figure \ref{fig:repFAM-clus-compare} shows the cumulative proportion of the
+%number of cell types. For the rep-FAM, the predominant cell type composes
+%50.67\% of the data across samples, while top two predominant cell types
+%compose 87.17\% of the data across samples.  For the FAM, the predominant cell
+%type composes 36.3\% of the data across samples, while top two predominant cell
+%types compose 68.17\% of the data across samples. Thus, we see infer that the
+%rep-FAM is learning cell types that are distinct.
+%%
+
+
+
+%%cumprop.repFAM
+%%        1         2         3         4
+%%0.5066667 0.8716667 0.9600000 1.0000000
+%%cumprop.FAM
+%%        1         2         3         4         5         6         7
+%%0.3633333 0.6816667 0.8700000 0.9450000 0.9850000 0.9983333 1.0000000
 
 % TODO: HELP!
-TODO:
-
-F-score for rep-FAM: \input{img/repFAM/fscore-rep-FAM.tex}.
-F-score for FAM: \input{img/repFAM/fscore-FAM.tex}.
 %repFAM
 %%%%%%%%%%%%%%%%%%%%%%%%
 %\begin{figure}%[th!]
@@ -1892,16 +1961,16 @@ F-score for FAM: \input{img/repFAM/fscore-FAM.tex}.
   \end{tabular}
   \end{center}
   \vspace{-0.05in}
-  \caption{\small[Rep-FAM Simulation]  Heatmaps of $y$ for simulated data.
-    Cells and markers are in rows and columns, respectively. Each column
-    contains the expression levels of a marker for all cells in the sample.
-    High expression levels are red, low expression levels are blue, missing
-    values are black.  Cells are rearranged by the corresponding posterior
-    estimate of their phenotype indicator, $\hat{\lambda}_{in}$.  Yellow
-    horizontal lines separate cells by different phenotypes.  At the bottom of
-    each panel, the transpose of $\hat{\Z}_i$ and $\hat{\bw}_i$ are provided
-    for each sample.  We include phenotypes having largest $\hat{w}_{ik}$ to
-    explain at least 90\% of the cells in a sample.}
+  \caption{\small[Rep-FAM Simulation Study (rep-FAM prior)]  Heatmaps of $y$
+    for simulated data.  Cells and markers are in rows and columns,
+    respectively. Each column contains the expression levels of a marker for
+    all cells in the sample.  High expression levels are red, low expression
+    levels are blue, missing values are black.  Cells are rearranged by the
+    corresponding posterior estimate of their phenotype indicator,
+    $\hat{\lambda}_{in}$.  Yellow horizontal lines separate cells by different
+    phenotypes.  At the bottom of each panel, the transpose of $\hat{\Z}_i$ and
+    $\hat{\bw}_i$ are provided for each sample.  We include phenotypes having
+    largest $\hat{w}_{ik}$ to explain at least 99.9\% of the cells in a sample.}
 \label{fig:repFAM-TRUE-post-Z}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1919,19 +1988,38 @@ F-score for FAM: \input{img/repFAM/fscore-FAM.tex}.
   \end{tabular}
   \end{center}
   \vspace{-0.05in}
-  \caption{\small[Rep-FAM Simulation (FAM)]  Heatmaps of $y$ for simulated data.
-    Cells and markers are in rows and columns, respectively. Each column
-    contains the expression levels of a marker for all cells in the sample.
-    High expression levels are red, low expression levels are blue, missing
-    values are black.  Cells are rearranged by the corresponding posterior
-    estimate of their phenotype indicator, $\hat{\lambda}_{in}$.  Yellow
-    horizontal lines separate cells by different phenotypes.  At the bottom of
-    each panel, the transpose of $\hat{\Z}_i$ and $\hat{\bw}_i$ are provided
-    for each sample.  We include phenotypes having largest $\hat{w}_{ik}$ to
-    explain at least 90\% of the cells in a sample.}
+  \caption{\small[Rep-FAM Simulation Study (FAM prior)]  Heatmaps of $y$ for
+    simulated data.  Cells and markers are in rows and columns, respectively.
+    Each column contains the expression levels of a marker for all cells in the
+    sample.  High expression levels are red, low expression levels are blue,
+    missing values are black.  Cells are rearranged by the corresponding
+    posterior estimate of their phenotype indicator, $\hat{\lambda}_{in}$.
+    Yellow horizontal lines separate cells by different phenotypes.  At the
+    bottom of each panel, the transpose of $\hat{\Z}_i$ and $\hat{\bw}_i$ are
+    provided for each sample.  We include phenotypes having largest
+    $\hat{w}_{ik}$ to explain at least 99.9\% of the cells in a sample.}
 \label{fig:repFAM-FALSE-post-Z}
 \end{figure}
 %%%%%%%%%%%%%%%%%%%%%%%%%
+
+%\begin{figure}[H]
+%\begin{center}
+%\includegraphics[scale=0.5]{img/repFAM/compareClus.pdf}
+%\caption{[Cumulative proportion of number of cell types] Included are the
+%  cumulative proportions of the number of cell types for the rep-FAM (red)
+%  and FAM (blue).}
+%\label{fig:repFAM-clus-compare}
+%\end{center}
+%\end{figure}
+
+Finally the F-score was computed from $\hat\lin$ for each model. 
+The F-score for rep-FAM and FAM were \input{img/repFAM/fscore-rep-FAM.tex},
+and \input{img/repFAM/fscore-FAM.tex} respectively. 
+
+We conclude that the rep-FAM may provide a more parsimonious representation of
+the latent feature matrix $\bZ$ compared to the FAM. We therefore propose
+using rep-FAM as the prior for the feature allocation matrices in our 
+remaining projects.
 
 \section{Project 3: Feature Allocation Model with Regression for Abundances of
 Features}\label{sec:proj3}
