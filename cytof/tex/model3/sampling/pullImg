@@ -1,0 +1,13 @@
+#!/usr/bin/env python
+
+from archive.driveLink2Download import driveLink2Download
+
+img_db_path = 'archive/resources/img_db.txt'
+with open(img_db_path, 'r') as f:
+    latestImg = f.readline()
+    latestImg = f.readline()
+    imgDate, latestImg = latestImg.split(',')
+
+
+print "Donloading latest images from: " + imgDate
+driveLink2Download(latestImg)
