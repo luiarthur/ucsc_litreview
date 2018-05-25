@@ -7,7 +7,7 @@
 my.image(Z, col = grey(seq(1, 0, len = 2)), na.color = "transparent",
   fg = "grey", f = function(dat) stopifnot(TRUE), truncate = TRUE,
   rm0Cols = FALSE, addLegend = FALSE, nticks = 11, zlim = range(Z),
-  cex.y.leg = 1, ...)
+  cex.y.leg = 1, color.bar.digits = 1, ...)
 }
 \description{
 Plotting an image with missing values

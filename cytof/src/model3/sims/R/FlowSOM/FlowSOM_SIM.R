@@ -167,3 +167,23 @@ abline(h=1:10 / 10, v=1:last(out)$prior$K, lty=2, col='grey')
 legend('bottomright', col=c('red', 'blue'), legend=c('FlowSOM', 'FAM'), cex=3,
        lwd=5, bty='n')
 dev.off()
+
+
+### UQ on Z / W ###
+Z = lapply(out, function(o) o$Z)
+my.image(matApply(Z, mean), xlab='cell types', ylab='markers', col=greys(5), addL=TRUE)
+my.image(matApply(Z, sd),   xlab='cell types', ylab='markers', col=greys(4), addL=TRUE)
+
+W = lapply(out, function(o) o$W)
+cc=5; M = cbind(matrix(rep(1:3,cc), ncol=cc), 4)
+layout(M)
+my.image(matApply(W, quantile, .975), zlim=c(0,.4), xlab='cell types',
+         ylab='markers', col=greys(6), main='97.5% Quantile')
+my.image(matApply(W, mean), zlim=c(0,.4), xlab='cell types', ylab='markers',
+         col=greys(4), main='mean')
+my.image(matApply(W, quantile, .025), zlim=c(0,.4), xlab='cell types',
+         ylab='markers', col=greys(6), main='2.5% Quantile')
+color.bar(greys(5), zlim=c(0,.4), dig=3)
+par(mfrow=c(1,1))
+
+

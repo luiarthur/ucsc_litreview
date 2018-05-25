@@ -1,5 +1,7 @@
 #!/bin/bash
 
+CURR_DIR=$PWD
+
 echo "Generating plots for rep-FAM (Proj2)..."
 ./compare_repFAM
 
@@ -16,3 +18,9 @@ echo "Generating plots for cytof comparison (Proj1)..."
 echo "Generating plots for CB (Proj1)..."
 Rscript separate_pp_obs.R
 
+echo "Generating plots for FlowSOM..."
+cd ../FlowSOM/
+./gen_plots
+cd $CURR_DIR
+
+exit 0

@@ -82,10 +82,9 @@ color.bar <- function(col, zlim=range(col), ticks=seq(zlim[1], zlim[2], len=leng
 
 my.image <- function(Z, col=grey(seq(1,0,len=2)), na.color='transparent',
                      fg='grey', f=function(dat) stopifnot(TRUE),
-                     truncate=TRUE,
-                     rm0Cols=FALSE,
-                     addLegend=FALSE,nticks=11, zlim=range(Z),
-                     cex.y.leg=1, ...) {
+                     truncate=TRUE, rm0Cols=FALSE,
+                     addLegend=FALSE, nticks=11, zlim=range(Z),
+                     cex.y.leg=1, color.bar.digits=1, ...) {
   #' Plotting an image with missing values
   #' @export
 
@@ -122,7 +121,7 @@ my.image <- function(Z, col=grey(seq(1,0,len=2)), na.color='transparent',
   if (addLegend) {
     par(mar=c(5.1,1,4.1,1))
     #color.bar(COL[-length(COL)],mn,mx,nticks)
-    color.bar(col, zlim, cex=cex.y.leg)
+    color.bar(col, zlim, cex=cex.y.leg, digits=color.bar.digits)
     par(mfrow=c(1,1),mar=c(5.1,4.1,4.1,2.1))
   }
 

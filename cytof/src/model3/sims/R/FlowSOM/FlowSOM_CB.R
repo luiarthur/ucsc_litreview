@@ -32,6 +32,7 @@ idx = cbind(idx_lower, idx_upper)
 y_tilde = preimpute(y)
 
 Y_tilde = Reduce(rbind, y_tilde)
+colnames(Y_tilde) = paste0('V',1:32)
 ff_Y = flowFrame(Y_tilde)
 
 ### Example ###
@@ -74,7 +75,12 @@ for (i in 1:I) {
            })
 }
 dev.off()
+fs.clus = relabel_clusters(as.numeric(fSOM.clus))
+fs.clus.ls = sapply(1:I, function(i) fs.clus[idx[i,1]:idx[i,2]])
+fs.clus.prop = lapply(fs.clus.ls, function(x) table(x) / sum(table(x)))
 
+### Print ###
+lapply(fs.clus.prop, function(x) round(x,3)*100)
 
 ### Principal Components (2D) ###
 pY = prcomp(Y_tilde)
