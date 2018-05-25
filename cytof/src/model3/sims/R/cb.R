@@ -1,5 +1,5 @@
 ### GLOBALS ###
-OUTDIR = '../out/cb_locked_beta1_K20/'
+OUTDIR = '../out/cb_rand_beta_K20/'
 ### END OF GLOBALS ###
 
 library(rcommon)
@@ -54,8 +54,9 @@ prior$a_sig=sig2_ab[1]
 s_ab = gamma_params(m=sig2_ab[2], v=1)
 prior$a_s=s_ab[1]; prior$b_s=s_ab[2]
 
-sig2_prior = 1 / rgamma(1000, prior$a_sig, rgamma(1000, prior$a_s, prior$b_s))
-#hist(sig2_prior)
+sig2_prior_samps = 1 / rgamma(1000, prior$a_sig, rgamma(1000, prior$a_s, prior$b_s))
+#hist(sig2_prior_samps)
+prior$sig2_max = quantile(sig2_prior_samps, .95)
 
 ### Missing Mechanism Prior ###
 

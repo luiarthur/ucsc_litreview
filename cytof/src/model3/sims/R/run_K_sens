@@ -20,7 +20,7 @@ for k in $K; do
   i=$((i+1)) 
 
   # ADD BACKSLASH AT THE END!
-  outdir="../out/sim_locked_beta1_K20_N${N}_sensK${k}/"
+  outdir="../out/sim_rand_beta_K20_N${N}_sensK${k}/"
 
   mkdir -p $outdir
   cmd="Rscript sim.R --N=$N --ncores=$NCORES --B=$B --burn=$BURN -o $outdir --use_repulsive=$USE_REPULSIVE --K_MCMC=$k"

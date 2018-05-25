@@ -126,9 +126,9 @@ sig2_ab = invgamma_params(m=.1, sig=.05)
 prior$a_sig=sig2_ab[1]
 s_ab = gamma_params(m=sig2_ab[2], v=1)
 prior$a_s=s_ab[1]; prior$b_s=s_ab[2]
-sig2_prior = 1 / rgamma(1000, prior$a_sig, rgamma(1000, prior$a_s, prior$b_s))
-#hist(sig2_prior)
-prior$sig2_max = quantile(sig2_prior, .95)
+sig2_prior_samps = 1 / rgamma(1000, prior$a_sig, rgamma(1000, prior$a_s, prior$b_s))
+#hist(sig2_prior_samps)
+prior$sig2_max = quantile(sig2_prior_samps, .95)
 
 ### Missing Mechanism Prior ###
 
