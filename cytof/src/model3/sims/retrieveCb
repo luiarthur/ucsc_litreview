@@ -1,0 +1,16 @@
+#!/bin/bash
+
+### SETTINGS ###
+SERVER="alui2@firedance"
+SIM_NAME="cb_randBeta_K20"
+DIR="repo/ucsc_litreview/cytof/src/model3/sims/out/$SIM_NAME/"
+cmd="rsync -av $SERVER:~/$DIR/ out/$SIM_NAME/"
+
+### Grab CB Analysis Results ###
+numargs=$#
+if [ $numargs == 0 ]
+then
+  $cmd --exclude *.rda
+else
+  $cmd
+fi
