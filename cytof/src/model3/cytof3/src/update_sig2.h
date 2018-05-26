@@ -44,8 +44,11 @@ void update_sig2_zil(State &state, const Data &data, const Prior &prior, const S
     // Version 1
     //new_sig2_zil = prior.sig2_max + R::runif(0, .01);
     // Version 2
-    new_sig2_zil = mcmc::rinvgamma(prior.a_sig, state.s(i));
+    //new_sig2_zil = mcmc::rinvgamma(prior.a_sig, state.s(i));
     // Version 3
+    new_sig2_zil = R::rnorm(prior.sig2_max, .01);
+    while (new_sig2_zil < 0) new_sig2_zil = R::rnorm(prior.sig2_max, .01);
+    // Version 4
     //const double u_max = mcmc::pinvgamma(prior.sig2_max, a_new, b_new);
     //const double u_min = mcmc::pinvgamma(1E-6,           a_new, b_new);
     //const double u = R::runif(u_min, u_max);

@@ -138,17 +138,11 @@ st = system.time({
   locked$beta_0 = TRUE
   locked$beta_1 = TRUE
   #locked$s = TRUE
-  #locked$sig2_0 = TRUE
-  #locked$sig2_1 = TRUE
-  out0 = fit_cytof_cpp(y, B=1, burn=100, prior=prior, locked=locked,
+  out0 = fit_cytof_cpp(y, B=1, burn=10, prior=prior, locked=locked,
                         init=init, print_freq=1, show_timings=FALSE,
                         normalize_loglike=TRUE, joint_update_freq=0, ncore=1,
                         use_repulsive=FALSE)
   locked$beta_0 = FALSE
-  locked$s = FALSE
-  locked$sig2_0 = FALSE
-  locked$sig2_1 = FALSE
-  prior$sig2_max = Inf
   out = fit_cytof_cpp(y, B=B, burn=burn, prior=prior, locked=locked,
                        init=last(out0), print_freq=1, show_timings=FALSE,
                        normalize_loglike=TRUE, joint_update_freq=0, ncore=1,
