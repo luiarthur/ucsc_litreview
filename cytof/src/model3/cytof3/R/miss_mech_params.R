@@ -6,7 +6,9 @@ miss_mech_params = function(y, prob) {
   logit = function(p) log(p / (1-p))
 
   stopifnot(length(y) == 3)
+  stopifnot(y[1] < y[2] && y[2] < y[3])
   stopifnot(length(prob) == 3)
+  stopifnot(prob[1] < prob[2] && prob[3] < prob[2]) # higher prob. of missing in the middle
 
   b0 = logit(prob[2])
   b1 = (b0 - logit(prob[1])) / (y[1] - y[2])^2

@@ -1,9 +1,14 @@
-### GLOBALS ###
-OUTDIR = '../out/cb_rand_beta_K20/'
-### END OF GLOBALS ###
-
 library(rcommon)
 library(cytof3)
+
+### GLOBALS ###
+args = commandArgs(trailingOnly=TRUE)
+OUTDIR   = ifelse(length(args) < 1, '../out/cb_randBeta_K20/', args[1]) %+% '/'
+PROP     = ifelse(length(args) < 2,    1, as.numeric(args[2]))
+B        = ifelse(length(args) < 3, 2000, as.numeric(args[3]))
+burn     = ifelse(length(args) < 4, 1000, as.numeric(args[4]))
+K_MCMC   = ifelse(length(args) < 5,   20, as.numeric(args[5]))
+### END OF GLOBALS ###
 
 system(paste0('mkdir -p ', OUTDIR))
 system(paste0('cp cb.R ', OUTDIR))
@@ -13,8 +18,7 @@ fileDest = function(filename) paste0(OUTDIR, filename)
 
 #saveRDS(y, '../data/cytof_cb.rds')
 y_orig = readRDS('../data/cytof_cb.rds')
-#y = resample(y_orig, prop=.01)
-y = y_orig
+y = if (0 < PROP && PROP < 1) resample(y_orig, prop=PROP) else y_orig
 missing_prop = round(get_missing_prop(y),4)
 sink(fileDest('missing_prop.txt'))
 print(missing_prop)
@@ -24,7 +28,7 @@ sink()
 #y = y_orig
 
 ### TODO: add def for miss-mech in gen_default prior ###
-prior = gen_default_prior(y, K=20, L0=5, L1=5)
+prior = gen_default_prior(y, K=K_MCMC, L0=5, L1=5)
 I = prior$I
 N = prior$N
 J = prior$J
@@ -49,8 +53,8 @@ prior$cs_h = 1
 
 #prior$a_sig=3; prior$a_s=.04; prior$b_s=2
 # sig2 ~ IG(mean=.1, sd=.01)
-sig2_ab = invgamma_params(m=.2, sig=.01)
-prior$a_sig=sig2_ab[1]
+sig2_ab = invgamma_params(m=.2, sig=1E-2)
+prior$a_sig = sig2_ab[1]
 s_ab = gamma_params(m=sig2_ab[2], v=1)
 prior$a_s=s_ab[1]; prior$b_s=s_ab[2]
 
@@ -61,22 +65,30 @@ prior$sig2_max = quantile(sig2_prior_samps, .95)
 ### Missing Mechanism Prior ###
 
 # Missing Mechanism params
-mmp = miss_mech_params(y=c(-6, -2.5, -1.0), p=c(.1, .99, .01))
+#mmp = miss_mech_params(y=c(-6, -2.5, -1.0), p=c(.1, .99, .01))
+p0 = median(missing_prop)
+Y = c(Reduce(rbind, y))
+Y = Y[which(Y < 0)]
+yq = quantile(Y, c(.1, .25, .50))
+mmp = miss_mech_params(y=as.numeric(yq), p=c(.001, p0, .01))
+rm(Y)
 
 prior$c0 = mmp['c0']
 prior$c1 = mmp['c1']
-prior$m_beta0 = mmp['b0']; prior$s2_beta0 = .001 
-prior$m_beta1 = mmp['b1']; prior$s2_beta1 = .001
+prior$m_beta0 = mmp['b0']; prior$s2_beta0 = 1 
+prior$m_beta1 = mmp['b1']; prior$s2_beta1 = 1E-4
 prior$cs_beta0 = .1
 prior$cs_beta1 = .1
 
-yy = seq(-7,3,l=100)
+yy = seq(yq[1]-1,3,l=100)
 mm_prior = sample_from_miss_mech_prior(yy, prior$m_beta0, prior$s2_beta0, 
                                        prior$m_beta1, prior$s2_beta1, 
-                                       prior$c0, prior$c1, B=1000)
+                                       prior$c0, prior$c1, B=50)
 pdf(fileDest('miss_mech_prior.pdf'))
-plot(yy, mm_prior[,1], type='n', ylim=0:1); abline(v=0)
-for (i in 1:NCOL(mm_prior)) lines(yy, mm_prior[,i], col='grey')
+plot(yy, mm_prior[,1], type='n', ylim=0:1, fg='grey', cex.axis=1.5,
+     xlab='y', ylab='Pr(y missing)', cex.lab=1.4)
+abline(v=0, lty=2)
+for (i in 1:NCOL(mm_prior)) lines(yy, mm_prior[,i], col='grey30')
 dev.off()
 
 set.seed(1)
@@ -85,12 +97,16 @@ set.seed(1)
 init = gen_default_init(prior)
 init$mus_0 = seq(-5,-1, l=prior$L0)
 init$mus_1 = seq(0, 5, l=prior$L1)
-init$sig2_0 = matrix(.5, prior$I, prior$L0) # TODO: Did this work?
-init$sig2_1 = matrix(.5, prior$I, prior$L1) # TODO: Did this work?
+init$sig2_0 = matrix(.1, prior$I, prior$L0) # TODO: Did this work?
+init$sig2_1 = matrix(.1, prior$I, prior$L1) # TODO: Did this work?
 #init$Z = matrix(1, prior$J, prior$K)
 #init$H = matrix(-2, prior$J, prior$K)
 init$H = matrix(rnorm(prior$J*prior$K, 0, 2), prior$J, prior$K)
 init$Z = compute_Z(H=init$H, v=init$v, G=prior$G)
+init$missing_y = y
+for (i in 1:prior$I) {
+  init$missing_y[[i]][which(is.na(init$missing_y[[i]]))] = yq[2]
+}
 
 
 ### Fixed parameters ###
@@ -116,12 +132,26 @@ locked = gen_default_locked(init)
 ### Init Z ###
 #init$Z = t((Z_est_kmeans$centers > 0) * 1)
 
-st = system.time(
-  out <- fit_cytof_cpp(y, B=2000, burn=1000, prior=prior, locked=locked,
-                       init=init, print_freq=1, show_timings=FALSE,
+st = system.time({
+  locked$beta_0 = TRUE
+  locked$beta_1 = TRUE
+  #locked$s = TRUE
+  #locked$sig2_0 = TRUE
+  #locked$sig2_1 = TRUE
+  out0 = fit_cytof_cpp(y, B=1, burn=100, prior=prior, locked=locked,
+                        init=init, print_freq=1, show_timings=FALSE,
+                        normalize_loglike=TRUE, joint_update_freq=0, ncore=1,
+                        use_repulsive=FALSE)
+  locked$beta_0 = FALSE
+  locked$s = FALSE
+  locked$sig2_0 = FALSE
+  locked$sig2_1 = FALSE
+  prior$sig2_max = Inf
+  out = fit_cytof_cpp(y, B=B, burn=burn, prior=prior, locked=locked,
+                       init=last(out0), print_freq=1, show_timings=FALSE,
                        normalize_loglike=TRUE, joint_update_freq=0, ncore=1,
                        use_repulsive=FALSE)
-)
+})
 print(st)
 out = shrinkOut(out)
 saveRDS(out, fileDest('out.rds'))
@@ -275,22 +305,27 @@ beta_1 = t(sapply(out, function(o) o$beta_1))
 #plotPosts(beta_1)
 
 pdf(fileDest('miss_mech_posterior.pdf'))
-mm_post = sapply(1:B, function(b) 
-                 prob_miss(yy, beta_0[b,1], beta_1[b,1], prior$c0, prior$c1))
-
-mm_post_mean = rowMeans(mm_post)
-mm_post_ci = apply(mm_post, 1, quantile, c(.025,.975))
-
-plot(yy, mm_post_mean, ylim=0:1, type='l',
-     bty='n', fg='grey', xlab='density', col='blue')
-color.btwn(yy, mm_post_ci[1,], mm_post_ci[2,], from=-10, to=10, col=rgb(0,0,1,.4))
-
+### Prior missing mechanism ###
 mm_prior_mean = rowMeans(mm_prior)
 mm_prior_ci = apply(mm_prior, 1, quantile, c(.025,.975))
+plot(yy, mm_prior_mean, ylim=0:1, type='l', bty='n', fg='grey', xlab='y',
+     col='grey30', cex.lab=1.4, cex.axis=1.5, ylab='Pr(y missing)')
+color.btwn(yy, mm_prior_ci[1,], mm_prior_ci[2,], from=-10, to=10, col=rgb(0,0,0,.2))
 
-lines(yy, mm_prior_mean, col='red')
-color.btwn(yy, mm_prior_ci[1,], mm_prior_ci[2,], from=-10, to=10, col=rgb(1,0,0,.2))
-abline(v=0)
+for (i in 1:prior$I) {
+  mm_post = sapply(1:B, function(b) 
+                   prob_miss(yy, beta_0[b,i], beta_1[b,i], prior$c0, prior$c1))
+
+  mm_post_mean = rowMeans(mm_post)
+  mm_post_ci = apply(mm_post, 1, quantile, c(.025,.975))
+
+  lines(yy, mm_post_mean, ylim=0:1, type='l', bty='n', fg='grey', xlab='y',
+       col=i+1, cex.lab=1.4, cex.axis=1.5, ylab='Pr(y missing)')
+  color.btwn(yy, mm_post_ci[1,], mm_post_ci[2,], from=-10, to=10, col=rgba(i+1,.4))
+}
+
+
+abline(v=0, lty=2)
 #for (i in 1:NCOL(bb)) lines(yy, bb[,i], col='grey')
 #for (i in 1:NCOL(mm_post)) lines(yy,mm_post[,i], col='blue')
 dev.off()
@@ -315,7 +350,7 @@ par(mfrow=c(4,2))
 for (i in 1:prior$I) for (j in 1:prior$J) {
   zjk_mean = compute_zjk_mean(out, i, j)
   plot_dat(out[[B]]$missing_y_mean, i, j, xlim=dat_lim, lwd=1, col='red',
-           main=paste0('i: ', i,', j: ', j, ' (Z_ij mean: ', zjk_mean, ')'))
+           main=paste0('i: ', i,', j: ', j, ' (Z_ij mean: ', round(zjk_mean,4), ')'))
 
   lines(density(out[[B]]$missing_y[[i]][,j]), col='grey')
          

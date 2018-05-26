@@ -32,13 +32,26 @@ struct SS_sig2 { // sufficient stats for sig2
 
 void update_sig2_zil(State &state, const Data &data, const Prior &prior, const SS_sig2 &ss_sig2, int z, int i, int l){
 
-  double new_sig2_zil=mcmc::rinvgamma(ss_sig2.a_new[z](i,l),ss_sig2.b_new[z](i,l));
+  const double a_new = ss_sig2.a_new[z](i,l);
+  const double b_new = ss_sig2.b_new[z](i,l);
+  double new_sig2_zil=mcmc::rinvgamma(a_new, b_new);
+
+  //Rcout << new_sig2_zil << std::endl;
 
   // FIXME: This hacky stuff helps MCMC not select high values for sig2.
   //        Is there a better solution to avoid large sig2?
   if (new_sig2_zil > prior.sig2_max) {
+    // Version 1
     //new_sig2_zil = prior.sig2_max + R::runif(0, .01);
+    // Version 2
     new_sig2_zil = mcmc::rinvgamma(prior.a_sig, state.s(i));
+    // Version 3
+    //const double u_max = mcmc::pinvgamma(prior.sig2_max, a_new, b_new);
+    //const double u_min = mcmc::pinvgamma(1E-6,           a_new, b_new);
+    //const double u = R::runif(u_min, u_max);
+    //Rcout << "Hacky. a_new: " << a_new << ", b_new: " << b_new << std::endl;
+    //Rcout << "Hacky. u_min: " << u_min << ", u_max: " << u_max << std::endl;
+    //new_sig2_zil = mcmc::qinvgamma(u, a_new, b_new);
   }
 
   // This is the non-hacky stuff

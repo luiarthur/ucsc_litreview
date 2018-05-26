@@ -276,6 +276,16 @@ namespace mcmc {
     // random draw from inverse-gamma with mean b / (a-1)
     return 1 / R::rgamma(a, 1/b); // R::Gamma(shape,scale) instead of rate.
   }
+
+  // Note that:
+  // Y = 1/X => P(Y < y) = P(1/X < y) = P(X > 1/y)
+  double pinvgamma(double x, double a, double b) {
+    return R::pgamma(1/x, a, 1/b, 0, 0); // lt = 0, lg = 0
+  }
+
+  double qinvgamma(double x, double a, double b) {
+    return R::qgamma(1/x, a, 1/b, 0, 0); // lt = 0, lg = 0
+  }
 }
 
 #endif

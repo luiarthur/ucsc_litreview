@@ -1,0 +1,11 @@
+#!/bin/bash
+
+### Arguments ###
+OUTDIR="../out/cb_randBeta_K20/"
+PROP="0.01"
+B=2000
+burn=1000
+K_MCMC=20
+
+### Command ###
+Rscript cb.R  $OUTDIR/  $PROP  $B  $burn  $K_MCMC
