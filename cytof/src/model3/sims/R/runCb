@@ -8,4 +8,4 @@ burn=1000
 K_MCMC=20
 
 ### Command ###
-Rscript cb.R  $OUTDIR/  $PROP  $B  $burn  $K_MCMC
+Rscript cb.R  $OUTDIR/  $PROP  $B  $burn  $K_MCMC > $OUTDIR/log.txt
