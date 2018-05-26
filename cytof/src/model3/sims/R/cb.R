@@ -113,8 +113,8 @@ for (i in 1:prior$I) {
 
 ### Fixed parameters ###
 locked = gen_default_locked(init)
-#locked$beta_0 = TRUE # TODO: Can I make this random?
-#locked$beta_1 = TRUE # TODO: Can I make this random?
+#locked$beta_0 = TRUE # TODO: Can I make this random? Yes.
+#locked$beta_1 = TRUE # TODO: Can I make this random? No?
 
 #locked$s = TRUE
 #locked$sig2_0 = TRUE # TODO: Can I make this random?
@@ -135,18 +135,11 @@ locked = gen_default_locked(init)
 #init$Z = t((Z_est_kmeans$centers > 0) * 1)
 
 st = system.time({
-  locked$beta_0 = TRUE
   locked$beta_1 = TRUE
-  #locked$s = TRUE
-  out0 = fit_cytof_cpp(y, B=1, burn=10, prior=prior, locked=locked,
+  out = fit_cytof_cpp(y, B=B, burn=burn, prior=prior, locked=locked,
                         init=init, print_freq=1, show_timings=FALSE,
                         normalize_loglike=TRUE, joint_update_freq=0, ncore=1,
                         use_repulsive=FALSE)
-  locked$beta_0 = FALSE
-  out = fit_cytof_cpp(y, B=B, burn=burn, prior=prior, locked=locked,
-                       init=last(out0), print_freq=1, show_timings=FALSE,
-                       normalize_loglike=TRUE, joint_update_freq=0, ncore=1,
-                       use_repulsive=FALSE)
 })
 print(st)
 out = shrinkOut(out)
