@@ -1,5 +1,6 @@
 library(rcommon)
 library(cytof3)
+set.seed(42)
 
 ### GLOBALS ###
 args = commandArgs(trailingOnly=TRUE)
@@ -18,6 +19,7 @@ fileDest = function(filename) paste0(OUTDIR, filename)
 
 #saveRDS(y, '../data/cytof_cb.rds')
 y_orig = readRDS('../data/cytof_cb.rds')
+set.seed(42)
 y = if (0 < PROP && PROP < 1) resample(y_orig, prop=PROP) else y_orig
 missing_prop = round(get_missing_prop(y),4)
 sink(fileDest('missing_prop.txt'))
