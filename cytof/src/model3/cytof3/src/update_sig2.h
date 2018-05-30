@@ -20,6 +20,7 @@ struct SS_sig2 { // sufficient stats for sig2
       for (int i=0; i<I; i++) {
         for (int l=0; l < Lz; l++) {
           b_new[z](i,l) = state.s(i) + 0;
+          //b_new[z](i,l) = (prior.a_s / prior.b_s) + 0;
         }
       }
     }
@@ -46,8 +47,8 @@ void update_sig2_zil(State &state, const Data &data, const Prior &prior, const S
     // Version 2
     //new_sig2_zil = mcmc::rinvgamma(prior.a_sig, state.s(i));
     // Version 3
-    new_sig2_zil = R::rnorm(prior.sig2_max, .01);
-    while (new_sig2_zil < 0) new_sig2_zil = R::rnorm(prior.sig2_max, .01);
+    //new_sig2_zil = R::rnorm(prior.sig2_max, .01);
+    //while (new_sig2_zil < 0) new_sig2_zil = R::rnorm(prior.sig2_max, .01);
     // Version 4
     //const double u_max = mcmc::pinvgamma(prior.sig2_max, a_new, b_new);
     //const double u_min = mcmc::pinvgamma(1E-6,           a_new, b_new);
@@ -55,6 +56,7 @@ void update_sig2_zil(State &state, const Data &data, const Prior &prior, const S
     //Rcout << "Hacky. a_new: " << a_new << ", b_new: " << b_new << std::endl;
     //Rcout << "Hacky. u_min: " << u_min << ", u_max: " << u_max << std::endl;
     //new_sig2_zil = mcmc::qinvgamma(u, a_new, b_new);
+    //Rcout << "sig2 (i: " << i << ", l: " << l << ") is " << new_sig2_zil << std::endl;
   }
 
   // This is the non-hacky stuff

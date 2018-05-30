@@ -36,3 +36,13 @@ rgba = function(col, a=1) {
     rgb(RGB[1], RGB[2], RGB[3], a)
   })
 }
+
+
+pinvgamma = function(x, a, b) {
+  pgamma(1/x, a, b, lower.tail=FALSE)
+}
+
+qinvgamma = function(u, a, b) {
+  1 / qgamma(u, a, b, lower.tail=FALSE)
+}
+

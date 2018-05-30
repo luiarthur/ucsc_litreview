@@ -283,8 +283,8 @@ namespace mcmc {
     return R::pgamma(1/x, a, 1/b, 0, 0); // lt = 0, lg = 0
   }
 
-  double qinvgamma(double x, double a, double b) {
-    return R::qgamma(1/x, a, 1/b, 0, 0); // lt = 0, lg = 0
+  double qinvgamma(double u, double a, double b) {
+    return 1.0 / R::qgamma(u, a, 1/b, 0, 0); // lt = 0, lg = 0
   }
 }
 

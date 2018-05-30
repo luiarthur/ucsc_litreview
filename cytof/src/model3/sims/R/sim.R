@@ -122,7 +122,7 @@ prior$nu_b = 1.5
 
 #prior$a_sig=3; prior$a_s=.04; prior$b_s=2
 # sig2 ~ IG(mean=.1, sd=.01)
-sig2_ab = invgamma_params(m=.1, sig=.05)
+sig2_ab = invgamma_params(m=.1, sig=.0001)
 prior$a_sig=sig2_ab[1]
 s_ab = gamma_params(m=sig2_ab[2], v=1)
 prior$a_s=s_ab[1]; prior$b_s=s_ab[2]
@@ -133,12 +133,18 @@ prior$sig2_max = quantile(sig2_prior_samps, .95)
 ### Missing Mechanism Prior ###
 
 # Missing Mechanism params
-mmp = miss_mech_params(y=c(-5, -2.5, -1.5), p=c(.1, .80, .01))
+#mmp = miss_mech_params(y=c(-5, -2.5, -1.5), p=c(.1, .80, .01))
+p0 = median(missing_prop)
+Y = c(Reduce(rbind, y))
+Y = Y[which(Y < 0)]
+yq = quantile(Y, c(.1, .25, .50))
+mmp = miss_mech_params(y=as.numeric(yq), p=c(.01, p0, .01))
+rm(Y)
 
 prior$c0 = mmp['c0']
 prior$c1 = mmp['c1']
-prior$m_beta0 = mmp['b0']; prior$s2_beta0 = 1 
-prior$m_beta1 = mmp['b1']; prior$s2_beta1 = .01
+prior$m_beta0 = mmp['b0']; prior$s2_beta0 = .1 
+prior$m_beta1 = mmp['b1']; prior$s2_beta1 = 1E-5
 prior$cs_beta0 = .1
 prior$cs_beta1 = .1
 
@@ -199,6 +205,7 @@ dat = unshrinkDat(dat)
 
 ### Start MCMC ###
 st = system.time(
+  #locked$beta_1 = TRUE # TODO: Can I make this random?
   out <- fit_cytof_cpp(y, B=B, burn=BURN, prior=prior, locked=locked,
                        init=init, print_freq=1, show_timings=FALSE,
                        normalize_loglike=TRUE, joint_update_freq=0,
@@ -393,15 +400,16 @@ for (i in 1:I) {
   mm_post_mean = rowMeans(mm_post)
   mm_post_ci = apply(mm_post, 1, quantile, c(.025,.975))
   lines(yy, mm_post_mean, col=i+1, lwd=2)
-  color.btwn(yy, mm_post_ci[1,], mm_post_ci[2,], from=-10, to=10, col=rgb(0,0,0,.2))
+  color.btwn(yy, mm_post_ci[1,], mm_post_ci[2,], from=-10, to=10, col=rgba(i+1,.2))
 }
 
-mm_prior_mean = rowMeans(mm_prior)
+#mm_prior_mean = rowMeans(mm_prior)
+mm_prior_mean = prob_miss(yy, prior$m_beta0, prior$m_beta1, prior$c0, prior$c1)
 mm_prior_ci = apply(mm_prior, 1, quantile, c(.01,.99))
 
 lines(yy, mm_prior_mean, col='black')
 color.btwn(yy, mm_prior_ci[1,], mm_prior_ci[2,], from=-10, to=10, col=rgb(0,0,0,.2))
-abline(v=0)
+abline(v=c(0, prior$c0), lty=2)
 #for (i in 1:NCOL(bb)) lines(yy, bb[,i], col='grey')
 #for (i in 1:NCOL(mm_post)) lines(yy,mm_post[,i], col='blue')
 dev.off()
