@@ -31,6 +31,7 @@ for i in $I; do
   cp ${simImgPath}/${simName}/"YZ00${i}.png" $outdir
   cp ${simImgPath}/${simName}/"Y00${i}.png" $outdir
   cp ${simImgPath}/${simName}/"Ysorted00${i}.png" $outdir
+  cp ${simImgPath}/${simName}/"Z${i}_true.pdf" $outdir
 done
 
 cp ${simImgPath}/${simName}/"Z_true_all.pdf" $outdir

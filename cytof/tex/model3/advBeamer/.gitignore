@@ -1,0 +1,17 @@
+# Ignore the tex file
+*.tex
+
+# Ignore the pdf
+adv*.pdf
+
+# Ignore artifact files
+*.log
+*.aux
+*.nav
+*.out
+*.snm
+*.toc
+*.blg
+*.bbl
+*.pyc
+*.vrb
