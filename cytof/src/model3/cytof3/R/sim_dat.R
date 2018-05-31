@@ -20,8 +20,10 @@ genSimpleZ <- function(J, K) {
       if (j >= lo && j <= hi) Z[j,k] <- 1
     }
   }
-  Z <- rowSort(Z)
-  Z[, left_order(Z)]
+  Z = rowSort(Z)
+  Z = Z[, left_order(Z)]
+
+  if (NCOL(unique(Z, MARGIN=2)) == NCOL(Z)) Z else genSimpleZ(J,K)
 }
 
 #' @export
@@ -32,7 +34,9 @@ genZ <- function(J,K,prob1=c(.6)) {
   Z <- rowSort(Z)
   Z <- Z[, left_order(Z)]
 
-  if (all(rowSums(Z) > 0)) Z else genZ(J,K,prob1)
+  if (all(rowSums(Z) > 0) && NCOL(unique(Z, MARGIN=2)) == NCOL(Z)) {
+    Z
+  } else genZ(J,K,prob1)
 }
 
 

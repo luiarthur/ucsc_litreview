@@ -55,7 +55,7 @@ prior$cs_h = 1
 
 #prior$a_sig=3; prior$a_s=.04; prior$b_s=2
 # sig2 ~ IG(mean=.1, sd=.01)
-sig2_ab = invgamma_params(m=.2, sig=1E-2)
+sig2_ab = invgamma_params(m=.2, sig=.05)
 prior$a_sig = sig2_ab[1]
 s_ab = gamma_params(m=sig2_ab[2], v=1)
 prior$a_s=s_ab[1]; prior$b_s=s_ab[2]
@@ -71,14 +71,14 @@ prior$sig2_max = quantile(sig2_prior_samps, .95)
 p0 = median(missing_prop)
 Y = c(Reduce(rbind, y))
 Y = Y[which(Y < 0)]
-yq = quantile(Y, c(.1, .25, .50))
-mmp = miss_mech_params(y=as.numeric(yq), p=c(.001, p0, .01))
+yq = quantile(Y, c(.08, .1, .12))
+mmp = miss_mech_params(y=as.numeric(yq), p=c(.01, p0, .01))
 rm(Y)
 
 prior$c0 = mmp['c0']
 prior$c1 = mmp['c1']
-prior$m_beta0 = mmp['b0']; prior$s2_beta0 = 1 
-prior$m_beta1 = mmp['b1']; prior$s2_beta1 = 1E-4
+prior$m_beta0 = mmp['b0']; prior$s2_beta0 = 1E-1 
+prior$m_beta1 = mmp['b1']; prior$s2_beta1 = 1E-5
 prior$cs_beta0 = .1
 prior$cs_beta1 = .1
 
@@ -97,8 +97,8 @@ set.seed(1)
 init0 = gen_default_init(prior)
 set.seed(1)
 init = gen_default_init(prior)
-init$mus_0 = seq(-5,-1, l=prior$L0)
-init$mus_1 = seq(0, 5, l=prior$L1)
+init$mus_0 = seq(-6,-.5, l=prior$L0)
+init$mus_1 = seq(.5, 6, l=prior$L1)
 init$sig2_0 = matrix(.1, prior$I, prior$L0) # TODO: Did this work?
 init$sig2_1 = matrix(.1, prior$I, prior$L1) # TODO: Did this work?
 #init$Z = matrix(1, prior$J, prior$K)

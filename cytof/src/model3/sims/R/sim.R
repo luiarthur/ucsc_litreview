@@ -47,7 +47,7 @@ Z_repFAM = matrix(c(1,0,0,0,
                     0,1,0,1,
                     0,0,1,0,
                     1,1,1,0,
-                    1,1,0,1), ncol=K_TRUE)
+                    1,1,0,1), ncol=4)
 
 dat = sim_dat(I=I, J=J, N=N, K=K, 
               L0=3, L1=4, Z=if (repFAM_Test) Z_repFAM else genZ(J,K,.6),
