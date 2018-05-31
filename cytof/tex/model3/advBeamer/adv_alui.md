@@ -161,7 +161,8 @@ $w_{ik}^\true$ within each sample.}
 
 # R Package
 ```R
-#R code for installing `cytof3` package
+# R code for installing cytof3
+
 library(devtools)
 repo = 'luiarthur/ucsc_litreview'
 subdir = 'cytof/src/model3/cytof3'
@@ -180,8 +181,9 @@ install_github(repo, subdir=subdir)
   \begin{center}
     \begin{tabular}{{| l | l |}}
     \hline Project & Academic Quarter \\
-    \hline Project 1  &   Fall 17 - Fall 18  \\
-    Project 2  &   Fall 18 - Spring 19  \\
+    \hline
+    Project 1  & Fall 17 - Fall 18  \\
+    Project 2  & Fall 18 - Spring 19  \\
     Project 3  & Winter 19 - Fall 19  \\
     Thesis     & Fall 19 -   Winter 20  \\
     \hline

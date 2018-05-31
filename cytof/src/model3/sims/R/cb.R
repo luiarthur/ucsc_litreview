@@ -419,7 +419,7 @@ dev.off()
 
 ### Q hist (Histogram of P(Z=0) for missing y) ###
 pdf(fileDest('pz0_missy.pdf'))
-hist(pz0_missy, main='',
+hist(pz0_missy, main='', xlim=0:1,
      xlab='Histogram: Posterior Probability of Z=0 for missing y',
      col='grey', border='white', prob=FALSE)
 dev.off()

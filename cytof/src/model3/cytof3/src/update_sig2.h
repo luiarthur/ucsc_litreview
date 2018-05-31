@@ -57,6 +57,9 @@ void update_sig2_zil(State &state, const Data &data, const Prior &prior, const S
     //Rcout << "Hacky. u_min: " << u_min << ", u_max: " << u_max << std::endl;
     //new_sig2_zil = mcmc::qinvgamma(u, a_new, b_new);
     //Rcout << "sig2 (i: " << i << ", l: " << l << ") is " << new_sig2_zil << std::endl;
+    // Version 5
+    new_sig2_zil = (z==0) ? state.sig2_0(i,l) + 0 : state.sig2_1(i,l) + 0;
+    //Rcout << "Hacky (i,l):" << i << "," << l << std::endl;
   }
 
   // This is the non-hacky stuff
