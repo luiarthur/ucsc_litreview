@@ -55,12 +55,12 @@ prior$cs_h = 1
 
 #prior$a_sig=3; prior$a_s=.04; prior$b_s=2
 # sig2 ~ IG(mean=.1, sd=.01)
-sig2_ab = invgamma_params(m=.2, sig=.05)
+sig2_ab = invgamma_params(m=.2, sig=.05) # Inv-Gamma(mean=.2, sig=.05) is great.
 prior$a_sig = sig2_ab[1]
 s_ab = gamma_params(m=sig2_ab[2], v=1)
 prior$a_s=s_ab[1]; prior$b_s=s_ab[2]
 
-sig2_prior_samps = 1 / rgamma(1000, prior$a_sig, rgamma(1000, prior$a_s, prior$b_s))
+sig2_prior_samps = rinvgamma(1000, prior$a_sig, rgamma(1000, prior$a_s, prior$b_s))
 #hist(sig2_prior_samps)
 prior$sig2_max = quantile(sig2_prior_samps, .95)
 
@@ -71,16 +71,16 @@ prior$sig2_max = quantile(sig2_prior_samps, .95)
 p0 = median(missing_prop)
 Y = c(Reduce(rbind, y))
 Y = Y[which(Y < 0)]
-yq = quantile(Y, c(.08, .1, .12))
+yq = quantile(Y, c(.05, .1, .15))
 mmp = miss_mech_params(y=as.numeric(yq), p=c(.01, p0, .01))
 rm(Y)
 
 prior$c0 = mmp['c0']
 prior$c1 = mmp['c1']
-prior$m_beta0 = mmp['b0']; prior$s2_beta0 = 1E-1 
-prior$m_beta1 = mmp['b1']; prior$s2_beta1 = 1E-5
-prior$cs_beta0 = 1 # needs to be big enough to escape local mode
-prior$cs_beta1 = 1 # needs to be big enough to escape local mode
+prior$m_beta0 = mmp['b0']; prior$s2_beta0 = 1 
+prior$m_beta1 = mmp['b1']; prior$s2_beta1 = 1
+prior$cs_beta0 = .1 # needs to be big enough to escape local mode
+prior$cs_beta1 = .1 # needs to be big enough to escape local mode
 
 yy = seq(yq[1]-1,3,l=100)
 mm_prior = sample_from_miss_mech_prior(yy, prior$m_beta0, prior$s2_beta0, 
@@ -135,7 +135,7 @@ locked = gen_default_locked(init)
 #init$Z = t((Z_est_kmeans$centers > 0) * 1)
 
 st = system.time({
-  locked$beta_1 = TRUE
+  locked$beta_1 = FALSE
   out = fit_cytof_cpp(y, B=B, burn=burn, prior=prior, locked=locked,
                         init=init, print_freq=1, show_timings=FALSE,
                         normalize_loglike=TRUE, joint_update_freq=0, ncore=1,

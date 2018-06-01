@@ -279,12 +279,14 @@ namespace mcmc {
 
   // Note that:
   // Y = 1/X => P(Y < y) = P(1/X < y) = P(X > 1/y)
-  double pinvgamma(double x, double a, double b) {
-    return R::pgamma(1/x, a, 1/b, 0, 0); // lt = 0, lg = 0
+  double pinvgamma(double x, double a, double b, bool log_prob=false) {
+    const bool use_lower_tail = false;
+    return R::pgamma(1/x, a, 1/b, use_lower_tail, log_prob ? 1 : 0);
   }
 
-  double qinvgamma(double u, double a, double b) {
-    return 1.0 / R::qgamma(u, a, 1/b, 0, 0); // lt = 0, lg = 0
+  double qinvgamma(double p, double a, double b, bool prob_is_logged=false) {
+    const bool use_lower_tail = false;
+    return 1.0 / R::qgamma(p, a, 1/b, use_lower_tail, prob_is_logged ? 1 : 0);
   }
 }
 

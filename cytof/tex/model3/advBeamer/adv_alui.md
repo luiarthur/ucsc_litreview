@@ -158,6 +158,37 @@ $w_{ik}^\true$ within each sample.}
 \label{fig:sim-post-Z}
 \end{figure}
 
+# Project I: CB Study (FAM)
+\vspace{-1em}
+\begin{figure}
+  \begin{center}
+  \begin{tabular}{cc}
+  \includegraphics[scale=.3]{../sampling/img/cb/YZ001.png}&
+  \includegraphics[scale=.3]{../sampling/img/cb/YZ002.png}\\
+  {\small (a) Sample 1} & {\small(b) Sample 2} \\
+  \end{tabular}
+  \end{center}
+  \vspace{-0.05in}
+  \caption{\small[FlowSOM Simulation Study]}
+\label{fig:sim-post-Z}
+\end{figure}
+
+
+# Project I: CB Study (FlowSOM)
+\vspace{-1em}
+\begin{figure}
+  \begin{center}
+  \begin{tabular}{cc}
+  \includegraphics[scale=.3]{../sampling/img/FlowSOM/YZ001_FlowSOM_CB.png}&
+  \includegraphics[scale=.3]{../sampling/img/FlowSOM/YZ002_FlowSOM_CB.png}\\
+  {\small (a) Sample 1} & {\small(b) Sample 2} \\
+  \end{tabular}
+  \end{center}
+  \vspace{-0.05in}
+  \caption{\small[FlowSOM Simulation Study]}
+\label{fig:sim-post-Z}
+\end{figure}
+
 
 # R Package
 ```R

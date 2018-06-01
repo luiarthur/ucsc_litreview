@@ -1,12 +1,15 @@
 #!/bin/bash
 
 ### Arguments ###
-OUTDIR="../out/cb_randBeta_K20/"
-#PROP="0.01"
-PROP="1"
-B=2000
-burn=1000
+#OUTDIR="../out/cb_randBeta_K20/"
+#PROP="1"
+OUTDIR="../out/cb_randBeta_bla/"
+PROP="0.01"
+B=200
+burn=100
 K_MCMC=20
 
 ### Command ###
+mkdir -p $OUTDIR
+touch $OUTDIR/log.txt
 Rscript cb.R  $OUTDIR/  $PROP  $B  $burn  $K_MCMC > $OUTDIR/log.txt

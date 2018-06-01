@@ -38,11 +38,14 @@ rgba = function(col, a=1) {
 }
 
 
-pinvgamma = function(x, a, b) {
-  pgamma(1/x, a, b, lower.tail=FALSE)
+pinvgamma = function(x, a, b, log.p=FALSE) {
+  pgamma(1/x, a, b, lower.tail=FALSE, log.p=log.p)
 }
 
-qinvgamma = function(u, a, b) {
-  1 / qgamma(u, a, b, lower.tail=FALSE)
+qinvgamma = function(u, a, b, log.p=FALSE) {
+  1 / qgamma(u, a, b, lower.tail=FALSE, log.p=log.p)
 }
 
+rinvgamma = function(n, a, b) {
+  1 / rgamma(n, a, b)
+}

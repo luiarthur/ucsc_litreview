@@ -35,31 +35,39 @@ void update_sig2_zil(State &state, const Data &data, const Prior &prior, const S
 
   const double a_new = ss_sig2.a_new[z](i,l);
   const double b_new = ss_sig2.b_new[z](i,l);
-  double new_sig2_zil=mcmc::rinvgamma(a_new, b_new);
+  const bool lg=true;
+  double new_sig2_zil;
 
-  //Rcout << new_sig2_zil << std::endl;
-
+  // Version 0
+  //new_sig2_zil = mcmc::rinvgamma(a_new, b_new);
   // FIXME: This hacky stuff helps MCMC not select high values for sig2.
   //        Is there a better solution to avoid large sig2?
+  // Version 1
+  //new_sig2_zil = prior.sig2_max + R::runif(0, .01);
+  // Version 2
+  //new_sig2_zil = mcmc::rinvgamma(prior.a_sig, state.s(i));
+  // Version 3
+  //new_sig2_zil = R::rnorm(prior.sig2_max, .01);
+  //while (new_sig2_zil < 0) new_sig2_zil = R::rnorm(prior.sig2_max, .01);
+
+
+  // Version 4. Equivalent to a truncated InvGamma prior trancated at sig2_max
+  const double lg_u_max = mcmc::pinvgamma(prior.sig2_max, a_new, b_new, lg);
+  const double q = R::runif(0,1); // ~ Unif(0,1)
+  const double lg_u = log(q) + lg_u_max;
+  new_sig2_zil = mcmc::qinvgamma(lg_u, a_new, b_new, lg);
+  //Rcout << "Hacky. a_new: " << a_new << ", b_new: " << b_new << std::endl;
+  //Rcout << "Hacky. lg_u: " << lg_u << std::endl;
+  //Rcout << "sig2 (i: " << i << ", l: " << l << ") is " <<new_sig2_zil<<std::endl;
+
+
+  // Version 5
+  //new_sig2_zil = (z==0) ? state.sig2_0(i,l) + 0 : state.sig2_1(i,l) + 0;
+  //Rcout << "Hacky (i,l):" << i << "," << l << std::endl;
+
   if (new_sig2_zil > prior.sig2_max) {
-    // Version 1
-    //new_sig2_zil = prior.sig2_max + R::runif(0, .01);
-    // Version 2
-    //new_sig2_zil = mcmc::rinvgamma(prior.a_sig, state.s(i));
-    // Version 3
-    //new_sig2_zil = R::rnorm(prior.sig2_max, .01);
-    //while (new_sig2_zil < 0) new_sig2_zil = R::rnorm(prior.sig2_max, .01);
-    // Version 4
-    //const double u_max = mcmc::pinvgamma(prior.sig2_max, a_new, b_new);
-    //const double u_min = mcmc::pinvgamma(1E-6,           a_new, b_new);
-    //const double u = R::runif(u_min, u_max);
-    //Rcout << "Hacky. a_new: " << a_new << ", b_new: " << b_new << std::endl;
-    //Rcout << "Hacky. u_min: " << u_min << ", u_max: " << u_max << std::endl;
-    //new_sig2_zil = mcmc::qinvgamma(u, a_new, b_new);
-    //Rcout << "sig2 (i: " << i << ", l: " << l << ") is " << new_sig2_zil << std::endl;
-    // Version 5
-    new_sig2_zil = (z==0) ? state.sig2_0(i,l) + 0 : state.sig2_1(i,l) + 0;
-    //Rcout << "Hacky (i,l):" << i << "," << l << std::endl;
+    Rcout << "This message should not be showing! new_sig2_zil: " << 
+      new_sig2_zil << std::endl;
   }
 
   // This is the non-hacky stuff
