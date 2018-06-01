@@ -79,8 +79,8 @@ prior$c0 = mmp['c0']
 prior$c1 = mmp['c1']
 prior$m_beta0 = mmp['b0']; prior$s2_beta0 = 1E-1 
 prior$m_beta1 = mmp['b1']; prior$s2_beta1 = 1E-5
-prior$cs_beta0 = .1
-prior$cs_beta1 = .1
+prior$cs_beta0 = 1 # needs to be big enough to escape local mode
+prior$cs_beta1 = 1 # needs to be big enough to escape local mode
 
 yy = seq(yq[1]-1,3,l=100)
 mm_prior = sample_from_miss_mech_prior(yy, prior$m_beta0, prior$s2_beta0, 
