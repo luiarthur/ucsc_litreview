@@ -30,11 +30,12 @@ void update_muszl(State &state, const Data &data, const Prior &prior, const SS_m
   const double var_new = get_tau2_z(prior,z) / denom;
   double mean_new = get_psi_z(prior,z) + get_tau2_z(prior,z) * stat_mean;
   mean_new /= denom;
+  const double near_zero = 0;
 
   if (z == 0) {
-    state.mus_0(l) = mcmc::rtnorm(mean_new, sqrt(var_new), -INFINITY, 0);
+    state.mus_0(l) = mcmc::rtnorm(mean_new, sqrt(var_new), -INFINITY, -near_zero);
   } else {
-    state.mus_1(l) = mcmc::rtnorm(mean_new, sqrt(var_new), 0, INFINITY);
+    state.mus_1(l) = mcmc::rtnorm(mean_new, sqrt(var_new), near_zero, INFINITY);
   }
 }
 

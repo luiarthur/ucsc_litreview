@@ -9,6 +9,10 @@ PROP     = ifelse(length(args) < 2,    1, as.numeric(args[2]))
 B        = ifelse(length(args) < 3, 2000, as.numeric(args[3]))
 burn     = ifelse(length(args) < 4, 1000, as.numeric(args[4]))
 K_MCMC   = ifelse(length(args) < 5,   20, as.numeric(args[5]))
+L0       = ifelse(length(args) < 6,    5, as.numeric(args[6]))
+L1       = ifelse(length(args) < 7,    5, as.numeric(args[7]))
+println("L0: ", L0)
+println("L1: ", L1)
 ### END OF GLOBALS ###
 
 system(paste0('mkdir -p ', OUTDIR))
@@ -30,7 +34,7 @@ sink()
 #y = y_orig
 
 ### TODO: add def for miss-mech in gen_default prior ###
-prior = gen_default_prior(y, K=K_MCMC, L0=5, L1=5)
+prior = gen_default_prior(y, K=K_MCMC, L0=L0, L1=L1)
 I = prior$I
 N = prior$N
 J = prior$J
@@ -41,28 +45,22 @@ for (i in 1:I) {
 }
 dev.off()
 
-# Are these good priors?
-prior$psi_0 = -2
-prior$psi_1 = 2
-prior$tau2_0 = .3^2
-prior$tau2_1 = .3^2
-
 #prior$cs_v = .01 # I think this should be better
 #prior$cs_h = 1 # I think this should be better
 # 1,1 -> great changes
-prior$cs_v = 1
+prior$cs_v = .01
 prior$cs_h = 1
 
-#prior$a_sig=3; prior$a_s=.04; prior$b_s=2
-# sig2 ~ IG(mean=.1, sd=.01)
 sig2_ab = invgamma_params(m=.2, sig=.05) # Inv-Gamma(mean=.2, sig=.05) is great.
+#sig2_ab = invgamma_params(m=.05, sig=.05)
 prior$a_sig = sig2_ab[1]
 s_ab = gamma_params(m=sig2_ab[2], v=1)
 prior$a_s=s_ab[1]; prior$b_s=s_ab[2]
 
-sig2_prior_samps = rinvgamma(1000, prior$a_sig, rgamma(1000, prior$a_s, prior$b_s))
+sig2_prior_samps = rinvgamma(1000, sig2_ab[1], sig2_ab[2])
 #hist(sig2_prior_samps)
-prior$sig2_max = quantile(sig2_prior_samps, .95)
+prior$sig2_max = qinvgamma(.99, sig2_ab[1], sig2_ab[2])
+println("sig2_max: ", prior$sig2_max)
 
 ### Missing Mechanism Prior ###
 
@@ -70,17 +68,18 @@ prior$sig2_max = quantile(sig2_prior_samps, .95)
 #mmp = miss_mech_params(y=c(-6, -2.5, -1.0), p=c(.1, .99, .01))
 p0 = median(missing_prop)
 Y = c(Reduce(rbind, y))
-Y = Y[which(Y < 0)]
-yq = quantile(Y, c(.05, .1, .15))
-mmp = miss_mech_params(y=as.numeric(yq), p=c(.01, p0, .01))
-rm(Y)
+Y = Y[which(!is.na(Y))]
+Y_neg = Y[which(Y<0)]
+Y_pos = Y[which(Y>0)]
+yq = quantile(Y_neg, c(.05, .1, .15))
+mmp = miss_mech_params(y=as.numeric(yq), p=c(.01, p0, .0001))
 
 prior$c0 = mmp['c0']
 prior$c1 = mmp['c1']
-prior$m_beta0 = mmp['b0']; prior$s2_beta0 = 1 
-prior$m_beta1 = mmp['b1']; prior$s2_beta1 = 1
-prior$cs_beta0 = .1 # needs to be big enough to escape local mode
-prior$cs_beta1 = .1 # needs to be big enough to escape local mode
+prior$m_beta0 = mmp['b0']; prior$s2_beta0 = 1
+prior$m_beta1 = mmp['b1']; prior$s2_beta1 = .001
+prior$cs_beta0 = 1 # needs to be big enough to escape local mode
+prior$cs_beta1 = 1 # needs to be big enough to escape local mode
 
 yy = seq(yq[1]-1,3,l=100)
 mm_prior = sample_from_miss_mech_prior(yy, prior$m_beta0, prior$s2_beta0, 
@@ -97,18 +96,32 @@ set.seed(1)
 init0 = gen_default_init(prior)
 set.seed(1)
 init = gen_default_init(prior)
-init$mus_0 = seq(-6,-.5, l=prior$L0)
-init$mus_1 = seq(.5, 6, l=prior$L1)
-init$sig2_0 = matrix(.1, prior$I, prior$L0) # TODO: Did this work?
-init$sig2_1 = matrix(.1, prior$I, prior$L1) # TODO: Did this work?
+init$mus_0 = quantile(Y_neg, prob=seq(0,1,l=prior$L0))
+init$mus_1 = quantile(Y_pos, prob=seq(0,1,l=prior$L1))
+println("init$mus_0: ", init$mus_0)
+println("init$mus_1: ", init$mus_1)
+init$sig2_0 = matrix(mean(sig2_prior_samps), prior$I, prior$L0)
+init$sig2_1 = matrix(mean(sig2_prior_samps), prior$I, prior$L1)
 #init$Z = matrix(1, prior$J, prior$K)
 #init$H = matrix(-2, prior$J, prior$K)
 init$H = matrix(rnorm(prior$J*prior$K, 0, 2), prior$J, prior$K)
 init$Z = compute_Z(H=init$H, v=init$v, G=prior$G)
 init$missing_y = y
 for (i in 1:prior$I) {
-  init$missing_y[[i]][which(is.na(init$missing_y[[i]]))] = yq[2]
+  miss_idx = which(is.na(init$missing_y[[i]]))
+  init$missing_y[[i]][miss_idx] = runif(length(miss_idx), yq[1], yq[3])
 }
+
+# Are these good priors?
+prior$psi_0 = mean(Y_neg)
+prior$psi_1 = mean(Y_pos)
+prior$tau2_0 = var(Y_neg)
+prior$tau2_1 = var(Y_pos)
+println("psi_0: ", prior$psi_0)
+println("psi_1: ", prior$psi_1)
+println("tau2_0: ", prior$tau2_0)
+println("tau2_1: ", prior$tau2_1)
+
 
 
 ### Fixed parameters ###
@@ -133,9 +146,11 @@ locked = gen_default_locked(init)
 
 ### Init Z ###
 #init$Z = t((Z_est_kmeans$centers > 0) * 1)
+rm(Y, Y_neg, Y_pos)
+println("")
 
 st = system.time({
-  locked$beta_1 = FALSE
+  locked$beta_1 = TRUE
   out = fit_cytof_cpp(y, B=B, burn=burn, prior=prior, locked=locked,
                         init=init, print_freq=1, show_timings=FALSE,
                         normalize_loglike=TRUE, joint_update_freq=0, ncore=1,
@@ -200,6 +215,13 @@ plot_mus(out)
 dev.off()
 
 pdf(fileDest('sig2.pdf'))
+### sig2_1 ###
+sig2_1 = sapply(out, function(o) o$sig2_1)
+ci_sig2_1 = apply(sig2_1, 1, quantile, c(.025,.975))
+plot(rowMeans(sig2_1), col=rgb(0,0,1,.5), pch=20, cex=1.5, ylim=range(ci_sig2_1))
+abline(h=0, lty=2, col='grey')
+add.errbar(t(ci_sig2_1), col='grey')
+
 ### sig2_0 ###
 sig2_0 = sapply(out, function(o) o$sig2_0)
 ci_sig2_0 = apply(sig2_0, 1, quantile, c(.025,.975))
@@ -207,16 +229,22 @@ plot(rowMeans(sig2_0), col=rgb(0,0,1,.5), pch=20, cex=1.5, ylim=range(ci_sig2_0)
 abline(h=0, lty=2, col='grey')
 add.errbar(t(ci_sig2_0), col='grey')
 
-### sig2_1 ###
-sig2_1 = sapply(out, function(o) o$sig2_1)
-ci_sig2_1 = apply(sig2_1, 1, quantile, c(.025,.975))
-plot(rowMeans(sig2_1), col=rgb(0,0,1,.5), pch=20, cex=1.5, ylim=range(ci_sig2_1))
-abline(h=0, lty=2, col='grey')
-add.errbar(t(ci_sig2_1), col='grey')
 dev.off()
 
 ### mus vs sig2 ###
 pdf(fileDest('mus_vs_sig2.pdf'))
+### sig2_1i ###
+sig2_1i = sapply(out, function(o) o$sig2_1[1,])
+plot(rowMeans(sig2_1i), rowMeans(mus_1), pch=as.character(1:prior$L1),
+     main=paste0('Red: i=1, Green: i=2, Blue: i=3'),
+     type='n', xlim=range(sig2_1), ylim=range(mus_1))
+for (i in 1:I) {
+  sig2_1i = sapply(out, function(o) o$sig2_1[i,])
+  points(rowMeans(sig2_1i), rowMeans(mus_1), pch=as.character(1:last(out)$prior$L1),
+         main=paste0('i=',i), col=i+1)
+}
+
+### sig2_0i ###
 sig2_0i = sapply(out, function(o) o$sig2_0[1,])
 plot(rowMeans(sig2_0i), rowMeans(mus_0), pch=as.character(1:prior$L0),
      main=paste0('Red: i=1, Green: i=2, Blue: i=3'),
@@ -227,15 +255,6 @@ for (i in 1:I) {
        main=paste0('i=',i), col=i+1)
 }
 
-sig2_1i = sapply(out, function(o) o$sig2_1[1,])
-plot(rowMeans(sig2_1i), rowMeans(mus_1), pch=as.character(1:prior$L1),
-     main=paste0('Red: i=1, Green: i=2, Blue: i=3'),
-     type='n', xlim=range(sig2_1), ylim=range(mus_1))
-for (i in 1:I) {
-  sig2_1i = sapply(out, function(o) o$sig2_1[i,])
-  points(rowMeans(sig2_1i), rowMeans(mus_1), pch=as.character(1:last(out)$prior$L1),
-         main=paste0('i=',i), col=i+1)
-}
 dev.off()
 
 pdf(fileDest('s.pdf'))
@@ -338,13 +357,19 @@ pdf(fileDest('y_hist.pdf'))
 par(mfrow=c(4,2))
 for (i in 1:prior$I) for (j in 1:prior$J) {
   zjk_mean = compute_zjk_mean(out, i, j)
+  yij = postpred_yij(out, i, j)
+
+  den_mean = density(last(out)$missing_y_mean[[i]][,j])
+  den_pp = density(yij)
+  den_one_samp = density(last(out)$missing_y[[i]][,j])
+  h = max(den_mean$y, den_pp$y, den_one_samp$y)
+
   plot_dat(out[[B]]$missing_y_mean, i, j, xlim=dat_lim, lwd=1, col='red',
+           ylim = c(0, h),
            main=paste0('i: ', i,', j: ', j, ' (Z_ij mean: ', round(zjk_mean,4), ')'))
 
-  lines(density(out[[B]]$missing_y[[i]][,j]), col='grey')
-         
-  yij = postpred_yij(out, i, j)
-  lines(density(yij), col='darkgrey', lwd=2)
+  lines(den_one_samp, col='grey')
+  lines(den_pp, col='darkgrey', lwd=2)
 
   eta_0ij = sapply(out, function(o) o$eta_0[i,j,])
   eta_1ij = sapply(out, function(o) o$eta_1[i,j,])

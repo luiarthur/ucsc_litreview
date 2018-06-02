@@ -40,7 +40,7 @@ system(paste0('cp sim.R ', OUTDIR))
 
 fileDest = function(filename) paste0(OUTDIR, filename)
 
-dat_lim=c(-3,3)
+dat_lim=c(-2,2)
 I=3; J=J; N=c(3,2,1)*N_degree; K=K_TRUE
 
 Z_repFAM = matrix(c(1,0,0,0,
@@ -50,10 +50,12 @@ Z_repFAM = matrix(c(1,0,0,0,
                     1,1,0,1), ncol=4)
 
 dat = sim_dat(I=I, J=J, N=N, K=K, 
-              L0=3, L1=4, Z=if (repFAM_Test) Z_repFAM else genZ(J,K,.6),
-              sig2_0=matrix(runif(I*3, 0,.3), I, 3),
-              sig2_1=matrix(runif(I*4, 0,.3), I, 4),
-              mus_0=c(-5,-2,-1), mus_1=c(1,2,4,5),
+              L0=5, L1=4, Z=if (repFAM_Test) Z_repFAM else genZ(J,K,.6),
+              sig2_0=matrix(runif(I*5, 0,.3), nrow=I),
+              sig2_1=matrix(runif(I*4, 0,.3), nrow=I),
+              #mus_0=c(-4, -.2, -.1), mus_1=c(.1, .2, .3, 1), # difficult!
+              #mus_0=c(-4, -2, -.7, -.6, -.1), mus_1=c(.1, .2, .3, 1), # easier
+              mus_0=c(-4, -2, -.7, -.6, -.4), mus_1=c(.3, .4, .5, 2), # easier
               a_W=if(repFAM_Test) c(15,15,1,1) else 1:K, 
               miss_mech_params(c(-30, -3, -1), c(.1, .99, .001)))
 y = dat$y
@@ -119,16 +121,10 @@ dev.off()
 
 prior = gen_default_prior(y, K=K_MCMC, L0=10, L1=10)
 
-# Are these good priors?
-prior$psi_0 = -2
-prior$psi_1 = 2
-prior$tau2_0 = .3^2
-prior$tau2_1 = .3^2
-
 #prior$cs_v = .01 # I think this should be better
 #prior$cs_h = 1 # I think this should be better
 # 1,1 -> great changes
-prior$cs_v = 1.0
+prior$cs_v = .01
 prior$cs_h = 1.0
 
 ### Repulsive Z ###
@@ -136,15 +132,17 @@ prior$a_Z = 1/J
 prior$nu_a = 0.5
 prior$nu_b = 1.5
 
-#prior$a_sig=3; prior$a_s=.04; prior$b_s=2
-# sig2 ~ IG(mean=.1, sd=.01)
 sig2_ab = invgamma_params(m=.2, sig=.05) # Inv-Gamma(mean=.2, sig=.05) is great.
+#sig2_ab = invgamma_params(m=.001, sig=.001)
+#sig2_ab = invgamma_params(m=.0005, sig=.0001)
 prior$a_sig=sig2_ab[1]
 s_ab = gamma_params(m=sig2_ab[2], v=1)
 prior$a_s=s_ab[1]; prior$b_s=s_ab[2]
-sig2_prior_samps = 1 / rgamma(1000, prior$a_sig, rgamma(1000, prior$a_s, prior$b_s))
+
+sig2_prior_samps = rinvgamma(1000, sig2_ab[1], sig2_ab[2])
 #hist(sig2_prior_samps)
-prior$sig2_max = quantile(sig2_prior_samps, .95)
+prior$sig2_max = qinvgamma(.99, sig2_ab[1], sig2_ab[2])
+println("sig2_max: ", prior$sig2_max)
 
 ### Missing Mechanism Prior ###
 
@@ -152,15 +150,16 @@ prior$sig2_max = quantile(sig2_prior_samps, .95)
 #mmp = miss_mech_params(y=c(-5, -2.5, -1.5), p=c(.1, .80, .01))
 p0 = median(missing_prop)
 Y = c(Reduce(rbind, y))
-Y = Y[which(Y < 0)]
+Y = Y[which(!is.na(Y))]
+Y_neg = Y[which(Y<0)]
+Y_pos = Y[which(Y>0)]
 yq = quantile(Y, c(.05, .1, .15))
-mmp = miss_mech_params(y=as.numeric(yq), p=c(.01, p0, .01))
-rm(Y)
+mmp = miss_mech_params(y=as.numeric(yq), p=c(.01, p0, .0001))
 
 prior$c0 = mmp['c0']
 prior$c1 = mmp['c1']
 prior$m_beta0 = mmp['b0']; prior$s2_beta0 = 1
-prior$m_beta1 = mmp['b1']; prior$s2_beta1 = 1
+prior$m_beta1 = mmp['b1']; prior$s2_beta1 = .001
 prior$cs_beta0 = .1
 prior$cs_beta1 = .1
 
@@ -179,15 +178,31 @@ set.seed(1)
 init0 = gen_default_init(prior)
 set.seed(1)
 init = gen_default_init(prior)
-init$mus_0 = seq(-6,-.5, l=prior$L0)
-init$mus_1 = seq(.5, 6,  l=prior$L1)
-init$sig2_0 = matrix(.01, prior$I, prior$L0) # TODO: Did this work?
-init$sig2_1 = matrix(.01, prior$I, prior$L1) # TODO: Did this work?
+init$mus_0 = quantile(Y_neg, prob=seq(0,1,l=prior$L0))
+init$mus_1 = quantile(Y_pos, prob=seq(0,1,l=prior$L1))
+println("init$mus_0: ", init$mus_0)
+println("init$mus_1: ", init$mus_1)
+init$sig2_0 = matrix(mean(sig2_prior_samps), prior$I, prior$L0)
+init$sig2_1 = matrix(mean(sig2_prior_samps), prior$I, prior$L1)
 #init$Z = matrix(1, prior$J, prior$K)
 #init$H = matrix(-2, prior$J, prior$K)
 init$H = matrix(rnorm(prior$J*prior$K, 0, 2), prior$J, prior$K)
 init$Z = compute_Z(H=init$H, v=init$v, G=prior$G)
+init$missing_y = y
+for (i in 1:prior$I) {
+  miss_idx = which(is.na(init$missing_y[[i]]))
+  init$missing_y[[i]][miss_idx] = runif(length(miss_idx), yq[1], yq[3])
+}
 
+# Are these good priors?
+prior$psi_0 = mean(Y_neg)
+prior$psi_1 = mean(Y_pos)
+prior$tau2_0 = var(Y_neg)
+prior$tau2_1 = var(Y_pos)
+println("psi_0: ", prior$psi_0)
+println("psi_1: ", prior$psi_1)
+println("tau2_0: ", prior$tau2_0)
+println("tau2_1: ", prior$tau2_1)
 
 ### Fixed parameters ###
 locked = gen_default_locked(init)
@@ -210,11 +225,12 @@ init$nu = 1.0   # TODO: make random?
 ### preimpute y for initialization
 #preimpute_y = preimpute(y)
 #init$missing_y = preimpute_y
-init$missing_y = y
-for (i in 1:I) init$missing_y[[i]][is.na(y[[i]])] = prior$c0
+#init$missing_y = y
+#for (i in 1:I) init$missing_y[[i]][is.na(y[[i]])] = prior$c0
 
 ### Save Checkpoint###
 #save(prior, init, locked, dat, file=fileDest('dat.rda'))
+rm(Y, Y_neg, Y_pos)
 dat = shrinkDat(dat)
 save.image(file=fileDest('checkpoint.rda'))
 dat = unshrinkDat(dat)
@@ -450,13 +466,18 @@ pdf(fileDest('y_hist.pdf'))
 par(mfrow=c(4,2))
 for (i in 1:prior$I) for (j in 1:prior$J) {
   zjk_mean = compute_zjk_mean(out, i, j)
+  yij = postpred_yij(out, i, j)
+
+  den_mean = density(last(out)$missing_y_mean[[i]][,j])
+  den_pp = density(yij)
+  den_one_samp = density(last(out)$missing_y[[i]][,j])
+  h = max(den_mean$y, den_pp$y, den_one_samp$y) * 1.1
+
   plot_dat(out[[B]]$missing_y_mean, i, j, xlim=c(-8,8), lwd=1, col='red',
            main=paste0('i: ', i,', j: ', j, ' (Z_ij mean: ', round(zjk_mean,4), ')'))
 
-  lines(density(out[[B]]$missing_y[[i]][,j]), col='grey')
-         
-  yij = postpred_yij(out, i, j)
-  lines(density(yij), col='darkgrey', lwd=2)
+  lines(den_one_samp, col='grey')
+  lines(den_pp, col='darkgrey', lwd=2)
 
   eta_0ij = sapply(out, function(o) o$eta_0[i,j,])
   eta_1ij = sapply(out, function(o) o$eta_1[i,j,])
