@@ -73,11 +73,57 @@ header-includes:
 - Timeline
 -->
 
-# CyTOF
+<!-- one minute -->
+# Introduction
 
-# Review of Feature Allocation Models
+- Natural Killer (NK) cells
+- Cytometry at time-of-flight (CyTOF)
+- Feature Allocation Model (FAM)
 
+<!-- one minute -->
+# CyTOF Data
+<!--latex table generated in R 3.4.4 by xtable 1.8-2 package
+Mon Jun  4 10:45:42 2018-->
+<!--transformed data
+\begin{tabular}{rrrrrrrr}
+  \hline
+ & 2B4 & 2DL1 & 2DL3 & 2DS4 & 3DL1 & CCR7 & CD158B \\
+  \hline
+1 & 1.83 & NA & 0.82 & -1.03 & 1.67 & NA & 1.03 \\
+  2 & 2.37 & -2.63 & -2.73 & -2.00 & 2.44 & -1.39 & -2.70 \\
+  3 & 0.56 & NA & NA & NA & NA & -0.08 & NA \\
+   \hline
+\end{tabular}
+-->
+<!-- original data, first three rows, first seven columns -->
+\begin{table}
+\begin{tabular}{rrrrrrrr}
+  \hline
+ & 2B4 & 2DL1 & 2DL3 & 2DS4 & 3DL1 & CCR7 & $\cdots$ \\
+  \hline
+  1 & 47.60 & 0.00 & 30.90 & 1.35 & 82.49 & 0.00 & $\cdots$ \\
+  2 & 81.84 & 0.44 & 0.88 & 0.51 & 176.99 & 2.38 &$\cdots$ \\
+  3 & 13.33 & 0.00 & 0.00 & 0.00 & 0.00 & 8.81 &  $\cdots$ \\
+  $\vdots$ & $\vdots$& $\vdots$& $\vdots$& $\vdots$& $\vdots$& $\vdots$& \\
+  \hline
+\end{tabular}
+\caption{CyTOF cord-blood sample marker expression data for 6 of 32 NK-cell markers, and 3 of 41437 cells.}
+\end{table}
+
+<!-- 30 seconds -->
+# Proposed Projects
+
+- Project I: Bayesian Feature Allocation Model for Heterogeneous Cell Populations
+
+- Project II: Repulsive Feature Allocation Model
+
+- Project III: Feature Allocation Model with Regression for Abundances of Features in Longitudinal Data
+
+
+<!-- 15 minutes -->
 # Project I: Bayesian Feature Allocation Model for Heterogeneous Cell Populations
+
+# Feature Allocation Models
 
 # Project I: Simulation Study
 \begin{figure}
@@ -201,11 +247,19 @@ install_github(repo, subdir=subdir)
 ```
 
 
+<!-- 10 minutes -->
 # Project II: Repulsive Feature Allocation Model
+Include outline
 
+# Project II: Simulation Study
+
+
+<!-- 2 minutes -->
 # Project III: Feature Allocation Model with Regression for Abundances of Features
+Include outline
 
 
+<!-- 10 seconds -->
 # Timeline
 \Large
 \begin{table}[H]
