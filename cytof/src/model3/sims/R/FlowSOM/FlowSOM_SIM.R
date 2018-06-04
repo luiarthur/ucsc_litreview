@@ -13,7 +13,7 @@ set.seed(3)
 OUT_SIM  = '../../out/'
 OUT_FLOW = OUT_SIM %+% 'FlowSOM/'
 
-cytof3.results = OUT_SIM %+% '/sim_locked_beta_K20_N100/checkpoint.rda'
+cytof3.results = OUT_SIM %+% '/sim_rand_beta_K20_N10000/checkpoint.rda'
 load(cytof3.results)
 
 ### Indices for each sample ###
