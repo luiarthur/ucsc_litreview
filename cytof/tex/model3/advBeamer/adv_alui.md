@@ -14,6 +14,7 @@ header-includes:
     - \def\endmyfig{\end{center}\end{figure}}
     - \newcommand{\tbf}[1]{\textbf{#1}}
     # MATH
+    - \newcommand{\iid}{\overset{iid}{\sim}}
     - \def\inv{^{\raisebox{.2ex}{$\scriptscriptstyle-1$}}}
     - \newcommand{\m}[1]{\mathbf{\bm{#1}}} # Serif bold math
     - \newcommand{\norm}[1]{\left\lVert#1\right\rVert}
@@ -39,7 +40,7 @@ header-includes:
     #- \institute{ AMS\\ UC Santa Cruz \footnote{UCSC is awesome}}
     #- \titlegraphic{\vspace{2.0em}\hspace{-6em}\includegraphics[scale=.3]{img/baskin-logo.jpg}}
     - \institute{Department of Applied Mathematics and Statistics\\ UC Santa Cruz}
-    - \titlegraphic{\includegraphics[scale=.3]{img/baskin-logo.jpg}}
+    #- \titlegraphic{\includegraphics[scale=.3]{img/baskin-logo.jpg}}
     # OTHER defs:
     - \def\logit{\text{logit}}
     - \newcommand{\true}{{\mbox{\tiny TR}}}
@@ -61,6 +62,9 @@ header-includes:
     - \def\blambda{\bm{\lambda}}
     - \def\bet{\bm{\eta}}
     - \def\lin{\lambda_{in}}
+    - \def\h{\bm{h}}
+    - \def\mus{\mu^\star}
+    - \def\sss{{\sigma^2}^\star}
 #}}}1
 ---
 
@@ -93,7 +97,7 @@ header-includes:
     \begin{minipage}{\textwidth}
     \begin{columns}[T]
     \begin{column}{0.1\textwidth}
-    \vspace{10em}
+    \vspace{5em}
     \includegraphics[scale=0.5]{img/CyTOF_instrument.jpg}
     \end{column}
     \begin{column}{0.6\textwidth}
@@ -210,7 +214,7 @@ $$
 # Project I: Bayesian Feature Allocation Model for Heterogeneous Cell Populations
 ## Notation (cont'd)
 - $\lambda_{in} \in \bc{1,...,K}$: The latent phenotype of observation $n$, sample $i$
-    - $K$ is held constant
+    - $K$ is a sufficiently large constant
 - $\bZ$: $(J \times K)$ binary matrix defining the latent phenotypes.
     - if $Z_{jk} = 1$, then marker $j$ is expressed in phenotype $k$
     - if $Z_{jk} = 0$, then marker $j$ is not expressed in phenotype $k$
@@ -249,23 +253,57 @@ and $\eta^0_{ij\ell}, \eta^1_{ij\ell} > 0$
   \beta_{0i} - \beta_{1i}c_1\p{y_{inj}-c_0}^{1/2}, & \text{otherwise}, \nonumber \\
   \end{cases} 
 \end{align*}
+where $m_{inj}=1$ if $y_{inj}$ is missing, and 0 otherwise.
+\beginmyfig
+\includegraphics[scale=.20]{../sampling/img/prob_miss_example.pdf}
+\caption{Example missing mechanism}
+\endmyfig
 
-![](../sampling/img/prob_miss_example.pdf){ height=40% }
+# Project I: Priors
+## Latent Phenotypes
+\begin{eqnarray*}
+  v_k \mid \alpha &\iid& \text{Beta}(\alpha/K, 1),~ k=1, \ldots, K \\
+  \alpha &\sim& \text{Gamma}(a_\alpha, b_\alpha) \\
+  \h_k &\iid& \text{Normal}_J(\mathbf{0}, \Gamma) \\ 
+  z_{jk} \mid h_{jk}, v_k &=& \mathbb{I}\bc{ \Phi(h_{jk} \mid 0,
+  \Gamma_{jj}) < v_k }
+\end{eqnarray*}
+
+## Phenotype Abundance
+Let $w_{ik}$ denote an abundance level of phenotype $k$ in sample $i$.
+Let $\bw_i=(w_{i1}, \ldots, w_{iK})$. Then, $\bw_{i} \mid K \iid
+\text{Dirichlet}_K(d/K)$.
+
+## Latent Cell Phenotype Indicators
+$$p(\lin=k \mid \bm \bw_i) = w_{ik}$$
+
+# Project I: Priors
+\begin{align*}
+\mus_{0\ell} \mid \psi_0, \tau^2_0 &\iid \text{Normal}_-(\psi_0, \tau^2_0), ~~~ \ell \in \bc{1,...,L^0} \\
+\mus_{1\ell} \mid \psi_1, \tau^2_1 &\iid \text{Normal}_+(\psi_1, \tau^2_1), ~~~ \ell \in \bc{1,...,L^1} \\
+\sigma^2_{0i\ell} \mid s_i &\ind \text{Inverse-Gamma}(a_\sigma, s_i), ~~~ \ell \in \bc{1,...,L^0} \\
+\sigma^2_{1i\ell} \mid s_i &\ind \text{Inverse-Gamma}(a_\sigma, s_i), ~~~ \ell \in \bc{1,...,L^1}  \\
+s_i &\iid \text{Gamma}(a_s, b_s) \\
+\bm\eta^0_{ij} &\iid \text{Dirichlet}_{L^0}(a_{\eta^0}/L^0), ~~~ i \in \bc{1,...,I}, j \in \bc{1,...,J} \\
+\bm\eta^1_{ij} &\iid \text{Dirichlet}_{L^1}(a_{\eta^1}/L^1), ~~~ i \in \bc{1,...,I}, j \in \bc{1,...,J} \\
+\beta_{0i} &\iid \text{Normal}_-(m_{\beta_0}, s^2_{\beta_0}), ~~~ i \in \bc{1,...,I} \\
+\beta_{1i} &\iid \text{Normal}_+(m_{\beta_1}, s^2_{\beta_1}), ~~~ i \in \bc{1,...,I} \\
+\end{align*}
+
 
 # Project I: Simulation Study
 \begin{figure}
-  \begin{center}
+\begin{center}
 \begin{tabular}{c}
 \includegraphics[scale=.35]{../sampling/img/sim/Z_true_all.pdf}
-  \end{tabular}
- \end{center}
- \vspace{-0.05in}
-\caption{\tiny The transpose of $\bZ^\true$ with markers in columns and latent
-phenotypes in rows. Black and white represents $z^\true_{jk}=1$ and 0,
-respectively. The phenotypes and $\bw^\true_i$ are shown on the left and
-right sides of each panel, respectively. The samples share the same $\bZ^\true$ and the phenotypes are arranged in order of
+\end{tabular}
+\end{center}
+\vspace{-0.05in} \caption{\tiny The transpose of $\bZ^\true$ with markers in
+columns and latent phenotypes in rows. Black and white represents
+$z^\true_{jk}=1$ and 0, respectively. The phenotypes and $\bw^\true_i$ are
+shown on the left and right sides of each panel, respectively. The samples
+share the same $\bZ^\true$ and the phenotypes are arranged in order of
 $w_{ik}^\true$ within each sample.}
-\label{fig:sim-Z}
 \end{figure}
 
 
