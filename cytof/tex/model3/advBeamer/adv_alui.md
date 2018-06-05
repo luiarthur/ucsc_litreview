@@ -185,6 +185,12 @@ returned by CyTOF instrument.}
 
 - Obtaining cell phenotypes using overly-simplistic methods may yield unreasonably high number of sub-populations.
 
+# Existing Methods
+
+- Most existing methods use traditional clustering methods (K-means, hierarchical clustering, density-based clustering, etc.)
+\setlength\itemsep{1em}
+- Existing methods do not directly model latent phenotypes
+- Existing methods do not quantify model uncertainty
 
 <!-- 30 seconds -->
 # Proposed Projects
