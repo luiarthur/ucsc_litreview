@@ -7,7 +7,7 @@ pm = prob_miss(yy, b0=mmp['b0'], b1=mmp['b1'], c0=mmp['c0'], c1=mmp['c1'])
 
 pdf('prob_miss_example.pdf')
 plot(yy, pm, type='l', ylab='probability of missing', xlab='y', 
-     fg='grey', lwd=2, ylim=0:1)
+     fg='grey', lwd=2, ylim=0:1, cex.axis=1.4, cex.lab=1.4)
 abline(v=y0, lty=2, col='grey')
 points(y0, p0, pch=20, cex=2, col='steelblue')
 dev.off()
