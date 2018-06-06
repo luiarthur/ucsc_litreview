@@ -9,7 +9,7 @@ PRES_NAME="adv_alui"
 
 #pandoc ${PRES_NAME}.md -t beamer -s -o ${PRES_NAME}.tex
 #pandoc ${PRES_NAME}.md -t beamer --natbib -s -o ${PRES_NAME}.tex
-pandoc ${PRES_NAME}.md -t beamer -V theme:alui --natbib -s -o ${PRES_NAME}.tex
+#pandoc ${PRES_NAME}.md -t beamer -V theme:alui --natbib -s -o ${PRES_NAME}.tex
 
 
 echo "Compiling stuff..."
@@ -20,5 +20,5 @@ pdflatex ${PRES_NAME}.tex
 
 echo "Removing stuff..."
 rm -f ${PRES_NAME}.{log,aux,nav,out,snm,toc,bbl,blg,vrb}
-rm -f ${PRES_NAME}.tex
+#rm -f ${PRES_NAME}.tex
 
