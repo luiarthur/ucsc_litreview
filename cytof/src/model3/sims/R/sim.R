@@ -242,7 +242,7 @@ st = system.time({
                       init=init, print_freq=1, show_timings=FALSE,
                       normalize_loglike=TRUE, joint_update_freq=0,
                       ncores=NCORES, print_new_line=TRUE,
-                      use_repulsive=USE_REPULSIVE)
+                      use_repulsive=USE_REPULSIVE, mu_eps=.1)
 })
 print(st)
 #saveRDS(out, fileDest('out.rds'))
@@ -328,24 +328,25 @@ dev.off()
 ### mus vs sig2 ###
 pdf(fileDest('mus_vs_sig2.pdf'))
 sig2_0i = sapply(out, function(o) o$sig2_0[1,])
-plot(rowMeans(sig2_0i), rowMeans(mus_0), pch=as.character(1:prior$L0),
-     main=paste0('Red: i=1, Green: i=2, Blue: i=3'),
-     type='n', xlim=range(sig2_0), ylim=range(mus_0))
-for (i in 1:I) {
-  sig2_0i = sapply(out, function(o) o$sig2_0[i,])
-  points(rowMeans(sig2_0i), rowMeans(mus_0), pch=as.character(1:last(out)$prior$L0),
-       main=paste0('i=',i), col=i+1)
-}
-
 sig2_1i = sapply(out, function(o) o$sig2_1[1,])
 plot(rowMeans(sig2_1i), rowMeans(mus_1), pch=as.character(1:prior$L1),
      main=paste0('Red: i=1, Green: i=2, Blue: i=3'),
-     type='n', xlim=range(sig2_1), ylim=range(mus_1))
+     type='n', #xlim=range(sig2_1), ylim=range(mus_1),
+     xlim=range((sig2_1i),(sig2_0i)),
+     ylim=range((mus_1), (mus_0)))
 for (i in 1:I) {
   sig2_1i = sapply(out, function(o) o$sig2_1[i,])
   points(rowMeans(sig2_1i), rowMeans(mus_1), pch=as.character(1:last(out)$prior$L1),
-         main=paste0('i=',i), col=i+1)
+         col=i+1)
 }
+
+for (i in 1:I) {
+  sig2_0i = sapply(out, function(o) o$sig2_0[i,])
+  points(rowMeans(sig2_0i), rowMeans(mus_0), pch=as.character(1:last(out)$prior$L0),
+         col=i+1)
+}
+
+abline(h=0, lty=2)
 dev.off()
 
 pdf(fileDest('s.pdf'))

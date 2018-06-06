@@ -218,7 +218,6 @@ $$
     - $(y_{inj} \ll 0)$ likely corresponds to non-expression
 
 # Project I: Bayesian Feature Allocation Model for Heterogeneous Cell Populations
-## Notation (cont'd)
 - $\lambda_{in} \in \bc{1,...,K}$: The latent phenotype of observation $n$, sample $i$
     - $K$ is a sufficiently large constant
 - $\bZ$: $(J \times K)$ binary matrix defining the latent phenotypes.
@@ -313,7 +312,18 @@ $w_{ik}^\true$ within each sample.}
 \end{figure}
 
 
-# Project I: Simulation Study (FAM)
+# Project I: Simulation Study
+\begin{figure}
+\begin{center}
+\begin{tabular}{c}
+\includegraphics[scale=.35]{../sampling/img/sim/Y001.png}
+\end{tabular}
+\end{center}
+\vspace{-0.05in} \caption{Simulated data for one sample}
+\end{figure}
+
+
+# Project I: Simulation Results (FAM)
 \vspace{-1em}
 \begin{figure}
   \begin{center}
@@ -328,7 +338,7 @@ $w_{ik}^\true$ within each sample.}
 \label{fig:sim-post-Z}
 \end{figure}
 
-# Project I: Simulation Study (FAM)
+# Project I: Simulation Results (FAM)
 \vspace{-1em}
 \begin{figure}
   \begin{center}
@@ -343,7 +353,7 @@ $w_{ik}^\true$ within each sample.}
 \label{fig:sim-post-Z}
 \end{figure}
 
-# Project I: Simulation Study (FAM)
+# Project I: Simulation Results (FAM)
 \vspace{-1em}
 \begin{figure}
   \begin{center}
@@ -366,14 +376,45 @@ $w_{ik}^\true$ within each sample.}
   \begin{center}
   \begin{tabular}{cc}
   \includegraphics[scale=.3]{../sampling/img/FlowSOM/YZ001_FlowSOM_SIM.png}&
-  \includegraphics[scale=.3]{../sampling/img/FlowSOM/YZ002_FlowSOM_SIM.png}\\
-  {\small (a) Sample 1} & {\small(b) Sample 2} \\
+  \includegraphics[scale=.3]{../sampling/img/sim/Z1_true.pdf}\\
+  {\small (a) Sample 1} & {\small(b) Z true} \\
   \end{tabular}
   \end{center}
   \vspace{-0.05in}
-  \caption{\small[FlowSOM Simulation Study]}
+  \caption{FlowSOM Simulation Study}
 \label{fig:sim-post-Z}
 \end{figure}
+
+# Project I: Simulation Study (FlowSOM)
+\vspace{-1em}
+\begin{figure}
+  \begin{center}
+  \begin{tabular}{cc}
+  \includegraphics[scale=.3]{../sampling/img/FlowSOM/YZ002_FlowSOM_SIM.png}&
+  \includegraphics[scale=.3]{../sampling/img/sim/Z2_true.pdf}\\
+  {\small (a) Sample 2} & {\small(b) Z true} \\
+  \end{tabular}
+  \end{center}
+  \vspace{-0.05in}
+  \caption{FlowSOM Simulation Study}
+\label{fig:sim-post-Z}
+\end{figure}
+
+# Project I: Simulation Study (FlowSOM)
+\vspace{-1em}
+\begin{figure}
+  \begin{center}
+  \begin{tabular}{cc}
+  \includegraphics[scale=.3]{../sampling/img/FlowSOM/YZ003_FlowSOM_SIM.png}&
+  \includegraphics[scale=.3]{../sampling/img/sim/Z3_true.pdf}\\
+  {\small (a) Sample 3} & {\small(b) Z true} \\
+  \end{tabular}
+  \end{center}
+  \vspace{-0.05in}
+  \caption{FlowSOM Simulation Study}
+\label{fig:sim-post-Z}
+\end{figure}
+
 
 # Project I: CB Study (FAM)
 \vspace{-1em}
@@ -390,6 +431,21 @@ $w_{ik}^\true$ within each sample.}
 \label{fig:sim-post-Z}
 \end{figure}
 
+# Project I: CB Study (FAM)
+\vspace{-1em}
+\begin{figure}
+  \begin{center}
+  \begin{tabular}{cc}
+  \includegraphics[scale=.3]{../sampling/img/cb/YZ003.png} & \\
+  {\small Sample 3} &  \\
+  \end{tabular}
+  \end{center}
+  \vspace{-0.05in}
+  \caption{\small[FlowSOM Simulation Study]}
+\label{fig:sim-post-Z}
+\end{figure}
+
+
 
 # Project I: CB Study (FlowSOM)
 \vspace{-1em}
@@ -399,6 +455,20 @@ $w_{ik}^\true$ within each sample.}
   \includegraphics[scale=.3]{../sampling/img/FlowSOM/YZ001_FlowSOM_CB.png}&
   \includegraphics[scale=.3]{../sampling/img/FlowSOM/YZ002_FlowSOM_CB.png}\\
   {\small (a) Sample 1} & {\small(b) Sample 2} \\
+  \end{tabular}
+  \end{center}
+  \vspace{-0.05in}
+  \caption{\small[FlowSOM Simulation Study]}
+\label{fig:sim-post-Z}
+\end{figure}
+
+# Project I: CB Study (FlowSOM)
+\vspace{-1em}
+\begin{figure}
+  \begin{center}
+  \begin{tabular}{cc}
+  \includegraphics[scale=.3]{../sampling/img/FlowSOM/YZ003_FlowSOM_CB.png}\\
+  {\small Sample 1} &  \\
   \end{tabular}
   \end{center}
   \vspace{-0.05in}

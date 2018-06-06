@@ -1,5 +1,5 @@
 # Ignore the tex file
-*.tex
+adv.tex
 
 # Ignore the pdf
 adv*.pdf
