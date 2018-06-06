@@ -335,7 +335,6 @@ $w_{ik}^\true$ within each sample.}
   \end{center}
   \vspace{-0.05in}
   \caption{FAM Simulation Study}
-\label{fig:sim-post-Z}
 \end{figure}
 
 # Project I: Simulation Results (FAM)
@@ -350,7 +349,6 @@ $w_{ik}^\true$ within each sample.}
   \end{center}
   \vspace{-0.05in}
   \caption{FAM Simulation Study}
-\label{fig:sim-post-Z}
 \end{figure}
 
 # Project I: Simulation Results (FAM)
@@ -365,7 +363,6 @@ $w_{ik}^\true$ within each sample.}
   \end{center}
   \vspace{-0.05in}
   \caption{FAM Simulation Study}
-\label{fig:sim-post-Z}
 \end{figure}
 
 
@@ -382,7 +379,6 @@ $w_{ik}^\true$ within each sample.}
   \end{center}
   \vspace{-0.05in}
   \caption{FlowSOM Simulation Study}
-\label{fig:sim-post-Z}
 \end{figure}
 
 # Project I: Simulation Study (FlowSOM)
@@ -397,7 +393,6 @@ $w_{ik}^\true$ within each sample.}
   \end{center}
   \vspace{-0.05in}
   \caption{FlowSOM Simulation Study}
-\label{fig:sim-post-Z}
 \end{figure}
 
 # Project I: Simulation Study (FlowSOM)
@@ -412,8 +407,36 @@ $w_{ik}^\true$ within each sample.}
   \end{center}
   \vspace{-0.05in}
   \caption{FlowSOM Simulation Study}
-\label{fig:sim-post-Z}
 \end{figure}
+
+# Project I: Simulation Study (Sensitivity to $K$)
+\vspace{-1em}
+\begin{figure}
+  \begin{center}
+  \begin{tabular}{cc}
+  \includegraphics[scale=.3]{../sampling/img/ksen/YZ001_K5.png}&
+  \includegraphics[scale=.3]{../sampling/img/ksen/YZ001_K10.png} \\
+  {\small (a) Sample 1. $K=5$} & {\small(b) Sample 1. $K=10$} \\
+  \end{tabular}
+  \end{center}
+  \vspace{-0.05in}
+  \caption{FAM sensitivity to $K$}
+\end{figure}
+
+# Project I: Simulation Study (Sensitivity to $K$)
+\vspace{-1em}
+\begin{figure}
+  \begin{center}
+  \begin{tabular}{cc}
+  \includegraphics[scale=.3]{../sampling/img/ksen/YZ001_K20.png}&
+  \includegraphics[scale=.3]{../sampling/img/ksen/YZ001_K10.png}\\
+  {\small (c) Sample 1. $K=20$} & {\small(b) Sample 1. $K=10$} \\
+  \end{tabular}
+  \end{center}
+  \vspace{-0.05in}
+  \caption{FAM sensitivity to $K$}
+\end{figure}
+
 
 
 # Project I: CB Study (FAM)
@@ -427,8 +450,7 @@ $w_{ik}^\true$ within each sample.}
   \end{tabular}
   \end{center}
   \vspace{-0.05in}
-  \caption{\small[FlowSOM Simulation Study]}
-\label{fig:sim-post-Z}
+  \caption{CB data analyzed using FAM}
 \end{figure}
 
 # Project I: CB Study (FAM)
@@ -441,8 +463,7 @@ $w_{ik}^\true$ within each sample.}
   \end{tabular}
   \end{center}
   \vspace{-0.05in}
-  \caption{\small[FlowSOM Simulation Study]}
-\label{fig:sim-post-Z}
+  \caption{CB data analyzed using FAM}
 \end{figure}
 
 
@@ -458,8 +479,7 @@ $w_{ik}^\true$ within each sample.}
   \end{tabular}
   \end{center}
   \vspace{-0.05in}
-  \caption{\small[FlowSOM Simulation Study]}
-\label{fig:sim-post-Z}
+  \caption{CB data analyzed using FlowSOM}
 \end{figure}
 
 # Project I: CB Study (FlowSOM)
@@ -472,8 +492,7 @@ $w_{ik}^\true$ within each sample.}
   \end{tabular}
   \end{center}
   \vspace{-0.05in}
-  \caption{\small[FlowSOM Simulation Study]}
-\label{fig:sim-post-Z}
+  \caption{CB data analyzed using FlowSOM}
 \end{figure}
 
 
