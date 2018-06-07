@@ -161,12 +161,10 @@
 \end{frame}
 
 \begin{frame}{Introduction}
-
 \begin{itemize}
 \tightlist
 \item
   \textbf{Cytometry at time-of-flight (CyTOF)} \setlength\itemsep{1em}
-
   \begin{minipage}{\textwidth}
   \begin{columns}[T]
   \begin{column}{0.1\textwidth}
@@ -194,7 +192,22 @@
   surveillance and are the first line of defense against viruses and
   transformed tumor cells.
 \end{itemize}
+\end{frame}
 
+\begin{frame}{Introduction}
+  \begin{itemize}
+    \setlength\itemsep{1em}
+    \item NK cell diversity refers to number of NK cell sub-populations within
+      NK cells, and also affects antiviral response
+    \item Drs. Thall and Rezvani, collaborators at UT MD Anderson Cancer
+      Center, have conducted clinical trials to study the potential clinical
+      efficacy of umbilical cord blood (UCB) transplantation as a therapy for
+      leukemia.
+    \item UCB NK cell therapy has the advantage of low risk of viral
+      transmission from donor to recipient \citep{sarvaria2017umbilical}.
+    \item In the trials, leukemia patients received UCB cell transplants, and
+      NK cell surface protein markers are measured using mass cytometry.
+  \end{itemize}
 \end{frame}
 
 \begin{frame}{CyTOF Data}
@@ -269,17 +282,19 @@ returned by CyTOF instrument.}
 \begin{frame}{Existing Methods}
 
 \begin{itemize}
-\tightlist
-\item
-  Most existing methods use traditional clustering methods (K-means,
-  hierarchical clustering, density-based clustering, etc.)
-  \setlength\itemsep{1em}
-\item
-  Existing methods do not directly model latent phenotypes
-\item
-  Existing methods do not quantify model uncertainty
-\end{itemize}
-
+\setlength\itemsep{1em}
+  \item Most existing methods use traditional clustering methods (K-means,
+    hierarchical clustering, density-based clustering, nearest-neighbor
+    clustering, etc.)
+  \item For high-dimensional cytometry data, \cite{weber2016comparison}
+    compared existing clustering methods including \textbf{FlowSOM}
+    \citep{van2015flowsom}, \textbf{PhenoGraph} \citep{levine2015data}, 
+    \textbf{Rclusterpp} \citep{linderman2013package}, 
+    and \textbf{flowClust} \citep{lo2009flowclust}
+  \item
+    Existing methods do not directly model latent phenotypes or quantify model
+    uncertainty
+  \end{itemize}
 \end{frame}
 
 \begin{frame}{Proposed Projects}
@@ -295,8 +310,78 @@ returned by CyTOF instrument.}
   \textbf{Project III}: Feature Allocation Model with Regression for
   Abundances of Features in Longitudinal Data
 \end{itemize}
-
 \end{frame}
+
+\frame{ %
+  \frametitle{Feature Allocation Model -- Indian buffet process}
+  \vspace{5mm}
+
+  Griffiths et al. \cite{griffiths2011indian} introduced the
+  IBP as follows:
+  \vspace{5mm}
+
+  Let $\bm Z$ be a $J\times K$ matrix such that
+  $$
+  \begin{array}{rclcl}
+    z_{jk} &\mid& \pi_k  &\sim& \text{Bernoulli}(\pi_k) \\
+    \pi_k  &\mid& \alpha &\sim& \text{Beta}\p{\frac{\alpha}{K},1} \\ 
+  \end{array}
+  $$
+  for $j=1,\cdots J$ and $k=1,\cdots, K$, and where $\alpha$ is positive. \\
+
+  Then as $K\rightarrow \infty$, $\bm Z \sim \text{IBP}(\alpha)$.
+  It can be shown that
+  $$
+  \text{P}(\bm Z) = \frac{\alpha^{K_+}}{\prod_{h=1}^{2^J-1} 
+                          {K_h}!} 
+                          \exp\{-\alpha H_J\}\prod_{k=1}^{K_+}
+                                       \frac{(J-m_k)!(m_k-1)!}{J!},
+  $$
+
+  where $H_J=\sum_{j=1}^J j^{-1}$ is the harmonic number, 
+  , $K_+$ is
+  the number of non-zero columns in $\bm Z$, $m_k$ is the $k^{th}$
+  column sum of $\bm Z$, and $K_h$ the number of columns having
+  history $h$ (some binary number).
+}
+
+
+% Draws from IBP
+\frame{ %
+  \frametitle{One draw from the IBP}
+  \vspace{5mm}
+  \beginmyfig
+    \includegraphics[scale=.4]{img/ibp/Z.pdf}
+    %\caption{Put Caption Here}
+  \endmyfig
+}
+\frame{ %
+  \frametitle{One draw from the IBP}
+  \vspace{5mm}
+  \beginmyfig
+    \includegraphics[scale=.4]{img/ibp/Z2.pdf}
+    %\caption{Put Caption Here}
+  \endmyfig
+}
+\frame{ %
+  \frametitle{One draw from the IBP}
+  \vspace{5mm}
+  \beginmyfig
+    \includegraphics[scale=.4]{img/ibp/Z3.pdf}
+    %\caption{Put Caption Here}
+  \endmyfig
+}
+% IBP Expectation
+\frame{ %
+  \frametitle{Expected value of the IBP}
+  \vspace{5mm}
+  \beginmyfig
+    \includegraphics[scale=.4]{img/ibp/EZ.pdf}
+    %\caption{Put Caption Here}
+  \endmyfig
+}
+
+
 
 \begin{frame}{Project I: Bayesian Feature Allocation Model for
 Heterogeneous Cell Populations}
@@ -414,7 +499,6 @@ where \(m_{inj}=1\) if \(y_{inj}\) is missing, and 0 otherwise.
 \end{frame}
 
 \begin{frame}{Project I: Priors}
-
 \begin{block}{Latent Phenotypes}
 \begin{eqnarray*}
   v_k \mid \alpha &\iid& \text{Beta}(\alpha/K, 1),~ k=1, \ldots, K \\
@@ -433,23 +517,17 @@ where \(m_{inj}=1\) if \(y_{inj}\) is missing, and 0 otherwise.
 
 \begin{frame}{Project I: Priors}
 \begin{block}{Phenotype Abundance}
-
 Let \(w_{ik}\) denote an abundance level of phenotype \(k\) in sample
 \(i\). Let \(\bw_i=(w_{i1}, \ldots, w_{iK})\). Then,
 \(\bw_{i} \mid K \iid \text{Dirichlet}_K(d/K)\).
-
 \end{block}
 
 \begin{block}{Latent Cell Phenotype Indicators}
-
 \[p(\lin=k \mid \bm \bw_i) = w_{ik}\]
-
 \end{block}
-
 \end{frame}
 
 \begin{frame}{Project I: Priors}
-
 \begin{align*}
 \mus_{0\ell} \mid \psi_0, \tau^2_0 &\iid \text{Normal}_-(\psi_0, \tau^2_0), ~~~ \ell \in \bc{1,...,L^0} \\
 \mus_{1\ell} \mid \psi_1, \tau^2_1 &\iid \text{Normal}_+(\psi_1, \tau^2_1), ~~~ \ell \in \bc{1,...,L^1} \\
@@ -461,11 +539,33 @@ Let \(w_{ik}\) denote an abundance level of phenotype \(k\) in sample
 \beta_{0i} &\iid \text{Normal}(m_{\beta_0}, s^2_{\beta_0}), ~~~ i \in \bc{1,...,I} \\
 \beta_{1i} &\iid \text{Normal}_+(m_{\beta_1}, s^2_{\beta_1}), ~~~ i \in \bc{1,...,I} \\
 \end{align*}
+\end{frame}
 
+\begin{frame}{Project I: Posterior Estimate for $\bZ$}
+  \begin{itemize}
+    \setlength\itemsep{1em}
+    \item $\bZ$ susceptible to label switching, especially when $K$ is random
+    \item We summarize the posterior distribution of $\bZ$ using sequentially-allocated latent structure optimization (SALSO) \citep{salso}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Project I: Posterior Estimate for $\bZ$}
+  For each posterior sample $b\in \bc{1,...,B}$ and patient sample $i$,
+\begin{enumerate}
+\item compute a $(J\times J)$ Adjacency Matrix $A_i^{(b)}$, where
+  $$
+  A^{(b)}_{i,j,j'} = \sum_{k=1}^K w^{(b)}_{ik} 
+  \mathbb{I}\left( z^{(b)}_{jk} = 1\right)
+  \mathbb{I}\left(z^{(b)}_{j^\prime k} = 1\right), b \in \bc{1,...,B}
+  $$
+\item compute the mean adjacency matrix \(\bar A_i = \sum_{b=1}^B A_i^{(b)} /
+B\).
+\item $\hat{\bm Z}_i = \text{argmin}_{\bm Z} \sum_{j,j'} (A_{i,j,j'}^{(b)} - \bar
+A_{i,j,j'})^2$
+\end{enumerate}
 \end{frame}
 
 \begin{frame}{Project I: Simulation Study}
-
 \begin{figure}
 \begin{center}
 \begin{tabular}{c}
@@ -483,7 +583,6 @@ $w_{ik}^\true$ within each sample.}
 \end{frame}
 
 \begin{frame}{Project I: Simulation Study}
-
 \begin{figure}
 \begin{center}
 \begin{tabular}{c}
@@ -492,11 +591,9 @@ $w_{ik}^\true$ within each sample.}
 \end{center}
 \vspace{-0.05in} \caption{Simulated data for one sample}
 \end{figure}
-
 \end{frame}
 
 \begin{frame}{Project I: Simulation Results -- FAM}
-
 \vspace{-1em}\begin{figure}
   \begin{center}
   \begin{tabular}{cc}
@@ -508,43 +605,19 @@ $w_{ik}^\true$ within each sample.}
   \vspace{-0.05in}
   \caption{FAM Simulation Study}
 \end{figure}
-
 \end{frame}
 
-\begin{frame}{Project I: Simulation Results -- FAM}
-
+\begin{frame}[noframenumbering]{Missing Mechanism Posterior}
 \vspace{-1em}\begin{figure}
   \begin{center}
-  \begin{tabular}{cc}
-  \includegraphics[scale=.3]{../sampling/img/sim/YZ002.png}&
-  \includegraphics[scale=.3]{../sampling/img/sim/Z2_true.pdf}\\
-  {\small (a) Sample 2} & {\small(b) Z true} \\
-  \end{tabular}
+    \includegraphics[scale=.4]{../sampling/img/sim/miss_mech_posterior.pdf}
   \end{center}
   \vspace{-0.05in}
-  \caption{FAM Simulation Study}
+  \caption{Posterior missing mechanism for simulation study in Project I for sample 1 (red), 2 (green), and 3 (blue). Prior missing mechanism in grey.}
 \end{figure}
-
 \end{frame}
 
-\begin{frame}{Project I: Simulation Results -- FAM}
-
-\vspace{-1em}\begin{figure}
-  \begin{center}
-  \begin{tabular}{cc}
-  \includegraphics[scale=.3]{../sampling/img/sim/YZ003.png}&
-  \includegraphics[scale=.3]{../sampling/img/sim/Z3_true.pdf}\\
-  {\small (a) Sample 3} & {\small(b) Z true} \\
-  \end{tabular}
-  \end{center}
-  \vspace{-0.05in}
-  \caption{FAM Simulation Study}
-\end{figure}
-
-\end{frame}
-
-\begin{frame}{Project I: Simulation Study -- FlowSOM}
-
+\begin{frame}{Project I: Simulation Results -- FlowSOM}
 \vspace{-1em}\begin{figure}
   \begin{center}
   \begin{tabular}{cc}
@@ -556,40 +629,8 @@ $w_{ik}^\true$ within each sample.}
   \vspace{-0.05in}
   \caption{FlowSOM Simulation Study}
 \end{figure}
-
 \end{frame}
 
-\begin{frame}{Project I: Simulation Study -- FlowSOM}
-
-\vspace{-1em}\begin{figure}
-  \begin{center}
-  \begin{tabular}{cc}
-  \includegraphics[scale=.3]{../sampling/img/FlowSOM/YZ002_FlowSOM_SIM.png}&
-  \includegraphics[scale=.3]{../sampling/img/sim/Z2_true.pdf}\\
-  {\small (a) Sample 2} & {\small(b) Z true} \\
-  \end{tabular}
-  \end{center}
-  \vspace{-0.05in}
-  \caption{FlowSOM Simulation Study}
-\end{figure}
-
-\end{frame}
-
-\begin{frame}{Project I: Simulation Study -- FlowSOM}
-
-\vspace{-1em}\begin{figure}
-  \begin{center}
-  \begin{tabular}{cc}
-  \includegraphics[scale=.3]{../sampling/img/FlowSOM/YZ003_FlowSOM_SIM.png}&
-  \includegraphics[scale=.3]{../sampling/img/sim/Z3_true.pdf}\\
-  {\small (a) Sample 3} & {\small(b) Z true} \\
-  \end{tabular}
-  \end{center}
-  \vspace{-0.05in}
-  \caption{FlowSOM Simulation Study}
-\end{figure}
-
-\end{frame}
 
 \begin{frame}{Project I: Simulation Study -- Comparing FAM and FlowSOM}
 We use the F-score to summarize the accuracy of the computed cluster labels.
@@ -626,48 +667,11 @@ $$
   \begin{itemize}
     \setlength\itemsep{1em}
     \item FAM produces posterior distribution and estimates of latent phenotypes and their weights
+    \item Choose $K$ sufficiently large
+    \item Graph first two principal components to visually estimate $K$
     \item FlowSOM quickly produces point estimates of clusters
     \item In FlowSOM, additional ad-hoc criteria are needed to produce estimates of latent phenotypes and their abundance
     \item In FlowSOM, missing values need to be pre-imputed
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Project I: Simulation Study -- Sensitivity to \(K\)}
-
-\vspace{-1em}\begin{figure}
-  \begin{center}
-  \begin{tabular}{cc}
-  \includegraphics[scale=.3]{../sampling/img/ksen/YZ001_K5.png}&
-  \includegraphics[scale=.3]{../sampling/img/ksen/YZ001_K10.png} \\
-  {\small (a) Sample 1. $K=5$} & {\small(b) Sample 1. $K=10$} \\
-  \end{tabular}
-  \end{center}
-  \vspace{-0.05in}
-  \caption{FAM sensitivity to $K$}
-\end{figure}
-
-\end{frame}
-
-\begin{frame}{Project I: Simulation Study -- Sensitivity to \(K\)}
-
-\vspace{-1em}\begin{figure}
-  \begin{center}
-  \begin{tabular}{cc}
-  \includegraphics[scale=.3]{../sampling/img/ksen/YZ001_K20.png}&
-  \includegraphics[scale=.3]{../sampling/img/ksen/YZ001_K10.png}\\
-  {\small (c) Sample 1. $K=20$} & {\small(b) Sample 1. $K=10$} \\
-  \end{tabular}
-  \end{center}
-  \vspace{-0.05in}
-  \caption{FAM sensitivity to $K$}
-\end{figure}
-\end{frame}
-
-\begin{frame}{Project I: Conclusions for FAM's Sensitivity to $K$}
-  \begin{itemize}
-    \setlength\itemsep{1em}
-    \item Choose $K$ sufficiently large
-    \item May graph first two principal components to visually estimate $K$
   \end{itemize}
 \end{frame}
 
@@ -681,69 +685,48 @@ $$
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Project I: CB Study -- FAM}
-
+\begin{frame}{Project I: CB Study}
 \vspace{-1em}\begin{figure}
   \begin{center}
   \begin{tabular}{cc}
-  \includegraphics[scale=.3]{../sampling/img/cb/YZ001.png}&
-  \includegraphics[scale=.3]{../sampling/img/cb/YZ002.png}\\
-  {\small (a) Sample 1} & {\small(b) Sample 2} \\
+  \includegraphics[scale=.3]{../sampling/img/cb/YZ001.png} &
+  \includegraphics[scale=.3]{../sampling/img/FlowSOM/YZ001_FlowSOM_CB.png} \\
+  {\small Sample 1 (FAM)} & {\small Sample 1 (FlowSOM)} \\
   \end{tabular}
   \end{center}
   \vspace{-0.05in}
-  \caption{CB data analyzed using FAM}
+  \caption{CB data Sample 1, analyzed using FAM (left) and FlowSOM (right)}
 \end{figure}
-
 \end{frame}
 
-\begin{frame}{Project I: CB Study (FAM)}
+\begin{frame}{Project I: Posterior Predictive for Observed Data}
 \vspace{-1em}\begin{figure}
   \begin{center}
   \begin{tabular}{cc}
-  \includegraphics[scale=.3]{../sampling/img/cb/YZ003.png} & \\
-    {\small (c) Sample 3} &  \\
+  \includegraphics[scale=.3]{../sampling/img/cb/pp_obs_i1_j1.pdf}&
+  \includegraphics[scale=.3]{../sampling/img/cb/pp_obs_i1_j2.pdf}\\
+  {\small (a) Sample 1, marker 1} & {\small (b) Sample 1, marker 2} \\
   \end{tabular}
   \end{center}
   \vspace{-0.05in}
-  \caption{CB data analyzed using FAM}
+  \caption{Observed data density for $y_{ij}$ in grey. Posterior predictive density for observed data in blue.}
 \end{figure}
 \end{frame}
 
-
-\begin{frame}{Project I: CB Study -- FlowSOM}
-
-\vspace{-1em}\begin{figure}
-  \begin{center}
-  \begin{tabular}{cc}
-  \includegraphics[scale=.3]{../sampling/img/FlowSOM/YZ001_FlowSOM_CB.png}&
-  \includegraphics[scale=.3]{../sampling/img/FlowSOM/YZ002_FlowSOM_CB.png}\\
-  {\small (a) Sample 1} & {\small(b) Sample 2} \\
-  \end{tabular}
-  \end{center}
-  \vspace{-0.05in}
-  \caption{CB data analyzed using FlowSOM}
+\begin{frame}{Project I: Probability of Non-expression for Imputed Values}
+\begin{figure}
+\begin{center}
+  \includegraphics[scale=0.30]{../sampling/img/cb/pz0_missy.pdf}
+  \caption{Histogram of posterior probabilities $\hat{q}_{ij}$ of
+  non-expression for missing for all $(i,j)$.  The peak at 1 suggests 
+  a marker is not likely expressed if its expression level is
+  missing.}
+\end{center}
 \end{figure}
 \end{frame}
 
-
-\begin{frame}{Project I: CB Study -- FlowSOM}
-\vspace{-1em}\begin{figure}
-  \begin{center}
-  \begin{tabular}{cc}
-  \includegraphics[scale=.3]{../sampling/img/FlowSOM/YZ003_FlowSOM_CB.png}&
-  \includegraphics[scale=.3]{../sampling/img/cb/YZ003.png}\\
-  {\small Sample 3 (FlowSOM)} & {\small Sample 3 (FAM)} \\
-  \end{tabular}
-  \end{center}
-  \vspace{-0.05in}
-  \caption{CB data Sample 3, analyzed using FlowSOM (left) and FAM (right)}
-\end{figure}
-
-\end{frame}
 
 \begin{frame}[fragile]{R Package}
-
 \begin{Shaded}
 \begin{Highlighting}[]
 \CommentTok{# R code for installing cytof3}
@@ -867,34 +850,6 @@ $w_{ik}^\true$ within each sample.}
 \end{figure}
 \end{frame}
 
-\begin{frame}{Project II: Simulation Study for rep-FAM Prior}
-\begin{figure}
-  \begin{center}
-  \begin{tabular}{cc}
-  \includegraphics[scale=.3]{../sampling/img/repFAM/TRUE/YZ002.png}&
-  \includegraphics[scale=.3]{../sampling/img/repFAM/FALSE/YZ002.png}\\
-  {\small (a) rep-FAM} & {\small(b) IBP} \\
-  \end{tabular}
-  \end{center}
-  \vspace{-0.05in}
-  \caption{Heatmaps of $y$ for simulated data ordered by phenotypes (Sample 2)}
-\end{figure}
-\end{frame}
-
-\begin{frame}{Project II: Simulation Study for rep-FAM Prior}
-\begin{figure}
-  \begin{center}
-  \begin{tabular}{cc}
-  \includegraphics[scale=.3]{../sampling/img/repFAM/TRUE/YZ003.png}&
-  \includegraphics[scale=.3]{../sampling/img/repFAM/FALSE/YZ003.png}\\
-  {\small (a) rep-FAM} & {\small(b) IBP} \\
-  \end{tabular}
-  \end{center}
-  \vspace{-0.05in}
-  \caption{Heatmaps of $y$ for simulated data ordered by phenotypes (Sample 3)}
-\end{figure}
-\end{frame}
-
 %\begin{frame}{Project II: Simulation Study for rep-FAM Prior}
 %  \begin{itemize}
 %    \item Ensuring that feature matrix contains distinct cell types avoids potential awkwardness in interpretation 
@@ -978,7 +933,7 @@ Abundances of Features}
 \end{figure}
 \end{frame}
 
-\begin{frame}{Probability of Non-expression for Imputed Values in Project I CB Analysis}
+\begin{frame}[noframenumbering]{Probability of Non-expression for Imputed Values in Project I CB Analysis}
 \begin{figure}
 \begin{center}
   \includegraphics[scale=0.30]{../sampling/img/cb/pz0_missy.pdf}
@@ -990,6 +945,217 @@ Abundances of Features}
 \end{figure}
 \end{frame}
 
-%
+\begin{frame}[noframenumbering]{Project I: Simulation Results -- FAM}
+\vspace{-1em}\begin{figure}
+  \begin{center}
+  \begin{tabular}{cc}
+  \includegraphics[scale=.3]{../sampling/img/sim/YZ002.png}&
+  \includegraphics[scale=.3]{../sampling/img/sim/Z2_true.pdf}\\
+  {\small (a) Sample 2} & {\small(b) Z true} \\
+  \end{tabular}
+  \end{center}
+  \vspace{-0.05in}
+  \caption{FAM Simulation Study}
+\end{figure}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Project I: Simulation Results -- FAM}
+\vspace{-1em}\begin{figure}
+  \begin{center}
+  \begin{tabular}{cc}
+  \includegraphics[scale=.3]{../sampling/img/sim/YZ003.png}&
+  \includegraphics[scale=.3]{../sampling/img/sim/Z3_true.pdf}\\
+  {\small (a) Sample 3} & {\small(b) Z true} \\
+  \end{tabular}
+  \end{center}
+  \vspace{-0.05in}
+  \caption{FAM Simulation Study}
+\end{figure}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Project I: Simulation Study -- FlowSOM}
+\vspace{-1em}\begin{figure}
+  \begin{center}
+  \begin{tabular}{cc}
+  \includegraphics[scale=.3]{../sampling/img/FlowSOM/YZ002_FlowSOM_SIM.png}&
+  \includegraphics[scale=.3]{../sampling/img/sim/Z2_true.pdf}\\
+  {\small (a) Sample 2} & {\small(b) Z true} \\
+  \end{tabular}
+  \end{center}
+  \vspace{-0.05in}
+  \caption{FlowSOM Simulation Study}
+\end{figure}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Project I: Simulation Study -- FlowSOM}
+\vspace{-1em}\begin{figure}
+  \begin{center}
+  \begin{tabular}{cc}
+  \includegraphics[scale=.3]{../sampling/img/FlowSOM/YZ003_FlowSOM_SIM.png}&
+  \includegraphics[scale=.3]{../sampling/img/sim/Z3_true.pdf}\\
+  {\small (a) Sample 3} & {\small(b) Z true} \\
+  \end{tabular}
+  \end{center}
+  \vspace{-0.05in}
+  \caption{FlowSOM Simulation Study}
+\end{figure}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Project I: CB Study -- FAM}
+\vspace{-1em}\begin{figure}
+  \begin{center}
+  \begin{tabular}{cc}
+  \includegraphics[scale=.3]{../sampling/img/cb/YZ001.png}&
+  \includegraphics[scale=.3]{../sampling/img/cb/YZ002.png}\\
+  {\small (a) Sample 1} & {\small(b) Sample 2} \\
+  \end{tabular}
+  \end{center}
+  \vspace{-0.05in}
+  \caption{CB data analyzed using FAM}
+\end{figure}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Project I: CB Study (FAM)}
+\vspace{-1em}\begin{figure}
+  \begin{center}
+  \begin{tabular}{cc}
+  \includegraphics[scale=.3]{../sampling/img/cb/YZ003.png} & \\
+    {\small (c) Sample 3} &  \\
+  \end{tabular}
+  \end{center}
+  \vspace{-0.05in}
+  \caption{CB data analyzed using FAM}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}[noframenumbering]{Project I: CB Study -- FlowSOM}
+\vspace{-1em}\begin{figure}
+  \begin{center}
+  \begin{tabular}{cc}
+  \includegraphics[scale=.3]{../sampling/img/FlowSOM/YZ001_FlowSOM_CB.png}&
+  \includegraphics[scale=.3]{../sampling/img/FlowSOM/YZ002_FlowSOM_CB.png}\\
+  {\small (a) Sample 1} & {\small(b) Sample 2} \\
+  \end{tabular}
+  \end{center}
+  \vspace{-0.05in}
+  \caption{CB data analyzed using FlowSOM}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}[noframenumbering]{Project I: CB Study -- FlowSOM}
+\vspace{-1em}\begin{figure}
+  \begin{center}
+  \begin{tabular}{cc}
+  \includegraphics[scale=.3]{../sampling/img/FlowSOM/YZ003_FlowSOM_CB.png}&
+  \includegraphics[scale=.3]{../sampling/img/cb/YZ003.png}\\
+  {\small Sample 3 (FlowSOM)} & {\small Sample 3 (FAM)} \\
+  \end{tabular}
+  \end{center}
+  \vspace{-0.05in}
+  \caption{CB data Sample 3, analyzed using FlowSOM (left) and FAM (right)}
+\end{figure}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Project I: Simulation Study -- Sensitivity to \(K\)}
+\vspace{-1em}\begin{figure}
+  \begin{center}
+  \begin{tabular}{cc}
+  \includegraphics[scale=.3]{../sampling/img/ksen/YZ001_K5.png}&
+  \includegraphics[scale=.3]{../sampling/img/ksen/YZ001_K10.png} \\
+  {\small (a) Sample 1. $K=5$} & {\small(b) Sample 1. $K=10$} \\
+  \end{tabular}
+  \end{center}
+  \vspace{-0.05in}
+  \caption{FAM sensitivity to $K$}
+\end{figure}
+
+\end{frame}
+
+\begin{frame}[noframenumbering]{Project I: Simulation Study -- Sensitivity to \(K\)}
+\vspace{-1em}\begin{figure}
+  \begin{center}
+  \begin{tabular}{cc}
+  \includegraphics[scale=.3]{../sampling/img/ksen/YZ001_K20.png}&
+  \includegraphics[scale=.3]{../sampling/img/ksen/YZ001_K10.png}\\
+  {\small (c) Sample 1. $K=20$} & {\small(b) Sample 1. $K=10$} \\
+  \end{tabular}
+  \end{center}
+  \vspace{-0.05in}
+  \caption{FAM sensitivity to $K$}
+\end{figure}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Project I: Conclusions for FAM's Sensitivity to $K$}
+  \begin{itemize}
+    \setlength\itemsep{1em}
+    \item Choose $K$ sufficiently large
+    \item May graph first two principal components to visually estimate $K$
+  \end{itemize}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Project II: Simulation Study for rep-FAM Prior}
+\begin{figure}
+  \begin{center}
+  \begin{tabular}{cc}
+  \includegraphics[scale=.3]{../sampling/img/repFAM/TRUE/YZ002.png}&
+  \includegraphics[scale=.3]{../sampling/img/repFAM/FALSE/YZ002.png}\\
+  {\small (a) rep-FAM} & {\small(b) IBP} \\
+  \end{tabular}
+  \end{center}
+  \vspace{-0.05in}
+  \caption{Heatmaps of $y$ for simulated data ordered by phenotypes (Sample 2)}
+\end{figure}
+\end{frame}
+
+\begin{frame}[noframenumbering]{Project II: Simulation Study for rep-FAM Prior}
+\begin{figure}
+  \begin{center}
+  \begin{tabular}{cc}
+  \includegraphics[scale=.3]{../sampling/img/repFAM/TRUE/YZ003.png}&
+  \includegraphics[scale=.3]{../sampling/img/repFAM/FALSE/YZ003.png}\\
+  {\small (a) rep-FAM} & {\small(b) IBP} \\
+  \end{tabular}
+  \end{center}
+  \vspace{-0.05in}
+  \caption{Heatmaps of $y$ for simulated data ordered by phenotypes (Sample 3)}
+\end{figure}
+\end{frame}
+
+
+\frame{ %
+  \frametitle{Why is it called the Indian Buffet Process?}
+  \vspace{5mm}
+  \beginmyfig
+    \includegraphics[scale=.4]{img/ibp/Z.pdf}
+    %\caption{}
+  \endmyfig
+}
+\frame{ %
+  \frametitle{Why is it called the Indian Buffet Process?}
+
+  In the IBP, a customer ($j$) taking a dish ($k$) is analogous to an
+  observation possessing a feature. This is indicated by setting the value of
+  $z_{jk}$ to 1 if the customer takes the dish, and 0 otherwise.
+
+  An IBP($\alpha$) for $J$ observations can be simulate as follows:
+  \begin{enumerate}
+    \item The $1^{st}$ customer takes Poisson($\alpha$) number of dishes
+    \item For customers $j=2 \text{ to } J$,
+    \begin{itemize}
+      \item For each previously sampled dish,
+            customer $j$ takes dish $k$ with probability $m_k / j$
+      \item after sampling the last sampled dish, customer $j$ samples 
+            Poisson($\alpha/j$) new dishes
+    \end{itemize}
+  \end{enumerate}
+
+  It can be shown that a matrix generated by this process 
+  has the same pmf up to a proportionality constant as the
+  previous pmf.
+}
+
+
 %%%%% END of BACKUP SLIDES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \end{document}
