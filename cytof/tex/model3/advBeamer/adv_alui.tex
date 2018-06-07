@@ -148,8 +148,12 @@
 \def\h{\bm{h}}
 \def\mus{\mu^\star}
 \def\sss{{\sigma^2}^\star}
+\usepackage{appendixnumberbeamer}
+% To rotate figure by 90 degrees
+\usepackage{rotating}
+\usepackage{tikz}
+%
 %}}}1
-
 \begin{document}
 
 \begin{frame}
@@ -243,7 +247,7 @@ returned by CyTOF instrument.}
     Some markers contain up to 85\% missing values
   \end{itemize}
 \item
-  Expression level range for each marker varies greatly
+  Cutoff values are computed after measurement
 \end{itemize}
 
 \end{frame}
@@ -354,32 +358,6 @@ returned by CyTOF instrument.}
     %\caption{Put Caption Here}
   \endmyfig
 }
-\frame{ %
-  \frametitle{One draw from the IBP}
-  \vspace{5mm}
-  \beginmyfig
-    \includegraphics[scale=.4]{img/ibp/Z2.pdf}
-    %\caption{Put Caption Here}
-  \endmyfig
-}
-\frame{ %
-  \frametitle{One draw from the IBP}
-  \vspace{5mm}
-  \beginmyfig
-    \includegraphics[scale=.4]{img/ibp/Z3.pdf}
-    %\caption{Put Caption Here}
-  \endmyfig
-}
-% IBP Expectation
-\frame{ %
-  \frametitle{Expected value of the IBP}
-  \vspace{5mm}
-  \beginmyfig
-    \includegraphics[scale=.4]{img/ibp/EZ.pdf}
-    %\caption{Put Caption Here}
-  \endmyfig
-}
-
 
 
 \begin{frame}{Project I: Bayesian Feature Allocation Model for
@@ -423,16 +401,7 @@ Heterogeneous Cell Populations}
 Heterogeneous Cell Populations}
 
 \begin{itemize}
-\tightlist
-\item
-  \(\lambda_{in} \in \bc{1,...,K}\): The latent phenotype of observation
-  \(n\), sample \(i\)
-
-  \begin{itemize}
-  \tightlist
-  \item
-    \(K\) is a sufficiently large constant
-  \end{itemize}
+%\tightlist
 \item
   \(\bZ\): \((J \times K)\) binary matrix defining the latent
   phenotypes.
@@ -445,50 +414,58 @@ Heterogeneous Cell Populations}
     if \(Z_{jk} = 0\), then marker \(j\) is not expressed in phenotype
     \(k\)
   \end{itemize}
-\end{itemize}
+\item
+  \(\lambda_{in} \in \bc{1,...,K}\): The latent phenotype of observation
+  \(n\), sample \(i\)
 
+  \begin{itemize}
+  \tightlist
+  \item
+    \(K\) is a sufficiently large constant
+  \end{itemize}
+\end{itemize}
 \end{frame}
 
 \begin{frame}{Project I: Sampling Distribution}
-
 \begin{align*}
 y_{inj} \mid \bet_{ij}, \bmu^\star, \bsig^{2 \star}_{i} \ind
 \begin{cases}
-  \sum_{\ell=1}^{L^0} \eta^0_{ij\ell}~ \text{Normal}(\mu^\star_{0\ell}, \sigma^{2 \star}_{0i\ell}), &\mbox{if $z_{j,\lambda_{in}}=0$},\\
-  \sum_{\ell=1}^{L^1} \eta^1_{ij\ell}~ \text{Normal}(\mu^\star_{1\ell}, \sigma^{2 \star}_{1i\ell}), &\mbox{if $z_{j,\lambda_{in}}=1$}.\\
+   F_0, &\mbox{if $z_{j,\lambda_{in}}=0$},\\
+   F_1, &\mbox{if $z_{j,\lambda_{in}}=1$}.\\
 \end{cases} \label{eq:y-mix}
 \end{align*}
-
+%
 \begin{itemize}
-\tightlist
-\item
-  Fixed number of mixture components \(L^0\) and \(L^1\)
-\item
-  Mixture weights \(\bet^0_{ij}\) and \(\bet^1_{ij}\) where
-  \(\sum_{\ell=1}^{L^0} \eta^0_{ij\ell}=\sum_{\ell=1}^{L^1}\eta^1_{ij\ell}=1\),
-  and \(\eta^0_{ij\ell}, \eta^1_{ij\ell} > 0\)
-\item
-  For computational convenience, we introduce mixture component
-  indicators \(\gamma_{inj}\) for \(y_{inj}\) so that
-  \[ P(\gamma_{inj} = \ell \mid \lin=k)=\eta^{z_{jk}}_{ij\ell}, \mbox{ where }~ \ell \in \{1,\ldots, L^{z_{jk}}\}.\]
-  Then, \[ 
-  y_{inj} \mid \mu_{inj}, \sigma^2_{inj}, \lin=k, \gamma_{inj}=\ell  \ind
-  \text{Normal}(\mu_{inj}, \sigma^2_{inj}),
-    \] where \(\mu_{inj}=\mu^\star_{z_{jk},\ell}\) and
-  \(\sigma^2_{inj}={\sigma^{2}}^\star_{z_{jk}i\ell}\).
+\item $F_0 = \sum_{\ell=1}^{L^0} \eta^0_{ij\ell}~\text{Normal}(\mu^\star_{0\ell}, \sigma^{2 \star}_{0i\ell})$, where $\mu^\star_{0\ell} < 0$
+\item $F_1 = \sum_{\ell=1}^{L^1} \eta^1_{ij\ell}~\text{Normal}(\mu^\star_{1\ell}, \sigma^{2 \star}_{1i\ell})$, where $\mu^\star_{1\ell} > 0$
+%\item
+%  Fixed number of mixture components \(L^0\) and \(L^1\)
+%\item
+%  Mixture weights \(\bet^0_{ij}\) and \(\bet^1_{ij}\) where
+%  \(\sum_{\ell=1}^{L^0} \eta^0_{ij\ell}=\sum_{\ell=1}^{L^1}\eta^1_{ij\ell}=1\),
+%  and \(\eta^0_{ij\ell}, \eta^1_{ij\ell} > 0\)
 \end{itemize}
-
+%
+\begin{figure}
+  \begin{center}
+    \includegraphics[scale=.2]{img/mixture.pdf}
+    \caption{Kernel density estimate of samples from $F_0$ (blue) and $F_1$ (red)}
+  \end{center}
+\end{figure}
 \end{frame}
 
 \begin{frame}{Project I: Missing Mechanism}
 
-\begin{align*}
-  m_{inj} \mid p_{inj} &\ind \text{Bernoulli}(p_{inj}) \\
-  \logit(p_{inj}) &= \begin{cases}
-  \beta_{0i} - \beta_{1i}(y_{inj}-c_0)^2, & \text{if } y_{inj} < c_0\nonumber, \\
+$$
+  m_{inj} \mid p_{inj} \ind \text{Bernoulli}(p_{inj})
+$$
+\pause
+$$
+  \logit(p_{inj}) = \begin{cases}
+  \beta_{0i} - \beta_{1i}(y_{inj}-c_0)^2, & \text{if } y_{inj} < c_0\nonumber \\
   \beta_{0i} - \beta_{1i}c_1\p{y_{inj}-c_0}^{1/2}, & \text{otherwise}, \nonumber \\
   \end{cases} 
-\end{align*}
+$$
 
 where \(m_{inj}=1\) if \(y_{inj}\) is missing, and 0 otherwise.
 \beginmyfig
@@ -553,14 +530,12 @@ Let \(w_{ik}\) denote an abundance level of phenotype \(k\) in sample
 \begin{enumerate}
 \item compute a $(J\times J)$ Adjacency Matrix $A_i^{(b)}$, where
   $$
-  A^{(b)}_{i,j,j'} = \sum_{k=1}^K w^{(b)}_{ik} 
-  \mathbb{I}\left( z^{(b)}_{jk} = 1\right)
-  \mathbb{I}\left(z^{(b)}_{j^\prime k} = 1\right), b \in \bc{1,...,B}
+  A^{(b)}_{i_{j,j'}} = \sum_{k=1}^K w^{(b)}_{ik} 
+  \Ind{ z^{(b)}_{jk} = z^{(b)}_{j^\prime k} = 1}, b \in \bc{1,...,B}
   $$
 \item compute the mean adjacency matrix \(\bar A_i = \sum_{b=1}^B A_i^{(b)} /
 B\).
-\item $\hat{\bm Z}_i = \text{argmin}_{\bm Z} \sum_{j,j'} (A_{i,j,j'}^{(b)} - \bar
-A_{i,j,j'})^2$
+\item $\hat{\bm Z}_i = \text{argmin}_{\bm Z} \sum_{j,j'} (A_{i_{j,j'}}^{(b)} - \bar A_{i_{j,j'}})^2$
 \end{enumerate}
 \end{frame}
 
@@ -568,17 +543,16 @@ A_{i,j,j'})^2$
 \begin{figure}
 \begin{center}
 \begin{tabular}{c}
-\includegraphics[scale=.35]{../sampling/img/sim/Z_true_all.pdf}
+\includegraphics[scale=.30]{../sampling/img/sim/Z1_true_noTranspose.pdf}
 \end{tabular}
 \end{center}
-\vspace{-0.05in} \caption{\tiny The transpose of $\bZ^\true$ with markers in
-columns and latent phenotypes in rows. Black and white represents
-$z^\true_{jk}=1$ and 0, respectively. The phenotypes and $\bw^\true_i$ are
+\vspace{-0.05in} \caption{Simulation truth for $\bZ$ in Sample 1, with markers in
+rows and latent phenotypes in columns. Black and white represents
+$z^\true_{jk}=1$ and 0, respectively. The phenotypes and $\bw^\true_1$ are
 shown on the left and right sides of each panel, respectively. The samples
 share the same $\bZ^\true$ and the phenotypes are arranged in order of
 $w_{ik}^\true$ within each sample.}
 \end{figure}
-
 \end{frame}
 
 \begin{frame}{Project I: Simulation Study}
@@ -822,16 +796,16 @@ where
 \begin{figure}
   \begin{center}
 \begin{tabular}{c}
-\includegraphics[scale=.3]{../sampling/img/repFAM/Z_true_all.pdf}
+\includegraphics[scale=.3]{../sampling/img/repFAM/Z1_true_noTranspose.pdf}
   \end{tabular}
  \end{center}
  \vspace{-0.05in}
-\caption{The transpose of $\bZ^\true$ with markers in columns and latent
-phenotypes in rows. Black and white represents $z^\true_{jk}=1$ and 0,
-respectively. The phenotypes and $\bw^\true_i$ are shown on the left and
-right sides of each panel.  All samples share the same $\bZ^\true$ and the phenotypes are arranged in order of
+\vspace{-0.05in} \caption{Simulation truth for $\bZ$ in Sample 1, with markers in
+rows and latent phenotypes in columns. Black and white represents
+$z^\true_{jk}=1$ and 0, respectively. The phenotypes and $\bw^\true_1$ are
+shown on the left and right sides of each panel, respectively. The samples
+share the same $\bZ^\true$ and the phenotypes are arranged in order of
 $w_{ik}^\true$ within each sample.}
-\label{fig:repFAM-sim-Z}
 \end{figure}
 \end{frame}
 
@@ -911,15 +885,15 @@ Feature Abundances Over Time}
   \end{tabular}
   \end{center}
 \end{table}
-
 \end{frame}
 
-%%% APPENDIX %%%
+\appendix
+%%% References %%%
 \begin{frame}[allowframebreaks, noframenumbering]{References}
 \bibliographytrue
 \bibliography{../sampling/litreview.bib}
 \end{frame}
-%%% End of APPENDIX %%%
+%%% End of References %%%
 
 %%%% BACKUP SLIDES BEGIN %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}[noframenumbering]{Missing Mechanism Posterior}
@@ -1181,6 +1155,69 @@ Feature Abundances Over Time}
   has the same pmf up to a proportionality constant as the
   previous pmf.
 }
+
+\frame[noframenumbering]{ %
+  \frametitle{One draw from the IBP}
+  \vspace{5mm}
+  \beginmyfig
+    \includegraphics[scale=.4]{img/ibp/Z2.pdf}
+    %\caption{Put Caption Here}
+  \endmyfig
+}
+\frame[noframenumbering]{ %
+  \frametitle{One draw from the IBP}
+  \vspace{5mm}
+  \beginmyfig
+    \includegraphics[scale=.4]{img/ibp/Z3.pdf}
+    %\caption{Put Caption Here}
+  \endmyfig
+}
+% IBP Expectation
+\frame[noframenumbering]{ %
+  \frametitle{Expected value of the IBP}
+  \vspace{5mm}
+  \beginmyfig
+    \includegraphics[scale=.4]{img/ibp/EZ.pdf}
+    %\caption{Put Caption Here}
+  \endmyfig
+}
+
+\begin{itemize}
+\tightlist
+\item
+  Fixed number of mixture components \(L^0\) and \(L^1\)
+\item
+  Mixture weights \(\bet^0_{ij}\) and \(\bet^1_{ij}\) where
+  \(\sum_{\ell=1}^{L^0} \eta^0_{ij\ell}=\sum_{\ell=1}^{L^1}\eta^1_{ij\ell}=1\),
+  and \(\eta^0_{ij\ell}, \eta^1_{ij\ell} > 0\)
+\item
+  For computational convenience, we introduce mixture component
+  indicators \(\gamma_{inj}\) for \(y_{inj}\) so that
+  \[ P(\gamma_{inj} = \ell \mid \lin=k)=\eta^{z_{jk}}_{ij\ell}, \mbox{ where }~ \ell \in \{1,\ldots, L^{z_{jk}}\}.\]
+  Then, \[ 
+  y_{inj} \mid \mu_{inj}, \sigma^2_{inj}, \lin=k, \gamma_{inj}=\ell  \ind
+  \text{Normal}(\mu_{inj}, \sigma^2_{inj}),
+    \] where \(\mu_{inj}=\mu^\star_{z_{jk},\ell}\) and
+  \(\sigma^2_{inj}={\sigma^{2}}^\star_{z_{jk}i\ell}\).
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Project II: Simulation Study for rep-FAM Prior}
+\begin{figure}
+  \begin{center}
+\begin{tabular}{c}
+\includegraphics[scale=.3]{../sampling/img/repFAM/Z_true_all.pdf}
+  \end{tabular}
+ \end{center}
+ \vspace{-0.05in}
+\caption{The transpose of $\bZ^\true$ with markers in columns and latent
+phenotypes in rows. Black and white represents $z^\true_{jk}=1$ and 0,
+respectively. The phenotypes and $\bw^\true_i$ are shown on the left and
+right sides of each panel.  All samples share the same $\bZ^\true$ and the phenotypes are arranged in order of
+$w_{ik}^\true$ within each sample.}
+\label{fig:repFAM-sim-Z}
+\end{figure}
+\end{frame}
 
 
 %%%%% END of BACKUP SLIDES %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

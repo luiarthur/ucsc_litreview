@@ -105,6 +105,20 @@ for (i in 1:I) {
   dev.off()
 }
 
+for (i in 1:I) {
+  pdf(fileDest('Z' %+% i %+% '_true_noTranspose.pdf'))
+  par(mar=c(5.1, 4.1, 2.1, 4.1)) # b,l,t,r
+  Wi = dat$W[i,]
+  ord = order(Wi, decreasing=TRUE)
+  my.image((dat$Z[,ord]), ylab='markers', xlab='cell types', xaxt='n', yaxt='n',
+           main='')
+  axis(2, at=1:J, fg='grey', las=2, cex.axis=.8)
+  axis(1, at=1:K, label=ord ,fg='grey', las=1, cex.axis=1)
+  axis(3, at=1:K, paste0(round(Wi[ord]*100, 1),'%') ,fg='grey', las=1, cex.axis=.8)
+  abline(v=1:K+.5, h=1:J+.5, col='grey')
+  par(mar=mar)
+  dev.off()
+}
 
 png(fileDest('Y%03d.png'))
 for (i in 1:I) {

@@ -2,7 +2,7 @@
 
 simImgPath="../../../src/model3/sims/out/"
 #simName="sim_locked_beta1_K20_N10000/"
-simName="sim_rand_beta_K20_N100/"
+simName="sim_rand_beta_K20_N1000/"
 outdir="img/sim/"
 mkdir -p $outdir
 
@@ -32,6 +32,7 @@ for i in $I; do
   cp ${simImgPath}/${simName}/"Y00${i}.png" $outdir
   cp ${simImgPath}/${simName}/"Ysorted00${i}.png" $outdir
   cp ${simImgPath}/${simName}/"Z${i}_true.pdf" $outdir
+  cp ${simImgPath}/${simName}/"Z${i}_true_noTranspose.pdf" $outdir
 done
 
 cp ${simImgPath}/${simName}/"Z_true_all.pdf" $outdir
@@ -79,5 +80,6 @@ cp ${simImgPath}/${repFamSimName}"TRUE"/"YZ"*".png" $repFamOutdir/TRUE
 cp ${simImgPath}/${repFamSimName}"FALSE"/"YZ"*".png" $repFamOutdir/FALSE
 cp ${simImgPath}/${repFamSimName}"TRUE"/*".tex" $repFamOutdir
 cp ${simImgPath}/${repFamSimName}"TRUE"/"Z_true_all.pdf" $repFamOutdir
+cp ${simImgPath}/${repFamSimName}"TRUE"/"Z"*"_true_"*".pdf" $repFamOutdir
 cp ${simImgPath}/${repFamSimName}"TRUE"/"compareClus.pdf" $repFamOutdir
 
