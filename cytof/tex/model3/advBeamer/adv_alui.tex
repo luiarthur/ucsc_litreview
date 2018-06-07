@@ -149,10 +149,7 @@
 \def\mus{\mu^\star}
 \def\sss{{\sigma^2}^\star}
 \usepackage{appendixnumberbeamer}
-% To rotate figure by 90 degrees
-\usepackage{rotating}
-\usepackage{tikz}
-%
+\def\eye{\bm{\mathrm{I}}}
 %}}}1
 \begin{document}
 
@@ -315,6 +312,13 @@ returned by CyTOF instrument.}
 \end{itemize}
 \end{frame}
 
+% Project I %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frame{
+  \begin{center}
+    \color{darkGrey}\Huge \textbf{Project I}
+  \end{center} 
+}
+
 \frame{ %
   \frametitle{Feature Allocation Model -- Indian buffet process}
   \vspace{5mm}
@@ -471,25 +475,59 @@ where \(m_{inj}=1\) if \(y_{inj}\) is missing, and 0 otherwise.
 \beginmyfig
 \includegraphics[scale=.20]{../sampling/img/prob_miss_example.pdf}
 \caption{Example missing mechanism} \endmyfig
-
 \end{frame}
 
 \begin{frame}{Project I: Priors}
 \begin{block}{Latent Phenotypes}
 \begin{eqnarray*}
-  v_k \mid \alpha &\iid& \text{Beta}(\alpha/K, 1),~ k=1, \ldots, K \\
+  \bZ \mid \alpha &\sim& \text{IBP}_K(\alpha) \\
   \alpha &\sim& \text{Gamma}(a_\alpha, b_\alpha) \\
-  \h_k &\iid& \text{Normal}_J(\mathbf{0}, \Gamma) \\ 
-  z_{jk} \mid h_{jk}, v_k &=& \mathbb{I}\bc{ \Phi(h_{jk} \mid 0,
-  \Gamma_{jj}) < v_k }
 \end{eqnarray*}
 \end{block}
+\end{frame}
 
+\begin{frame}[noframenumbering]{Project I: Priors}
+\begin{block}{Latent Phenotypes}
+\begin{eqnarray*}
+  z_{jk} \mid v_k  &\ind& \text{Bernoulli}(v_k) \\
+  v_k  \mid \alpha &\iid& \text{Beta}\p{\alpha/K,1} \\ 
+  \alpha &\sim& \text{Gamma}(a_\alpha, b_\alpha) \\
+\end{eqnarray*}
+\end{block}
+\end{frame}
+
+
+\begin{frame}[noframenumbering]{Project I: Priors}
+\begin{block}{Latent Phenotypes}
+\begin{eqnarray*}
+  z_{jk} \mid h_{jk}, v_k &=& 
+  \mathbb{I}\bc{ \Phi(h_{jk} \mid 0, \alt<2>{\Gamma_{jj}}{1}) < v_k } \\
+  v_k \mid \alpha &\iid& \text{Beta}(\alpha/K, 1) \\
+  \h_k &\iid& \text{Normal}_J(\mathbf{0}, \alt<2>{\Gamma}{\eye}) \\ 
+  \alpha &\sim& \text{Gamma}(a_\alpha, b_\alpha) \\
+\end{eqnarray*}
+\end{block}
+\pause
 \begin{itemize}
   \item Dependent IBP (dIBP) \citep{williamson2010dependent} construction to model correlations between markers
   \item dIBP reduces to IBP \citep{griffiths2011indian} when $\Gamma$ is the identity matrix
 \end{itemize}
 \end{frame}
+
+
+\begin{frame}[noframenumbering]{Project I: Priors}
+\begin{block}{Latent Phenotypes}
+\begin{eqnarray*}
+  \bZ \mid \alpha, \Gamma &\sim& \text{dIBP}_K(\alpha, \Gamma) \\
+  \alpha &\sim& \text{Gamma}(a_\alpha, b_\alpha) \\
+\end{eqnarray*}
+\end{block}
+\begin{itemize}
+  \item Dependent IBP (dIBP) \citep{williamson2010dependent} construction to model correlations between markers
+  \item dIBP reduces to IBP \citep{griffiths2011indian} when $\Gamma$ is the identity matrix
+\end{itemize}
+\end{frame}
+
 
 \begin{frame}{Project I: Priors}
 \begin{block}{Phenotype Abundance}
@@ -526,12 +564,12 @@ Let \(w_{ik}\) denote an abundance level of phenotype \(k\) in sample
 \end{frame}
 
 \begin{frame}{Project I: Posterior Estimate for $\bZ$}
-  For each posterior sample $b\in \bc{1,...,B}$ and patient sample $i$,
+For each posterior sample $b\in \bc{1,...,B}$ and patient sample $i$,
 \begin{enumerate}
 \item compute a $(J\times J)$ Adjacency Matrix $A_i^{(b)}$, where
   $$
   A^{(b)}_{i_{j,j'}} = \sum_{k=1}^K w^{(b)}_{ik} 
-  \Ind{ z^{(b)}_{jk} = z^{(b)}_{j^\prime k} = 1}, b \in \bc{1,...,B}
+  \Ind{ z^{(b)}_{jk} = z^{(b)}_{j^\prime k} = 1}
   $$
 \item compute the mean adjacency matrix \(\bar A_i = \sum_{b=1}^B A_i^{(b)} /
 B\).
@@ -657,9 +695,11 @@ $$
 \begin{frame}{Project I: Cord Blood Samples Data}
   \begin{itemize}
     \setlength\itemsep{1em}
-    \item Three cord-blood samples from three subjects at MD Anderson Cancer Center
+    \item Three cord blood (CB) samples from MD Anderson Cancer Center
     \item Number of cells in each sample $N = (41474,10454,5177)$
     \item Number of markers $J=32$
+    \item $K$ = 20
+    \item MCMC: 2000 iterations, 1000 burn-in
   \end{itemize}
 \end{frame}
 
@@ -715,13 +755,21 @@ $$
 \KeywordTok{install_github}\NormalTok{(repo, }\DataTypeTok{subdir=}\NormalTok{subdir)}
 \end{Highlighting}
 \end{Shaded}
-
 \end{frame}
+
+% Project II %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frame{
+  \begin{center}
+    \color{darkGrey}\Huge \textbf{Project II}
+  \end{center} 
+}
+
+
 
 \begin{frame}{Project II: Repulsive Feature Allocation Model}
   \begin{itemize}
     \setlength\itemsep{1em}
-    \item Similar or duplicated features may occur in feature allocation matrix
+    \item Similar or duplicated features may occur in feature allocation matrix under IBP prior
     \item Repulsion penalizes similar features in the prior, resulting in a parsimonious model
     \item Different approaches for repulsive models have been developed mostly
     in the context of mixture models \citep{petralia2012repulsive,
@@ -735,8 +783,9 @@ $$
     \setlength\itemsep{1em}
     \item Develop a repulsive feature allocation model for parsimonious feature
       matrix
-    \item Extend previous model to include a sample-specific covariate and
-      perform feature selection for groups of samples 
+    %\item Extend previous model to include a sample-specific covariate and
+    %  perform feature selection for groups of samples 
+    \item Compare phenotypes present in healthy subject samples and cord blood samples
   \end{itemize}
 \end{block}
 \end{frame}
@@ -744,13 +793,20 @@ $$
 
 \begin{frame}{Project II: rep-FAM Prior}
 \begin{align*}
-P(\bZ \mid v, C_\phi) &\propto \prod_{k=1}^K  \bc{\prod_{j=1}^J
-v_k^{z_{jk}}(1-v_k)^{1-z_{jk}}} \times \\
-&\hspace{1em}\prod_{k_1=1}^{K-1}\prod_{k_2=k_1+1}^{K} \bc{1 - C_\phi\p{\rho(\bz_{k_1},
-\bz_{k_2})}}\\
-%
-v_K \mid \alpha &\sim \text{Beta}(\alpha/K, 1)
+  \only<1>{
+    P(\bZ \mid v) &\propto \prod_{k=1}^K  \bc{\prod_{j=1}^J
+    v_k^{z_{jk}}(1-v_k)^{1-z_{jk}}} \\
+  } \only<2> {
+    P(\bZ \mid v, C_\phi) &\propto \prod_{k=1}^K  \bc{\prod_{j=1}^J
+    v_k^{z_{jk}}(1-v_k)^{1-z_{jk}}} \times \\
+    &\hspace{1em}\prod_{k_1=1}^{K-1}\prod_{k_2=k_1+1}^{K} \bc{1 -
+    C_\phi\p{\rho(\bz_{k_1}, \bz_{k_2})}}\\
+  }
+  v_K \mid \alpha &\sim \text{Beta}(\alpha/K, 1)
 \end{align*}
+%
+\pause
+%
 where
 \begin{itemize}
   \setlength\itemsep{1em}
@@ -832,9 +888,16 @@ are sorted by $w_{ik}$.}
 %    \item Ensuring that feature matrix contains distinct cell types avoids potential awkwardness in interpretation 
 %  \end{itemize}
 %\end{frame}
+% End Frame:
 
 
 % Project 3 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\frame{
+  \begin{center}
+    \color{darkGrey}\Huge \textbf{Project III}
+  \end{center} 
+}
+
 \begin{frame}{Project III: Feature Allocation Model with Regression for
 Feature Abundances Over Time}
 \begin{block}{Objectives:}
@@ -1221,6 +1284,39 @@ right sides of each panel.  All samples share the same $\bZ^\true$ and the pheno
 $w_{ik}^\true$ within each sample.}
 \label{fig:repFAM-sim-Z}
 \end{figure}
+\end{frame}
+
+\begin{frame}{Project II: Feature Selection for Different Samples}
+  \begin{itemize}
+    \item Sample covariate $x_i$. Cord blood samples ($x_i=0$). Healthy subject samples ($x_i=1$).
+      \pause
+    \item Binary indicator $\delta_{xk}\in \{0, 1\}$, $x=0,1$, and $k=1,\ldots,
+      K$, to indicate whether samples from $x$ possess phenotype $k$ 
+      \pause
+    \item $\delta_{xk} \mid p_x \ind \text{Bernoulli}(p_{x})$ and $p_x \iid
+      \text{Beta}(a_p, b_p)$.
+      \pause
+    \item Unnormalized cell phenotype abundances $\tilde w_{ik} \ind
+      \text{Gamma}(a_W/K, 1)$, $i=1, \ldots, I$, and $k=1, \ldots, K$. 
+      \pause
+    \item Relative abundances in sample $i$ from $x_i$ as $ w_{ik} =\tilde
+      w_{ik} \delta_{x_i k}/\sum_{\ell=1}^K\tilde w_{i\ell} \delta_{x_i \ell}$.
+    \item Relative abundance $w_{ik}$ is exactly zero for $\delta_{x_ik}=0$. 
+      \pause
+    \item Samples from $x$ have the same subset of phenotypes but can have
+      different relative abundances over the selected phenotypes. 
+      \pause
+    \item Phenotypes with $\delta_{0k}=\delta_{1k}=1$ appear in all samples,
+      while some are present in only one type of samples. 
+      \pause
+    \item The probability models for the other parameters remain unchanged as
+      in Project 1.  
+  \end{itemize}
+  %Feature-selection by $\delta_{xk}$ efficiently
+  %facilitates joint analysis of samples obtained from different sources. The
+  %model also allows phenotypes to absent in all samples, implying that some
+  %phenotypes are not used to describe any cells, providing a more parsimonious
+  %representation of cell-populations in samples.
 \end{frame}
 
 
