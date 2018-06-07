@@ -338,8 +338,7 @@ returned by CyTOF instrument.}
                                        \frac{(J-m_k)!(m_k-1)!}{J!},
   $$
 
-  where $H_J=\sum_{j=1}^J j^{-1}$ is the harmonic number, 
-  , $K_+$ is
+  where $H_J=\sum_{j=1}^J j^{-1}$ is the harmonic number, $K_+$ is
   the number of non-zero columns in $\bm Z$, $m_k$ is the $k^{th}$
   column sum of $\bm Z$, and $K_h$ the number of columns having
   history $h$ (some binary number).
@@ -857,21 +856,48 @@ $w_{ik}^\true$ within each sample.}
 %\end{frame}
 
 
-
-
+% Project 3 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 \begin{frame}{Project III: Feature Allocation Model with Regression for
-Abundances of Features}
+Feature Abundances Over Time}
+\begin{block}{Objectives:}
 \begin{enumerate}
   \setlength\itemsep{1em}
   \item Extend the previous models to analyze samples taken at multiple time points from a patient after NK cell infusion.
   \item Model the evolution of NK cell populations over time
 \end{enumerate}
+\end{block}
 \end{frame}
 
+\begin{frame}{Project III: Feature Allocation Model with Regression for
+Feature Abundances Over Time}
+\begin{itemize}
+  \setlength\itemsep{1em}
+  \item $I$ samples taken at time points $t_1,...,t_I$
+  \item Phenotype abundances $\bw_{t_i}=(w_{t_i,1}, \ldots, w_{t_i,K})$ as a function of time $(t_i)$ after treatment 
+  \item $\bZ$ includes possible cell types possessed across all samples
+\end{itemize}
+\end{frame}
+
+\begin{frame}{Project III: Feature Allocation Model with Regression for
+Feature Abundances Over Time}
+\begin{itemize}
+  \setlength\itemsep{1em}
+  \item $w_{t_1,k}= \xi_{t_1,k}/\sum_{\ell=1}^K \xi_{t_1, \ell}$
+  \item  We fix $\xi_{t_1,1}=a$, an arbitrary positive number, to avoid
+    potential identifiability issues, and let $\xi_{t_1,k} =
+    \max(\xi^\prime_{t_1,k}, 0)$, for $k\ge 2$, where $\xi^\prime_{t_1,k} \iid
+    \N(0, s^2_1)$
+  \item $\xi_{t_i,k} = \max(\xi^\prime_{t_i,k}, 0)$, $i=2, \ldots, I$ and $k=1,
+    \ldots, K$ 
+  \item $\xi^\prime_{t_i,k} = \xi^\prime_{t_1, k} + f_k(t_i)$, where $f_k(t_i)$
+    is a phenotype-specific function of time
+  \item One choice is $f_k(t) = \xi^\prime_{t_1,k} + \beta_{k1}t + \beta_{k2}t^2$
+\end{itemize}
+\end{frame}
+
+
 \begin{frame}{Timeline}
-
 \Large
-
 \begin{table}[H]
   \begin{center}
     \begin{tabular}{{| l | l |}}
@@ -1124,7 +1150,7 @@ Abundances of Features}
 \end{frame}
 
 
-\frame{ %
+\frame[noframenumbering]{ %
   \frametitle{Why is it called the Indian Buffet Process?}
   \vspace{5mm}
   \beginmyfig
@@ -1132,7 +1158,7 @@ Abundances of Features}
     %\caption{}
   \endmyfig
 }
-\frame{ %
+\frame[noframenumbering]{ %
   \frametitle{Why is it called the Indian Buffet Process?}
 
   In the IBP, a customer ($j$) taking a dish ($k$) is analogous to an
