@@ -786,7 +786,6 @@ $$
 \begin{frame}{Project II: Feature Selection for Different Samples}
   \begin{itemize}
     \item Sample covariate $x_i$. Cord blood samples ($x_i=0$). Healthy subject samples ($x_i=1$).
-    \pause
     \begin{figure}
       \begin{tabular}{cccc}
       {CB} & {CB} & {subject} & {subject} \\
@@ -797,6 +796,7 @@ $$
       {$x_1=0$} & {$x_2=0$} & {$x_3=1$} & {$x_4=1$} \\
       \end{tabular}
     \end{figure}
+    \pause
     \item Learn binary indicator $\delta_{xk}\in \{0, 1\}$, $x=0,1$, and
       $k=1,\ldots, K$, to indicate whether samples from $x$ possess phenotype
       $k$ 
