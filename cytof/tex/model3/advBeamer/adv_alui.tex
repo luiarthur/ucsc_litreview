@@ -324,13 +324,13 @@ returned by CyTOF instrument.}
   $$
   \begin{array}{rclcl}
     z_{jk} &\mid& \pi_k  &\sim& \text{Bernoulli}(\pi_k) \\
-    \pi_k  &\mid& \alpha &\sim& \text{Beta}\p{\frac{\alpha}{K},1} \\ 
+    \pi_k  &\mid& \alpha &\sim& \text{Beta}\p{\alpha/K,1} \\ 
   \end{array}
   $$
   for $j=1,\cdots J$ and $k=1,\cdots, K$, and where $\alpha$ is positive. \\
   \pause
 
-  Then as $K\rightarrow \infty$, $\bm Z \sim \text{IBP}(\alpha)$.
+  Then as $K\rightarrow \infty$, $\bm Z \sim \text{IBP}(\alpha)$. \pause
   It can be shown that
   $$
   \text{P}(\bm Z) = \frac{\alpha^{K_+}}{\prod_{h=1}^{2^J-1} 
@@ -399,7 +399,6 @@ Heterogeneous Cell Populations}
 
 \begin{itemize}
 %\tightlist
-\item $K$ is a sufficiently large constant
 \item
   \(\bZ\): \((J \times K)\) binary matrix defining the latent
   phenotypes.
@@ -411,6 +410,7 @@ Heterogeneous Cell Populations}
     if \(Z_{jk} = 0\), then marker \(j\) is not expressed in phenotype
     \(k\)
   \end{itemize}
+\item $K$ is a sufficiently large constant
 \item
   \(\lambda_{in} \in \bc{1,...,K}\): The latent phenotype of observation
   \(n\), sample \(i\)
@@ -425,6 +425,7 @@ y_{inj} \mid \bet_{ij}, \bmu^\star, \bsig^{2 \star}_{i} \ind
    F_1, &\mbox{if $z_{j,\lambda_{in}}=1$}.\\
 \end{cases} \label{eq:y-mix}
 \end{align*}
+\pause
 %
 \begin{itemize}
 \item $F_0 = \sum_{\ell=1}^{L^0} \eta^0_{ij\ell}~\text{Normal}(\mu^\star_{0\ell}, \sigma^{2 \star}_{0i\ell})$, where $\mu^\star_{0\ell} < 0$
