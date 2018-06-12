@@ -2,6 +2,7 @@
 
 export("%+%")
 export(add.cut)
+export(ari)
 export(blueToRed)
 export(color.bar)
 export(color.bar.horiz)

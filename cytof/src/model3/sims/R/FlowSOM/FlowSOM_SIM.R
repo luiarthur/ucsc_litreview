@@ -13,7 +13,7 @@ set.seed(3)
 OUT_SIM  = '../../out/'
 OUT_FLOW = OUT_SIM %+% 'FlowSOM/'
 
-cytof3.results = OUT_SIM %+% '/sim_rand_beta_K20_N10000/checkpoint.rda'
+cytof3.results = OUT_SIM %+% '/sim_rand_beta_K20_N1000/checkpoint.rda'
 load(cytof3.results)
 
 ### Indices for each sample ###
@@ -106,17 +106,18 @@ cytof3.clus.ls = lapply(1:I, function(i) out[[best_idx[i]]]$lam[[i]])
 fs.clus.ls = lapply(1:I, function(i) fs.clus[idx_lower[i]:idx_upper[i]])
 true.clus.ls = dat$lam
 
-FM = sapply(1:I, function(i) {
-  c('fs'=FMeasure(true.clus.ls[[i]], fs.clus.ls[[i]], silent=TRUE),
-    'cy'=FMeasure(true.clus.ls[[i]], cytof3.clus.ls[[i]], silent=TRUE))
+println("Computing ARI ...")
+ARI = sapply(1:I, function(i) {
+  c('fs'=ari(true.clus.ls[[i]], fs.clus.ls[[i]]),
+    'cy'=ari(true.clus.ls[[i]], cytof3.clus.ls[[i]]))
 })
-print(FM)
+print(ARI)
 
-FM.all = round({
-  c('FlowSOM'=FMeasure(unlist(true.clus.ls), fs.clus, silent=TRUE),
-    'FAM'=FMeasure(unlist(true.clus.ls), unlist(cytof3.clus.ls), silent=TRUE))
+ARI.all = round({
+  c('FlowSOM'=ari(unlist(true.clus.ls), fs.clus),
+    'FAM'=ari(unlist(true.clus.ls), unlist(cytof3.clus.ls)))
 }, 4)
-print(FM.all)
+print(ARI.all)
 
 
 #mean(relabel_clusters(cytof3.clus[[1]]) == relabel_clusters(true.clus[[1]]))
@@ -136,14 +137,9 @@ plot(pY, main="Differences", col=ifelse(abs(fs.c-cy.c)==0, 'transparent', 'red')
 par(mfrow=c(1,1))
 dev.off()
 
-### FMeasure (F1 score) ###
-# 2 / (1/precision + 1/recall)
-# precision = tp / (tp + fp)
-# recall = tp / (tp + fn)
-
 
 # Timings: cytof3 (39h),  FlowSOM (13s)
-compare.results = cbind('F-score'=FM.all,
+compare.results = cbind('ARI'=ARI.all,
                         'Elapsed time (seconds)'=c(tim[3], st[3]))
 
 sink(OUT_FLOW %+% 'timings_FlowSOM_vs_SIM.tex')
