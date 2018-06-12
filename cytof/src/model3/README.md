@@ -1,5 +1,11 @@
 # Model 3
 
+## Things to change after advancement
+- [X] ARI for cluster comparisons
+- [ ] use simple link for missing mechanism
+- [ ] use truncated IG prior
+- [ ] stochastic ordering of $mu*$ for identifiability
+
 ## NOW (Due Tuesday 15 May, 2018)
 - [ ] Post-pred for observed values only
     - $\tilde\eta_{0ij}^{obs} = (p^0_1,...,p^0_{L0})$
