@@ -4,7 +4,14 @@
 - [X] ARI for cluster comparisons
 - [ ] use simple link for missing mechanism
 - [ ] use truncated IG prior
-- [ ] stochastic ordering of $mu*$ for identifiability
+- [ ] stochastic ordering of $mu*$ for identifiability (Thanos?)
+    - [ ] like this? $mu_{0,1}* < mu_{0,2}* < ... < mu_{0,L0}*$
+- [ ] drop $l$ in $\sigma_{izl}$
+- [ ] use monotonic missing mechanism, but do $\mu_{0}* ~ N(psi, tau, c, 0)$, where $ \infty < c < 0$
+- [ ] Ask Katy about K
+- [ ] paper -> journal
+- [ ] understand how cut-offs are computed
+- [ ] nature of 0's in machine?
 
 ## NOW (Due Tuesday 15 May, 2018)
 - [ ] Post-pred for observed values only
