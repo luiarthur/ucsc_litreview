@@ -3,7 +3,8 @@
 MODEL_NAME="cytof3"
 
 ### Generate the docs ###
-rm -f ${MODEL_NAME}/NAMESPACE
+#rm -f ${MODEL_NAME}/NAMESPACE
+mv ${MODEL_NAME}/NAMESPACE ${MODEL_NAME}/.NAMESPACE
 R -q -e "roxygen2::roxygenise('${MODEL_NAME}');Rcpp::compileAttributes('${MODEL_NAME}');"
 R -q -e "roxygen2::roxygenise('${MODEL_NAME}');Rcpp::compileAttributes('${MODEL_NAME}');"
 
