@@ -6,7 +6,6 @@
 #include "Data.h"
 #include "Prior.h"
 #include "Locked.h"
-#include <omp.h>
 
 int flip_bit(int z, double p) {
   // Randomly flip z between 0 and 1 with probability p

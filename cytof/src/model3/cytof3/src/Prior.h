@@ -4,6 +4,9 @@
 #include <RcppArmadillo.h>
 
 struct Prior {
+  // mu bounds
+  double mu_lower;
+  double mu_upper;
   // missing mechnism. constants
   double c0;
   double c1;

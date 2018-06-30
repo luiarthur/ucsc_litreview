@@ -8,7 +8,6 @@
 #include "Locked.h"
 #include "dmixture.h"
 
-#include <omp.h>
 
 void update_lam_in(State &state, const Data &data, const Prior &prior, int i, int n){
   const int J = data.J;
@@ -35,7 +34,6 @@ void update_lam(State &state, const Data &data, const Prior &prior, const Locked
 
     for (int i=0; i<I; i++){
       Ni = data.N[i];
-#pragma omp parallel for
       for (int n=0; n<Ni; n++){
         update_lam_in(state, data, prior, i, n);
       }

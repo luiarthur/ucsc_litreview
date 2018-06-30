@@ -9,7 +9,6 @@
 #include "missing_mechanism.h"
 #include "dmixture.h"
 
-#include <omp.h>
 
 void update_missing_yinj(State &state, const Data &data, const Prior &prior, int i, int n, int j){
   const int z = state.Z(j, state.lam[i](n));
@@ -35,8 +34,7 @@ void update_missing_y(State &state, const Data &data, const Prior &prior, const 
   if (!locked.missing_y) {
     for (int i=0; i < data.I; i++) {
       for (int j=0; j < data.J; j++) {
-#pragma omp parallel for
-        for (int n=0; n < data.N[i]; n++) {
+        for (int n=0; n < data.n[i]; n++) {
           if (data.M[i](n, j) == 1) { // 1 ->  y_inj is missing
             update_missing_yinj(state, data, prior, i, n, j);
           }

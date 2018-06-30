@@ -9,9 +9,6 @@
 #include "compute_loglike.h"
 #include "update_all_jointly.h"
 
-#include <omp.h>           // shared memory multicore parallelism
-// [[Rcpp::plugins(openmp)]]
-
 using namespace Rcpp;
 
 // TODO. Remove all colon after `at` param.
@@ -37,7 +34,7 @@ std::vector<List> fit_cytof_cpp(
   const std::vector<Rcpp::NumericMatrix> &y, int B, int burn,
   List prior_ls, List locked_ls, List init_ls,
   int thin=1, int thin_some=1,
-  int compute_loglike_every=1, int print_freq=10, int ncores=1,
+  int compute_loglike_every=1, int print_freq=10, 
   int joint_update_freq=0,
   bool use_repulsive=false,
   bool show_timings=false, 
@@ -45,7 +42,6 @@ std::vector<List> fit_cytof_cpp(
   bool print_new_line=false,
   bool save_gam=false, double mu_eps=0, bool update_z_by_column=true) {
 
-  omp_set_num_threads(ncores);
 
   const Prior prior = gen_prior_obj(prior_ls);
   const Locked locked= gen_locked_obj(locked_ls);
