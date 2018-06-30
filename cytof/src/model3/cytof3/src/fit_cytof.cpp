@@ -27,7 +27,6 @@ using namespace Rcpp;
 //' @param normalize_loglike  (bool). Whether the log-likelihood should be normalized.
 //' @param joint_update_freq(int). Frequency of proposing from prior (0 -> don't do it). NOT READY!
 //' @param print_new_line(bool). Whether or not to print new line for MCMC progress
-//' @param mu_eps(double). How close mu* can be to 0. (default is 0)
 //' @export
 // [[Rcpp::export]]
 std::vector<List> fit_cytof_cpp(
@@ -40,7 +39,7 @@ std::vector<List> fit_cytof_cpp(
   bool show_timings=false, 
   bool normalize_loglike=false,
   bool print_new_line=false,
-  bool save_gam=false, double mu_eps=0, bool update_z_by_column=true) {
+  bool save_gam=false, bool update_z_by_column=true) {
 
 
   const Prior prior = gen_prior_obj(prior_ls);
@@ -56,7 +55,7 @@ std::vector<List> fit_cytof_cpp(
   auto update = [&](State &state) {
     for (int t=0; t<thin; t++) {
       TIME_CODE(show_timings, "theta", 
-        update_theta(state, data, prior, locked, show_timings, thin_some, use_repulsive, update_z_by_column, mu_eps)
+        update_theta(state, data, prior, locked, show_timings, thin_some, use_repulsive, update_z_by_column)
       );
     }
 

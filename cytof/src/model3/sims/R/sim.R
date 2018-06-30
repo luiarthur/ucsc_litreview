@@ -23,7 +23,6 @@ opt = parse_args(opt_parser)
 ### Globals ###
 OUTDIR = getOrFail(paste0(opt$outdir,'/'), opt_parser)
 N_degree = getOrFail(opt$N, opt_parser)
-NCORES = getOrFail(opt$ncores, opt_parser)
 B = getOrFail(opt$B, opt_parser)
 BURN = getOrFail(opt$burn, opt_parser)
 J = getOrFail(opt$J, opt_parser)
@@ -209,10 +208,14 @@ for (i in 1:prior$I) {
 }
 
 # Are these good priors?
+prior$mu_lower = quantile(Y_neg, .01)
+prior$mu_upper = quantile(Y_pos, .99)
 prior$psi_0 = mean(Y_neg)
 prior$psi_1 = mean(Y_pos)
 prior$tau2_0 = var(Y_neg)
 prior$tau2_1 = var(Y_pos)
+println("mu_lower: ", prior$mu_lower)
+println("mu_upper: ", prior$mu_upper)
 println("psi_0: ", prior$psi_0)
 println("psi_1: ", prior$psi_1)
 println("tau2_0: ", prior$tau2_0)
@@ -255,8 +258,8 @@ st = system.time({
   out = fit_cytof_cpp(y, B=B, burn=BURN, prior=prior, locked=locked,
                       init=init, print_freq=1, show_timings=FALSE,
                       normalize_loglike=TRUE, joint_update_freq=0,
-                      ncores=NCORES, print_new_line=TRUE,
-                      use_repulsive=USE_REPULSIVE, mu_eps=.1)
+                      print_new_line=TRUE,
+                      use_repulsive=USE_REPULSIVE)
 })
 print(st)
 #saveRDS(out, fileDest('out.rds'))

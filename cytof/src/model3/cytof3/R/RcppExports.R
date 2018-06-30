@@ -28,10 +28,9 @@ test_gen_data_obj <- function(y) {
 #' @param normalize_loglike  (bool). Whether the log-likelihood should be normalized.
 #' @param joint_update_freq(int). Frequency of proposing from prior (0 -> don't do it). NOT READY!
 #' @param print_new_line(bool). Whether or not to print new line for MCMC progress
-#' @param mu_eps(double). How close mu* can be to 0. (default is 0)
 #' @export
-fit_cytof_cpp <- function(y, B, burn, prior_ls, locked_ls, init_ls, thin = 1L, thin_some = 1L, compute_loglike_every = 1L, print_freq = 10L, ncores = 1L, joint_update_freq = 0L, use_repulsive = FALSE, show_timings = FALSE, normalize_loglike = FALSE, print_new_line = FALSE, save_gam = FALSE, mu_eps = 0, update_z_by_column = TRUE) {
-    .Call('_cytof3_fit_cytof_cpp', PACKAGE = 'cytof3', y, B, burn, prior_ls, locked_ls, init_ls, thin, thin_some, compute_loglike_every, print_freq, ncores, joint_update_freq, use_repulsive, show_timings, normalize_loglike, print_new_line, save_gam, mu_eps, update_z_by_column)
+fit_cytof_cpp <- function(y, B, burn, prior_ls, locked_ls, init_ls, thin = 1L, thin_some = 1L, compute_loglike_every = 1L, print_freq = 10L, joint_update_freq = 0L, use_repulsive = FALSE, show_timings = FALSE, normalize_loglike = FALSE, print_new_line = FALSE, save_gam = FALSE, update_z_by_column = TRUE) {
+    .Call('_cytof3_fit_cytof_cpp', PACKAGE = 'cytof3', y, B, burn, prior_ls, locked_ls, init_ls, thin, thin_some, compute_loglike_every, print_freq, joint_update_freq, use_repulsive, show_timings, normalize_loglike, print_new_line, save_gam, update_z_by_column)
 }
 
 #' Shuffle matrix by rows

@@ -12,6 +12,8 @@
 - [ ] paper -> journal
 - [ ] understand how cut-offs are computed
 - [ ] nature of 0's in machine?
+- [ ] remove all parallel components (parallel random number too complicated)
+- [ ] implement minibatch option instead
 
 ## NOW (Due Tuesday 15 May, 2018)
 - [ ] Post-pred for observed values only

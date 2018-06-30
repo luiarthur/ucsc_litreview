@@ -153,7 +153,7 @@ st = system.time({
   locked$beta_1 = TRUE
   out = fit_cytof_cpp(y, B=B, burn=burn, prior=prior, locked=locked,
                         init=init, print_freq=1, show_timings=FALSE,
-                        normalize_loglike=TRUE, joint_update_freq=0, ncore=1,
+                        normalize_loglike=TRUE, joint_update_freq=0,
                         use_repulsive=FALSE)
 })
 print(st)

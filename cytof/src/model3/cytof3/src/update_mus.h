@@ -15,7 +15,7 @@ struct SS_mus { // sufficient stats for mus
   std::vector<arma::mat> S_sum;
 };
 
-void update_muszl(State &state, const Data &data, const Prior &prior, const SS_mus &ss_mus, int z, int l, double mu_eps) {
+void update_muszl(State &state, const Data &data, const Prior &prior, const SS_mus &ss_mus, int z, int l) {
   using namespace Rcpp;
 
   // compute var_mean, var_new
@@ -30,15 +30,21 @@ void update_muszl(State &state, const Data &data, const Prior &prior, const SS_m
   const double var_new = get_tau2_z(prior,z) / denom;
   double mean_new = get_psi_z(prior,z) + get_tau2_z(prior,z) * stat_mean;
   mean_new /= denom;
+  double mu_lower;
+  double mu_upper;
 
   if (z == 0) {
-    state.mus_0(l) = mcmc::rtnorm(mean_new, sqrt(var_new), -INFINITY, -mu_eps);
+    mu_lower = (l == 0) ? prior.mu_lower : state.mus_0(l - 1);
+    mu_upper = (l == get_L0(state) - 1) ? 0 : state.mus_0(l + 1);
+    state.mus_0(l) = mcmc::rtnorm(mean_new, sqrt(var_new), mu_lower, mu_upper);
   } else {
-    state.mus_1(l) = mcmc::rtnorm(mean_new, sqrt(var_new), mu_eps, INFINITY);
+    mu_lower = (l == 0) ? 0 : state.mus_1(l - 1);
+    mu_upper = (l == get_L1(state) - 1) ? prior.mu_upper : state.mus_1(l + 1);
+    state.mus_1(l) = mcmc::rtnorm(mean_new, sqrt(var_new), mu_lower, mu_upper);
   }
 }
 
-void update_mus(State &state, const Data &data, const Prior &prior, const Locked &locked, double mu_eps){
+void update_mus(State &state, const Data &data, const Prior &prior, const Locked &locked){
   int Lz;
   int Ni;
   const int I = data.I;
@@ -67,10 +73,10 @@ void update_mus(State &state, const Data &data, const Prior &prior, const Locked
   } 
 
   if(!locked.mus_0) for(l=0; l < get_L0(state); l++) {
-    update_muszl(state, data, prior, ss_mus, 0, l, mu_eps);
+    update_muszl(state, data, prior, ss_mus, 0, l);
   }
   if(!locked.mus_1) for(l=0; l < get_L1(state); l++) {
-    update_muszl(state, data, prior, ss_mus, 1, l, mu_eps);
+    update_muszl(state, data, prior, ss_mus, 1, l);
   }
 }
 

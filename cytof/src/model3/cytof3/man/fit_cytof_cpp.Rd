@@ -7,9 +7,9 @@ TODO: add descriptions for params}
 \usage{
 fit_cytof_cpp(y, B, burn, prior_ls, locked_ls, init_ls, thin = 1L,
   thin_some = 1L, compute_loglike_every = 1L, print_freq = 10L,
-  ncores = 1L, joint_update_freq = 0L, use_repulsive = FALSE,
-  show_timings = FALSE, normalize_loglike = FALSE, print_new_line = FALSE,
-  save_gam = FALSE, mu_eps = 0, update_z_by_column = TRUE)
+  joint_update_freq = 0L, use_repulsive = FALSE, show_timings = FALSE,
+  normalize_loglike = FALSE, print_new_line = FALSE, save_gam = FALSE,
+  update_z_by_column = TRUE)
 }
 \arguments{
 \item{y}{A list of NumericMatrix with same number of columns.}
@@ -35,8 +35,6 @@ fit_cytof_cpp(y, B, burn, prior_ls, locked_ls, init_ls, thin = 1L,
 \item{joint_update_freq(int).}{Frequency of proposing from prior (0 -> don't do it). NOT READY!}
 
 \item{print_new_line(bool).}{Whether or not to print new line for MCMC progress}
-
-\item{mu_eps(double).}{How close mu* can be to 0. (default is 0)}
 }
 \description{
 Cytof Model for fixed K

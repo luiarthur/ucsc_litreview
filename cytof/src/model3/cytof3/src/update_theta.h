@@ -33,7 +33,7 @@
 
 #include "my_timer.h" // TIME_CODE
 
-void update_theta(State &state, const Data &data, const Prior &prior, const Locked &locked, bool show_timings=false, int thin_some=1, bool use_repulsive=false, bool update_z_by_column=true, double mu_eps=0) {
+void update_theta(State &state, const Data &data, const Prior &prior, const Locked &locked, bool show_timings=false, int thin_some=1, bool use_repulsive=false, bool update_z_by_column=true) {
   //INIT_TIMER;
   if (show_timings) Rcout << std::endl;
 
@@ -42,7 +42,7 @@ void update_theta(State &state, const Data &data, const Prior &prior, const Lock
   TIME_CODE(show_timings, "y", update_missing_y(state, data, prior, locked));
 
   // gibbs
-  TIME_CODE(show_timings, "mus", update_mus(state, data, prior, locked, mu_eps));
+  TIME_CODE(show_timings, "mus", update_mus(state, data, prior, locked));
   TIME_CODE(show_timings, "sig2", update_sig2(state, data, prior, locked));
   TIME_CODE(show_timings, "s",   update_s(state, data, prior, locked));
 
