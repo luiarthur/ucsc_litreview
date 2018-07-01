@@ -12,7 +12,7 @@ struct Prior {
   double m_beta0;
   double s2_beta0;
   double cs_beta0;
-  // beta_1 ~ N+(m_beta1, s2_beta1). metropolis.
+  // beta_1 ~ N-(m_beta1, s2_beta1). metropolis.
   double m_beta1;
   double s2_beta1;
   double cs_beta1;

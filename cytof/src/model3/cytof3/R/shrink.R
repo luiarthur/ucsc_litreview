@@ -28,8 +28,8 @@ shrinkDat = function(dat) {
   #' shrinks data
   #' @export
 
-  dat$missing_y_mean = lapply(dat$y, fl)
-  dat$missing_y = lapply(dat$y_complete, fl)
+  dat$y = lapply(dat$y, fl)
+  dat$y_complete = lapply(dat$y_complete, fl)
 
   dat
 }
@@ -38,8 +38,8 @@ unshrinkDat = function(dat) {
   #' Unshrink data
   #' @export
 
-  dat$missing_y_mean = lapply(dat$y, dbl)
-  dat$missing_y = lapply(dat$y_complete, dbl)
+  dat$y = lapply(dat$y, dbl)
+  dat$y_complete = lapply(dat$y_complete, dbl)
 
   dat
 }

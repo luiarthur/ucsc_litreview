@@ -39,6 +39,7 @@ std::vector<List> fit_cytof_cpp(
   bool show_timings=false, 
   bool normalize_loglike=false,
   bool print_new_line=false,
+  bool print_ll=false,
   bool save_gam=false, bool update_z_by_column=true) {
 
 
@@ -86,9 +87,14 @@ std::vector<List> fit_cytof_cpp(
 
   // assign function
   auto assign_to_out = [&](const State &state, int i) {
+    double ll_current;
     // update loglike
     if ( (i-burn+1) % compute_loglike_every == 0 || i == burn ) {
-      ll.push_back(compute_loglike(state, data, prior, normalize_loglike));
+      ll_current = compute_loglike(state, data, prior, normalize_loglike);
+      ll.push_back(ll_current);
+      if (print_ll) {
+        Rcout << "loglike: " << ll_current << std::endl;
+      }
     }
     // only do the following after burn-in
     if (i - burn >= 0) {

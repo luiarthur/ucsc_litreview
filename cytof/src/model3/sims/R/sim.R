@@ -53,8 +53,9 @@ dat = sim_dat(I=I, J=J, N=N, K=K,
               sig2_0=matrix(runif(I*5, 0,.3), nrow=I),
               sig2_1=matrix(runif(I*4, 0,.3), nrow=I),
               #mus_0=c(-4, -.2, -.1), mus_1=c(.1, .2, .3, 1), # difficult!
-              #mus_0=c(-4, -2, -.7, -.6, -.1), mus_1=c(.1, .2, .3, 1), # easier
-              mus_0=c(-4, -2, -.7, -.6, -.4), mus_1=c(.3, .4, .5, 2), # easier
+              #mus_0=c(-4, -2, -.7, -.6, -.1), mus_1=c(.1, .2, .3, 1), # moderate
+              #mus_0=c(-4, -2, -.7, -.6, -.4), mus_1=c(.3, .4, .5, 2), # moderate
+              mus_0=c(-4, -2, -1, -.9, -.8), mus_1=c(1, 1.5, 2, 4), # easy
               a_W=if(repFAM_Test) c(15,15,1,1) else 1:K, 
               mmp=miss_mech_params(c(-5, -1), c(.99, .001)))
 y = dat$y
@@ -165,7 +166,7 @@ Y = c(Reduce(rbind, y))
 Y = Y[which(!is.na(Y))]
 Y_neg = Y[which(Y<0)]
 Y_pos = Y[which(Y>0)]
-yq = quantile(Y_neg, c(.05, .15))
+yq = quantile(Y_neg, c(0, .5))
 print(yq)
 mmp = miss_mech_params(y=as.numeric(yq), p=c(.99, .001))
 print(mmp)
@@ -174,10 +175,8 @@ prior$m_beta0 = mmp['b0']; prior$s2_beta0 = 1
 prior$m_beta1 = mmp['b1']; prior$s2_beta1 = 1
 prior$cs_beta0 = .1
 prior$cs_beta1 = .1
-prior$mu_lower = quantile(Y_neg, .01)
-prior$mu_upper = max(Y_pos)
 
-yy = seq(-10,3,l=100)
+yy = seq(-10, 3, l=100)
 mm_prior = sample_from_miss_mech_prior(yy, prior$m_beta0, prior$s2_beta0, 
                                        prior$m_beta1, prior$s2_beta1, B=1000)
 pdf(fileDest('miss_mech_prior.pdf'))
@@ -191,10 +190,10 @@ set.seed(1)
 init0 = gen_default_init(prior)
 set.seed(1)
 init = gen_default_init(prior)
-init$mus_0 = quantile(Y_neg, prob=seq(.05,1,l=prior$L0))
-init$mus_1 = quantile(Y_pos, prob=seq(0,1,l=prior$L1))
+init$mus_0 = quantile(Y_neg, prob=seq(.05, 1, l=prior$L0))
+init$mus_1 = quantile(Y_pos, prob=seq(.00, 1, l=prior$L1))
 prior$mu_lower = quantile(Y_neg, .01)
-prior$mu_upper = quantile(Y_pos, .99)
+prior$mu_upper = max(Y_pos)
 println("init$mus_0: ", init$mus_0)
 println("init$mus_1: ", init$mus_1)
 init$sig2_0 = matrix(mean(sig2_prior_samps), prior$I, prior$L0)
@@ -207,7 +206,7 @@ init$missing_y = y
 for (i in 1:prior$I) {
   miss_idx = which(is.na(init$missing_y[[i]]))
   init$missing_y[[i]][miss_idx] = runif(length(miss_idx), yq[1], yq[2])
-  #init$missing_y[[i]][miss_idx] = runif(length(miss_idx), -5, -3)
+  #init$missing_y[[i]][miss_idx] = -5
 }
 
 # Are these good priors?
@@ -255,11 +254,13 @@ dat = unshrinkDat(dat)
 
 ### Start MCMC ###
 st = system.time({
-  #locked$beta_1 = FALSE # TODO: Can I make this random?
-  locked$missing_y = TRUE # FIXME: MAKE THIS RANDOM!
+  #locked$beta_0 = TRUE # TODO: Can I make this random?
+  #locked$beta_1 = TRUE # TODO: Can I make this random?
+  #locked$missing_y = TRUE # FIXME: MAKE THIS RANDOM!
   out = fit_cytof_cpp(y, B=B, burn=BURN, prior=prior, locked=locked,
                       init=init, print_freq=1, show_timings=FALSE,
                       normalize_loglike=TRUE, joint_update_freq=0,
+                      print_ll=TRUE,
                       print_new_line=TRUE, use_repulsive=USE_REPULSIVE)
 })
 print(st)
@@ -273,6 +274,7 @@ B = length(out)
 
 ### loglike 
 ll_true = compute_loglike(dat, dat$y_complete)
+println("ll_true: ", ll_true)
 ll = last(out)$ll
 pdf(fileDest('ll.pdf'))
 plot(ll, type='l', ylab='log-likelihood', xlab='MCMC iteration')
@@ -543,7 +545,7 @@ pz0_missy = matrix(NA, I, J)
 f = function(i,j,b) {
   lami = out[[b]]$lam[[i]] + 1
   lami = lami[which(is.na(y[[i]][,j]))]
-  if (length(lami) == 0) 0 else {
+  if (length(lami) == 0) 1 else {
     mean(out[[b]]$Z[j,lami] == 0)
   }
 

@@ -22,8 +22,8 @@ void update_beta0i(State &state, const Data &data, const Prior &prior, int i){
     if (in_range) {
       for (int j=0; j < J; j++) {
         for (int n=0; n < Ni; n++) {
-          ll += log(f_inj(state.missing_y[i](n,j), 
-                          data.M[i](n,j), b0i, state.beta_1(i)));
+          ll += log(f_inj(state.missing_y[i](n,j), data.M[i](n,j),
+                          b0i, state.beta_1(i)));
         }
       }
     } else {
