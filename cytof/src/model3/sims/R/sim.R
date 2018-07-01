@@ -175,7 +175,7 @@ prior$m_beta1 = mmp['b1']; prior$s2_beta1 = 1
 prior$cs_beta0 = .1
 prior$cs_beta1 = .1
 prior$mu_lower = quantile(Y_neg, .01)
-prior$mu_upper = 10
+prior$mu_upper = max(Y_pos)
 
 yy = seq(-10,3,l=100)
 mm_prior = sample_from_miss_mech_prior(yy, prior$m_beta0, prior$s2_beta0, 
