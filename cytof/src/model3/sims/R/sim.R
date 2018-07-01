@@ -56,7 +56,7 @@ dat = sim_dat(I=I, J=J, N=N, K=K,
               #mus_0=c(-4, -2, -.7, -.6, -.1), mus_1=c(.1, .2, .3, 1), # easier
               mus_0=c(-4, -2, -.7, -.6, -.4), mus_1=c(.3, .4, .5, 2), # easier
               a_W=if(repFAM_Test) c(15,15,1,1) else 1:K, 
-              miss_mech_params(c(-30, -3, -1), c(.1, .99, .001)))
+              mmp=miss_mech_params(c(-5, -1), c(.99, .001)))
 y = dat$y
 missing_prop = round(get_missing_prop(y),4)
 sink(fileDest('missing_prop.txt'))
@@ -161,25 +161,25 @@ println("sig2_max: ", prior$sig2_max)
 
 # Missing Mechanism params
 #mmp = miss_mech_params(y=c(-5, -2.5, -1.5), p=c(.1, .80, .01))
-p0 = median(missing_prop)
 Y = c(Reduce(rbind, y))
 Y = Y[which(!is.na(Y))]
 Y_neg = Y[which(Y<0)]
 Y_pos = Y[which(Y>0)]
-yq = quantile(Y, c(.05, .1, .15))
-mmp = miss_mech_params(y=as.numeric(yq), p=c(.01, p0, .0001))
+yq = quantile(Y_neg, c(.05, .8))
+print(yq)
+mmp = miss_mech_params(y=as.numeric(yq), p=c(.99, .001))
+print(mmp)
 
-prior$c0 = mmp['c0']
-prior$c1 = mmp['c1']
 prior$m_beta0 = mmp['b0']; prior$s2_beta0 = 1
-prior$m_beta1 = mmp['b1']; prior$s2_beta1 = .001
+prior$m_beta1 = mmp['b1']; prior$s2_beta1 = 1
 prior$cs_beta0 = .1
 prior$cs_beta1 = .1
+prior$mu_lower = quantile(Y_neg, .01)
+prior$mu_upper = 10
 
-yy = seq(-7,3,l=100)
+yy = seq(-10,3,l=100)
 mm_prior = sample_from_miss_mech_prior(yy, prior$m_beta0, prior$s2_beta0, 
-                                       prior$m_beta1, prior$s2_beta1, 
-                                       prior$c0, prior$c1, B=1000)
+                                       prior$m_beta1, prior$s2_beta1, B=1000)
 pdf(fileDest('miss_mech_prior.pdf'))
 plot(yy, mm_prior[,1], type='n', ylim=0:1, bty='n',
      fg='grey', xlab='y', ylab='probability of missing')
@@ -191,8 +191,10 @@ set.seed(1)
 init0 = gen_default_init(prior)
 set.seed(1)
 init = gen_default_init(prior)
-init$mus_0 = quantile(Y_neg, prob=seq(0,1,l=prior$L0))
+init$mus_0 = quantile(Y_neg, prob=seq(.05,1,l=prior$L0))
 init$mus_1 = quantile(Y_pos, prob=seq(0,1,l=prior$L1))
+prior$mu_lower = quantile(Y_neg, .01)
+prior$mu_upper = quantile(Y_pos, .99)
 println("init$mus_0: ", init$mus_0)
 println("init$mus_1: ", init$mus_1)
 init$sig2_0 = matrix(mean(sig2_prior_samps), prior$I, prior$L0)
@@ -204,12 +206,10 @@ init$Z = compute_Z(H=init$H, v=init$v, G=prior$G)
 init$missing_y = y
 for (i in 1:prior$I) {
   miss_idx = which(is.na(init$missing_y[[i]]))
-  init$missing_y[[i]][miss_idx] = runif(length(miss_idx), yq[1], yq[3])
+  init$missing_y[[i]][miss_idx] = runif(length(miss_idx), yq[1], yq[2])
 }
 
 # Are these good priors?
-prior$mu_lower = quantile(Y_neg, .01)
-prior$mu_upper = quantile(Y_pos, .99)
 prior$psi_0 = mean(Y_neg)
 prior$psi_1 = mean(Y_pos)
 prior$tau2_0 = var(Y_neg)
@@ -254,12 +254,12 @@ dat = unshrinkDat(dat)
 
 ### Start MCMC ###
 st = system.time({
-  locked$beta_1 = FALSE # TODO: Can I make this random?
+  #locked$beta_1 = FALSE # TODO: Can I make this random?
+  locked$missing_y = TRUE # FIXME: MAKE THIS RANDOM!
   out = fit_cytof_cpp(y, B=B, burn=BURN, prior=prior, locked=locked,
                       init=init, print_freq=1, show_timings=FALSE,
                       normalize_loglike=TRUE, joint_update_freq=0,
-                      print_new_line=TRUE,
-                      use_repulsive=USE_REPULSIVE)
+                      print_new_line=TRUE, use_repulsive=USE_REPULSIVE)
 })
 print(st)
 #saveRDS(out, fileDest('out.rds'))
@@ -445,8 +445,7 @@ plot(0, 0, ylim=0:1, xlim=range(yy), type='n', ylab='Probability of missing',
      bty='n', fg='grey', xlab='density', col='blue', 
      cex.lab=1.5, cex.axis=1.5)
 for (i in 1:I) {
-  mm_post = sapply(1:B, function(b) 
-                   prob_miss(yy, beta_0[b,i], beta_1[b,i], prior$c0, prior$c1))
+  mm_post = sapply(1:B, function(b) prob_miss(yy, beta_0[b,i], beta_1[b,i]))
   mm_post_mean = rowMeans(mm_post)
   mm_post_ci = apply(mm_post, 1, quantile, c(.025,.975))
   lines(yy, mm_post_mean, col=i+1, lwd=2)
@@ -454,7 +453,7 @@ for (i in 1:I) {
 }
 
 #mm_prior_mean = rowMeans(mm_prior)
-mm_prior_mean = prob_miss(yy, prior$m_beta0, prior$m_beta1, prior$c0, prior$c1)
+mm_prior_mean = prob_miss(yy, prior$m_beta0, prior$m_beta1)
 mm_prior_ci = apply(mm_prior, 1, quantile, c(.005,.995))
 
 lines(yy, mm_prior_mean, col='black')

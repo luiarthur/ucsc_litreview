@@ -22,8 +22,6 @@ gen_default_prior = function(y, K=10, L0=10, L1=10) {
   list(
     mu_lower = -5.0, #double
     mu_upper = 50, #double
-    c0 = -2, #double
-    c1 = 6.7, #double
     m_beta0 = 4.6, #double
     s2_beta0 = .01, #double
     cs_beta0 = 1, #double

@@ -22,7 +22,8 @@ void update_beta0i(State &state, const Data &data, const Prior &prior, int i){
     if (in_range) {
       for (int j=0; j < J; j++) {
         for (int n=0; n < Ni; n++) {
-          ll += log(f_inj(state.missing_y[i](n,j), data.M[i](n,j), b0i, state.beta_1(i), prior.c0, prior.c1));
+          ll += log(f_inj(state.missing_y[i](n,j), 
+                          data.M[i](n,j), b0i, state.beta_1(i)));
         }
       }
     } else {
@@ -47,11 +48,11 @@ void update_beta1i(State &state, const Data &data, const Prior &prior, int i){
     const bool in_range = true;
     
     double ll = 0;
-    if (b1i > 0 && in_range) {
+    if (b1i < 0 && in_range) {
       for (int j=0; j < J; j++) {
         for (int n=0; n < Ni; n++) {
           ll += log(f_inj(state.missing_y[i](n,j), data.M[i](n,j), 
-                          state.beta_0(i), b1i, prior.c0, prior.c1));
+                          state.beta_0(i), b1i));
         }
       }
     } else {

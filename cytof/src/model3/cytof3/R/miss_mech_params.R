@@ -5,46 +5,45 @@
 miss_mech_params = function(y, prob) {
   logit = function(p) log(p / (1-p))
 
-  stopifnot(length(y) == 3)
-  stopifnot(y[1] < y[2] && y[2] < y[3])
-  stopifnot(length(prob) == 3)
-  stopifnot(prob[1] < prob[2] && prob[3] < prob[2]) # higher prob. of missing in the middle
+  stopifnot(length(y) == 2)
+  stopifnot(y[1] < y[2])
+  stopifnot(length(prob) == 2)
+  stopifnot(prob[1] > prob[2])
+  
+  b1 = -(log(1/prob[1] - 1) - log(1/prob[2] - 1)) / (y[1] - y[2]) # should be negative
+  b0 = -(log(1/prob[1] - 1) + b1 * y[1])
 
-  b0 = logit(prob[2])
-  b1 = (b0 - logit(prob[1])) / (y[1] - y[2])^2
-  c1 = (b0 - logit(prob[3])) / ( b1 * sqrt(y[3] - y[2]) )
-
-  c(b0=b0, b1=b1, c1=c1, c0=y[2])
+  c(b0=b0, b1=b1)
 }
 
 #' Compute probability of missing using missing mechanism
-#' @param y, c0, b0, b1, c1
+#' @param y, b0, b1
 #' @export
-prob_miss = function(y, b0, b1, c0, c1) {
-  d = abs(y - c0)
-  x = ifelse(y < c0, b0 - b1 * d^2, b0 - b1 * c1 * sqrt(d))
+prob_miss = function(y, b0, b1) {
+  stopifnot(b1 < 0)
+  x = b0 + b1 * y
   1 / (1 + exp(-x))
 }
 
 #' Sample from missing mechanism prior
 #' @export
 sample_from_miss_mech_prior = function(y, m_beta0, s2_beta0, m_beta1, s2_beta1,
-                                       c0, c1, B=10) {
+                                       B=10) {
   b0 = rnorm(B, m_beta0, sqrt(s2_beta0))
-  b1 = sapply(1:B, function(b) rtn(m_beta1, sqrt(s2_beta1), 0, Inf))
+  b1 = sapply(1:B, function(b) rtn(m_beta1, sqrt(s2_beta1), -Inf, 0))
 
-  sapply(1:B, function(b) prob_miss(y, b0[b], b1[b], c0, c1))
+  sapply(1:B, function(b) prob_miss(y, b0[b], b1[b]))
 }
 
 ## TEST
-#param = miss_mech_params(c(-4,-2,-1), c(.1, .99, .001))
+#param = miss_mech_params(c(-4,-2), c(.99, .001))
 #y = seq(-7, 7, l=100)
-#p = prob_miss(y, param['b0'], param['b1'], param['c0'], param['c1'])
+#p = prob_miss(y, param['b0'], param['b1'])
 #
 #v = .01
 #b1_params = gamma_params(param['b1'], v)
 #out = sample_from_miss_mech_prior(y, param['b0'], v, b1_params[1], b1_params[2],
-#                                  param['c0'], param['c1'], B=1000)
+#                                  B=1000)
 #
 #plot(y, p, type='l', lwd=2); abline(v=0, lty=2)
 #for (k in 1:NCOL(out)) lines(y, out[,k], col='grey')

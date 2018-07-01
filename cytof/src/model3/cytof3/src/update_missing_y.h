@@ -21,7 +21,7 @@ void update_missing_yinj(State &state, const Data &data, const Prior &prior, int
     fc = R::dnorm(state.missing_y[i](n,j), 
                   get_mus_z(state, z)->at(l),
                   sqrt(get_sig2_z(state, z)->at(i,l)), lg);
-    fc *= prob_miss(y_inj, state.beta_0(i), state.beta_1(i), prior.c0, prior.c1);
+    fc *= prob_miss(y_inj, state.beta_0(i), state.beta_1(i));
 
     return log(fc);
   };

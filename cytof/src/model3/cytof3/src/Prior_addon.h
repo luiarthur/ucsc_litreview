@@ -8,8 +8,8 @@ Prior gen_prior_obj(const Rcpp::List &prior_ls) {
 
   prior.mu_lower = Rcpp::as<double>(prior_ls["mu_lower"]);
   prior.mu_upper = Rcpp::as<double>(prior_ls["mu_upper"]);
-  prior.c0 = Rcpp::as<double>(prior_ls["c0"]);
-  prior.c1 = Rcpp::as<double>(prior_ls["c1"]);
+  //prior.c0 = Rcpp::as<double>(prior_ls["c0"]);
+  //prior.c1 = Rcpp::as<double>(prior_ls["c1"]);
   prior.m_beta0 = Rcpp::as<double>(prior_ls["m_beta0"]);
   prior.s2_beta0 = Rcpp::as<double>(prior_ls["s2_beta0"]);
   prior.cs_beta0 = Rcpp::as<double>(prior_ls["cs_beta0"]);

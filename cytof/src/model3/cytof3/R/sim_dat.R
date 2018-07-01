@@ -50,7 +50,7 @@ rdirichlet = function(a) {
 #' @description Given some metrics, generate data y, and simulation truth of parameters
 #' @export
 sim_dat = function(I, J, N, K, L0, L1,
-                   mmp=miss_mech_params(c(-6, -2.5, -1),c(.1,.99,.001)),
+                   mmp=miss_mech_params(c(-6, -1),c(.99,.001)),
                    Z=genSimpleZ(J,K),
                    sig2_0=matrix(.1, I, L0), sig2_1=matrix(.1, I, L1),
                    mus_0=seq(-5,-1,length=L0), mus_1=seq(1,5,length=L1),
@@ -137,8 +137,7 @@ sim_dat = function(I, J, N, K, L0, L1,
       y_complete[[i]][,j] = rnorm(N[i], mu_ij, sig_ij)
 
       ### Set some to be missing
-      p_miss = prob_miss(y_complete[[i]][,j], mmp['b0'], mmp['b1'],
-                         mmp['c0'], mmp['c1'])
+      p_miss = prob_miss(y_complete[[i]][,j], mmp['b0'], mmp['b1'])
 
       # old 
       #y[[i]][,j] = ifelse(p_miss > runif(N[i]),NA, y_complete[[i]][,j])
@@ -155,7 +154,7 @@ sim_dat = function(I, J, N, K, L0, L1,
   list(y=y, y_complete=y_complete, Z=Z, W=W,
        eta_0=eta_0, eta_1=eta_1, mus_0=mus_0, mus_1=mus_1,
        sig2_0=sig2_0, sig2_1=sig2_1, lam=lam, gam=gam,
-       b0=mmp['b0'], b1=mmp['b1'], c0=mmp['c0'], c1=mmp['c1'])
+       b0=mmp['b0'], b1=mmp['b1'])
 }
 
 

@@ -66,16 +66,13 @@ println("sig2_max: ", prior$sig2_max)
 
 # Missing Mechanism params
 #mmp = miss_mech_params(y=c(-6, -2.5, -1.0), p=c(.1, .99, .01))
-p0 = median(missing_prop)
 Y = c(Reduce(rbind, y))
 Y = Y[which(!is.na(Y))]
 Y_neg = Y[which(Y<0)]
 Y_pos = Y[which(Y>0)]
-yq = quantile(Y_neg, c(.05, .1, .15))
-mmp = miss_mech_params(y=as.numeric(yq), p=c(.01, p0, .0001))
+yq = quantile(Y_neg, c(.05, .15))
+mmp = miss_mech_params(y=as.numeric(yq), p=c(.01, .0001))
 
-prior$c0 = mmp['c0']
-prior$c1 = mmp['c1']
 prior$m_beta0 = mmp['b0']; prior$s2_beta0 = 1
 prior$m_beta1 = mmp['b1']; prior$s2_beta1 = .001
 prior$cs_beta0 = 1 # needs to be big enough to escape local mode
@@ -84,7 +81,7 @@ prior$cs_beta1 = 1 # needs to be big enough to escape local mode
 yy = seq(yq[1]-1,3,l=100)
 mm_prior = sample_from_miss_mech_prior(yy, prior$m_beta0, prior$s2_beta0, 
                                        prior$m_beta1, prior$s2_beta1, 
-                                       prior$c0, prior$c1, B=50)
+                                       B=50)
 pdf(fileDest('miss_mech_prior.pdf'))
 plot(yy, mm_prior[,1], type='n', ylim=0:1, fg='grey', cex.axis=1.5,
      xlab='y', ylab='Pr(y missing)', cex.lab=1.4)
@@ -321,8 +318,7 @@ plot(yy, mm_prior_mean, ylim=0:1, type='l', bty='n', fg='grey', xlab='y',
 color.btwn(yy, mm_prior_ci[1,], mm_prior_ci[2,], from=-10, to=10, col=rgb(0,0,0,.2))
 
 for (i in 1:prior$I) {
-  mm_post = sapply(1:B, function(b) 
-                   prob_miss(yy, beta_0[b,i], beta_1[b,i], prior$c0, prior$c1))
+  mm_post = sapply(1:B, function(b) prob_miss(yy, beta_0[b,i], beta_1[b,i]))
 
   mm_post_mean = rowMeans(mm_post)
   mm_post_ci = apply(mm_post, 1, quantile, c(.025,.975))
