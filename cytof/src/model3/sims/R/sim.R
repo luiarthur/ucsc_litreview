@@ -165,7 +165,7 @@ Y = c(Reduce(rbind, y))
 Y = Y[which(!is.na(Y))]
 Y_neg = Y[which(Y<0)]
 Y_pos = Y[which(Y>0)]
-yq = quantile(Y_neg, c(.05, .8))
+yq = quantile(Y_neg, c(.05, .15))
 print(yq)
 mmp = miss_mech_params(y=as.numeric(yq), p=c(.99, .001))
 print(mmp)
@@ -207,6 +207,7 @@ init$missing_y = y
 for (i in 1:prior$I) {
   miss_idx = which(is.na(init$missing_y[[i]]))
   init$missing_y[[i]][miss_idx] = runif(length(miss_idx), yq[1], yq[2])
+  #init$missing_y[[i]][miss_idx] = runif(length(miss_idx), -5, -3)
 }
 
 # Are these good priors?
