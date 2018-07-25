@@ -6,7 +6,7 @@ model.code = nimbleCode({
   for (i in 1:I) {
     y[i] ~ dnorm(mu, var=sig2)
     m[i] ~ dbern( p[i])
-    logit(p[i]) <- b0 + b1 * (y[i]-cc)^2
+    logit(p[i]) <- b0 + b1 * y[i]
   }
   mu ~ dnorm(m_mu, var=s2_mu)
   sig2 ~ dinvgamma(a, b)
@@ -34,12 +34,12 @@ hist(y)
 model.data = list(m=m, y=y)
 model.consts = list(m_mu=0, s2_mu=100, a=2, b=1, I=length(y),
                     #m_b0=0, m_b1=-3, s2_b0=3, s2_b1=.01, cc=-5)
-                    m_b0=-1, m_b1=-3, s2_b0=.1, s2_b1=.01, cc=-5)
+                    m_b0=-1, m_b1=-3, s2_b0=1, s2_b1=1)
                     #b0=-1, b1=-3, cc=-5)
 
 plot(seq(-10,10,l=100), 
      #sigmoid(model.consts$b0+model.consts$b1*(seq(-10,10,l=100)-model.consts$cc)^2),
-     sigmoid(model.consts$m_b0+model.consts$m_b1*(seq(-10,10,l=100)-model.consts$cc)^2),
+     sigmoid(model.consts$m_b0+model.consts$m_b1*seq(-10,10,l=100)),
      type='l')
 
 y.init = y
@@ -67,5 +67,6 @@ hist(out$summary[-c(1:non_y),1], prob=TRUE, col=rgb(1,0,0,.4), border='transpare
 hist(y_true, add=TRUE, prob=TRUE, col=rgb(0,0,1,.4), border='transparent')
 
 hist(out$summary[-c(1:non_y),1][idx.na], prob=TRUE, col=rgb(1,0,0,.4),border='transparent', xlim=c(-6,6))
+#hist(out$samples[1,-c(1:non_y)][idx.na], prob=TRUE, col=rgb(1,0,0,.4),border='transparent', xlim=c(-6,6))
 hist(y_true[idx.na], prob=TRUE, col=rgb(0,0,1,.4),border='transparent', add=TRUE)
 
