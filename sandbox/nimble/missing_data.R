@@ -1,4 +1,5 @@
 library(nimble)
+library(rcommon)
 set.seed(1)
 
 model.code = nimbleCode({
@@ -31,8 +32,16 @@ hist(y)
 
 ### Model data, constants, and inits
 model.data = list(m=m, y=y)
-model.consts = list(m_mu=0, s2_mu=100, a=3, b=2,
-                    m_b0=-1, m_b1=-3, s2_b0=.1, s2_b1=.1, I=length(y), cc=-5)
+model.consts = list(m_mu=0, s2_mu=100, a=2, b=1, I=length(y),
+                    #m_b0=0, m_b1=-3, s2_b0=3, s2_b1=.01, cc=-5)
+                    m_b0=-1, m_b1=-3, s2_b0=.1, s2_b1=.01, cc=-5)
+                    #b0=-1, b1=-3, cc=-5)
+
+plot(seq(-10,10,l=100), 
+     #sigmoid(model.consts$b0+model.consts$b1*(seq(-10,10,l=100)-model.consts$cc)^2),
+     sigmoid(model.consts$m_b0+model.consts$m_b1*(seq(-10,10,l=100)-model.consts$cc)^2),
+     type='l')
+
 y.init = y
 idx.na = which(is.na(y.init))
 y.init[idx.na] <- rnorm(length(idx.na))
@@ -47,11 +56,16 @@ model.conf = configureMCMC(model, print=TRUE)
 model.conf$addMonitors(c('y'))
 model.mcmc = buildMCMC(model.conf)
 cmodel = compileNimble(model.mcmc, project=model)
-out = runMCMC(cmodel, summary=TRUE, niter=10000, nburnin=9000)
+out = runMCMC(cmodel, summary=TRUE, niter=20000, nburnin=19000)
 
 
 ### Summary ###
-plotPosts(out$samples[,1:4])
-plotPosts(out$samples[,(4+idx.na)[1:4]])
-hist(out$summary[-c(1:4),1], prob=TRUE, col=rgb(1,0,0,.4), border='transparent', xlim=c(-6,6))
+non_y = 4
+plotPosts(out$samples[,1:non_y])
+plotPosts(out$samples[,(non_y+idx.na)[1:4]])
+hist(out$summary[-c(1:non_y),1], prob=TRUE, col=rgb(1,0,0,.4), border='transparent', xlim=c(-6,6))
 hist(y_true, add=TRUE, prob=TRUE, col=rgb(0,0,1,.4), border='transparent')
+
+hist(out$summary[-c(1:non_y),1][idx.na], prob=TRUE, col=rgb(1,0,0,.4),border='transparent', xlim=c(-6,6))
+hist(y_true[idx.na], prob=TRUE, col=rgb(0,0,1,.4),border='transparent', add=TRUE)
+
