@@ -9,20 +9,27 @@ model.code = nimbleCode({
     logit(p[i]) <- b0 + b1 * y[i]
   }
   mu ~ dnorm(m_mu, var=s2_mu)
-  sig2 ~ dinvgamma(a, b)
-  b0 ~ dnorm(m_b0, s2_b0)
-  b1 ~ dnorm(m_b1, s2_b1)
+  sig2 ~ dinvgamma(a, scale=b)
+  b0 ~ dnorm(m_b0, var=s2_b0)
+  b1 ~ dnorm(m_b1, var=s2_b1)
 })
 
 logit = function(p) log(p) - log(1-p)
 sigmoid = function(x) 1 / (1 + exp(-x))
+solve_b = function(y, p) {
+  stopifnot(length(y) == 2 && length(p) == 2)
+  b1 = diff(logit(p)) / diff(y)
+  b0 = logit(p[1]) - b1 * y[1]
+  c(b0, b1)
+}
 
 ### Data ###
-N = 300
+N = 500
 mu = 1
 sig2 = 2
 y_true = rnorm(N, mu, sig2)
-b0 = -1; b1 = -3
+b_true = solve_b(y=c(-1, -.5), p=c(.99, .01))
+b0 = b_true[1]; b1 = b_true[2]
 hist(y_true)
 p_true = sigmoid(b0 + b1 * y_true)
 plot(y_true, p_true)
@@ -31,15 +38,13 @@ y = ifelse(m, NA, y_true)
 hist(y)
 
 ### Model data, constants, and inits
+b = solve_b(y=c(min(y,na.rm=TRUE), -.1), p=c(.99, .0001))
 model.data = list(m=m, y=y)
-model.consts = list(m_mu=0, s2_mu=100, a=2, b=1, I=length(y),
-                    #m_b0=0, m_b1=-3, s2_b0=3, s2_b1=.01, cc=-5)
-                    m_b0=-1, m_b1=-3, s2_b0=1, s2_b1=1)
-                    #b0=-1, b1=-3, cc=-5)
+model.consts = list(m_mu=0, s2_mu=10, a=301, b=300, I=length(y),
+                    m_b0=b[1], m_b1=b[2], s2_b0=.1, s2_b1=.1)
 
-plot(seq(-10,10,l=100), 
-     #sigmoid(model.consts$b0+model.consts$b1*(seq(-10,10,l=100)-model.consts$cc)^2),
-     sigmoid(model.consts$m_b0+model.consts$m_b1*seq(-10,10,l=100)),
+plot(seq(-5,5,l=100), 
+     sigmoid(model.consts$m_b0+model.consts$m_b1*seq(-5,5,l=100)),
      type='l')
 
 y.init = y
@@ -61,12 +66,26 @@ out = runMCMC(cmodel, summary=TRUE, niter=20000, nburnin=19000)
 
 ### Summary ###
 non_y = 4
-plotPosts(out$samples[,1:non_y])
-plotPosts(out$samples[,(non_y+idx.na)[1:4]])
-hist(out$summary[-c(1:non_y),1], prob=TRUE, col=rgb(1,0,0,.4), border='transparent', xlim=c(-6,6))
-hist(y_true, add=TRUE, prob=TRUE, col=rgb(0,0,1,.4), border='transparent')
 
-hist(out$summary[-c(1:non_y),1][idx.na], prob=TRUE, col=rgb(1,0,0,.4),border='transparent', xlim=c(-6,6))
-#hist(out$samples[1,-c(1:non_y)][idx.na], prob=TRUE, col=rgb(1,0,0,.4),border='transparent', xlim=c(-6,6))
-hist(y_true[idx.na], prob=TRUE, col=rgb(0,0,1,.4),border='transparent', add=TRUE)
+# Posterior of b, mu, sig2
+plotPosts(out$samples[,1:non_y])
+
+# Posterior of first 4 missing y
+plotPosts(out$samples[,(non_y+idx.na)[1:4]])
+
+# Posterior distribution of complete data
+dens = apply(out$sample[, -c(1:non_y)], 1, density)
+plot(dens[[1]], col=rgb(0,0,1,.01), xlim=c(-10,10), 
+     ylim=c(0,max(sapply(dens, function(d) max(d$y)))),
+     main='Posterior draws of complete data')
+for (d in dens) lines(d, col=rgb(0,0,1,.1))
+lines(density(y_true), lwd=3)
+
+# Posterior distribution of missing data
+dens_missing = apply(out$sample[, -c(1:non_y)][,idx.na], 1, density)
+plot(dens_missing[[1]], col=rgb(0,0,1,.01), xlim=c(-10, 5),
+     ylim=c(0,max(sapply(dens_missing, function(d) max(d$y)))),
+     main='Posterior draws of missing data')
+for (d in dens_missing) lines(d, col=rgb(0,0,1,.1))
+lines(density(y_true[idx.na]), lwd=3)
 
