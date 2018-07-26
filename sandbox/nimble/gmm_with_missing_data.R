@@ -1,5 +1,6 @@
 library(nimble)
 library(rcommon)
+set.seed(251)
 # will call cytof3::ari
 
 ### util functions ###
@@ -31,14 +32,18 @@ model.code = nimbleCode({
   b0 ~ dnorm(m_b0, var=s2_b0)
   b1 ~ dnorm(m_b1, var=s2_b1)
   alpha[1:J] ~ ddirch(d[1:J])
+
+  # Constrains mu to be in ascending order
+  constraints ~ dconstraint( prod(mu[1:(J-1)] <= mu[2:J]) )
 })
 
 ### Sim Dat ###
-N = 10000
+N = 1000
 J = 3
 mu_true = c(-3, 1, 5)
+alpha_true = c(.3, .5, .2)
 sig2_true = .5
-c_true = sample(1:J, N, p=c(.3,.5,.2), replace=T)
+c_true = sample(1:J, N, p=alpha_true, replace=T)
 y_complete = rnorm(N, mu_true[c_true], sig2_true)
 hist(y_complete)
 
@@ -56,8 +61,8 @@ quantile(y, seq(0,1,l=10), na.rm=T)
 y_lower = min(y, na.rm=TRUE)
 y_upper = quantile(y, .1, na.rm=T)
 b = solve_b(y=c(y_lower, y_upper), p=c(.99, .01))
-model.data = list(m=m, y=y)
-model.consts = list(m_mu=0, s2_mu=10, a=301, b=300, 
+model.data = list(m=m, y=y, constraints=1) # constraints set to 1 (satisfied)
+model.consts = list(m_mu=0, s2_mu=10, a=301, b=300,
                     N=length(y), J=J, d=rep(1/J, J),
                     m_b0=b[1], m_b1=b[2], s2_b0=.001, s2_b1=.001)
 
@@ -94,7 +99,7 @@ out = runMCMC(cmodel, summary=TRUE, niter=B+burn, nburnin=burn,
 
 y_post = out$samples2[, paste0('y[',1:N,']')]
 c_post = out$samples2[, paste0('c[',1:N,']')]
-
+mu_post = out$samples[, paste0('mu[',1:J,']')]
 
 # Posterior of alpha
 plotPosts(out$samples[, 1:J])
@@ -132,3 +137,5 @@ c_post_ari = cytof3::ari(c_post[nsamps2,], c_true)
 cat('Cluster ARI of last sample: ', c_post_ari, '\n')
 cat('Cluster ARI of mode:        ', c_post_ari, '\n')
 
+# Test
+plotPosts(out$samples[, -c(1:J)])
