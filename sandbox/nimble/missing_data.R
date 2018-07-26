@@ -57,35 +57,35 @@ model.inits = list(y=y.init, mu=0, sig2=1, b0=0, b1=0, p=rep(.5,length(y)))
 model = nimbleModel(model.code, data=model.data, constants=model.consts, inits=model.inits)
 cmodel = compileNimble(model)
 
-model.conf = configureMCMC(model, print=TRUE)
-model.conf$addMonitors(c('y'))
-model.mcmc = buildMCMC(model.conf)
+B = 1000
+burn = 20000
+model.conf = configureMCMC(model, print=TRUE, monitors2=c('y'), thin2=(B/20))
+model.mcmc = buildMCMC(model.conf, enableWAIC=TRUE)
 cmodel = compileNimble(model.mcmc, project=model)
-out = runMCMC(cmodel, summary=TRUE, niter=20000, nburnin=19000)
+out = runMCMC(cmodel, summary=TRUE, niter=B+burn, nburnin=burn, WAIC=TRUE)
 
 
 ### Summary ###
-non_y = 4
 
 # Posterior of b, mu, sig2
-plotPosts(out$samples[,1:non_y])
+plotPosts(out$samples)
 
 # Posterior of first 4 missing y
-plotPosts(out$samples[,(non_y+idx.na)[1:4]])
+plotPosts(out$samples2[,idx.na[1:4]])
 
 # Posterior distribution of complete data
-dens = apply(out$sample[, -c(1:non_y)], 1, density)
-plot(dens[[1]], col=rgb(0,0,1,.01), xlim=c(-10,10), 
+dens = apply(out$samples2, 1, density)
+plot(dens[[1]], col=rgb(0,0,1,.5), xlim=c(-10,10), 
      ylim=c(0,max(sapply(dens, function(d) max(d$y)))),
      main='Posterior draws of complete data')
-for (d in dens) lines(d, col=rgb(0,0,1,.1))
+for (d in dens) lines(d, col=rgb(0,0,1,.5))
 lines(density(y_true), lwd=3)
 
 # Posterior distribution of missing data
-dens_missing = apply(out$sample[, -c(1:non_y)][,idx.na], 1, density)
-plot(dens_missing[[1]], col=rgb(0,0,1,.01), xlim=c(-10, 5),
+dens_missing = apply(out$samples2[,idx.na], 1, density)
+plot(dens_missing[[1]], col=rgb(0,0,1,.5), xlim=c(-10, 5),
      ylim=c(0,max(sapply(dens_missing, function(d) max(d$y)))),
      main='Posterior draws of missing data')
-for (d in dens_missing) lines(d, col=rgb(0,0,1,.1))
+for (d in dens_missing) lines(d, col=rgb(0,0,1,.5))
 lines(density(y_true[idx.na]), lwd=3)
 
