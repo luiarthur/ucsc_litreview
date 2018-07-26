@@ -13,9 +13,9 @@ model.code = nimbleCode({
 })
 
 ### Data ###
-J = c(30, 15)
-mu_true = c(-3, 5)
-y_orig = list(rnorm(J[1], mu_true[1]), rnorm(J[2], mu_true[2]))
+J = c(30, 15, 20)
+mu_true = c(-3, 5, 10)
+y_orig = sapply(1:length(J), function(i) rnorm(J[i], mu_true[i]))
 I = length(y_orig)
 y = Reduce(c, y_orig)
 hist(y)
