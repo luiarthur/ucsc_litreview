@@ -107,7 +107,7 @@ model.conf$thin2 = B / nsamps2
 
 model.mcmc = buildMCMC(model.conf)
 cmodel = compileNimble(model.mcmc, project=model)
-burn=1000
+burn=2000
 time_100_iters = system.time(runMCMC(cmodel, summary=TRUE, niter=100, nburnin=0))
 seconds_one_iter = time_100_iters[3] / 100
 estimated_time = seconds_one_iter * (B+burn)
