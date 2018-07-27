@@ -17,6 +17,10 @@ pad_zeros = function(y_list) {
 #y_ls = list(matrix(1,2,5), matrix(2,3,5), matrix(3,1,5))
 #pad_zeros(y_ls)
 
+# p.78 of nimble manual: llFun
+# p.83 of nimble manual: MCMC suite
+# p.166 of nimble manual: targetLL
+
 ### Nimble Code ###
 model.code = nimbleCode({
   for (k in 1:K) {
