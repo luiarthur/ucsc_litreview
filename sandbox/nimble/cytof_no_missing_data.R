@@ -111,6 +111,8 @@ burn=1000
 time_100_iters = system.time(runMCMC(cmodel, summary=TRUE, niter=100, nburnin=0))
 seconds_one_iter = time_100_iters[3] / 100
 estimated_time = seconds_one_iter * (B+burn)
+print("Estimated time:")
+print(estimated_time)
 time_model = system.time(
   out <- runMCMC(cmodel, summary=TRUE, niter=B+burn, nburnin=burn, setSeed=1)
 )
