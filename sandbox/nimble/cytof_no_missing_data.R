@@ -55,7 +55,7 @@ model.code = nimbleCode({
 })
 
 ### Simulate Data ###
-dat = sim_dat(I=3, J=8, N=c(3,1,2)*100, K=4, L0=3, L1=5)
+dat = sim_dat(I=3, J=8, N=c(3,1,2)*1000, K=4, L0=3, L1=5)
 y_complete = dat$y_complete
 y = Reduce(rbind, y_complete)
 N = sapply(y_complete, NROW)
@@ -139,5 +139,9 @@ my.image(matrix(out$summary[Z.cols,1], J, K))
 H.cols = get_param('H', out$samples)
 my.image(matrix(out$summary[H.cols,1], J, K), col=blueToRed(11), addL=T, zlim=c(-3,3))
 
-#out$samples2[, lam.cols]
+sig2.cols = get_param('sig2', out$samples)
+sig2_post = out$samples[, sig2.cols]
+plotPosts(sig2_post)
 
+#out$samples2[, lam.cols]
+            
