@@ -14,8 +14,8 @@ pad_zeros(y_ls)
 model.code = nimbleCode({
   for (i in 1:I) {
     for (j in 1:J[i]) {
-      #y[idxOffset[i] + j] ~ dnorm(mu[i], 1) # version 1
-      y[i,j] ~ dnorm(mu[i], 1) # version 2
+      y[idxOffset[i] + j] ~ dnorm(mu[i], 1) # version 1
+      #y[i,j] ~ dnorm(mu[i], 1) # version 2
     }
     mu[i] ~ dnorm(m, var=s2)
   }
@@ -26,8 +26,8 @@ J = c(30, 15, 20)
 mu_true = c(-3, 5, 10)
 y_orig = sapply(1:length(J), function(i) rnorm(J[i], mu_true[i]))
 I = length(y_orig)
-#y = Reduce(c, y_orig) # version 1
-y = t(pad_zeros(y_orig)) # version 2
+y = Reduce(c, y_orig) # version 1
+#y = t(pad_zeros(y_orig)) # version 2
 
 hist(y)
 
