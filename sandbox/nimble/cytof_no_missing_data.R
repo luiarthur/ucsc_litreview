@@ -27,6 +27,10 @@ model.code = nimbleCode({
     v[k] ~ dbeta(alpha/K, 1)
     H[1:J, k] ~ dmnorm(h_mean[1:J], h_cov[1:J,1:J])
     Z[1:J, k] <- 1 + (pnorm(H[1:J, k]) < v[k])
+    #for (j in 1:J) {
+    #  Z0[j, k] ~ dbern(v[k])
+    #  Z[j, k] <- Z0[j, k] + 1
+    #}
   }
 
   alpha ~ dgamma(a_alpha, b_alpha)
@@ -34,9 +38,9 @@ model.code = nimbleCode({
   for (l in 1:L) {
     # TODO: order, use truncated normal
     # mus_0
-    mus[1,l] ~ dunif(-20,0) #T(dnorm(psi_0, var=tau2_0), -100, 0)
+    mus[1,l] ~ T(dnorm(psi_0, var=tau2_0), -30, 0) #dunif(-20,0) 
     # mus_1
-    mus[2,l] ~ dunif(0,20) #T(dnorm(psi_1, var=tau2_1), 0, 100)
+    mus[2,l] ~ T(dnorm(psi_1, var=tau2_1), 0, 30) #dunif(0,20) 
   }
 
   for (i in 1:I) {
@@ -59,7 +63,7 @@ model.code = nimbleCode({
 })
 
 ### Simulate Data ###
-dat = sim_dat(I=3, J=8, N=c(3,1,2)*1000, K=4, L0=3, L1=5)
+dat = sim_dat(I=3, J=8, N=c(3,1,2)*100, K=4, L0=3, L1=5)
 y_complete = dat$y_complete
 y = Reduce(rbind, y_complete)
 N = sapply(y_complete, NROW)
@@ -86,8 +90,8 @@ model.consts = list(N=N, J=J, I=I, K=K, N_sum=N_sum,
 model.data = list(y=y)
 model.inits = list(gam=matrix(1, sum(N), J),
                    lam=rep(1,sum(N)),
-                   #z=matrix(0,J,K),
                    H=matrix(rnorm(J*K),J,K),
+                   #Zr=matrix(rbinom(J*K,1,.5),J,K),
                    W=matrix(1/K, I, K),
                    v=rep(1/K,K),
                    alpha=1,
@@ -142,8 +146,8 @@ Z.cols= get_param('Z', out$samples)
 Z.mean = matrix(out$summary[Z.cols,1], J, K) - 1
 my.image(matrix(out$summary[Z.cols,1], J, K))
 
-H.cols = get_param('H', out$samples)
-my.image(matrix(out$summary[H.cols,1], J, K), col=blueToRed(11), addL=T, zlim=c(-3,3))
+#H.cols = get_param('H', out$samples)
+#my.image(matrix(out$summary[H.cols,1], J, K), col=blueToRed(11), addL=T, zlim=c(-3,3))
 
 sig2.cols = get_param('sig2', out$samples)
 sig2_post = out$samples[, sig2.cols]
