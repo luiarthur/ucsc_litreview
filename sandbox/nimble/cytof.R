@@ -91,6 +91,7 @@ dat = sim_dat(I=3, J=8, N=c(3,1,2)*100, K=4, L0=3, L1=5)
 #dat = sim_dat(I=3, J=8, N=c(3,1,2)*10000, K=4, L0=3, L1=5, Z=genZ(J=8,K=4))
 # TODO: try block sampling mus. How do you block sample a matrix of params?
 # TODO: try removing  ordering constraints for mus
+# TODO: compute loglike
 
 y_complete = dat$y_complete
 #y = Reduce(rbind, y_complete)
