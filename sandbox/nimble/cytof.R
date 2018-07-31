@@ -34,11 +34,10 @@ model.code = nimbleCode({
   alpha ~ dgamma(a_alpha, b_alpha)
 
   for (l in 1:L) {
-    # TODO: order, use truncated normal
     # mus_0
-    mus[1,l] ~ T(dnorm(psi_0, var=tau2_0), -30, 0) #dunif(-20,0) 
+    mus[1,l] ~ T(dnorm(psi_0, var=tau2_0), -30, 0)
     # mus_1
-    mus[2,l] ~ T(dnorm(psi_1, var=tau2_1), 0, 30) #dunif(0,20) 
+    mus[2,l] ~ T(dnorm(psi_1, var=tau2_1), 0, 30)
   }
 
   for (i in 1:I) {
@@ -56,8 +55,8 @@ model.code = nimbleCode({
     for (j in 1:J) {
       gam[n, j] ~ dcat(eta[Z[j, lam[n]], get_i[n], j, 1:L])
       y[n, j] ~ dnorm(mus[Z[j, lam[n]], gam[n, j]], var=sig2[get_i[n]])
-      m[n, j] ~ dbern(p[n,j])
-      logit(p[n,j]) <- b0 + b1 * y[n,j]
+      m[n, j] ~ dbern(p[n, j])
+      logit(p[n, j]) <- b0 + b1 * y[n, j]
     }
   }
 
@@ -65,8 +64,10 @@ model.code = nimbleCode({
   b1 ~ dnorm(m_b1, var=s2_b1)
             
   # Constrains mu to be in ascending order
-  constraints_mus0 ~ dconstraint( prod(mus[1,1:(L-1)] <= mus[1,2:L]) )
-  constraints_mus1 ~ dconstraint( prod(mus[2,1:(L-1)] <= mus[2,2:L]) )
+  # TODO: These make sampling a little harder
+  #       Can I remove them at the expense of less identifiability?
+  constraints_mus0 ~ dconstraint( prod(mus[1, 1:(L-1)] <= mus[1, 2:L]) )
+  constraints_mus1 ~ dconstraint( prod(mus[2, 1:(L-1)] <= mus[2, 2:L]) )
 })
 
 ### util functions ###
@@ -81,6 +82,15 @@ solve_b = function(y, p) {
 
 ### Simulate Data ###
 dat = sim_dat(I=3, J=8, N=c(3,1,2)*100, K=4, L0=3, L1=5)
+
+### TODO: Try these data###
+#dat = sim_dat(I=3, J=8, N=c(3,1,2)*100, K=4, L0=3, L1=5, Z=genZ(J=8,K=4))
+#dat = sim_dat(I=3, J=8, N=c(3,1,2)*1000, K=4, L0=3, L1=5)
+#dat = sim_dat(I=3, J=8, N=c(3,1,2)*1000, K=4, L0=3, L1=5, Z=genZ(J=8,K=4))
+#dat = sim_dat(I=3, J=8, N=c(3,1,2)*10000, K=4, L0=3, L1=5)
+#dat = sim_dat(I=3, J=8, N=c(3,1,2)*10000, K=4, L0=3, L1=5, Z=genZ(J=8,K=4))
+# TODO: try block sampling mus. How do you block sample a matrix of params?
+
 y_complete = dat$y_complete
 #y = Reduce(rbind, y_complete)
 y = Reduce(rbind, dat$y)
@@ -105,17 +115,23 @@ model.consts = list(N=N, J=J, I=I, K=K, N_sum=N_sum,
                     h_mean=rep(0,J), h_cov=diag(J),
                     L=L,
                     a_eta0=rep(1/L,L), a_eta1=rep(1/L,L),
-                    psi_0=0, psi_1=0, tau2_0=1, tau2_1=1,
+                    psi_0=mean(y[y<0], na.rm=TRUE), tau2_0=var(y[y<0], na.rm=TRUE), 
+                    psi_1=mean(y[y>0], na.rm=TRUE), tau2_1=var(y[y>0], na.rm=TRUE),
                     a_alpha=1, b_alpha=1,
                     a_sig=3, b_sig=2, d_W=rep(1/K,K),
                     m_b1=b_prior[1], s2_b1=.1,
                     m_b0=b_prior[2], s2_b0=.1)
 model.data = list(y=y, m=m, constraints_mus0=1, constraints_mus1=1)
+
+y.init = y
+y.init[which(is.na(y))] <- mean(y[y<0], na.rm=TRUE)
+y.init[-which(is.na(y))] <- NA
 model.inits = list(gam=matrix(1, sum(N), J),
                    lam=rep(1,sum(N)),
                    Z0=matrix(rbinom(J*K,1,.5),J,K),
                    W=matrix(1/K, I, K),
                    v=rep(1/K,K),
+                   y=y.init,
                    alpha=1,
                    sig2=rep(1,I),
                    eta=array(1/L, dim=c(2,I,J,L)),
@@ -137,11 +153,11 @@ model.conf$thin2 = B / nsamps2
 
 model.mcmc = buildMCMC(model.conf)
 cmodel = compileNimble(model.mcmc, project=model)
-burn=2000
+burn=4000
 time_100_iters = system.time(runMCMC(cmodel, summary=TRUE, niter=100, nburnin=0))
 seconds_one_iter = time_100_iters[3] / 100
 estimated_time = seconds_one_iter * (B+burn)
-print("Estimated time:")
+print("Estimated time (in seconds):")
 print(estimated_time)
 time_model = system.time(
   out <- runMCMC(cmodel, summary=TRUE, niter=B+burn, nburnin=burn, setSeed=1)
@@ -162,12 +178,13 @@ ari_lam = ari(lam_last, c(unlist(dat$lam)))
 cat("ARI of cell-type labesl (lambda): ", ari_lam, '\n')
 
 W.cols = get_param('W', out$samples)
-my.image(matrix(out$summary[W.cols,1], I, K), col=greys(10), zlim=c(0,.1),
+my.image(matrix(out$summary[W.cols,1], I, K), col=greys(10), zlim=c(0,max(dat$W)),
          addL=T, color.bar.dig=2)
 
 Z.cols= get_param('Z', out$samples)
 Z.mean = matrix(out$summary[Z.cols,1], J, K) - 1
 my.image(matrix(out$summary[Z.cols,1], J, K))
+my.image(dat$Z, main='True Z')
 
 sig2.cols = get_param('sig2', out$samples)
 sig2_post = out$samples[, sig2.cols]
