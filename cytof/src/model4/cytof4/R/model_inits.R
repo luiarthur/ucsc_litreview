@@ -1,5 +1,8 @@
 #' @export
-model.inits = function(y, N, K=10, L=5) {
+model.inits = function(y_ls, K=10, L=5) {
+  N = sapply(y_ls, NROW)
+  y = Reduce(rbind, y_ls)
+
   J = NCOL(y)
   I = length(N)
   y.init = y

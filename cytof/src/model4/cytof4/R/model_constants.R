@@ -2,10 +2,14 @@
 #'
 #' TODO: document
 #' @export
-model.consts = function(y, N, K=10, L=5, b_prior=NULL) {
+model.consts = function(y_ls, K=10, L=5, b_prior=NULL) {
+  N = sapply(y_ls, NROW)
+  y = Reduce(rbind, y_ls)
+
   if (is.null(b_prior)) {
     b_prior = solve_miss_mech_params(y=c(min(y,na.rm=TRUE), -.1), p=c(.99,.0001))
   }
+
   J = NCOL(y)
   I = length(N)
 

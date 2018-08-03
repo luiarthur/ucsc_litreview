@@ -19,9 +19,8 @@ test_that("simple cytof", {
   
   K = 10
   L = 5
-  y = Reduce(rbind, dat$y)
   model = nimbleModel(model.code(),
-                      data=model.data(y),
-                      constants=model.consts(y=y, N=N, K=K, L=L),
-                      inits=model.inits(y=y, N=N))
+                      data=model.data(dat$y),
+                      constants=model.consts(y=dat$y, K=K, L=L),
+                      inits=model.inits(y=dat$y))
 })

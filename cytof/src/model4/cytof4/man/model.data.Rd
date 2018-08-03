@@ -4,7 +4,7 @@
 \alias{model.data}
 \title{Nimble model data object generator}
 \usage{
-model.data(y = NA)
+model.data(y_ls)
 }
 \description{
 y: concatenated matrix of transformed marker expression. missing values should be recorded as NA

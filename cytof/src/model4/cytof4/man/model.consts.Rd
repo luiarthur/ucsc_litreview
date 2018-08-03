@@ -4,7 +4,7 @@
 \alias{model.consts}
 \title{Generate Nimble model constants}
 \usage{
-model.consts(y, N, K = 10, L = 5, b_prior = NULL)
+model.consts(y_ls, K = 10, L = 5, b_prior = NULL)
 }
 \description{
 TODO: document
