@@ -1,5 +1,6 @@
 #' @export
-model.inits = function(y, N, J, K, L) {
+model.inits = function(y, N, K=10, L=5) {
+  J = NCOL(y)
   I = length(N)
   y.init = y
   y.init[which(is.na(y))] <- mean(y[y<0], na.rm=TRUE)

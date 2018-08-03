@@ -4,8 +4,7 @@
 \alias{model.consts}
 \title{Generate Nimble model constants}
 \usage{
-model.consts(N, J, K, L, y, b_prior = solve_miss_mech_params(y = c(min(y,
-  na.rm = TRUE), -0.1), p = c(0.99, 1e-04)))
+model.consts(y, N, K = 10, L = 5, b_prior = NULL)
 }
 \description{
 TODO: document

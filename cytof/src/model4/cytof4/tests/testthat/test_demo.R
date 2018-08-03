@@ -4,6 +4,7 @@ test_that("demo is working", {
 })
 
 
+context("simple cytof model declaration")
 test_that("simple cytof", {
   library(cytof4)
   library(nimble)
@@ -21,6 +22,6 @@ test_that("simple cytof", {
   y = Reduce(rbind, dat$y)
   model = nimbleModel(model.code(),
                       data=model.data(y),
-                      constants=model.consts(N=N, J=J, K=K, L=L, y=y),
-                      inits=model.inits(y=y, N=N, J=J, K=K, L=L))
+                      constants=model.consts(y=y, N=N, K=K, L=L),
+                      inits=model.inits(y=y, N=N))
 })

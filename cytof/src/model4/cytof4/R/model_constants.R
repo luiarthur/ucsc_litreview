@@ -2,8 +2,11 @@
 #'
 #' TODO: document
 #' @export
-model.consts = function(N, J, K, L, y,
-  b_prior = solve_miss_mech_params(y=c(min(y,na.rm=TRUE), -.1), p=c(.99, .0001))) {
+model.consts = function(y, N, K=10, L=5, b_prior=NULL) {
+  if (is.null(b_prior)) {
+    b_prior = solve_miss_mech_params(y=c(min(y,na.rm=TRUE), -.1), p=c(.99,.0001))
+  }
+  J = NCOL(y)
   I = length(N)
 
   idxOffset = c(0, cumsum(N[-I]))
