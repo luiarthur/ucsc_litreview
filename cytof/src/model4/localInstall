@@ -1,0 +1,18 @@
+#!/bin/bash
+
+PACKAGE_NAME="cytof4"
+
+### Generate the docs ###
+mv ${PACKAGE_NAME}/NAMESPACE ${PACKAGE_NAME}/.NAMESPACE
+R -q -e "roxygen2::roxygenise('${PACKAGE_NAME}')"
+R -q -e "roxygen2::roxygenise('${PACKAGE_NAME}')"
+
+### Install Package Locally ###
+time R CMD INSTALL --no-multiarch ${PACKAGE_NAME}
+echo
+
+### Run Unit Tests (if -t tag is provided) ###
+while getopts ":t" opt
+do
+  R -q -e "system.time(devtools::test('${PACKAGE_NAME}'))"
+done

@@ -1,0 +1,4 @@
+#!/bin/bash
+
+time R -q -e "devtools::install_github('luiarthur/ucsc_litreview', subdir='cytof/src/model4/cytof4')"
+
