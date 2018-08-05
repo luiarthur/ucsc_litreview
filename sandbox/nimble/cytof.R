@@ -143,20 +143,24 @@ model = nimbleModel(model.code, data=model.data,
                     constants=model.consts, inits=model.inits)
 model$simulate()
 #model$initializeInfo()
-cmodel = compileNimble(model)
+print(1)
+cmodel = compileNimble(model, showCompilerOutput=TRUE)
 
 B=200
 nsamps2=1
 
-model.conf = configureMCMC(model, print=TRUE)
-model.conf$addMonitors(c('Z'))
+print(2)
+model.conf = configureMCMC(model)#, print=TRUE)
+model.conf$addMonitors(c('Z', 'logProb_y'))
 model.conf$addMonitors2(c('lam', 'y'))
 model.conf$thin2 = B / nsamps2
 
-model.mcmc = buildMCMC(model.conf)
-cmodel = compileNimble(model.mcmc, project=model)
+print(3)
+model.mcmc = buildMCMC(model.conf, time=TRUE)
+print(4)
+cmodel = compileNimble(model.mcmc, project=model, showCompilerOutput=TRUE)
 burn=4000
-time_100_iters = system.time(runMCMC(cmodel, summary=TRUE, niter=100, nburnin=0))
+time_100_iters = system.time(out<-runMCMC(cmodel, summary=TRUE, niter=100, nburnin=0))
 seconds_one_iter = time_100_iters[3] / 100
 estimated_time = seconds_one_iter * (B+burn)
 print("Estimated time (in seconds):")
