@@ -2,10 +2,24 @@
 % Please edit documentation in R/fit_model.R
 \name{fit.cytof}
 \alias{fit.cytof}
-\title{Fit CyTOF model}
+\title{Fit the CyTOF Model}
 \usage{
-fit.cytof(model, B, burn, thin, nsamps2 = 1)
+fit.cytof(cmodel, niter, nburnin, thin2 = niter, warmup_period = 0, ...)
+}
+\arguments{
+\item{cmodel:}{compiled model (output from compile.cytof.model)}
+
+\item{niter:}{number of MCMC iterations}
+
+\item{nburnin:}{burn-in period}
+
+\item{thin2:}{amount to thin by for large parameters (leave it as niter!)}
+
+\item{...:}{additional arguments in nimble::runMCMC}
+}
+\value{
+list(cmodel, timing)
 }
 \description{
-Fit CyTOF model
+Fit the CyTOF Model
 }

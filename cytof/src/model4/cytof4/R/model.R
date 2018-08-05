@@ -1,5 +1,3 @@
-library(nimble)
-
 #' Nimble Model Code
 #'
 #' @export
