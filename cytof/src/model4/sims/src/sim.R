@@ -1,6 +1,6 @@
 library(cytof4)
 library(nimble)
-souce("getOpts.R")
+source("getOpts.R")
 
 # utils
 mkdir = function(dir) system('mkdir -p ' %+% dir)
@@ -27,7 +27,6 @@ USE_REPULSIVE = getOrFail(opt$use_repulsive, opt_parser)
 println("Use repulsive: ", USE_REPULSIVE)
 ### END OF GLOBALS ###
 mkdir(OUTDIR)
-sink(OUTDIR %+% 'out.txt')
 
 ### OUTPUT DIRECTORY ###
 OUTDIR = 'log/'
@@ -67,4 +66,3 @@ pdf(OUTDIR %+% 'out.pdf')
 post_process(out$cmodel, N=N, J=J, K=K_MCMC, L=L_MCMC)
 dev.off()
 
-sink()
