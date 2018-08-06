@@ -2,6 +2,8 @@ library(cytof4)
 library(nimble)
 source("getOpts.R")
 
+print(Sys.time())
+
 # utils
 mkdir = function(dir) system('mkdir -p ' %+% dir)
 println = function(x,...) cat(x,...,'\n')
@@ -35,7 +37,7 @@ OUTDIR = 'log/'
 set.seed(1)
 
 ### Data ###
-println("Simulating Data...") 
+println(Sys.time() %+% ": Simulating Data...") 
 I=3
 N=c(3,1,2) * N_factor
 dat = cytof3::sim_dat(I=I, J=J, N=N, K=K_TRUE, L0=L0, L1=L1)
@@ -43,18 +45,19 @@ save.image(file=OUTDIR %+% 'checkpoint.rda')
 #load(OUTDIR %+% 'checkpoint.rda')
   
 ### Compile Model ###
-println('Compiling model...')
+println(Sys.time() %+% ': Compiling model...')
 compile_time = system.time({
   cmodel <- compile.cytof.model(dat$y, K=K_MCMC, L=L_MCMC)
 }); cat("Compilation Time (seconds): ", compile_time[3], '\n')
 # Don't save!!! Saving model is NOT SUPPORTED!!!
 
 ### Fit Model ###
-println('Fitting model...')
+println(Sys.time() %+% ': Fitting model...')
 fit_time = system.time({
   out <- fit.cytof(cmodel, niter=niter, nburnin=BURN, warmup=10)
 }); cat("Model Fitting Time (seconds): ", fit_time[3], '\n')
 #cmodel$run(3000); out$cmodel <- cmodel
+println(Sys.time() %+% ': Model-fitting done.')
 
 
 ### Save mcmc samples (but not cmodel object!) ###
