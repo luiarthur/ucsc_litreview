@@ -38,7 +38,8 @@ set.seed(1)
 println(Sys.time() %+% ": Simulating Data...") 
 I=3
 N=c(3,1,2) * N_factor
-dat = cytof3::sim_dat(I=I, J=J, N=N, K=K_TRUE, L0=L0, L1=L1)
+# TODO: check cytof4 sim_dat is doing well
+dat = sim_dat(I=I, J=J, N=N, K=K_TRUE, L0=L0, L1=L1)
 save.image(file=OUTDIR %+% 'checkpoint.rda')
 #load(OUTDIR %+% 'checkpoint.rda')
   
@@ -65,6 +66,8 @@ saveRDS(list(mvSamples=as.matrix(out$cmodel$mvSamples),
 
 ### Source post processing functions ###
 source('post_process.R')
+
+# TODO: move `my.image` to cytof4
 
 pdf(OUTDIR %+% 'out.pdf')
 post_process(out$cmodel, N=N, J=J, K=K_MCMC, L=L_MCMC)
