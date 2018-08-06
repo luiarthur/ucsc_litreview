@@ -2,7 +2,7 @@ library(optparse)
 
 getOpts = function() {
   option_list = list(
-    make_option("--N", type='integer'),
+    make_option("--N_factor", type='integer'),
     make_option("--J", type='integer', default=32),
     make_option("--L0", type='integer', default=5),
     make_option("--L1", type='integer', default=5),
