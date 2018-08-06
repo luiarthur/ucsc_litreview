@@ -30,8 +30,6 @@ println("Use repulsive: ", USE_REPULSIVE)
 ### END OF GLOBALS ###
 mkdir(OUTDIR)
 
-### OUTPUT DIRECTORY ###
-OUTDIR = 'log/'
 
 ### Set seed for random number generator for reproducibility ###
 set.seed(1)
@@ -67,6 +65,7 @@ saveRDS(list(mvSamples=as.matrix(out$cmodel$mvSamples),
 
 ### Source post processing functions ###
 source('post_process.R')
+out = list(cmodel=readRDS(OUTDIR %+% 'samples.rds'))
 
 pdf(OUTDIR %+% 'out.pdf')
 post_process(out$cmodel, N=N, J=J, K=K_MCMC, L=L_MCMC)

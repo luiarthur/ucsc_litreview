@@ -1,8 +1,8 @@
 post_process = function(samps, N, J, K, L, is.simdat=FALSE) {
   I = length(N)
 
-  samples = samps$mvSamples
-  samples2 = samps$mvSamples2
+  samples = as.matrix(samps$mvSamples)
+  samples2 = as.matrix(samps$mvSamples2)
 
   # TODO: reimplement cytof3 functions in cytof4
   # Plot log-likelihood
