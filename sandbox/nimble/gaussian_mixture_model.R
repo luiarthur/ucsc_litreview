@@ -14,7 +14,7 @@ model.code = nimbleCode({
 })
 
 ### Sim Truth ###
-N = 300
+N = 300 # 30000
 J = 5
 c_true = sample(1:5, N, replace=TRUE)
 mu = 1:J
@@ -30,9 +30,11 @@ model.inits = list(alpha=rep(1/J, J), c=sample(1:J,N,repl=TRUE),
 model = nimbleModel(model.code, data=model.data, constants=model.consts, inits=model.inits)
 cmodel = compileNimble(model)
 
-model.conf = configureMCMC(model, print=TRUE)
+model.conf = configureMCMC(model, print=FALSE)
 model.conf$addMonitors(c('c'))
-model.mcmc = buildMCMC(model.conf)
+print(system.time(
+  model.mcmc <- buildMCMC(model.conf) # build time increases as N grows
+))
 cmodel = compileNimble(model.mcmc, project=model)
 samps = runMCMC(cmodel, summary=TRUE, niter=10000, nburnin=9000)
 
