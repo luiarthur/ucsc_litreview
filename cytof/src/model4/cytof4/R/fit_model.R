@@ -35,7 +35,8 @@ compile.cytof.model = function(y_ls, K, L,
   model.conf = configureMCMC(model, print=print_mcmc_config)
   cmodel = compileNimble(model, showCompilerOutput=showCompilerOutput)
 
-  model.conf$addMonitors(c('Z0', 'v', 'logProb_y'))
+  #model.conf$addMonitors(c('Z0', 'v', 'logProb_y')) # THIS STORES LOG DENSITY EVALUATED AT ALL Y! TOO EXPENSIVE!
+  model.conf$addMonitors(c('Z0', 'v')) # TODO: NEED A DIFFERENT WAY TO COMPUTE LOGLIKE EVERY ITERATION!
   model.conf$addMonitors2(c('lam', 'y', 'gam', 'eta'))
 
   model.mcmc = buildMCMC(model.conf)#, time=TRUE)

@@ -5,10 +5,12 @@ post_process = function(samps, N, J, K, L, is.simdat=FALSE) {
   samples2 = as.matrix(samps$mvSamples2)
 
   # TODO: reimplement cytof3 functions in cytof4
+
+  # TODO: Need alternate way of computing loglike!
   # Plot log-likelihood
-  ll.cols = get_param('logProb_y', samples)
-  ll = rowSums(samples[, ll.cols]) / sum(N)
-  plot(ll, type='o')
+  #ll.cols = get_param('logProb_y', samples)
+  #ll = rowSums(samples[, ll.cols]) / sum(N)
+  #plot(ll, type='o')
 
   Z.cols = get_param('Z0', samples)
   Z.post = samples[, Z.cols]
