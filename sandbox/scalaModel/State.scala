@@ -11,9 +11,10 @@ case class State(var x:Int, var y:Double, a:Array[Int], aad:Array[Array[Double]]
   override def toString = s"State(${x},${y},${arrayToString(a)},${aad})"
 }
 
-def getAllFields[T](s:T):List[String] = {
+def fieldnames[T](s:T):List[String] = {
   val fields = s.getClass.getDeclaredFields
-  "\\.\\w+".r.findAllIn(fields.mkString(",")).toList.map(_.tail)
+  val rgx = "\\.\\w+".r
+  fields.map{f => rgx.findFirstIn(f.toString)}.toList.flatten.map(_.tail)
 }
 
 
@@ -25,18 +26,25 @@ def matchField(f:java.lang.reflect.Field, s:String):Boolean = {
   s == x.drop(periodIdx+1)
 }
 
-def getField[T<:StateGeneric](s:T, field:String):Any = {
+def getField[T](s:T, field:String):Any = {
   val fields = s.getClass.getDeclaredFields
   val rgx = s".${field}[^\\w]".r
-  val f = fields.filter( f => matchField(f, field)).head
+  val f = fields.filter{f => matchField(f, field)}.head
   f.setAccessible(true)
   f.get(s)
+}
+
+def getFieldType[T](s:T, field:String):String = {
+  val fields = s.getClass.getDeclaredFields
+  val rgx = s".${field}[^\\w]".r
+  val f = fields.filter{f => matchField(f, field)}.head
+  f.toString.split(" ").dropRight(1).mkString(" ").replace("private", "").trim
 }
 
 /*
  * @param state: 
  * @param update: 
- * @param monitor: use getAllFields(state) as a default
+ * @param monitor: use fieldnames(state) as a default
  */
 
 type Monitor = List[Map[String, Any]]
@@ -50,13 +58,13 @@ def gibbs[T<:StateGeneric](state:T, update: T=>Unit,
   // TODO:
   // require that all thins are positive
   // require that all monitors contain valid fields
-  //val allFields = getAllFields(state)
+  //val allFields = fieldnames(state)
   //require(monitors.flatten.map()
 
   val numMoniors = if (monitors.size == 0) 1 else monitors.size
 
   println(s"Number of monitors: ${numMoniors}")
-  val _monitor0 = if (monitors.size == 0) getAllFields(state) else monitors.head
+  val _monitor0 = if (monitors.size == 0) fieldnames(state) else monitors.head
   val _thin0 = if (monitors.size == 0) 1 else thins.head
 
   val _monitors = Vector.tabulate(numMoniors){_ match {
@@ -124,4 +132,9 @@ s2
 getField(s, "x")
 getField(s, "a")
 getField(s, "aad").asInstanceOf[Array[Array[Double]]]
+
+getFieldType(s, "x")
+getFieldType(s, "a")
+getFieldType(s, "y")
+getFieldType(s, "aad")
 */
