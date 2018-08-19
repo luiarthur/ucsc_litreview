@@ -2,6 +2,8 @@ import org.scalatest.FunSuite
 
 
 class TestSuite extends FunSuite {
+  val printDebug = false //true
+
   test("Gibbs") {
     import cytof5._
 
@@ -29,9 +31,12 @@ class TestSuite extends FunSuite {
     val sc = State(0, 1.0, Array(0), Array.ofDim[Double](0,0))
     val outC = Gibbs.gibbs(sc.deepcopy, nmcmc=10, update=update, 
                      monitors=Vector(List("x", "a"), List("y")), thins=Vector(1,1))
-    println
-    outC(1).foreach(println)
 
+    if (printDebug) {
+      println
+      outC(0).foreach(o => println(arrayToString(o("a").asInstanceOf[Array[Int]])))
+      outC(1).foreach(println)
+    }
   }
 
   test("Clone X-d Array") {

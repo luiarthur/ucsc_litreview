@@ -1,0 +1,5 @@
+#!/bin/bash
+
+rm -f out/*.*
+
+scala GenCloneCode.scala > out/code.scala

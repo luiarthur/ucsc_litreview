@@ -45,7 +45,8 @@ object Gibbs {
   def gibbs[T<:State](state:T, update: T=>Unit, 
                monitors:Vector[List[String]]=Vector(),
                thins:Vector[Int]=Vector(),
-               nmcmc:Int=1000, nburn:Int=0, printProgress:Boolean=true) = {
+               nmcmc:Int=1000, nburn:Int=0, printProgress:Boolean=true,
+               printDebug:Boolean=false) = {
 
     require(monitors.size == thins.size)
 
@@ -57,7 +58,9 @@ object Gibbs {
 
     val numMoniors = if (monitors.size == 0) 1 else monitors.size
 
-    println(s"Number of monitors: ${numMoniors}")
+    if (printDebug) {
+      println(s"Number of monitors: ${numMoniors}")
+    }
     val _monitor0 = if (monitors.size == 0) fieldnames(state) else monitors.head
     val _thin0 = if (monitors.size == 0) 1 else thins.head
 
@@ -78,12 +81,11 @@ object Gibbs {
 
       if (_nburn > 0) {
         engine(_nmcmc, _nburn - 1, _out)
-      } else if (_nmcmc > 0) { // TODO: add condition to implement comment below
-        val stateCopy = state.deepcopy // Try to not do this if don't have store
+      } else if (_nmcmc > 0) {
         val newOut = Vector.tabulate(numMoniors){ i =>
           if ((nmcmc - _nmcmc) % _thins(i) == 0) {
             val newDict = _monitors(i).map{
-              field => field -> getField(stateCopy, field)
+              field => field -> CloneXdArray.smartClone(getField(state, field))
             }.toMap
             newDict :: _out(i)
           } else _out(i)
