@@ -144,7 +144,7 @@ model = nimbleModel(model.code, data=model.data,
 model$simulate()
 #model$initializeInfo()
 print(1)
-cmodel = compileNimble(model, showCompilerOutput=TRUE)
+cmodel = compileNimble(model, showCompilerOutput=TRUE, dirName='nimCpp')
 
 B=200
 nsamps2=1
@@ -158,7 +158,7 @@ model.conf$thin2 = B / nsamps2
 print(3)
 model.mcmc = buildMCMC(model.conf, time=TRUE)
 print(4)
-cmodel = compileNimble(model.mcmc, project=model, showCompilerOutput=TRUE)
+cmodel = compileNimble(model.mcmc, project=model, showCompilerOutput=TRUE, dirName='nimCpp')
 burn=4000
 time_100_iters = system.time(out<-runMCMC(cmodel, summary=TRUE, niter=100, nburnin=0))
 seconds_one_iter = time_100_iters[3] / 100
