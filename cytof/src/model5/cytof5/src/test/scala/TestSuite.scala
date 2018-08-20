@@ -15,7 +15,7 @@ class TestSuite extends FunSuite {
       override def toString = s"State(${x},${y},${arrayToString(a)},${aad})"
     }
 
-    def update(s:State) = {
+    def update(s:State, doNotUpdate:List[String]=List()) = {
       s.x += 1
       s.a(0) -= 1
       s.y *= 2

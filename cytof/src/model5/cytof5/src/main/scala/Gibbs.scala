@@ -41,10 +41,12 @@ object Gibbs {
    * @param state: 
    * @param update: 
    * @param monitor: use fieldnames(state) as a default
+   * @param doNotUpdate: list (String) of parameters to not update. An argument in function update
    */
-  def gibbs[T<:State](state:T, update: T=>Unit, 
+  def gibbs[T<:State](state:T, update: (T,List[String]) =>Unit, 
                monitors:Vector[List[String]]=Vector(),
                thins:Vector[Int]=Vector(),
+               doNotUpdate:List[String]=List(),
                nmcmc:Int=1000, nburn:Int=0, printProgress:Boolean=true,
                printDebug:Boolean=false) = {
 
@@ -77,7 +79,7 @@ object Gibbs {
                _out:Vector[Monitor]): Vector[Monitor] = {
 
       // Update the current state.
-      update(state)
+      update(state, doNotUpdate)
 
       if (_nburn > 0) {
         engine(_nmcmc, _nburn - 1, _out)
