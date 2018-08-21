@@ -24,16 +24,23 @@ case class model(var N:Int, var J:Int) extends Data with Params {
 val b = model(10, 3)
 */
 
+/* Version 2. Reflection...
+import scala.reflect.runtime.universe._
+typeOf[Params].members.toList
+*/
+
+
 // http://www.lihaoyi.com/post/EasyParsingwithParserCombinators.html
-// Version 2: Parser combinators. Probably go with this...
-import scala.util.parsing.combinators._
+// Version 3: Parser combinators. Probably go with this...
+import scala.util.parsing.combinator._
+
 val model = """
 Constants {
   N: Int
   J: Int
   m: Double
   s2:Double
-  alpha: Array[Double]
+  alpha: Array.ofDim[Double](J)
 }
 
 Data { // extends Constants
@@ -55,8 +62,31 @@ model { // extends Data
 }
 """
 
+def parseData = ???
+def parseConstants = ???
+def parseLikelihood = ???
+def parseAllParams = ???
+def parseAllRV = ???
+def parseMissingValues = ???
+def parseParamsInFullConditionalOf(param:String) = ???
 
-/* Version 3. Reflection...
-import scala.reflect.runtime.universe._
-typeOf[Params].members.toList
-*/
+class ParseBayes extends RegexParsers {
+  val eoi = """\z""".r // end of input
+  val eol = sys.props("line.separator")
+  val separator = eoi | eol
+  def block = ("{" ~ (""".*""".r | separator) ~ "}") ^^ { _.toString }
+  def constantBlock = """Constant\s*""".r ~ block ^^ { _.toString }
+}
+
+object test extends ParseBayes {
+  def main {
+    parse(block, model) match {
+      case Success(matched, rest) => println(matched)
+      case Failure(msg, rest) => println("FAILURE: " + msg)
+      case Error(msg, _) => println("ERROR: " + msg)
+    }
+  }
+}
+
+test.main
+
