@@ -1,6 +1,15 @@
 package cytof5
 
 object Gibbs {
+  def timer[R](block: => R) = {
+    val t0 = System.nanoTime()
+    val result = block
+    val t1 = System.nanoTime()
+    println("Elapsed time: " + (t1 - t0) / 1E9 + "s")
+    result
+  }
+
+
   trait State {
     def deepcopy: State
   }
@@ -43,12 +52,14 @@ object Gibbs {
    * @param monitor: use fieldnames(state) as a default
    * @param doNotUpdate: list (String) of parameters to not update. An argument in function update
    */
-  def gibbs[T<:State](state:T, update: (T,List[String]) =>Unit, 
-               monitors:Vector[List[String]]=Vector(),
-               thins:Vector[Int]=Vector(),
-               doNotUpdate:List[String]=List(),
-               nmcmc:Int=1000, nburn:Int=0, printProgress:Boolean=true,
-               printDebug:Boolean=false) = {
+  def gibbs[T<:State](state:T,
+                      updateFunctions: Map[String, T=>Unit], 
+                      monitors:Vector[List[String]]=Vector(),
+                      thins:Vector[Int]=Vector(),
+                      doNotUpdate:List[String]=List(),
+                      nmcmc:Int=1000, nburn:Int=0, printProgress:Boolean=true,
+                      printDebug:Boolean=false,
+                      showTimings:Boolean=false) = {
 
     require(monitors.size == thins.size)
 
@@ -79,7 +90,13 @@ object Gibbs {
                _out:Vector[Monitor]): Vector[Monitor] = {
 
       // Update the current state.
-      update(state, doNotUpdate)
+      //update(state, doNotUpdate)
+      updateFunctions.foreach{ case (s,f) =>
+        if (showTimings) {
+          print(s"${s}: ")
+          timer{ f(state) }
+        } else f(state)
+      }
 
       if (_nburn > 0) {
         engine(_nmcmc, _nburn - 1, _out)

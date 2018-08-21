@@ -15,21 +15,27 @@ class TestSuite extends FunSuite {
       override def toString = s"State(${x},${y},${arrayToString(a)},${aad})"
     }
 
-    def update(s:State, doNotUpdate:List[String]=List()) = {
-      s.x += 1
-      s.a(0) -= 1
-      s.y *= 2
-    }
+    val updateFunctions = Map(
+      "x" -> {(state:State) => state.x += 1},
+      "a" -> {(state:State) => state.a(0) -= 1},
+      "y" -> {(state:State) => state.y *= 2}
+    )
+    //def update(s:State, doNotUpdate:List[String]=List()) = {
+    //  s.x += 1
+    //  s.a(0) -= 1
+    //  s.y *= 2
+    //}
 
     val sa = State(0, 2.0, Array(0), Array.ofDim[Double](2,3))
-    val outA = Gibbs.gibbs(sa, nmcmc=5, update=update)
+    //val outA = Gibbs.gibbs(sa, nmcmc=5, updateFunctions=updateFunctions, showTimings=true)
+    val outA = Gibbs.gibbs(sa, nmcmc=5, updateFunctions=updateFunctions, showTimings=false)
 
     val sb = State(0, 2.0, Array(0), Array.ofDim[Double](2,3))
-    val outB = Gibbs.gibbs(sb, nmcmc=5, update=update, 
+    val outB = Gibbs.gibbs(sb, nmcmc=5, updateFunctions=updateFunctions,
                      monitors=Vector(List("x", "a")), thins=Vector(1))
 
     val sc = State(0, 1.0, Array(0), Array.ofDim[Double](0,0))
-    val outC = Gibbs.gibbs(sc.deepcopy, nmcmc=10, update=update, 
+    val outC = Gibbs.gibbs(sc.deepcopy, nmcmc=10, updateFunctions=updateFunctions,
                      monitors=Vector(List("x", "a"), List("y")), thins=Vector(1,1))
 
     if (printDebug) {
