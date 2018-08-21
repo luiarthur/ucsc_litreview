@@ -36,7 +36,22 @@ Constants {
   alpha: Array[Double]
 }
 
-Data {
+Data { // extends Constants
+  y: Array.ofDim[Double](N)
+}
+
+model { // extends Data
+  sig2 ~ IG(a, b)
+  w ~ Dirichlet(alpha)
+
+  for (i <- 0 until N) {
+    y[i] ~ Normal( mu[c[i]], sig2 )
+    c[i] ~ Categorical(J, w)
+  }
+
+  for (j <- 0 until J) {
+    mu[j] ~ Normal(m, s2)
+  }
 }
 """
 
