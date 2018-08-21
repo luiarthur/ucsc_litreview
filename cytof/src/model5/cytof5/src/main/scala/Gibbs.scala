@@ -53,7 +53,7 @@ object Gibbs {
    * @param doNotUpdate: list (String) of parameters to not update. An argument in function update
    */
   def gibbs[T<:State](state:T,
-                      updateFunctions: Map[String, T=>Unit], 
+                      updateFunctions: List[(String, T=>Unit)],
                       monitors:Vector[List[String]]=Vector(),
                       thins:Vector[Int]=Vector(),
                       doNotUpdate:List[String]=List(),
