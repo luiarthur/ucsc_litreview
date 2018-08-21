@@ -39,7 +39,7 @@ val constantsBlock = """
     N: Int
     J: Int
     m: Double
-    s2:Double
+    s2: Double
     alpha: Array.ofDim[Double](J)
   };
 """.trim
@@ -85,9 +85,10 @@ def parseParamsInFullConditionalOf(param:String) = ???
 
 class ParseConstants extends RegexParsers {
   //val eol = sys.props("line.separator")
-  def eol = "\n"
-  def block = """\s*Constants\s*\{""".r ~ eol ~ rep(entry) ~ "};"
-  def entry = """\s*""" ~ valueName ~ """\s*""".r ~ colon ~ """\s*""".r ~ valueType ~ eol
+  def eol = """\n""".r
+  def filler = """.*""".r
+  def block = """\s*Constants\s*\{""".r ~ filler ~ rep(entry) ~ "};"
+  def entry = """\s*""".r ~ valueName ~ """\s*""".r ~ colon ~ """\s*""".r ~ valueType ~ filler ^^ {_ => "xyz"}
   def valueName = """\w+""".r
   def colon = ":"
   def valueType = """\w+""".r
