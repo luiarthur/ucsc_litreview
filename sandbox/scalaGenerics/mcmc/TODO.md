@@ -1,4 +1,4 @@
 # TODO
 
-- [ ] in Gibbs, `deepcopy2` should return `Substate2`
-- [ ] in Gibbs, `Output` should be `(List[Substate1], Option[List[Substate2]], ...)`
+- [x] in Gibbs, `Output` should be `(List[Substate1], List[Substate2], ...)`
+- [ ] Maybe use traits for the `Substate`'s...

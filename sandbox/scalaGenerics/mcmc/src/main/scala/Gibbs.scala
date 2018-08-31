@@ -5,13 +5,11 @@ import java.util.Calendar
 trait Gibbs extends MCMC {
   // State
   type State
-  def deepcopy(s:State): State
-
 
   // Substate to monitor. By default, it is the entire state.
   // thin period is 1 by default
-  type Substate1 = State
-  def deepcopy1(s:State): Substate1 = deepcopy(s)
+  type Substate1
+  def deepcopy1(s:State): Option[Substate1] = None
   val thin1:Int = 1
 
 
@@ -29,7 +27,7 @@ trait Gibbs extends MCMC {
   // Update function
   def update(s: State): Unit
 
-  type Output = (List[Substate1], List[Option[Substate2]], List[Option[Substate3]])
+  type Output = (List[Substate1], List[Substate2], List[Substate3])
 
   def gibbs(s: State, 
             niter:Int, nburn:Int, printProgress:Boolean=true,
@@ -46,15 +44,26 @@ trait Gibbs extends MCMC {
     if (nburn > 0) {
       gibbs(s, niter, nburn - 1, printProgress, _out)
     } else if (niter > 0) {
-      lazy val newOut1 = 
-        if (niter % thin1 == 0)
-          deepcopy1(s) :: _out._1 else _out._1
-      lazy val newOut2 =
-        if (thin2 > 0 && niter % thin2 == 0)
-          deepcopy2(s) :: _out._2 else _out._2
-      lazy val newOut3 =
-        if (thin3 > 0 && niter % thin3 == 0)
-          deepcopy3(s) :: _out._3 else _out._3
+      lazy val newOut1:List[Substate1] = if (thin1 > 0 && niter % thin1 == 0) {
+        deepcopy1(s) match {
+          case Some(x) => x :: _out._1
+          case None => _out._1
+        }
+      } else _out._1
+
+      lazy val newOut2:List[Substate2] = if (thin2 > 0 && niter % thin2 == 0) {
+        deepcopy2(s) match {
+          case Some(x) => x :: _out._2
+          case None => _out._2
+        }
+      } else _out._2
+
+      lazy val newOut3:List[Substate3] = if (thin3 > 0 && niter % thin3 == 0) {
+        deepcopy3(s) match {
+          case Some(x) => x :: _out._3
+          case None => _out._3
+        }
+      } else _out._3
 
       lazy val newOut = (newOut1, newOut2, newOut3)
       gibbs(s, niter - 1, 0, printProgress, newOut)
