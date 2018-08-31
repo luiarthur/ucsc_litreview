@@ -1,6 +1,6 @@
 package cytof5
 
-object Gibbs {
+trait Gibbs {
   def timer[R](block: => R) = {
     val t0 = System.nanoTime()
     val result = block

@@ -4,13 +4,13 @@ import org.scalatest.FunSuite
 class TestSuite extends FunSuite {
   val printDebug = false //true
 
-  test("Gibbs") {
+  test("MCMC") {
     import cytof5._
 
     def arrayToString[T](a:Array[T]): String = s"Array(${a.mkString(",")})"
 
     case class State(var x:Int, var y:Double,
-                     a:Array[Int], aad:Array[Array[Double]]) extends Gibbs.State {
+                     a:Array[Int], aad:Array[Array[Double]]) extends MCMC.State {
       def deepcopy = this.copy(a=a.clone, aad=aad.map(_.clone))
       override def toString = s"State(${x},${y},${arrayToString(a)},${aad})"
     }
@@ -22,15 +22,15 @@ class TestSuite extends FunSuite {
     )
 
     val sa = State(0, 2.0, Array(0), Array.ofDim[Double](2,3))
-    val outA = Gibbs.gibbs(sa, nmcmc=5, updateFunctions=updateFunctions, showTimings=true)
-    //val outA = Gibbs.gibbs(sa, nmcmc=5, updateFunctions=updateFunctions, showTimings=false)
+    val outA = MCMC.gibbs(sa, nmcmc=5, updateFunctions=updateFunctions, showTimings=true)
+    //val outA = MCMC.gibbs(sa, nmcmc=5, updateFunctions=updateFunctions, showTimings=false)
 
     val sb = State(0, 2.0, Array(0), Array.ofDim[Double](2,3))
-    val outB = Gibbs.gibbs(sb, nmcmc=5, updateFunctions=updateFunctions,
+    val outB = MCMC.gibbs(sb, nmcmc=5, updateFunctions=updateFunctions,
                      monitors=Vector(List("x", "a")), thins=Vector(1))
 
     val sc = State(0, 1.0, Array(0), Array.ofDim[Double](0,0))
-    val outC = Gibbs.gibbs(sc.deepcopy, nmcmc=10, updateFunctions=updateFunctions,
+    val outC = MCMC.gibbs(sc.deepcopy, nmcmc=10, updateFunctions=updateFunctions,
                      monitors=Vector(List("x", "a"), List("y")), thins=Vector(1,1))
 
     if (printDebug) {
