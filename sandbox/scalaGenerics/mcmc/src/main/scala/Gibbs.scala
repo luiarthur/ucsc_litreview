@@ -9,7 +9,7 @@ trait Gibbs extends MCMC {
   // Substate to monitor. By default, it is the entire state.
   // thin period is 1 by default
   type Substate1
-  def deepcopy1(s:State): Option[Substate1] = None
+  def deepcopy1(s:State): Substate1
   val thin1:Int = 1
 
 
@@ -45,10 +45,7 @@ trait Gibbs extends MCMC {
       gibbs(s, niter, nburn - 1, printProgress, _out)
     } else if (niter > 0) {
       lazy val newOut1:List[Substate1] = if (thin1 > 0 && niter % thin1 == 0) {
-        deepcopy1(s) match {
-          case Some(x) => x :: _out._1
-          case None => _out._1
-        }
+        deepcopy1(s) :: _out._1
       } else _out._1
 
       lazy val newOut2:List[Substate2] = if (thin2 > 0 && niter % thin2 == 0) {

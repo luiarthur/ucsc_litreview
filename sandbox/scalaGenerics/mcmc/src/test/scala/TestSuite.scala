@@ -5,14 +5,13 @@ class TestSuite extends FunSuite {
 
   test("Gibbs with Substate2") {
     case class Param(var x: Int, val y: Array[Int]) 
-    case class Sub1(var x: Int, val y:Array[Int])
     case class Sub2(var x: Int)
 
     object TestGibbs extends mcmc.Gibbs {
       type State = Param 
       
-      type Substate1 = Sub1
-      override def deepcopy1(s:State) = Some(Sub1(s.x+0, s.y.clone))
+      type Substate1 = Param
+      def deepcopy1(s:State):Substate1 = Param(s.x+0, s.y.clone)
 
       type Substate2 = Sub2
       override def deepcopy2(s:State) = Some(Sub2(s.x+0))
