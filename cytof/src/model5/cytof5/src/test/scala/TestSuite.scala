@@ -3,53 +3,41 @@ import org.scalatest.FunSuite
 
 class TestSuite extends FunSuite {
   val printDebug = false //true
-  def arrayToString[T](a:Array[T]): String = s"Array(${a.mkString(",")})"
 
   test("Gibbs") {
-    case class StateTest(var x:Int, var y:Double,
-      a:Array[Int], aad:Array[Array[Double]]) {
+    import cytof5._
 
-      override def toString = s"StateTest(${x},${y},${arrayToString(a)},${aad})"
+    def arrayToString[T](a:Array[T]): String = s"Array(${a.mkString(",")})"
+
+    case class State(var x:Int, var y:Double,
+                     a:Array[Int], aad:Array[Array[Double]]) extends Gibbs.State {
+      def deepcopy = this.copy(a=a.clone, aad=aad.map(_.clone))
+      override def toString = s"State(${x},${y},${arrayToString(a)},${aad})"
     }
 
-    object GibbsTest extends cytof5.Gibbs {
-      
-      type State = StateTest
+    val updateFunctions = List(
+      ("x", (state:State) => state.x += 1),
+      ("a", (state:State) => state.a(0) -= 1),
+      ("y", (state:State) => state.y *= 2)
+    )
 
-      def deepcopy(s:State) = s.copy(a=s.a.clone, aad=s.aad.map(_.clone))
+    val sa = State(0, 2.0, Array(0), Array.ofDim[Double](2,3))
+    val outA = Gibbs.gibbs(sa, nmcmc=5, updateFunctions=updateFunctions, showTimings=true)
+    //val outA = Gibbs.gibbs(sa, nmcmc=5, updateFunctions=updateFunctions, showTimings=false)
 
-      val updateFunctions = List(
-        ("x", (state:State) => state.x += 1),
-        ("a", (state:State) => state.a(0) -= 1),
-        ("y", (state:State) => state.y *= 2)
-      )
+    val sb = State(0, 2.0, Array(0), Array.ofDim[Double](2,3))
+    val outB = Gibbs.gibbs(sb, nmcmc=5, updateFunctions=updateFunctions,
+                     monitors=Vector(List("x", "a")), thins=Vector(1))
 
-      def main() {
-        val sa = StateTest(0, 2.0, Array(0), Array.ofDim[Double](2,3))
-        val outA = gibbs(sa, nmcmc=5, showTimings=true)
-        //val outA = Gibbs.gibbs(sa, nmcmc=5, updateFunctions=updateFunctions, showTimings=false)
+    val sc = State(0, 1.0, Array(0), Array.ofDim[Double](0,0))
+    val outC = Gibbs.gibbs(sc.deepcopy, nmcmc=10, updateFunctions=updateFunctions,
+                     monitors=Vector(List("x", "a"), List("y")), thins=Vector(1,1))
 
-        val sb = StateTest(0, 2.0, Array(0), Array.ofDim[Double](2,3))
-        val outB = gibbs(sb, nmcmc=5, 
-                         monitors=Vector(List("x", "a")), thins=Vector(1))
-
-        val sc = StateTest(0, 1.0, Array(0), Array.ofDim[Double](0,0))
-        val outC = gibbs(deepcopy(sc), nmcmc=10, 
-                         monitors=Vector(List("x", "a"), List("y")), thins=Vector(1,1))
-
-        val ocMonitorOneA = outC(0).map(_("a").asInstanceOf[Array[Int]])
-        assert(ocMonitorOneA.head(0) == -10)
-        assert(ocMonitorOneA.last(0) == -1)
-
-        val ocMonitorTwoY = outC(1).map(_("y").asInstanceOf[Double])
-        ocMonitorTwoY.indices.foreach{i => 
-          assert(ocMonitorTwoY(i) == math.pow(2, 10-i))
-        }
-        //outC(1).foreach(println)
-      }
+    if (printDebug) {
+      println
+      outC(0).foreach(o => println(arrayToString(o("a").asInstanceOf[Array[Int]])))
+      outC(1).foreach(println)
     }
-
-    GibbsTest.main
   }
 
   test("Clone X-d Array") {

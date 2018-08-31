@@ -1,6 +1,6 @@
 package cytof5
 
-trait Gibbs {
+object Gibbs {
   def timer[R](block: => R) = {
     val t0 = System.nanoTime()
     val result = block
@@ -9,8 +9,13 @@ trait Gibbs {
     result
   }
 
-  type State
-  def deepcopy(s:State): State
+
+  trait State {
+    def deepcopy: State
+  }
+
+
+  type Monitor = List[Map[String, Any]]
 
   def fieldnames[T](s:T):List[String] = {
     val fields = s.getClass.getDeclaredFields
@@ -41,23 +46,20 @@ trait Gibbs {
     f.toString.split(" ").dropRight(1).mkString(" ").replace("private", "").trim
   }
 
-  val updateFunctions: List[(String, State=>Unit)]
-
-  private type Monitor = List[Map[String, Any]]
-
   /*
    * @param state: 
    * @param update: 
    * @param monitor: use fieldnames(state) as a default
    * @param doNotUpdate: list (String) of parameters to not update. An argument in function update
    */
-  def gibbs(state:State,
-            monitors:Vector[List[String]]=Vector(),
-            thins:Vector[Int]=Vector(),
-            doNotUpdate:List[String]=List(),
-            nmcmc:Int=1000, nburn:Int=0, printProgress:Boolean=true,
-            printDebug:Boolean=false,
-            showTimings:Boolean=false) = {
+  def gibbs[T<:State](state:T,
+                      updateFunctions: List[(String, T=>Unit)],
+                      monitors:Vector[List[String]]=Vector(),
+                      thins:Vector[Int]=Vector(),
+                      doNotUpdate:List[String]=List(),
+                      nmcmc:Int=1000, nburn:Int=0, printProgress:Boolean=true,
+                      printDebug:Boolean=false,
+                      showTimings:Boolean=false) = {
 
     require(monitors.size == thins.size)
 
