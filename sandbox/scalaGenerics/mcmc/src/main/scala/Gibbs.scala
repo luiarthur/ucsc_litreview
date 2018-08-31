@@ -1,6 +1,7 @@
 package mcmc
 
 import java.util.Calendar
+import scala.annotation.tailrec
 
 trait Gibbs extends MCMC {
   // State
@@ -25,46 +26,51 @@ trait Gibbs extends MCMC {
 
 
   // Update function
-  def update(s: State): Unit
+  def update(s: State, iter:Int, out:Output): Unit
 
   type Output = (List[Substate1], List[Substate2], List[Substate3])
 
-  def gibbs(s: State, 
-            niter:Int, nburn:Int, printProgress:Boolean=true,
-            _out: Output = (List(), List(), List())): Output = {
-    // Update the current state
-    update(s)
+  def gibbs(s: State, niter:Int, nburn:Int, printProgress:Boolean=true): Output = {
 
-    // Print progress
-    if (printProgress && (niter + nburn) % 100 == 0) {
-      println(s"Progress: ${niter+nburn} iterations remaining -- ${Calendar.getInstance.getTime}")
+    @tailrec
+    def engine(_niter:Int, _nburn:Int, _out:Output=(List(), List(), List())): Output = {
+      // Update the current state
+      val iter = niter + nburn - (_niter + _nburn)
+      update(s, _niter, _out)
+
+      // Print progress
+      if (printProgress && (_niter + _nburn) % 100 == 0) {
+        println(s"Progress: ${_niter+_nburn} iterations remaining -- ${Calendar.getInstance.getTime}")
+      }
+
+      // Repeat if still burning
+      if (_nburn > 0) {
+        engine(_niter, _nburn - 1, _out)
+      } else if (_niter > 0) {
+        lazy val newOut1:List[Substate1] = if (thin1 > 0 && _niter % thin1 == 0) {
+          deepcopy1(s) :: _out._1
+        } else _out._1
+
+        lazy val newOut2:List[Substate2] = if (thin2 > 0 && _niter % thin2 == 0) {
+          deepcopy2(s) match {
+            case Some(x) => x :: _out._2
+            case None => _out._2
+          }
+        } else _out._2
+
+        lazy val newOut3:List[Substate3] = if (thin3 > 0 && _niter % thin3 == 0) {
+          deepcopy3(s) match {
+            case Some(x) => x :: _out._3
+            case None => _out._3
+          }
+        } else _out._3
+
+        val newOut = (newOut1, newOut2, newOut3)
+        engine(_niter - 1, 0, newOut)
+      } else _out
     }
 
-    // Repeat if still burning
-    if (nburn > 0) {
-      gibbs(s, niter, nburn - 1, printProgress, _out)
-    } else if (niter > 0) {
-      lazy val newOut1:List[Substate1] = if (thin1 > 0 && niter % thin1 == 0) {
-        deepcopy1(s) :: _out._1
-      } else _out._1
-
-      lazy val newOut2:List[Substate2] = if (thin2 > 0 && niter % thin2 == 0) {
-        deepcopy2(s) match {
-          case Some(x) => x :: _out._2
-          case None => _out._2
-        }
-      } else _out._2
-
-      lazy val newOut3:List[Substate3] = if (thin3 > 0 && niter % thin3 == 0) {
-        deepcopy3(s) match {
-          case Some(x) => x :: _out._3
-          case None => _out._3
-        }
-      } else _out._3
-
-      lazy val newOut = (newOut1, newOut2, newOut3)
-      gibbs(s, niter - 1, 0, printProgress, newOut)
-    } else _out
+    engine(niter, nburn)
   }
 }
 

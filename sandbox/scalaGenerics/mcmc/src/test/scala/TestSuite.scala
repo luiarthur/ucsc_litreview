@@ -17,7 +17,7 @@ class TestSuite extends FunSuite {
       override def deepcopy2(s:State) = Some(Sub2(s.x+0))
       override val thin2 = 2
 
-      def update(s:State) {
+      def update(s:State, i:Int, out:Output) {
         s.x += 1
         s.y(0) -= 1
       }
@@ -25,14 +25,16 @@ class TestSuite extends FunSuite {
 
 
     val state = Param(0, Array(0))
-    val (niter, nburn) = (10, 5)
+    val (niter, nburn) = (2000, 100)
+
     val out = TestGibbs.gibbs(state, niter=niter, nburn=nburn, printProgress=true)
     if (printDebug) println(out)
+
     assert(out._1.head.x == niter+nburn && out._1.last.x == 1 + nburn)
     assert(out._1.head.y(0) == -(niter+nburn) && out._1.last.y(0) == -(1 + nburn))
 
     assert(out._2.last.x == nburn + 1)
-    assert(out._2.head.x == nburn + (if (nburn % 2 == 0) niter else niter-1))
+    assert(out._2.head.x == nburn + niter - 1)
 
     assert(out._3 == List())
   }

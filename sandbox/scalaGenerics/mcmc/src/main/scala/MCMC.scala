@@ -16,6 +16,9 @@ trait MCMC {
 
   /* Adaptive metropolis (within Gibbs). See section 3 of the paper below:
    *   http://probability.ca/jeff/ftpdir/adaptex.pdf
+   *
+   * Another useful website:
+   *   https://m-clark.github.io/docs/ld_mcmc/index_onepage.html
    */
   def metropolis_adaptive[T <: TuningParam](x:Double, logFullCondCond:Array[Double], iter:Int, delta: Int=>Double, stepSize: T) = {
     ???
