@@ -1,0 +1,3 @@
+object MCMC {
+  def mh = ???
+}
