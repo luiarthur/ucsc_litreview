@@ -82,4 +82,35 @@ trait MCMC {
   def defaultDelta(n:Int):Double = {
     List(math.pow(n.toDouble,-0.5), 0.01).min
   }
+
+  // TODO: Needs testing.
+  def sech(x:Double) = 1 / math.cosh(x)
+  
+  def sigmoid(x:Double, a:Double=0, b:Double=1): Double = {
+    1 / (1 + math.exp(-x))
+  }
+
+  def logit(p:Double, a:Double=0, b:Double=1): Double = {
+    math.log(p - a) - math.log(b - p)
+  }
+
+  def pdfLogX(x:Double, pdf:(Double,Double*)=>Double, params:Double*): Double = {
+    //val ex = math.exp(x)
+    //pdf(ex, params) * ex
+    ???
+  }
+
+  def pdfLogistic(x:Double, loc:Double=0, scale:Double=1):Double = {
+    (loc, scale) match {
+      case (0, 1) => {
+        val sx = sech(x / 2.0)
+        0.25 * sx * sx
+      }
+      case _ => pdfLogistic((x - loc) / scale) / scale
+    }
+  }
+
+  def logpdfLogistic(x:Double, loc:Double=0, scale:Double=1): Double = {
+    ???
+  }
 }
