@@ -40,7 +40,7 @@ trait Gibbs extends MCMC {
 
       // Print progress
       if (printProgress && (_niter + _nburn) % 100 == 0) {
-        println(s"Progress: ${_niter+_nburn} iterations remaining -- ${Calendar.getInstance.getTime}")
+        println(s"Progress: ${_niter + _nburn} iterations remaining -- ${Calendar.getInstance.getTime}")
       }
 
       // Repeat if still burning

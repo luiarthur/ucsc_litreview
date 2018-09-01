@@ -34,7 +34,7 @@ class TestAdaptiveMetropolis extends FunSuite with mcmc.MCMC {
     object Model extends mcmc.Gibbs {
       type State = Param
       type Substate1 = Param
-      val stepSigMu = TuningParam[Double](1.0)
+      val stepSigMu = Array.fill(muTrue.size){ TuningParam(1.0) }
       def deepcopy1(s:State):Substate1 = Param(s.mu.clone, s.sig2 + 0.0)
       def updateMuj(s:State, j:Int, i:Int, out:Output): Unit = {
         def logFullCond(muj:Double):Double = {
@@ -43,7 +43,7 @@ class TestAdaptiveMetropolis extends FunSuite with mcmc.MCMC {
           ll + lp
         }
 
-        s.mu(j) = metropolisAdaptive(s.mu(j), logFullCond, stepSigMu, rdg)
+        s.mu(j) = metropolisAdaptive(s.mu(j), logFullCond, stepSigMu(j), rdg)
       }
 
       def updateMu(s:State, i:Int, out:Output): Unit = {
@@ -76,7 +76,9 @@ class TestAdaptiveMetropolis extends FunSuite with mcmc.MCMC {
       assert(math.abs(m - mtrue) < eps)
     }
 
-    println(s"mu Acceptance Rate: ${Model.stepSigMu.accRate}")
+    Model.stepSigMu.indices.foreach{ j => 
+      println(s"mu(${j}) Acceptance Rate: ${Model.stepSigMu(j).accRate}")
+    }
 
     assert(true)
   }
