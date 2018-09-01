@@ -30,10 +30,12 @@ trait Gibbs extends MCMC {
 
   type Output = (List[Substate1], List[Substate2], List[Substate3])
 
-  def gibbs(s: State, niter:Int, nburn:Int, printProgress:Boolean=true): Output = {
+  def gibbs(s: State, niter:Int, nburn:Int,
+            printProgress:Boolean=true): Output = {
 
     @tailrec
-    def engine(_niter:Int, _nburn:Int, _out:Output=(List(), List(), List())): Output = {
+    def engine(_niter:Int, _nburn:Int,
+               _out:Output=(List(), List(), List())): Output = {
       // Update the current state
       val iter = niter + nburn - (_niter + _nburn)
       update(s, _niter, _out)
@@ -47,27 +49,31 @@ trait Gibbs extends MCMC {
       if (_nburn > 0) {
         engine(_niter, _nburn - 1, _out)
       } else if (_niter > 0) {
-        lazy val newOut1:List[Substate1] = if (thin1 > 0 && _niter % thin1 == 0) {
-          deepcopy1(s) :: _out._1
-        } else _out._1
+        lazy val newOut1:List[Substate1] = {
+          if (thin1 > 0 && _niter % thin1 == 0) {
+            deepcopy1(s) :: _out._1
+          } else { _out._1 }
+        }
 
         lazy val newOut2:List[Substate2] = if (thin2 > 0 && _niter % thin2 == 0) {
           deepcopy2(s) match {
             case Some(x) => x :: _out._2
             case None => _out._2
           }
-        } else _out._2
+        } else { _out._2 }
 
         lazy val newOut3:List[Substate3] = if (thin3 > 0 && _niter % thin3 == 0) {
           deepcopy3(s) match {
             case Some(x) => x :: _out._3
             case None => _out._3
           }
-        } else _out._3
+        } else { _out._3 }
 
         val newOut = (newOut1, newOut2, newOut3)
         engine(_niter - 1, 0, newOut)
-      } else _out
+      } else {
+        _out
+      }
     }
 
     engine(niter, nburn)
