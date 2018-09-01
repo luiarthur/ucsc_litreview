@@ -2,6 +2,9 @@ import org.scalatest.FunSuite
 
 class TestSuite extends FunSuite {
   val printDebug = false
+  def approx(a:Double, b:Double, eps:Double=1E-6) = {
+    math.abs(a - b) < eps
+  }
 
   test("Gibbs with Substate2") {
     case class Param(var x: Int, val y: Array[Int]) 
@@ -38,4 +41,24 @@ class TestSuite extends FunSuite {
 
     assert(out._3 == List())
   }
+
+  test("Test logit / sigmoid") {
+    object T extends mcmc.MCMC
+    import T._
+    val p = .3
+    approx(logit(sigmoid(p)), p)
+  }
+
+  test("Test logistic pdf") {
+    object T extends mcmc.MCMC
+    import T._
+    val p = pdfLogistic(3, 2, 4)
+    val valueFromR = 0.06153352
+    approx(p, valueFromR)
+
+    val logP = logpdfLogistic(3, 2, 4)
+    val logvalueFromR = -2.788173
+    approx(logP, logvalueFromR)
+  }
+
 }

@@ -1,6 +1,6 @@
 package mcmc
 
-import org.apache.commons.math3.random.RandomDataGenerator 
+import org.apache.commons.math3.random.RandomDataGenerator
 
 case class TuningParam[T](var value:T, var accCount:Int=0, var currIter:Int=1) {
 
@@ -83,34 +83,38 @@ trait MCMC {
     List(math.pow(n.toDouble,-0.5), 0.01).min
   }
 
-  // TODO: Needs testing.
-  def sech(x:Double) = 1 / math.cosh(x)
-  
+  def sech(x:Double):Double = 1 / math.cosh(x)
+
   def sigmoid(x:Double, a:Double=0, b:Double=1): Double = {
-    1 / (1 + math.exp(-x))
+    (a, b) match {
+      case (0, 1) => 1 / (1 + math.exp(-x))
+      case _ => {
+        val ex = math.exp(x)
+        (b * ex + a) / (1 + ex)
+      }
+    }
   }
 
   def logit(p:Double, a:Double=0, b:Double=1): Double = {
     math.log(p - a) - math.log(b - p)
   }
 
-  def pdfLogX(x:Double, pdf:(Double,Double*)=>Double, params:Double*): Double = {
-    //val ex = math.exp(x)
-    //pdf(ex, params) * ex
-    ???
+  // TODO: Needs testing.
+  def logpdfLogX2Param(logX:Double, logpdfX:(Double,Double,Double)=>Double, params:Double, a:Double, b:Double): Double = {
+    logpdfX(math.exp(logX), a, b) + logX
   }
 
   def pdfLogistic(x:Double, loc:Double=0, scale:Double=1):Double = {
     (loc, scale) match {
-      case (0, 1) => {
-        val sx = sech(x / 2.0)
-        0.25 * sx * sx
-      }
+      case (0, 1) => 0.25 * math.pow(sech(x / 2.0), 2.0)
       case _ => pdfLogistic((x - loc) / scale) / scale
     }
   }
 
   def logpdfLogistic(x:Double, loc:Double=0, scale:Double=1): Double = {
-    ???
+    (loc, scale) match {
+      case (0, 1) => math.log(0.25) + 2.0 * math.log(sech(x / 2.0))
+      case _ => logpdfLogistic((x - loc) / scale) - math.log(scale)
+    }
   }
 }
