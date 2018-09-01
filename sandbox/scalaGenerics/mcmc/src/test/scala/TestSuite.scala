@@ -27,7 +27,7 @@ class TestSuite extends FunSuite {
     val state = Param(0, Array(0))
     val (niter, nburn) = (2000, 100)
 
-    val out = TestGibbs.gibbs(state, niter=niter, nburn=nburn, printProgress=true)
+    val out = TestGibbs.gibbs(state, niter=niter, nburn=nburn, printProgress=false)
     if (printDebug) println(out)
 
     assert(out._1.head.x == niter+nburn && out._1.last.x == 1 + nburn)
