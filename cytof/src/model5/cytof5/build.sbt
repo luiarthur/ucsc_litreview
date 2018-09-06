@@ -11,7 +11,8 @@ libraryDependencies ++= Seq(
   "org.scalatest" %% "scalatest" % "3.0.0" % "test"
 )
 
-lazy val root = Project("root", file(".")) dependsOn(distributions)
-lazy val distributions = RootProject(uri("git://github.com/luiarthur/scala-distributions.git"))
+lazy val root = Project("root", file(".")) dependsOn(distribution)
+lazy val distribution = RootProject(uri("git://github.com/luiarthur/scala-distributions.git"))
+lazy val mcmc = RootProject(uri("git://github.com/luiarthur/scala-distributions.git"))
 
 
