@@ -1,4 +1,4 @@
-package cytof5
+package cytof5.experimental
 
 trait Gibbs {
   def timer[R](block: => R) = {

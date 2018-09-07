@@ -1,11 +1,12 @@
 import org.scalatest.FunSuite
 
 
-class TestSuite extends FunSuite {
+class TestExperimental extends FunSuite {
   val printDebug = false //true
 
-  test("MCMC") {
-    import cytof5._
+  test("Gibbs") {
+    import cytof5.experimental._
+    object MCMC extends Gibbs
 
     def arrayToString[T](a:Array[T]): String = s"Array(${a.mkString(",")})"
 
@@ -22,7 +23,7 @@ class TestSuite extends FunSuite {
     )
 
     val sa = State(0, 2.0, Array(0), Array.ofDim[Double](2,3))
-    val outA = MCMC.gibbs(sa, nmcmc=5, updateFunctions=updateFunctions, showTimings=true)
+    val outA = MCMC.gibbs(sa, nmcmc=5, updateFunctions=updateFunctions, showTimings=false)
     //val outA = MCMC.gibbs(sa, nmcmc=5, updateFunctions=updateFunctions, showTimings=false)
 
     val sb = State(0, 2.0, Array(0), Array.ofDim[Double](2,3))
@@ -41,7 +42,7 @@ class TestSuite extends FunSuite {
   }
 
   test("Clone X-d Array") {
-    import cytof5.CloneXdArray._
+    import cytof5.experimental.CloneXdArray._
     val x2d = Array.ofDim[Int](2,3)
     val x3d = Array.ofDim[Int](2,3,4)
     val x4d = Array.ofDim[Int](2,3,4,5)
