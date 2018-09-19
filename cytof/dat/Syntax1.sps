@@ -1,4 +1,4 @@
-﻿
+
 
 recode CD16 (low thru 46=0)(SYSMIS=SYSMIS)(ELSE =1) into qCD16.
 recode  DNAM1 (low thru 2.79 =0)(SYSMIS=SYSMIS)(ELSE =1) into qDNAM1.
