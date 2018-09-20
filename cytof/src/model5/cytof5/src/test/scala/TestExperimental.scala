@@ -23,7 +23,7 @@ class TestExperimental extends FunSuite {
     )
 
     val sa = State(0, 2.0, Array(0), Array.ofDim[Double](2,3))
-    val outA = MCMC.gibbs(sa, nmcmc=5, updateFunctions=updateFunctions, showTimings=false)
+    val outA = MCMC.gibbs(sa, nmcmc=5, updateFunctions=updateFunctions, showTimings=true)
     //val outA = MCMC.gibbs(sa, nmcmc=5, updateFunctions=updateFunctions, showTimings=false)
 
     val sb = State(0, 2.0, Array(0), Array.ofDim[Double](2,3))

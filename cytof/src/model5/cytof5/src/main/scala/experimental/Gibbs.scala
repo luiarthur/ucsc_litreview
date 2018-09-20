@@ -17,38 +17,10 @@ trait Gibbs {
 
   type Monitor = List[Map[String, Any]]
 
-  def fieldnames[T](s:T):List[String] = {
-    val fields = s.getClass.getDeclaredFields
-    val rgx = "\\.\\w+".r
-    fields.map{f => rgx.findFirstIn(f.toString)}.toList.flatten.map(_.tail)
-  }
-
-  def matchField(f:java.lang.reflect.Field, s:String):Boolean = {
-    val fExpanded = f.toString.mkString("-")
-    val dollarPos = fExpanded.reverse.indexOf("$")
-    val x = fExpanded.takeRight(dollarPos).replace("-", "")
-    val periodIdx = x.indexOf(".")
-    s == x.drop(periodIdx+1)
-  }
-
-  def getField[T](s:T, field:String):Any = {
-    val fields = s.getClass.getDeclaredFields
-    val rgx = s".${field}[^\\w]".r
-    val f = fields.filter{f => matchField(f, field)}.head
-    f.setAccessible(true)
-    f.get(s)
-  }
-
-  def getFieldType[T](s:T, field:String):String = {
-    val fields = s.getClass.getDeclaredFields
-    val rgx = s".${field}[^\\w]".r
-    val f = fields.filter{f => matchField(f, field)}.head
-    f.toString.split(" ").dropRight(1).mkString(" ").replace("private", "").trim
-  }
-
-  /* FIXME: Not sure why this doesn't work.
   def fieldnames[T](x:T) = {
-    x.getClass.getDeclaredFields.toList.map{ _.getName }
+    lazy val fnames = x.getClass.getDeclaredFields.toList.map{ _.getName }
+    // Remove artifact fieldnames containing "$"
+    fnames.filterNot{ _.contains("$") }
   }
 
 
@@ -57,6 +29,7 @@ trait Gibbs {
     field.setAccessible(true)
     field.get(x)
   }
+  /* FIXME: Not sure why this doesn't work.
   */
 
   /*
@@ -105,10 +78,12 @@ trait Gibbs {
       // Update the current state.
       //update(state, doNotUpdate)
       updateFunctions.foreach{ case (s,f) =>
-        if (showTimings) {
-          print(s"${s}: ")
-          timer{ f(state) }
-        } else f(state)
+        if (!doNotUpdate.contains(s)) {
+          if (showTimings) {
+            print(s"${s}: ")
+            timer{ f(state) }
+          } else f(state)
+        }
       }
 
       if (_nburn > 0) {
