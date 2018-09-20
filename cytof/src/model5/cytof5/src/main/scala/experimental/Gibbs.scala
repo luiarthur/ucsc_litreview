@@ -46,6 +46,19 @@ trait Gibbs {
     f.toString.split(" ").dropRight(1).mkString(" ").replace("private", "").trim
   }
 
+  /* FIXME: Not sure why this doesn't work.
+  def fieldnames[T](x:T) = {
+    x.getClass.getDeclaredFields.toList.map{ _.getName }
+  }
+
+
+  def getField[T](x: T, fieldname: String): Any = {
+    val field = x.getClass.getDeclaredField(fieldname)
+    field.setAccessible(true)
+    field.get(x)
+  }
+  */
+
   /*
    * @param state: 
    * @param update: 
