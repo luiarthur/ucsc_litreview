@@ -18,4 +18,4 @@ Imports:
   doMC
 LinkingTo: Rcpp, RcppArmadillo, RcppTN
 X-CRAN-Comment: Libraries listed in `LinkingTo` are header files to be included into the Cpp source code. Libraries listed in `Imports` are libraries that are imported and used in R code.  Libraries in `Remotes` are libraries to be installed from github, or other external repos (other than CRAN). Libraries in `Depends` are attached. Look up the difference between `Imports` and `Depends`.
-RoxygenNote: 6.0.1
+RoxygenNote: 6.1.0
