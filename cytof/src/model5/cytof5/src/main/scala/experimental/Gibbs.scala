@@ -77,10 +77,10 @@ trait Gibbs {
 
       // Update the current state.
       //update(state, doNotUpdate)
-      updateFunctions.foreach{ case (s,f) =>
-        if (!doNotUpdate.contains(s)) {
+      updateFunctions.foreach{ case (paramName,f) =>
+        if (!doNotUpdate.contains(paramName)) {
           if (showTimings) {
-            print(s"${s}: ")
+            print(s"${paramName}: ")
             timer{ f(state) }
           } else f(state)
         }
