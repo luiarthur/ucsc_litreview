@@ -23,7 +23,7 @@ yZ_inspect = function(out, y, zlim, i, thresh=0.7,
   Zi = out[[idx_best]]$Z
   Wi = out[[idx_best]]$W[i,]
   lami = out[[idx_best]]$lam[[i]]
-  yZ(y[[i]], Zi, Wi, lami, zlim, using_zero_index=TRUE,
+  yZ(y[[i]], Zi, Wi, lami, zlim, 
      thresh=thresh, col=col, prop_lower_panel=prop_lower_panel, 
      decimals_W=decimals_W, fy=fy, fZ=fZ, na.color=na.color, ...)
 }

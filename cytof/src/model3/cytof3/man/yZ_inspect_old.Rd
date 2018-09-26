@@ -6,8 +6,8 @@
 \usage{
 yZ_inspect_old(out, y, dat_lim, i = 0, thresh = 0.1,
   col = list(blueToRed(), greys(10))[[1]], prop_lower_panel = 0.3,
-  is.postpred = FALSE, fy = function() stopifnot(TRUE),
-  fZ = function() stopifnot(TRUE))
+  is.postpred = FALSE, fy = function() stopifnot(TRUE), fZ = function()
+  stopifnot(TRUE))
 }
 \arguments{
 \item{fy}{function to execute after making y image}
