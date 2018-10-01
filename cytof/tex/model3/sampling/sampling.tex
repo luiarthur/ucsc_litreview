@@ -156,7 +156,8 @@
 \usepackage{pgffor}
 %}}}1
 
-\title{Bayesian Feature Allocation Models for Natural Killer Cell Repertoire Studies Using Mass Cytometry Data}
+\title{Bayesian Feature Allocation Models for Natural Killer Cell Repertoire
+Studies Using Mass Cytometry Data}
 \author{
   Arthur Lui\\
   %\thanks{This is a cool command}
@@ -2103,7 +2104,7 @@ Depending on $f_k(t)$, samples may have different subsets of phenotypes.
 Various functions can be used for $f_k(t)$.  One choice for $f_k(t_i)$ is a
 quadratic function in time $t$, $f_k(t) = \xi^\prime_{t_1,k} + \beta_{k1}t +
 \beta_{k2}t^2$, possibly with some constraints on $\beta_{k1}$ and
-$\beta_{k2}.$  For example, if $\beta_{k2} \leq 0$, the mean abundance of a
+$\beta_{k2}$.  For example, if $\beta_{k2} \leq 0$, the mean abundance of a
 phenotype cannot increase.  We will further investigate this model so as to
 accommodate biological knowledge on dynamics of cell populations in the model
 for $\bw$, and potentially in the model for $\bZ$.   
@@ -2170,7 +2171,7 @@ Gibbs sampler). Say \(B\) samples from a distribution with density
 \item
   Provide an initial value for the sampler, e.g. \(\theta^{(0)}\).
 \item
-  Repeat the following steps for \(i = 1,...,B\).
+  Repeat the following steps for \(i = 1,\ldots,B\).
 \item
   Sample a new value \(\tilde\theta\) for \(\theta^{(i)}\) from a
   proposal distribution \(Q(\cdot \mid \theta^{(i-1)})\).

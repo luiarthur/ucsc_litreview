@@ -8,3 +8,5 @@ sampling*.pdf
 *.blg
 *.bbl
 *.pyc
+*.fdb*
+*.fls*
