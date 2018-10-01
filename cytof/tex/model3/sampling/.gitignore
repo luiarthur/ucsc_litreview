@@ -10,3 +10,4 @@ sampling*.pdf
 *.pyc
 *.fdb*
 *.fls*
+*.synctex.gz
