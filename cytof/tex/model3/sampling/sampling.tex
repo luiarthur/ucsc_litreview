@@ -132,6 +132,7 @@
 \def\bgam{\bm{\gamma}}
 \def\bsig{\bm{\sigma}}
 \def\blambda{\bm{\lambda}}
+\def\TN{\text{TruncatedNormal}}
 
 \usepackage[dvipsnames,usenames]{color}
 \newcommand{\bch}{\color{blue}\it}
@@ -746,8 +747,12 @@ quantities. Modeling details will be discussed later.  Given \(z_{j,
 \begin{align}
 y_{inj} \mid \bet_{ij}, \bmu^\star, \bsig^{2 \star}_{i} \ind
 \begin{cases}
-  \sum_{\ell=1}^{L^0} \eta^0_{ij\ell}~ \text{Normal}(\mu^\star_{0\ell}, \sigma^{2 \star}_{0i\ell}), &\mbox{if $z_{j,\lambda_{in}}=0$},\\
-  \sum_{\ell=1}^{L^1} \eta^1_{ij\ell}~ \text{Normal}(\mu^\star_{1\ell}, \sigma^{2 \star}_{1i\ell}), &\mbox{if $z_{j,\lambda_{in}}=1$},\\
+  \sum_{\ell=1}^{L^0} \eta^0_{ij\ell}~
+    \text{Normal}(\mu^\star_{0\ell},
+                  \sigma^{2}_{i}), &\mbox{if $z_{j,\lambda_{in}}=0$},\\
+  \sum_{\ell=1}^{L^1} \eta^1_{ij\ell}~
+    \text{Normal}(\mu^\star_{1\ell},
+                  \sigma^{2}_{i}), &\mbox{if $z_{j,\lambda_{in}}=1$},\\
 \end{cases} \label{eq:y-mix}
 \end{align}
 where the number of mixture components \(L^0\) and \(L^1\) are fixed.  The
@@ -755,14 +760,14 @@ vectors $\bet^0_{ij}$ and $\bet^1_{ij}$ are mixture weights with
 \(\sum_{\ell=1}^{L^0} \eta^0_{ij\ell}=\sum_{\ell=1}^{L^1}\eta^1_{ij\ell}=1\),
 where \(0 < \eta^1_{ij\ell} < 1\) and \(0 < \eta^0_{ij\ell} < 1\).  In
 \eqref{eq:y-mix}, $\bmu^\star_0$ and $\bmu^\star_1$ are common for all samples
-and markers but $\bsig^{2\star}_0$ and $\bsig^{2\star}_1$ are additionally
-indexed by sample $i$ to account for sample specific variability.  Sample and
-marker specific mixture weight vectors $\bet^0_{ij}$ and $\bet^1_{ij}$ allow
-markers in samples to have different distributions. The mixture model can thus
-flexibly capture various features in data.  For computational convenience, we
-introduce mixture component indicators $\gamma_{inj}$ for $y_{inj}$.  Given
-$\lambda_{in}=k$, we define \(\gamma_{inj}\) for \(i=1, \ldots, I\), \(n=1,
-\ldots, N_i\) and \(j=1, \ldots, J\), by
+and markers but $\bsig^{2}$ isindexed by sample $i$ to account for sample
+specific variability. Sample and marker specific mixture weight vectors
+$\bet^0_{ij}$ and $\bet^1_{ij}$ allow markers in samples to have different
+distributions. The mixture model can thus flexibly capture various features
+in data. For computational convenience, we introduce mixture component
+indicators $\gamma_{inj}$ for $y_{inj}$. Given $\lambda_{in}=k$, we define
+\(\gamma_{inj}\) for \(i=1,\ldots, I\), \(n=1, \ldots, N_i\) and \(j=1,
+\ldots, J\), by
 \begin{eqnarray}
 P(\gamma_{inj} = \ell \mid \lin=k)=\eta^{z_{jk}}_{ij\ell}, \mbox{ where }~ \ell \in \{1,\ldots, L^{z_{jk}}\}. \label{eq:gam}
 \end{eqnarray}
@@ -770,12 +775,12 @@ Given \(\lambda_{in}=k\) and \(\gamma_{inj}=\ell\), we assume a normal
 distribution for \(y_{inj}\); for \(i=1, \ldots, I\),
 \(n=1, \ldots, N_i\) and \(j=1, \ldots, J\),
 \begin{align}
-  y_{inj} \mid \mu_{inj}, \sigma^2_{inj}  &\ind \text{Normal}(\mu_{inj}, \sigma^2_{inj}), \label{eq:y-gam}
+  y_{inj} \mid \mu_{inj}, \sigma^2_{inj} &\ind \text{Normal}(\mu_{inj},
+  \sigma^2_{i}), \label{eq:y-gam}
 \end{align}
-where \(\mu_{inj} = \mu^\star_{z_{j,k},\ell}\) and \(\sigma^2_{inj} =
-{\sigma^{2}}^\star_{z_{j,k}i\ell}\). After marginalizing over $\gamma_{inj}$,
-the model in \eqref{eq:y-gam} and \eqref{eq:gam} is equivalent to the model in
-\eqref{eq:y-mix}.  
+where \(\mu_{inj} = \mu^\star_{z_{j,k},\ell}\). After marginalizing over
+$\gamma_{inj}$, the model in \eqref{eq:y-gam} and \eqref{eq:gam} is
+equivalent to the model in \eqref{eq:y-mix}.
 
 We next build a model for the missingness mechanism.  To build the mechanism,
 we incorporate information provided by a subject scientist that a marker
@@ -795,31 +800,29 @@ Given
 \(i=1, \ldots, I\), \(n=1, \ldots, N_i\) and \(j=1, \ldots, J\),
 \begin{align}
   m_{inj} \mid p_{inj} &\ind \Bern(p_{inj}) \label{eq:missing} \\
-  \logit(p_{inj}) &= \begin{cases}
-  \beta_{0i} - \beta_{1i}(y_{inj}-c_0)^2, & \text{if } y_{inj} < c_0\nonumber, \\
-  \beta_{0i} - \beta_{1i}c_1\p{y_{inj}-c_0}^{1/2}, & \text{otherwise}, \nonumber \\
-  \end{cases} 
+  \logit(p_{inj}) &= \beta_{0i} - \beta_{1i} \cdot y_{inj} \\
 \end{align}
-where \(c_0\) and \(c_1\) are real constants, $\beta_{0i} \in \mathbb{R}$ , and
-$\beta_{1i} > 0$. Figure \ref{fig:prob-miss-eg} shows an example missing mechanism. We design the
-missing mechanism to have a peak in the middle to discourage missing values
-from being imputed as either extremely large or extremely small values. This
-helps to control the size of the scale parameter in the mixture of Normals used
-in the data density. Note that the assumptions for the distribution of the
-unobserved data are untestable. However, we can incorporate input from
-biologists through informed prior specifications. Prior uncertainty can then be
-directly propagated to the posterior distribution for the missing mechanism.
+where $\beta_{0i} \in \mathbb{R}$, and $\beta_{1i} > 0$.
+% Figure \ref{fig:prob-miss-eg} shows an example missing mechanism. We design
+% the missing mechanism to have a peak in the middle to discourage missing
+% values from being imputed as either extremely large or extremely small
+% values. This helps to control the size of the scale parameter in the mixture
+% of Normalsused in the data density.
+Note that the assumptions for the distribution of the unobserved data are
+untestable. However, we can incorporate input from biologists through
+informed prior specifications. Prior uncertainty can then be directly
+propagated to the posterior distribution for the missing mechanism.
+% TODO: Should we just use strong priors?
 
-\begin{figure}[th!]
-\begin{center}
-\includegraphics[scale=.5]{img/prob_miss_example.pdf}
-\caption{Example missing mechanism. The blue points serve as guides in
-determining a missing mechanism. Values for $\beta$ and $c$ can be solved for
-through a system of equations.}
-\label{fig:prob-miss-eg}
-\end{center}
-\end{figure}
-
+% \begin{figure}[th!]
+% \begin{center}
+% \includegraphics[scale=.5]{img/prob_miss_example.pdf}
+% \caption{Example missing mechanism. The blue points serve as guides in
+% determining a missing mechanism. Values for $\beta$ and $c$ can be solved for
+% through a system of equations.}
+% \label{fig:prob-miss-eg}
+% \end{center}
+% \end{figure}
 
 
 \subsubsection{Priors}\label{priors}
@@ -865,25 +868,27 @@ Recall that $\mus_{0\ell}$, $\ell=1, \ldots, L^0$ are mixture locations for
 $z_{j \lambda_{in}}=0$ and $\mus_{1\ell}$, $\ell=1, \ldots, L^1$ for $z_{j
 \lambda_{in}}=1$.  We assume 
 \begin{align*}
-\mus_{0\ell} \mid \psi_0, \tau^2_0 &\iid \N_-(\psi_0, \tau^2_0), ~~~ \ell \in \bc{1,...,L^0}, \\
-\mus_{1\ell} \mid \psi_1, \tau^2_1 &\iid \N_+(\psi_1, \tau^2_1), ~~~ \ell \in \bc{1,...,L^1}, 
+\mus_{0,1} \mid \psi_0, \tau^2_0 &\iid \text{TruncatedNormal}(\psi_0, \tau^2_0, -\infty, \mus_{0,2}) \\
+\mus_{0,L^0} \mid \psi_0, \tau^2_0 &\iid \text{TruncatedNormal}(\psi_0, \tau^2_0, \mus_{0,L^0-1}, 0) \\
+\\
+\mus_{1,1} \mid \psi_1, \tau^2_1 &\iid \text{TruncatedNormal}(\psi_1, \tau^2_1, 0, \mus_{1,2}) \\
+\mus_{1,L^1} \mid \psi_1, \tau^2_1 &\iid \text{TruncatedNormal}(\psi_1, \tau^2_1, \mus_{1,L^1-1}, \infty) \\
+\\
+\mus_{z,L^z} \mid \psi_z, \tau^2_z &\iid \text{TruncatedNormal}(\psi_z, \tau^2_z, \mus_{z,\ell-1}, \mus_{z,\ell+1}), ~~~ \ell \in \bc{2,...,L^z - 1}, \\
 \end{align*}
-where \(\N_-(m,s^2)\) and \(\N_+(m,s^2)\) denote the normal distribution with
-mean \(m\) and variance \(s^2\), truncated to take only negative values and
-positive values, respectively.  The variances $\bsig^{2 \star}_0$ and $\bsig^{2
-\star}_1$ in the mixture components differ by the value of $z_{j \lambda_{in}}$
-and also vary across samples. We let, for \(i=1, \ldots, I\),
+where $\TN(m, s^2, a, b)$ denotes the normal distribution. For the variances
+$\sigma^2_i$, we let, for $i=1, \ldots, I$,
 \begin{align*}
-\sigma^2_{0i\ell} \mid s_i &\ind \IG(a_\sigma, s_i), ~~~ \ell \in \bc{1,...,L^0}, \\
-\sigma^2_{1i\ell} \mid s_i &\ind \IG(a_\sigma, s_i), ~~~ \ell \in \bc{1,...,L^1}.  
+\sigma^2_{i} &\ind \IG(a_\sigma, b_\sigma) \\
 \end{align*}
-We also assume $s_i \iid \text{Gamma}(a_s, b_s)$, $i \in \bc{1,...,I}$, with
-mean \(a_s/b_s\). Lastly, we consider a model for the mixture weights
-$\bm\eta^0_{ij}$ and $\bm\eta^1_{ij}$. To flexibly model the distribution of
-$y_{inj}$, we assume for a marker $j$ in a sample $i$, that $y_{inj}$ has two
-sets of weights -- one for each value of $z \in \bc{0,1}$. That is,
-$\bm\eta^0_{ij}$ and $\bm\eta^1_{ij}$, for each $(i, j)$. So for $i=1,
-\ldots, I$, $n=1, \ldots, N_i$ and $j=1, \ldots, J$,
+%We also assume $s_i \iid \text{Gamma}(a_s, b_s)$, $i \in \bc{1,...,I}$, with
+%mean \(a_s/b_s\).
+Lastly, we consider a model for the mixture weights $\bm\eta^0_{ij}$ and
+$\bm\eta^1_{ij}$. To flexibly model the distribution of $y_{inj}$, we assume
+for a marker $j$ in a sample $i$, that $y_{inj}$ has two sets of weights --
+one for each value of $z \in \bc{0,1}$. That is, $\bm\eta^0_{ij}$ and
+$\bm\eta^1_{ij}$, for each $(i, j)$. So for $i=1,\ldots, I$, $n=1, \ldots,
+N_i$ and $j=1, \ldots, J$,
 \begin{align*}
 \bm\eta^0_{ij} &\iid \Dir_{L^0}(a_{\eta^0}/L^0), \\
 \bm\eta^1_{ij} &\iid \Dir_{L^1}(a_{\eta^1}/L^1). 
@@ -895,18 +900,18 @@ A prior distribution over the missing mechanism can be specified through
 placing priors on the parameters $\beta_{0i}$ and $\beta_{1i}$. 
 %
 We assume that $\beta_{0i} \iid \N(m_{\beta_0}, s^2_{\beta_0})$ and $\beta_{1i}
-\iid \N_+(m_{\beta_1}, s^2_{\beta_1})$, $i=1, \ldots, I$.  We use data to
-specify the values of the fixed hyperparameters, $m_{\beta_0}$ and
-$m_{\beta_1}$. We let $s^2_{\beta_0}$ and $s^2_{\beta_1}$ be small to induce an
-informative prior for $\beta_{0i}$ and $\beta_{1i}$. One way of determining
-priors for the parameters in the missing mechanism is described in detail in 
-the derivation of the full conditionals for $\beta$ in Appendix A.
-
+\iid \text{Gamma}(\text{shape}=a_{\beta_1}, \text{rate}=b_{\beta_1})$,
+ $i=1, \ldots, I$.  We use data to
+specify prior means for $\beta_{0i}$ and $\beta_{1i}$.
+We let the prior variances for $\beta_{0i}$ and $\beta_{1i}$ be small to induce
+informative priors. One way of determining priors for the parameters in the
+missing mechanism is described in detail in the derivation of the full
+conditionals for $\beta$ in Appendix A.
 
 
 \subsubsection{Posterior Computation}\label{sampling-via-mcmc}
-Let $\btheta=\bc{\bZ, \bw, \bm \mu^\star_0, \bm \mu^\star_1, \bm \sigma^2_{0i},
-\bm \sigma^2_{1i}, \bm \eta^0, \bm \eta^1, \bm \lambda, \bm \gamma, \bm v, \bm
+Let $\btheta=\bc{\bZ, \bw, \bm \mu^\star_0, \bm \mu^\star_1, \bm \sigma^2,
+\bm \eta^0, \bm \eta^1, \bm \lambda, \bm \gamma, \bm v, \bm
 h, \bm \beta_0, \bm \beta_1, \alpha}$ represent all random parameters.  Let
 \(\y\) and $\m$ denote $y_{inj}$ and $m_{inj}$ for all $(i,n,j)$, respectively.
 The joint posterior distribution is 
@@ -917,7 +922,7 @@ p(\btheta) \prod_{i,n,j} p(m_{inj} \mid y_{inj}, \btheta) p(y_{inj} \mid \btheta
 p(\btheta)
 \prod_{i,n,j} \left[
   p_{inj}^{m_{inj}} (1-p_{inj})^{1-m_{inj}} \times 
-   \frac{1}{\sqrt{2\pi\sigma^2_{inj}}} \exp\bc{-\frac{(y_{inj}-\mu_{inj})^2}{2\sigma^2_{inj}}}
+   \frac{1}{\sqrt{2\pi\sigma^2_{i}}} \exp\bc{-\frac{(y_{inj}-\mu_{inj})^2}{2\sigma^2_{i}}}
 \right].
 \end{align*}
 %The marginal density for \(y_{i,n,j}\) after integrating out \(\lambda\) and
@@ -1028,8 +1033,8 @@ the samples. In each panel, the cell types ($\bZ^\true$) are sorted by
 $w_{ik}^\true$.  Three and four mixture components were used for non-expressed
 and expressed marker expression levels, respectively. That is, $L^{0, \true}=3$
 and $L^{1, \true}=4$. We set  $\mu^{\star, \true}_{0} = (-5, -2, -1)$ and
-$\mu^{\star, \true}_{1} = (1, 2, 4, 5)$. Values of $\sigma^{\star 2,
-\true}_{0i\ell}$ and $\sigma^{\star 2,\true}_{1i\ell}$ drawn 
+$\mu^{\star, \true}_{1} = (1, 2, 4, 5)$. Values of $\sigma^{2,
+\true}_{i}$ are drawn 
 from a Uniform(0,~0.3) distribution for all $i$ and $\ell$.
 %
 We simulated $\bet_{0ij}^\true$ from a Dirichlet distribution with
@@ -1040,10 +1045,10 @@ parameters being some permutation of $(1,...,L^{1,\true})$.
 We then simulated latent phenotype indicators $\lambda_{in}^\true$ using
 $\bw_i^\true$, and conditionally on $z^\true_{j,\lambda_{in}^\true}$ generated
 $y_{inj}$ from the mixture model, $\sum_{\ell=1}^{L^{0,\true}}
-\eta^\true_{0ij}\cdot\N(\mu^{\star, \true}_{0\ell}, \sigma^{\star 2,
-\true}_{0i\ell})$ or $\sum_{\ell=1}^{L^{1,\true}}
-\eta^\true_{1ij}\cdot\N(\mu^{\star, \true}_{1\ell}, \sigma^{\star 2,
-\true}_{1i\ell})$. Finally, let some of the $y_{inj}$
+\eta^\true_{0ij}\cdot\N(\mu^{\star, \true}_{0\ell}, \sigma^{2,
+\true}_{i})$ or $\sum_{\ell=1}^{L^{1,\true}}
+\eta^\true_{1ij}\cdot\N(\mu^{\star, \true}_{1\ell}, \sigma^{2,
+\true}_{i})$. Finally, let some of the $y_{inj}$
 be missing as follows. Simulate a proportion $(p_{ij})$ of values to be missing
 for marker $j$ in sample $i$, from a
 Uniform$\p{0, \sum_k w^\true_{ik}(1-z^\true_{jk})}$ distribution. Sample
@@ -1134,6 +1139,7 @@ respectively.
 
 
 %\subsubsection{Results}
+%% TODO: Everything below here is not revised...
 To fit the proposed model, we fixed $(K=12, L^0=5,
 L^1=5)$. We used the mean of $y_{inj}$  having negative values to specify $c_0$
 and let $c_0=-2.5$ and $c_1=10.43$. We fixed $\Gamma=\bI_J$,

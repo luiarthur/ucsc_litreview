@@ -1,5 +1,10 @@
 {
+    "editor.minimap.enabled": false,
+    "editor.wordWrap": "on",
     "cSpell.words": [
-        "missingness"
+        "SALSO",
+        "hyperparameters",
+        "missingness",
+        "untestable"
     ]
 }
