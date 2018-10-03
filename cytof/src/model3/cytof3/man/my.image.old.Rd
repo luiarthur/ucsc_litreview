@@ -5,8 +5,9 @@
 \title{Old way of plotting images (deprecated)}
 \usage{
 my.image.old(Z, col = grey(seq(1, 0, len = 12)), fg = "grey",
-  f = function(dat) stopifnot(TRUE), truncate = TRUE, rm0Cols = FALSE,
-  addLegend = FALSE, nticks = 11, mn = 0, mx = 1, ...)
+  f = function(dat) stopifnot(TRUE), truncate = TRUE,
+  rm0Cols = FALSE, addLegend = FALSE, nticks = 11, mn = 0,
+  mx = 1, ...)
 }
 \description{
 Old way of plotting images (deprecated)
