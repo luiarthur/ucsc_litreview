@@ -12,6 +12,7 @@ build: $(filename).tex
 	pdflatex $(filename).tex
 	pdflatex $(filename).tex
 
+
 clean:
-	rm -f *.{log,aux,nav,out,snm,toc,blg,bbl,fdb_latexmk,fls}
+	rm -f *.{log,aux,nav,out,snm,toc,blg,bbl,fdb_latexmk,fls,synctex.gz}
 
