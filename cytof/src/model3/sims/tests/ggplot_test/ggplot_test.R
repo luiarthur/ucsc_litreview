@@ -84,3 +84,8 @@ png('out/heatmap.png', height=600, width=600)
 ggplot(melt.y1, aes(x=Var1,y=Var2,fill=value)) + geom_tile() + 
       scale_fill_manual(breaks=breaks, values=named_colors, na.value='black')
 dev.off()
+
+pdf('out/heatmap.pdf')
+ggplot(melt.y1, aes(x=Var1,y=Var2,fill=value)) + geom_tile() + 
+      scale_fill_manual(breaks=breaks, values=named_colors, na.value='black')
+dev.off()
