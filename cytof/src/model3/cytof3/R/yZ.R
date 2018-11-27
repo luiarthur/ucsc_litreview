@@ -25,7 +25,7 @@ add.cut = function(clus) {
 
 yZ = function(yi, Zi, Wi, cell_types_i, zlim=c(-4,4),
               using_zero_index=TRUE, na.color='transparent',
-              col_Z=grey(seq(0, 1, len=2)),
+              col_Z=grey(seq(1, 0, len=2)),
               thresh=0.8, col=list(blueToRed(7), greys(10))[[1]],
               prop_lower_panel=.3, decimals_W=1,
               fy=add.cut,
