@@ -25,6 +25,7 @@ add.cut = function(clus) {
 
 yZ = function(yi, Zi, Wi, cell_types_i, zlim=c(-4,4),
               using_zero_index=TRUE, na.color='transparent',
+              col_Z=grey(seq(0, 1, len=2)),
               thresh=0.8, col=list(blueToRed(7), greys(10))[[1]],
               prop_lower_panel=.3, decimals_W=1,
               fy=add.cut,
@@ -78,7 +79,7 @@ yZ = function(yi, Zi, Wi, cell_types_i, zlim=c(-4,4),
   color.bar(col, zlim, cex=cex.y.leg)
 
 
-  my.image(tZ_common[ord,],
+  my.image(tZ_common[ord,], col=col_Z,
            xlab='markers', ylab='cell-types', axes=F, cex.lab=cex.z.lab)
   axis(4, at=1:K_trunc, label=perc[ord], las=2, fg='grey', cex.axis=cex.z.right)
   axis(2, at=1:K_trunc, label=common_cell_types[ord], las=2, fg='grey',
