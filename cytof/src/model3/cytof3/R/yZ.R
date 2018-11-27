@@ -26,6 +26,7 @@ add.cut = function(clus) {
 yZ = function(yi, Zi, Wi, cell_types_i, zlim=c(-4,4),
               using_zero_index=TRUE, na.color='transparent',
               col_Z=grey(seq(1, 0, len=2)),
+              colorbar_Z=FALSE, cex_z_leg=1,
               thresh=0.8, col=list(blueToRed(7), greys(10))[[1]],
               prop_lower_panel=.3, decimals_W=1,
               fy=add.cut,
@@ -86,6 +87,9 @@ yZ = function(yi, Zi, Wi, cell_types_i, zlim=c(-4,4),
        cex.axis=cex.z.left)
   axis(1, at=1:J, label=1:J, las=2, fg='grey', cex.axis=cex.z.bottom)
   fZ(tZ_common)
+  if(colorbar_Z) {
+    color.bar(col_Z, c(0, 1), cex=cex_z_leg)
+  }
   ### Enf of plot the stuff ###
 
 
