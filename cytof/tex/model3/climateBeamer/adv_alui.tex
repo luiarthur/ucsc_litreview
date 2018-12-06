@@ -323,8 +323,8 @@ returned by CyTOF instrument.}
   Let $\bm Z$ be a $J\times K$ matrix such that
   $$
   \begin{array}{rclcl}
-    z_{jk} &\mid& \pi_k  &\sim& \text{Bernoulli}(\pi_k) \\
-    \pi_k  &\mid& \alpha &\sim& \text{Beta}\p{\alpha/K,1} \\ 
+    z_{jk} &\mid& v_k  &\sim& \text{Bernoulli}(v_k) \\
+    v_k  &\mid& \alpha &\sim& \text{Beta}\p{\alpha/K,1} \\ 
   \end{array}
   $$
   for $j=1,\cdots J$ and $k=1,\cdots, K$, and where $\alpha$ is positive. \\
@@ -419,7 +419,7 @@ Heterogeneous Cell Populations}
 
 \begin{frame}{Project I: Sampling Distribution}
 \begin{align*}
-y_{inj} \mid \bet_{ij}, \bmu^\star, \bsig^{2 \star}_{i} \ind
+y_{inj} \mid \bet_{ij}, \bmu^\star, \sigma^2_i \ind
 \begin{cases}
   F_{0ij}, &\mbox{if $z_{j,\lambda_{in}}=0$},\\
   F_{1ij}, &\mbox{if $z_{j,\lambda_{in}}=1$}.\\
@@ -428,8 +428,8 @@ y_{inj} \mid \bet_{ij}, \bmu^\star, \bsig^{2 \star}_{i} \ind
 \pause
 %
 \begin{itemize}
-  \item $F_{0ij} = \sum_{\ell=1}^{L^0} \eta^0_{ij\ell}~\text{Normal}(\mu^\star_{0\ell}, \sigma^{2 \star}_{0i\ell})$, where $\mu^\star_{0\ell} < 0$
-  \item $F_{1ij} = \sum_{\ell=1}^{L^1} \eta^1_{ij\ell}~\text{Normal}(\mu^\star_{1\ell}, \sigma^{2 \star}_{1i\ell})$, where $\mu^\star_{1\ell} > 0$
+  \item $F_{0ij} = \sum_{\ell=1}^{L^0} \eta^0_{ij\ell}~\text{Normal}(\mu^\star_{0\ell}, \sigma^2_i)$, where $\mu^\star_{0\ell} < 0$
+  \item $F_{1ij} = \sum_{\ell=1}^{L^1} \eta^1_{ij\ell}~\text{Normal}(\mu^\star_{1\ell}, \sigma^2_i)$, where $\mu^\star_{1\ell} > 0$
 %\item
 %  Fixed number of mixture components \(L^0\) and \(L^1\)
 %\item
@@ -485,44 +485,14 @@ where \(m_{inj}=1\) if \(y_{inj}\) is missing, and 0 otherwise.
 \end{frame}
 
 
-\begin{frame}[noframenumbering]{Project I: Priors}
-\begin{block}{Latent Phenotypes}
-\begin{eqnarray*}
-  z_{jk} \mid h_{jk}, v_k &=& 
-  \mathbb{I}\bc{ \Phi(h_{jk} \mid 0, \alt<2>{\Gamma_{jj}}{1}) < v_k } \\
-  v_k \mid \alpha &\iid& \text{Beta}(\alpha/K, 1) \\
-  \h_k &\iid& \text{Normal}_J(\mathbf{0}, \alt<2>{\Gamma}{\eye}) \\ 
-  \alpha &\sim& \text{Gamma}(a_\alpha, b_\alpha) \\
-\end{eqnarray*}
-\end{block}
-\pause
-\begin{itemize}
-  \item Dependent IBP (dIBP) \citep{williamson2010dependent} construction to model correlations between markers
-  \item dIBP reduces to IBP \citep{griffiths2011indian} when $\Gamma$ is the identity matrix
-\end{itemize}
-\end{frame}
-
-
-\begin{frame}[noframenumbering]{Project I: Priors}
-\begin{block}{Latent Phenotypes}
-\begin{eqnarray*}
-  \bZ \mid \alpha, \Gamma &\sim& \text{dIBP}_K(\alpha, \Gamma) \\
-  \alpha &\sim& \text{Gamma}(a_\alpha, b_\alpha) \\
-\end{eqnarray*}
-\end{block}
-\begin{itemize}
-  \item Dependent IBP (dIBP) \citep{williamson2010dependent} construction to model correlations between markers
-  \item dIBP reduces to IBP \citep{griffiths2011indian} when $\Gamma$ is the identity matrix
-\end{itemize}
-\end{frame}
-
-
 \begin{frame}{Project I: Priors}
 \begin{block}{Phenotype Abundance}
+\vspace{.5em}
 Let \(w_{ik}\) denote an abundance level of phenotype \(k\) in sample
 \(i\). Let \(\bw_i=(w_{i1}, \ldots, w_{iK})\). Then,
 \(\bw_{i} \mid K \iid \text{Dirichlet}_K(d/K)\).
 \end{block}
+\vspace{.5em}
 
 \begin{block}{Latent Cell Phenotype Indicators}
 \[p(\lin=k \mid \bm \bw_i) = w_{ik}\]
@@ -531,39 +501,16 @@ Let \(w_{ik}\) denote an abundance level of phenotype \(k\) in sample
 
 \begin{frame}{Project I: Priors}
 \begin{align*}
-\mus_{0\ell} \mid \psi_0, \tau^2_0 &\iid \text{Normal}_-(\psi_0, \tau^2_0), ~~~ \ell \in \bc{1,...,L^0} \\
-\mus_{1\ell} \mid \psi_1, \tau^2_1 &\iid \text{Normal}_+(\psi_1, \tau^2_1), ~~~ \ell \in \bc{1,...,L^1} \\
-\sigma^2_{0i\ell} \mid s_i &\ind \text{Inverse-Gamma}(a_\sigma, s_i), ~~~ \ell \in \bc{1,...,L^0} \\
-\sigma^2_{1i\ell} \mid s_i &\ind \text{Inverse-Gamma}(a_\sigma, s_i), ~~~ \ell \in \bc{1,...,L^1}  \\
-  s_i &\iid \text{Gamma}(a_s, b_s), ~~~ i \in \bc{1,...,I} \\
-\bm\eta^0_{ij} &\iid \text{Dirichlet}_{L^0}(a_{\eta^0}/L^0), ~~~ i \in \bc{1,...,I}, j \in \bc{1,...,J} \\
-\bm\eta^1_{ij} &\iid \text{Dirichlet}_{L^1}(a_{\eta^1}/L^1), ~~~ i \in \bc{1,...,I}, j \in \bc{1,...,J} \\
-\beta_{0i} &\iid \text{Normal}(m_{\beta_0}, s^2_{\beta_0}), ~~~ i \in \bc{1,...,I} \\
-\beta_{1i} &\iid \text{Normal}_+(m_{\beta_1}, s^2_{\beta_1}), ~~~ i \in \bc{1,...,I} \\
+\mus_{0\ell} \mid \psi_0, \tau^2_0 &\iid \text{Normal}_-(\psi_0, \tau^2_0), ~~~ \ell \in \bc{1, \dots,L^0} \\
+\mus_{1\ell} \mid \psi_1, \tau^2_1 &\iid \text{Normal}_+(\psi_1, \tau^2_1), ~~~ \ell \in \bc{1, \dots,L^1} \\
+\sigma^2_i &\ind \text{Inverse-Gamma}(a_\sigma, b_\sigma), ~~~ i \in \bc{1, \dots, I} \\
+\bm\eta^0_{ij} &\iid \text{Dirichlet}_{L^0}(a_{\eta^0}/L^0), ~~~ i \in \bc{1, \dots,I}, j \in \bc{1, \dots,J} \\
+\bm\eta^1_{ij} &\iid \text{Dirichlet}_{L^1}(a_{\eta^1}/L^1), ~~~ i \in \bc{1, \dots,I}, j \in \bc{1, \dots,J} \\
+\beta_{0i} &\iid \text{Normal}(m_{\beta_0}, s^2_{\beta_0}), ~~~ i \in \bc{1, \dots, I} \\
+\beta_{1i} &\iid \text{Normal}_+(m_{\beta_1}, s^2_{\beta_1}), ~~~ i \in \bc{1, \dots, I} \\
 \end{align*}
 \end{frame}
 
-\begin{frame}{Project I: Posterior Estimate for $\bZ$}
-  \begin{itemize}
-    \setlength\itemsep{1em}
-    \item $\bZ$ susceptible to label switching, especially when $K$ is random
-    \item We summarize the posterior distribution of $\bZ$ using sequentially-allocated latent structure optimization (SALSO) \citep{salso}
-  \end{itemize}
-\end{frame}
-
-\begin{frame}{Project I: Posterior Estimate for $\bZ$}
-For each posterior sample $b\in \bc{1,...,B}$ and patient sample $i$,
-\begin{enumerate}
-\item compute a $(J\times J)$ Adjacency Matrix $A_i^{(b)}$, where
-  $$
-  A^{(b)}_{i_{j,j'}} = \sum_{k=1}^K w^{(b)}_{ik} 
-  \Ind{ z^{(b)}_{jk} = z^{(b)}_{j^\prime k} = 1}
-  $$
-\item compute the mean adjacency matrix \(\bar A_i = \sum_{b=1}^B A_i^{(b)} /
-B\).
-\item $\hat{\bm Z}_i = \text{argmin}_{\bm Z} \sum_{j,j'} (A_{i_{j,j'}}^{(b)} - \bar A_{i_{j,j'}})^2$
-\end{enumerate}
-\end{frame}
 
 \begin{frame}{Project I: Simulation Study}
 \begin{figure}
@@ -611,15 +558,6 @@ are sorted by $w_{ik}$.}
 \end{figure}
 \end{frame}
 
-\begin{frame}[noframenumbering]{Missing Mechanism Posterior}
-\vspace{-1em}\begin{figure}
-  \begin{center}
-    \includegraphics[scale=.4]{results/img/sim/miss_mech_posterior.pdf}
-  \end{center}
-  \vspace{-0.05in}
-  \caption{Posterior missing mechanism for simulation study in Project I for sample 1 (red), 2 (green), and 3 (blue). Prior missing mechanism in grey.}
-\end{figure}
-\end{frame}
 
 \begin{frame}{Project I: Simulation Results -- FlowSOM}
 \vspace{-1em}\begin{figure}
@@ -637,18 +575,8 @@ are sorted by $w_{ik}$.}
 
 
 \begin{frame}{Project I: Simulation Study -- Comparing FAM and FlowSOM}
-We use the F-score to summarize the accuracy of the computed cluster labels.
-The F-score is defined as the harmonic mean of precision and recall.
-
-$$
-F_1 = \frac{2}{\text{precision}^{-1} + \text{recall}^{-1}},
-$$
-
-\begin{itemize}
-  \item precision $=\p{\text{true positives}}/\p{\text{true positives} + \text{false positives}}$ 
-  \item recall $=\p{\text{true positives}} / \p{\text{true positives} + \text{false negatives}}$
-  \item $F_1 \in \bk{0,1}$ with $F_1=1$ being a perfect score
-\end{itemize}
+We used the Adjusted Rand Index (ARI) to summarize the similarity of the
+clustering generated by each method to the true clustering. 
 
 % latex table generated in R 3.4.4 by xtable 1.8-2 package
 % Wed Jun  6 01:06:34 2018
@@ -656,14 +584,14 @@ $$
 \begin{center}
 \begin{tabular}{rrr}
   \hline
- & F-score & Elapsed time (seconds) \\ 
+ & ARI & Elapsed time (seconds) \\ 
   \hline
   FlowSOM & 0.490 & 6 \\ 
   FAM & 0.999 & 17472 \\ 
    \hline
 \end{tabular}
 \end{center}
-\caption{F-score and elapsed time for simulated data for FAM and FlowSOM}
+\caption{ARI and elapsed time for simulated data for FAM and FlowSOM}
 \end{table}
 \end{frame}
 
@@ -743,6 +671,36 @@ $$
 \KeywordTok{install_github}\NormalTok{(repo, }\DataTypeTok{subdir=}\NormalTok{subdir)}
 \end{Highlighting}
 \end{Shaded}
+\end{frame}
+
+\appendix
+%%% References %%%
+\begin{frame}[allowframebreaks]{References}
+\bibliographytrue
+\bibliography{litreview.bib}
+\end{frame}
+%%% End of References %%%
+
+\begin{frame}{Project I: Posterior Estimate for $\bZ$}
+  \begin{itemize}
+    \setlength\itemsep{1em}
+    \item $\bZ$ susceptible to label switching, especially when $K$ is random
+    \item We summarize the posterior distribution of $\bZ$ using sequentially-allocated latent structure optimization (SALSO) \citep{salso}
+  \end{itemize}
+\end{frame}
+
+\begin{frame}{Project I: Posterior Estimate for $\bZ$}
+For each posterior sample $b\in \bc{1,...,B}$ and patient sample $i$,
+\begin{enumerate}
+\item compute a $(J\times J)$ Adjacency Matrix $A_i^{(b)}$, where
+  $$
+  A^{(b)}_{i_{j,j'}} = \sum_{k=1}^K w^{(b)}_{ik} 
+  \Ind{ z^{(b)}_{jk} = z^{(b)}_{j^\prime k} = 1}
+  $$
+\item compute the mean adjacency matrix \(\bar A_i = \sum_{b=1}^B A_i^{(b)} /
+B\).
+\item $\hat{\bm Z}_i = \text{argmin}_{\bm Z} \sum_{j,j'} (A_{i_{j,j'}}^{(b)} - \bar A_{i_{j,j'}})^2$
+\end{enumerate}
 \end{frame}
 
 % Project II %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -948,12 +906,12 @@ Feature Abundances Over Time}
 \end{table}
 \end{frame}
 
-\appendix
+% \appendix
 %%% References %%%
-\begin{frame}[allowframebreaks]{References}
-\bibliographytrue
-\bibliography{litreview.bib}
-\end{frame}
+% \begin{frame}[allowframebreaks]{References}
+% \bibliographytrue
+% \bibliography{litreview.bib}
+% \end{frame}
 %%% End of References %%%
 
 %%%% BACKUP SLIDES BEGIN %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%

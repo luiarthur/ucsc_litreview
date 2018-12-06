@@ -11,7 +11,7 @@ build: $(PRES_NAME).tex
 	pdflatex $(PRES_NAME).tex
 
 clean:
-	rm -f *.log *.aux *.nav *.out *.snm *.toc *.bbl *.blg *.vrb
+	rm -f *.log *.aux *.nav *.out *.snm *.toc *.bbl *.blg *.vrb *.fdb_latexmk *.fls
 	rm -f img.zip
 
 purge: clean
