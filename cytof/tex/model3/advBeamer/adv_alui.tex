@@ -421,15 +421,15 @@ Heterogeneous Cell Populations}
 \begin{align*}
 y_{inj} \mid \bet_{ij}, \bmu^\star, \bsig^{2 \star}_{i} \ind
 \begin{cases}
-   F_0, &\mbox{if $z_{j,\lambda_{in}}=0$},\\
-   F_1, &\mbox{if $z_{j,\lambda_{in}}=1$}.\\
+  F_{0ij}, &\mbox{if $z_{j,\lambda_{in}}=0$},\\
+  F_{1ij}, &\mbox{if $z_{j,\lambda_{in}}=1$}.\\
 \end{cases} \label{eq:y-mix}
 \end{align*}
 \pause
 %
 \begin{itemize}
-\item $F_0 = \sum_{\ell=1}^{L^0} \eta^0_{ij\ell}~\text{Normal}(\mu^\star_{0\ell}, \sigma^{2 \star}_{0i\ell})$, where $\mu^\star_{0\ell} < 0$
-\item $F_1 = \sum_{\ell=1}^{L^1} \eta^1_{ij\ell}~\text{Normal}(\mu^\star_{1\ell}, \sigma^{2 \star}_{1i\ell})$, where $\mu^\star_{1\ell} > 0$
+  \item $F_{0ij} = \sum_{\ell=1}^{L^0} \eta^0_{ij\ell}~\text{Normal}(\mu^\star_{0\ell}, \sigma^{2 \star}_{0i\ell})$, where $\mu^\star_{0\ell} < 0$
+  \item $F_{1ij} = \sum_{\ell=1}^{L^1} \eta^1_{ij\ell}~\text{Normal}(\mu^\star_{1\ell}, \sigma^{2 \star}_{1i\ell})$, where $\mu^\star_{1\ell} > 0$
 %\item
 %  Fixed number of mixture components \(L^0\) and \(L^1\)
 %\item
