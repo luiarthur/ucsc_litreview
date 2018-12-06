@@ -12,5 +12,7 @@ adv*.pdf
 *.bbl
 *.pyc
 *.vrb
+*.fdb_latexmk
+*.fls
 
 results/*

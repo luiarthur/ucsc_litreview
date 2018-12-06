@@ -1,0 +1,85 @@
+\mode<presentation>
+
+
+% MY STYLES
+
+% References
+%http://tex.stackexchange.com/questions/105613/footer-in-beamer. Check this out. Frankfurt template.
+%http://tex.stackexchange.com/questions/39345/piecewise-highlighting-in-beamer-presentation
+%https://joerglenhard.wordpress.com/2011/08/01/beamer-customization-colors/
+
+%\geometry{vmargin=0.3in} % Formating the top bar
+\usepackage[UKenglish]{isodate} % for: \today 
+\cleanlookdateon                % for: \today
+
+%My Color Stuff
+\usepackage{caption}
+\usepackage{xcolor} % http://en.wikibooks.org/wiki/LaTeX/Colors
+                    % http://latexcolor.com/
+
+% Define Two Colors. Play around with this
+\definecolor{darkGrey}{rgb}{0.15, 0.15, 0.15}
+\definecolor{grey}{rgb}{0.45, 0.45, 0.45}
+\definecolor{pumpkin}{rgb}{1.0, 0.46, 0.09}
+\definecolor{tan}{rgb}{0.93, 0.80, 0.68}
+\definecolor{liteGrey}{rgb}{0.90, 0.90, 0.90}
+% Call them Primary and Secondary
+\def\darkColorOne{darkGrey}
+%\def\darkColorTwo{pumpkin}
+\def\darkColorTwo{grey}
+%\def\liteColorOne{tan}
+\def\liteColorOne{liteGrey}
+
+% Item Colors
+\def\itemColor{\darkColorTwo}
+\setbeamercolor{enumerate item}{fg=\itemColor}
+\setbeamercolor{enumerate subitem}{fg=\itemColor}
+\setbeamercolor{enumerate subsubitem}{fg=\itemColor}
+\setbeamercolor{itemize item}{fg=\itemColor}
+\setbeamercolor{itemize subitem}{fg=\itemColor}
+\setbeamercolor{itemize subsubitem}{fg=\itemColor}
+
+% Footline (at bottome of page)
+\setbeamercolor{footlinecolor}{fg=\liteColorOne, bg=\darkColorOne}
+% Frametitle bar (at top of page)
+\setbeamercolor{frametitle}{fg=\liteColorOne, bg=\darkColorOne}
+% Normal Text Color
+\setbeamercolor{normal text}{fg=\darkColorOne}
+\setbeamercolor{titlepage}{fg=\liteColorOne, bg=\darkColorOne}
+\setbeamercolor{block title}{fg=\darkColorOne}
+
+% titlepage
+\setbeamercolor{title}{fg=\darkColorOne}
+\setbeamercolor{author}{fg=\darkColorOne}
+\setbeamercolor{date}{fg=\darkColorOne}
+\setbeamercolor{institute}{fg=\darkColorOne}
+%\def\hline{ \textcolor{\darkColorTwo}{\hrulefill}\\ }
+
+% Captions
+\DeclareCaptionFont{figcol}{\color{\darkColorTwo}}
+\captionsetup{ font=scriptsize,
+               labelfont={bf,figcol,scriptsize} }
+
+% See this for footline:
+%http://tex.stackexchange.com/questions/26476/add-footer-text-to-all-slides-in-beamer
+%http://tex.stackexchange.com/questions/105613/footer-in-beamer
+\beamertemplatenavigationsymbolsempty
+\setbeamertemplate{footline}{
+  \hbox{
+    \hspace{-.15cm}
+    \begin{beamercolorbox}[ht=2.5mm,dp=1mm,
+                           rightskip=.1cm,leftskip=.1cm]{footlinecolor} 
+      \insertshortauthor\hfill
+      \insertshorttitle\hfill
+      \insertframenumber/\inserttotalframenumber
+    \end{beamercolorbox}
+  } % end of hbox
+} % end of footline 
+
+%\let\oldTitlePage\titlepage
+%\renewcommand{\titlepage}{%
+%  \date{\today}
+%  \oldTitlePage
+%}
+
+\mode<all>
