@@ -1,5 +1,5 @@
 # Ignore the pdf
-adv*.pdf
+alui-jsm2019.pdf
 
 # Ignore artifact files
 *.log

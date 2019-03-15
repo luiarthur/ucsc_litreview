@@ -2,7 +2,7 @@ AWS_BUCKET_CLIMATE_PRES = "s3://cytof-climate-pres"
 
 .PHONY: clean build all img
 
-PRES_NAME = adv_alui
+PRES_NAME = alui-jsm2019
 
 all: img build clean
 
