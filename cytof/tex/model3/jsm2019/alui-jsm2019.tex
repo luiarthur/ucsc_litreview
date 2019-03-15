@@ -407,67 +407,6 @@ All priors (except prior for missing $y_{inj}$) are conjugate.
 \end{frame}
 
 
-\begin{frame}{Simulation Study}
-\begin{figure}
-\begin{center}
-\begin{tabular}{c}
-\includegraphics[scale=.30]{results/img/sim/Z1_true_noTranspose.pdf}
-\end{tabular}
-\end{center}
-\vspace{-0.05in} \caption{Simulation truth for $\bZ$ in Sample 1, with markers in
-rows and latent phenotypes in columns. Black and white represents
-$z_{jk}=1$ and 0, respectively. The phenotypes and $\bw_1$ are
-shown at the bottom and on top, respectively. The markers
-are sorted by $w_{ik}$.}
-%\vspace{-0.05in} \caption{Simulation truth for $\bZ$ in Sample 1, with markers in
-%rows and latent phenotypes in columns. Black and white represents
-%$z^\true_{jk}=1$ and 0, respectively. The phenotypes and $\bw^\true_1$ are
-%shown on the left and right sides of each panel, respectively. The samples
-%share the same $\bZ^\true$ and the phenotypes are arranged in order of
-%$w_{ik}^\true$ within each sample.}
-\end{figure}
-\end{frame}
-
-\begin{frame}{Simulation Study}
-\begin{figure}
-\begin{center}
-\begin{tabular}{c}
-\includegraphics[scale=.35]{results/img/sim/Y001.png}
-\end{tabular}
-\end{center}
-\vspace{-0.05in} \caption{Simulated data for one sample}
-\end{figure}
-\end{frame}
-
-\begin{frame}{Simulation Results -- FAM}
-\vspace{-1em}\begin{figure}
-  \begin{center}
-  \begin{tabular}{cc}
-  \includegraphics[scale=.3]{results/img/sim/YZ001.png}&
-  \includegraphics[scale=.3]{results/img/sim/Z1_true.pdf}\\
-  {\small (a) Sample 1} & {\small(b) Z true} \\
-  \end{tabular}
-  \end{center}
-  \vspace{-0.05in}
-  \caption{FAM Simulation Study}
-\end{figure}
-\end{frame}
-
-
-\begin{frame}{Simulation Results -- FlowSOM}
-\vspace{-1em}\begin{figure}
-  \begin{center}
-  \begin{tabular}{cc}
-  \includegraphics[scale=.3]{results/img/FlowSOM/YZ001_FlowSOM_SIM.png}&
-  \includegraphics[scale=.3]{results/img/sim/Z1_true.pdf}\\
-  {\small (a) Sample 1} & {\small(b) Z true} \\
-  \end{tabular}
-  \end{center}
-  \vspace{-0.05in}
-  \caption{FlowSOM Simulation Study}
-\end{figure}
-\end{frame}
-
 
 \begin{frame}{Simulation Study -- Comparing FAM and FlowSOM}
 We used the Adjusted Rand Index (ARI) to summarize the similarity of the
@@ -673,6 +612,68 @@ B\).
 \item $\hat{\bm Z}_i = \text{argmin}_{\bm Z} \sum_{j,j'} (A_{i_{j,j'}}^{(b)} - \bar A_{i_{j,j'}})^2$
 \end{enumerate}
 \end{frame}
+
+\begin{frame}{Simulation Study}
+\begin{figure}
+\begin{center}
+\begin{tabular}{c}
+\includegraphics[scale=.30]{results/img/sim/Z1_true_noTranspose.pdf}
+\end{tabular}
+\end{center}
+\vspace{-0.05in} \caption{Simulation truth for $\bZ$ in Sample 1, with markers in
+rows and latent phenotypes in columns. Black and white represents
+$z_{jk}=1$ and 0, respectively. The phenotypes and $\bw_1$ are
+shown at the bottom and on top, respectively. The markers
+are sorted by $w_{ik}$.}
+%\vspace{-0.05in} \caption{Simulation truth for $\bZ$ in Sample 1, with markers in
+%rows and latent phenotypes in columns. Black and white represents
+%$z^\true_{jk}=1$ and 0, respectively. The phenotypes and $\bw^\true_1$ are
+%shown on the left and right sides of each panel, respectively. The samples
+%share the same $\bZ^\true$ and the phenotypes are arranged in order of
+%$w_{ik}^\true$ within each sample.}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Simulation Study}
+\begin{figure}
+\begin{center}
+\begin{tabular}{c}
+\includegraphics[scale=.35]{results/img/sim/Y001.png}
+\end{tabular}
+\end{center}
+\vspace{-0.05in} \caption{Simulated data for one sample}
+\end{figure}
+\end{frame}
+
+\begin{frame}{Simulation Results -- FAM}
+\vspace{-1em}\begin{figure}
+  \begin{center}
+  \begin{tabular}{cc}
+  \includegraphics[scale=.3]{results/img/sim/YZ001.png}&
+  \includegraphics[scale=.3]{results/img/sim/Z1_true.pdf}\\
+  {\small (a) Sample 1} & {\small(b) Z true} \\
+  \end{tabular}
+  \end{center}
+  \vspace{-0.05in}
+  \caption{FAM Simulation Study}
+\end{figure}
+\end{frame}
+
+
+\begin{frame}{Simulation Results -- FlowSOM}
+\vspace{-1em}\begin{figure}
+  \begin{center}
+  \begin{tabular}{cc}
+  \includegraphics[scale=.3]{results/img/FlowSOM/YZ001_FlowSOM_SIM.png}&
+  \includegraphics[scale=.3]{results/img/sim/Z1_true.pdf}\\
+  {\small (a) Sample 1} & {\small(b) Z true} \\
+  \end{tabular}
+  \end{center}
+  \vspace{-0.05in}
+  \caption{FlowSOM Simulation Study}
+\end{figure}
+\end{frame}
+
 
 \begin{frame}{Project I: Posterior Predictive for Observed Data}
 \vspace{-1em}\begin{figure}
