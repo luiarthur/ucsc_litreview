@@ -122,7 +122,7 @@
 \newcommand{\N}{ \mathcal{N} }
 \newcommand{\E}{ \text{E} }
 \def\given{~\bigg|~}
-\title[Bayesian FAM for CyTOF Data]{Bayesian Feature Allocation Models for Natural Killer Cell Repertoire Studies Using Mass Cytometry Data}
+\title[Bayesian FAM for CyTOF Data]{A Bayesian Feature Allocation Model for Cytometry by Time-of-Flight Data}
 \author[A. Lui]{Arthur Lui \\ {\small Advisor$\colon$ Juhee Lee}}
 \institute{Department of Applied Mathematics and Statistics\\ UC Santa Cruz}
 \def\logit{\text{logit}}
@@ -154,7 +154,8 @@
 \begin{document}
 
 \frame[noframenumbering, plain]{
-\date{7 December, 2018}
+%\date{7 December, 2018}
+\date{5 June, 2019}
 \titlepage
 }
 
@@ -263,29 +264,8 @@ returned by CyTOF instrument.}
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Proposed Projects}
 
-\begin{itemize}
-\tightlist
-\item
-  \textbf{Project I}: Bayesian Feature Allocation Model for
-  Heterogeneous Cell Populations \setlength\itemsep{1em}
-\item
-  \textbf{Project II}: Repulsive Feature Allocation Model
-\item
-  \textbf{Project III}: Feature Allocation Model with Regression for
-  Abundances of Features in Longitudinal Data
-\end{itemize}
-\end{frame}
-
-% Project I %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% \frame[noframenumbering, plain]{
-%   \begin{center} \Huge \textbf{Project I} \end{center} 
-% }
-
-
-\begin{frame}{Project I: Bayesian Feature Allocation Model for
-Heterogeneous Cell Populations}
+\begin{frame}{Bayesian FAM for Heterogeneous Cell Populations}
 
 \begin{block}{Notation}
 
@@ -321,8 +301,7 @@ Heterogeneous Cell Populations}
 
 \end{frame}
 
-\begin{frame}{Project I: Bayesian Feature Allocation Model for
-Heterogeneous Cell Populations}
+\begin{frame}{Bayesian FAM for Heterogeneous Cell Populations}
 
 \begin{itemize}
 %\tightlist
@@ -344,7 +323,7 @@ Heterogeneous Cell Populations}
 \end{itemize}
 \end{frame}
 
-\begin{frame}{Project I: Sampling Distribution}
+\begin{frame}{Sampling Distribution}
 \begin{align*}
 y_{inj} \mid \bet_{ij}, \bmu^\star, \sigma^2_i, \lambda_{in}, \bZ \ind
 \begin{cases}
@@ -355,8 +334,8 @@ y_{inj} \mid \bet_{ij}, \bmu^\star, \sigma^2_i, \lambda_{in}, \bZ \ind
 \pause
 %
 \begin{itemize}
-  \item $F_{0ij} = \sum_{\ell=1}^{L^0} \eta^0_{ij\ell}~\text{Normal}(\mu^\star_{0\ell}, \sigma^2_i)$, where $\mu^\star_{0\ell} < 0$
-  \item $F_{1ij} = \sum_{\ell=1}^{L^1} \eta^1_{ij\ell}~\text{Normal}(\mu^\star_{1\ell}, \sigma^2_i)$, where $\mu^\star_{1\ell} > 0$
+  \item $F_{0ij} = \sum_{\ell=1}^{L_0} \eta^0_{ij\ell}~\text{Normal}(\mu^\star_{0\ell}, \sigma^2_i)$, where $\mu^\star_{0\ell} < 0$
+  \item $F_{1ij} = \sum_{\ell=1}^{L_1} \eta^1_{ij\ell}~\text{Normal}(\mu^\star_{1\ell}, \sigma^2_i)$, where $\mu^\star_{1\ell} > 0$
 \end{itemize}
 %
 \begin{figure}
@@ -367,7 +346,7 @@ y_{inj} \mid \bet_{ij}, \bmu^\star, \sigma^2_i, \lambda_{in}, \bZ \ind
 \end{figure}
 \end{frame}
 
-\begin{frame}{Project I: Missing Mechanism}
+\begin{frame}{Missing Mechanism}
 
 $$
   m_{inj} \mid p_{inj} \ind \text{Bernoulli}(p_{inj})
@@ -375,11 +354,8 @@ $$
 \pause
 $$
   \logit(p_{inj}) = 
-  \beta_{2i} \cdot y_{inj}^2  + \beta_{1i} \cdot y_{inj} + \beta_{0i}
-  % \begin{cases}
-  % \beta_{0i} - \beta_{1i}(y_{inj}-c_0)^2, & \text{if } y_{inj} < c_0\nonumber \\
-  % \beta_{0i} - \beta_{1i}c_1\p{y_{inj}-c_0}^{1/2}, & \text{otherwise}, \nonumber \\
-  % \end{cases} 
+  %\beta_{2i} \cdot y_{inj}^2  + \beta_{1i} \cdot y_{inj} + \beta_{0i}
+  \beta_{0i} + \beta_{1i} \cdot y_{inj} + \beta_{2i} \cdot y_{inj}^2
 $$
 where \(m_{inj}=1\) if \(y_{inj}\) is missing, and 0 otherwise.
 \pause
@@ -388,7 +364,7 @@ where \(m_{inj}=1\) if \(y_{inj}\) is missing, and 0 otherwise.
 \caption{Example missing mechanism} \endmyfig
 \end{frame}
 
-\begin{frame}[noframenumbering]{Project I: Priors}
+\begin{frame}[noframenumbering]{Priors}
 \begin{block}{Latent Phenotypes}
 \begin{eqnarray*}
   z_{jk} \mid v_k  &\ind& \text{Bernoulli}(v_k) \\
@@ -399,7 +375,7 @@ where \(m_{inj}=1\) if \(y_{inj}\) is missing, and 0 otherwise.
 \end{frame}
 
 
-\begin{frame}{Project I: Priors}
+\begin{frame}{Priors}
 \begin{block}{Phenotype Abundance}
 \vspace{.5em}
 Let \(w_{ik}\) denote an abundance level of phenotype \(k\) in sample
@@ -413,21 +389,18 @@ Let \(w_{ik}\) denote an abundance level of phenotype \(k\) in sample
 \end{block}
 \end{frame}
 
-\begin{frame}{Project I: Priors}
+\begin{frame}{Priors}
 \begin{align*}
-\mus_{0\ell} \mid \psi_0, \tau^2_0 &\iid \text{Normal}_-(\psi_0, \tau^2_0), ~~~ \ell \in \bc{1, \dots,L^0} \\
-\mus_{1\ell} \mid \psi_1, \tau^2_1 &\iid \text{Normal}_+(\psi_1, \tau^2_1), ~~~ \ell \in \bc{1, \dots,L^1} \\
+\delta_{z\ell} \mid \psi, \tau^2 &\iid \text{Normal}_+(\psi, \tau^2), ~~~
+  z \in \bc{0, 1}, ~~ \ell \in \bc{1, \dots,L_z} \\
 \sigma^2_i &\ind \text{Inverse-Gamma}(a_\sigma, b_\sigma), ~~~ i \in \bc{1, \dots, I} \\
-\bm\eta^0_{ij} &\iid \text{Dirichlet}_{L^0}(a_{\eta^0}/L^0), ~~~ i \in \bc{1, \dots,I}, j \in \bc{1, \dots,J} \\
-\bm\eta^1_{ij} &\iid \text{Dirichlet}_{L^1}(a_{\eta^1}/L^1), ~~~ i \in \bc{1, \dots,I}, j \in \bc{1, \dots,J} \\
-\beta_{0i} &\iid \text{Normal}(m_{\beta_0}, s^2_{\beta_0}), ~~~ i \in \bc{1, \dots, I} \\
-\beta_{1i} &\iid \text{Normal}(m_{\beta_1}, s^2_{\beta_1}), ~~~ i \in \bc{1, \dots, I} \\
-\beta_{2i} &\iid \text{Normal}(m_{\beta_2}, s^2_{\beta_2}), ~~~ i \in \bc{1, \dots, I} \\
+\bm\eta^0_{ij} &\iid \text{Dirichlet}_{L_0}(a_{\eta^0}/L_0), ~~~ i \in \bc{1, \dots,I}, j \in \bc{1, \dots,J} \\
+\bm\eta^1_{ij} &\iid \text{Dirichlet}_{L_1}(a_{\eta^1}/L_1), ~~~ i \in \bc{1, \dots,I}, j \in \bc{1, \dots,J} \\
 \end{align*}
 \end{frame}
 
 
-\begin{frame}{Project I: Simulation Study}
+\begin{frame}{Simulation Study}
 \begin{figure}
 \begin{center}
 \begin{tabular}{c}
@@ -448,7 +421,7 @@ are sorted by $w_{ik}$.}
 \end{figure}
 \end{frame}
 
-\begin{frame}{Project I: Simulation Study}
+\begin{frame}{Simulation Study}
 \begin{figure}
 \begin{center}
 \begin{tabular}{c}
@@ -459,7 +432,7 @@ are sorted by $w_{ik}$.}
 \end{figure}
 \end{frame}
 
-\begin{frame}{Project I: Simulation Results -- FAM}
+\begin{frame}{Simulation Results -- FAM}
 \vspace{-1em}\begin{figure}
   \begin{center}
   \begin{tabular}{cc}
@@ -474,7 +447,7 @@ are sorted by $w_{ik}$.}
 \end{frame}
 
 
-\begin{frame}{Project I: Simulation Results -- FlowSOM}
+\begin{frame}{Simulation Results -- FlowSOM}
 \vspace{-1em}\begin{figure}
   \begin{center}
   \begin{tabular}{cc}
@@ -489,7 +462,7 @@ are sorted by $w_{ik}$.}
 \end{frame}
 
 
-\begin{frame}{Project I: Simulation Study -- Comparing FAM and FlowSOM}
+\begin{frame}{Simulation Study -- Comparing FAM and FlowSOM}
 We used the Adjusted Rand Index (ARI) to summarize the similarity of the
 clustering generated by each method to the true clustering. 
 
@@ -522,7 +495,7 @@ clustering generated by each method to the true clustering.
 %   \end{itemize}
 % \end{frame}
 
-\begin{frame}{Project I: Cord Blood Samples Data}
+\begin{frame}{Cord Blood Samples Data}
   \begin{itemize}
     \setlength\itemsep{1em}
     \item Three cord blood (CB) samples from MD Anderson Cancer Center
@@ -533,7 +506,7 @@ clustering generated by each method to the true clustering.
   \end{itemize}
 \end{frame}
 
-\begin{frame}{Project I: CB Study}
+\begin{frame}{CB Study}
 \vspace{-1em}\begin{figure}
   \begin{center}
   \begin{tabular}{cc}
@@ -547,13 +520,14 @@ clustering generated by each method to the true clustering.
 \end{figure}
 \end{frame}
 
-\begin{frame}{Project I: Conclusions and Future Work}
+\begin{frame}{Conclusions and Future Work}
   Conclusions:
   \vspace{.5em}
   \begin{itemize}
     \setlength\itemsep{1em}
     \item Created FAM to study latent cell types of marker expression data
-    \item Able to quantify posterior uncertainty of latent cell types and their abundances (not included here)
+    \item Able to quantify posterior uncertainty of latent cell types and their abundances
+    \item Julia package at {\color{blue}\url{https://github.com/luiarthur/cytof5}}
   \end{itemize}
   \vspace{1em}
 
@@ -566,19 +540,6 @@ clustering generated by each method to the true clustering.
   \end{itemize}
 \end{frame}
 
-
-\begin{frame}[fragile]{R Package}
-\begin{Shaded}
-\begin{Highlighting}[]
-\CommentTok{# R code for installing cytof3}
-
-\KeywordTok{library}\NormalTok{(devtools)}
-\NormalTok{repo =}\StringTok{ 'luiarthur/ucsc_litreview'}
-\NormalTok{subdir =}\StringTok{ 'cytof/src/model3/cytof3'}
-\KeywordTok{install_github}\NormalTok{(repo, }\DataTypeTok{subdir=}\NormalTok{subdir)}
-\end{Highlighting}
-\end{Shaded}
-\end{frame}
 
 \appendix
 %%% References %%%
@@ -1223,15 +1184,15 @@ Feature Abundances Over Time}
 \begin{itemize}
 \tightlist
 \item
-  Fixed number of mixture components \(L^0\) and \(L^1\)
+  Fixed number of mixture components \(L_0\) and \(L_1\)
 \item
   Mixture weights \(\bet^0_{ij}\) and \(\bet^1_{ij}\) where
-  \(\sum_{\ell=1}^{L^0} \eta^0_{ij\ell}=\sum_{\ell=1}^{L^1}\eta^1_{ij\ell}=1\),
+  \(\sum_{\ell=1}^{L_0} \eta^0_{ij\ell}=\sum_{\ell=1}^{L_1}\eta^1_{ij\ell}=1\),
   and \(\eta^0_{ij\ell}, \eta^1_{ij\ell} > 0\)
 \item
   For computational convenience, we introduce mixture component
   indicators \(\gamma_{inj}\) for \(y_{inj}\) so that
-  \[ P(\gamma_{inj} = \ell \mid \lin=k)=\eta^{z_{jk}}_{ij\ell}, \mbox{ where }~ \ell \in \{1,\ldots, L^{z_{jk}}\}.\]
+  \[ P(\gamma_{inj} = \ell \mid \lin=k)=\eta^{z_{jk}}_{ij\ell}, \mbox{ where }~ \ell \in \{1,\ldots, L_{z_{jk}}\}.\]
   Then, \[ 
   y_{inj} \mid \mu_{inj}, \sigma^2_{inj}, \lin=k, \gamma_{inj}=\ell  \ind
   \text{Normal}(\mu_{inj}, \sigma^2_{inj}),
