@@ -1,0 +1,18 @@
+# Ignore the pdf
+alui-jsm2019.pdf
+
+# Ignore artifact files
+*.log
+*.aux
+*.nav
+*.out
+*.snm
+*.toc
+*.blg
+*.bbl
+*.pyc
+*.vrb
+*.fdb_latexmk
+*.fls
+
+results/*
