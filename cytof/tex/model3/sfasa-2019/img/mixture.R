@@ -2,8 +2,8 @@
 set.seed(42)
 
 N = 1000
-m0 = c(-4,-2,-.3)
-m1 = c(.3, 1, 2)
+m0 = c(.5, 1, 1.5) * -1
+m1 = c(.5, 1, 1.5)
 s0 = runif(3, 0, 1)
 s1 = runif(3, 0, 1)
 
@@ -12,7 +12,7 @@ x1 = rnorm(N, m1, s1)
 
 den.x0 = density(x0)
 den.x1 = density(x1)
-h = max(den.x0$y, den.x1$y)
+h = max(den.x0$y, den.x1$y) * 1.2
 
 pdf('mixture.pdf')
 plot(den.x0, lwd=3, xlim=range(x0,x1), ylim=c(0,h), col='blue',
